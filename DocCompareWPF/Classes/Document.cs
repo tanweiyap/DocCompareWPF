@@ -17,12 +17,11 @@ namespace DocCompareWPF.Classes
         public string filePath;
         public string imageFolder;
         public FileTypes fileType;
-        public List<Image> pages;
+        public List<int> docCompareIndices;
         public string docID;
 
         public Document()
         {
-            pages = new List<Image>();
         }
 
         public void detectFileType()

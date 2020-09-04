@@ -19,6 +19,7 @@ namespace DocCompareWPF
         enum SidePanels
         {
             DRAGDROP,
+            DOCCOMPARE,
             FILE_EXPLORER,
         };
 
@@ -51,6 +52,10 @@ namespace DocCompareWPF
             Directory.CreateDirectory(Path.Join(workingDir, "compare"));
             documents[0].imageFolder = Path.Join(workingDir, "doc1");
             documents[1].imageFolder = Path.Join(workingDir, "doc2");
+
+            // GUI stuff
+            DragDropPanel.Visibility = Visibility.Visible;
+            DocComparePanel.Visibility = Visibility.Hidden;
         }
 
         private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
@@ -81,21 +86,37 @@ namespace DocCompareWPF
 
         private void SidePanelDocCompareButton_Click(object sender, RoutedEventArgs e)
         {
-            SetVisiblePanel(SidePanels.DRAGDROP);
+            SetVisiblePanel(SidePanels.DOCCOMPARE);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ProgressBarDocCompare.Visibility = Visibility.Visible;
+            });
+
+            if (doc1Loaded == true && doc2Loaded == true && docCompareRunning == false)
+            {
+                threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                threadCompare.Start();
+            }
         }
 
         private void SetVisiblePanel(SidePanels p_sidePanel)
         {
-            Brush brush = FindResource("SidePanelActiveBackground") as Brush;
+            //Brush brush = FindResource("SidePanelActiveBackground") as Brush;
 
             switch (p_sidePanel)
             {
                 case SidePanels.DRAGDROP:
-                    SidePanelDocCompareBackground.Background = brush;
+                    //SidePanelDocCompareBackground.Background = brush;
                     DragDropPanel.Visibility = Visibility.Visible;
+                    DocComparePanel.Visibility = Visibility.Hidden;
+                    break;
+                case SidePanels.DOCCOMPARE:
+                    //SidePanelDocCompareBackground.Background = brush;
+                    DragDropPanel.Visibility = Visibility.Hidden;
+                    DocComparePanel.Visibility = Visibility.Visible;
                     break;
                 default:
-                    SidePanelDocCompareBackground.Background = Brushes.Transparent;
+                    //SidePanelDocCompareBackground.Background = Brushes.Transparent;
                     DragDropPanel.Visibility = Visibility.Hidden;
                     break;
             }
@@ -164,12 +185,25 @@ namespace DocCompareWPF
             {
                 DisplayImage(0);
             }
+            
+        }
 
-            if (doc1Loaded == true && doc2Loaded == true && docCompareRunning == false)
-            {
-                threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                threadCompare.Start();
-            }
+        private void CloseDoc1Button_Click(object sender, RoutedEventArgs e)
+        {
+            documents[0] = new Document();
+            documents[0].imageFolder = Path.Join(workingDir, "doc1");
+            doc1Loaded = false;
+            doc1Processed = true;
+            Doc1Grid.Visibility = Visibility.Hidden;
+        }
+
+        private void CloseDoc2Button_Click(object sender, RoutedEventArgs e)
+        {
+            documents[1] = new Document();
+            documents[1].imageFolder = Path.Join(workingDir, "doc2");
+            doc2Loaded = false;
+            doc2Processed = true;
+            Doc2Grid.Visibility = Visibility.Hidden;
         }
 
         private void DocCompareDragDropZone2_DragOver(object sender, DragEventArgs e)
@@ -185,6 +219,11 @@ namespace DocCompareWPF
             {
                 e.Effects = DragDropEffects.None;
             }
+        }
+
+        private void CloseDocCompareButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void DocCompareDragDropZone2_Drop(object sender, DragEventArgs e)
@@ -235,12 +274,6 @@ namespace DocCompareWPF
             {
                 DisplayImage(1);
             }
-
-            if (doc1Loaded == true && doc2Loaded == true && docCompareRunning == false)
-            {
-                threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                threadCompare.Start();
-            }
         }
 
         private void DocCompareScrollViewer2_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -279,9 +312,34 @@ namespace DocCompareWPF
 
         private void CompareDocsThread()
         {
-            docCompareRunning = true;
-            Document.compareDocs(documents[0].imageFolder, documents[1].imageFolder, Path.Join(workingDir, "compare"), out pageIndices, out totalLen);
-            docCompareRunning = false;
+            try
+            {
+                docCompareRunning = true;
+                Document.compareDocs(documents[0].imageFolder, documents[1].imageFolder, Path.Join(workingDir, "compare"), out pageIndices, out totalLen);
+                documents[0].docCompareIndices = new List<int>();
+                documents[1].docCompareIndices = new List<int>();
+
+                if (totalLen != 0) // ? comparion successful
+                {
+                    for(int i = totalLen - 1; i >= 0; i--)
+                    {
+                        documents[0].docCompareIndices.Add((int)pageIndices[i]);
+                        documents[1].docCompareIndices.Add((int)pageIndices[i + totalLen]);
+                    }
+                }
+
+                docCompareRunning = false;
+
+                Dispatcher.Invoke(() =>
+                {
+                    DisplayComparisonResult();
+                    ProgressBarDocCompare.Visibility = Visibility.Hidden;
+                });
+
+            }catch
+            {
+                docCompareRunning = false;
+            }
         }
 
         private void DisplayImage(int docIndex)
@@ -371,6 +429,146 @@ namespace DocCompareWPF
                     doc2Processed = true;
                     //DocCompareColorZone2.Visibility = Visibility.Hidden;
                 }
+            });
+        }
+
+        private void DisplayComparisonResult()
+        {
+            int pageCounter = 0;
+            Dispatcher.Invoke(() =>
+            {
+                StackPanel childPanel = new StackPanel();
+                StackPanel childPanel2 = new StackPanel();
+                childPanel.Background = Brushes.Gray;
+                childPanel.HorizontalAlignment = HorizontalAlignment.Stretch;
+                childPanel2.Background = Brushes.Gray;
+                childPanel2.HorizontalAlignment = HorizontalAlignment.Stretch;
+                Image thisImage;
+                FileStream stream;
+                BitmapImage bitmap;
+
+                for (int i = 0; i < totalLen; i++) // going through all the pages of the longest document
+                {
+                    Grid thisGrid = new Grid();
+                    thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc1
+                    thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc2
+
+                    if(documents[0].docCompareIndices[i] != -1) // doc 1 has a valid page
+                    {
+                        thisImage = new Image();
+                        stream = File.OpenRead(Path.Join(documents[0].imageFolder, documents[0].docCompareIndices[i].ToString() + ".jpg"));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        stream.Close();
+                        thisImage.Source = bitmap;
+                        if (pageCounter == 0)
+                        {
+                            thisImage.Margin = new Thickness(10, 10, 10, 10);
+                        }
+                        else
+                        {
+                            thisImage.Margin = new Thickness(10, 0, 10, 10);
+                        }
+
+                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        Grid.SetColumn(thisImage, 0);
+                        thisGrid.Children.Add(thisImage);
+                    }
+
+                    if (documents[1].docCompareIndices[i] != -1) // doc 2 has a valid page
+                    {
+                        thisImage = new Image();
+                        stream = File.OpenRead(Path.Join(documents[1].imageFolder, documents[1].docCompareIndices[i].ToString() + ".jpg"));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        stream.Close();
+                        thisImage.Source = bitmap;
+                        if (pageCounter == 0)
+                        {
+                            thisImage.Margin = new Thickness(10, 10, 10, 10);
+                        }
+                        else
+                        {
+                            thisImage.Margin = new Thickness(10, 0, 10, 10);
+                        }
+
+                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        Grid.SetColumn(thisImage, 1);
+                        thisGrid.Children.Add(thisImage);
+                    }
+
+                    pageCounter++;
+                    childPanel.Children.Add(thisGrid);
+                }
+
+                DocCompareMainScrollViewer.Content = childPanel;
+
+                for (int i = 0; i < totalLen; i++) // going through all the pages of the longest document
+                {
+                    Grid thisGrid = new Grid();
+                    thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc1
+                    thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc2
+
+                    if (documents[0].docCompareIndices[i] != -1) // doc 1 has a valid page
+                    {
+                        thisImage = new Image();
+                        stream = File.OpenRead(Path.Join(documents[0].imageFolder, documents[0].docCompareIndices[i].ToString() + ".jpg"));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        stream.Close();
+                        thisImage.Source = bitmap;
+                        if (pageCounter == 0)
+                        {
+                            thisImage.Margin = new Thickness(10, 10, 10, 10);
+                        }
+                        else
+                        {
+                            thisImage.Margin = new Thickness(10, 0, 10, 10);
+                        }
+
+                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        Grid.SetColumn(thisImage, 0);
+                        thisGrid.Children.Add(thisImage);
+                    }
+
+                    if (documents[1].docCompareIndices[i] != -1) // doc 2 has a valid page
+                    {
+                        thisImage = new Image();
+                        stream = File.OpenRead(Path.Join(documents[1].imageFolder, documents[1].docCompareIndices[i].ToString() + ".jpg"));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        stream.Close();
+                        thisImage.Source = bitmap;
+                        if (pageCounter == 0)
+                        {
+                            thisImage.Margin = new Thickness(10, 10, 10, 10);
+                        }
+                        else
+                        {
+                            thisImage.Margin = new Thickness(10, 0, 10, 10);
+                        }
+
+                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        Grid.SetColumn(thisImage, 1);
+                        thisGrid.Children.Add(thisImage);
+                    }
+
+                    pageCounter++;
+                    childPanel2.Children.Add(thisGrid);
+                }
+                DocCompareSideScrollViewer.Content = childPanel2;
             });
         }
     }

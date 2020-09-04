@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "dgSpecHash": "tBT2tQo4zlJtIybMPqeG/eYu1PTopNDfrkF7Hp4YWX0445eitVeP9wVqSApSOdEcRqqNQJs5kCoqcno6uVdlHQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\weiyap\\Documents\\ProjectSV\\DocCompareWPF\\DocCompareWPF\\DocCompareWPF.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\weiyap\\.nuget\\packages\\controlzex\\4.3.2\\controlzex.4.3.2.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\mahapps.metro\\2.2.0\\mahapps.metro.2.2.0.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\mahapps.metro.iconpacks\\4.4.0\\mahapps.metro.iconpacks.4.4.0.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\materialdesigncolors\\1.2.6\\materialdesigncolors.1.2.6.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\materialdesignthemes\\3.1.3\\materialdesignthemes.3.1.3.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\materialdesignthemes.mahapps\\0.1.4\\materialdesignthemes.mahapps.0.1.4.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\microsoft.xaml.behaviors.wpf\\1.1.19\\microsoft.xaml.behaviors.wpf.1.1.19.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\opencvsharp4\\4.4.0.20200725\\opencvsharp4.4.4.0.20200725.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\opencvsharp4.runtime.win\\4.4.0.20200725\\opencvsharp4.runtime.win.4.4.0.20200725.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\opencvsharp4.windows\\4.4.0.20200725\\opencvsharp4.windows.4.4.0.20200725.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\system.drawing.common\\4.7.0\\system.drawing.common.4.7.0.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.7.1\\system.runtime.compilerservices.unsafe.4.7.1.nupkg.sha512",
+    "C:\\Users\\weiyap\\.nuget\\packages\\system.text.json\\4.7.2\\system.text.json.4.7.2.nupkg.sha512"
+  ],
+  "logs": []
+}

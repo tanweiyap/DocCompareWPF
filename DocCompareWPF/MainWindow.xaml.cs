@@ -202,7 +202,10 @@ namespace DocCompareWPF
                     Dispatcher.Invoke(() =>
                     {
                         ProgressBarDoc1.Visibility = Visibility.Hidden;
-                    });                    
+                    });
+                    doc1Loaded = true;
+                    doc1Processed = true;
+                    return;
                 }
 
             }
@@ -338,12 +341,15 @@ namespace DocCompareWPF
                     doc2Loaded = true;
                 }
                 else
-                {
+                {                    
                     MessageBox.Show("Error loading file: " + documents[1].filePath, "Error", MessageBoxButton.OK);
                     Dispatcher.Invoke(() =>
                     {
                         ProgressBarDoc2.Visibility = Visibility.Hidden;
                     });
+                    doc2Loaded = true;
+                    doc1Processed = true;
+                    return;
                 }
 
             }

@@ -121,7 +121,15 @@ namespace DocCompareWPF.Classes
         public int readPPT()
         {
             PPTConvertClass pptConvertClass = new PPTConvertClass();
-            int ret = pptConvertClass.convertPPTToImages(filePath, imageFolder);
+            int ret = -1;
+            try
+            {
+                ret = pptConvertClass.convertPPTToImages(filePath, imageFolder);
+            }
+            catch
+            {
+                return ret;
+            }
 
             return ret;
         }

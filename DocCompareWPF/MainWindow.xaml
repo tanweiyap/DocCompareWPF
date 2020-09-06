@@ -212,11 +212,11 @@
                                         <iconPacks:PackIconMicrons Kind="Show" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
                                     <Button x:Name="HideMaskButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
-                                            HorizontalAlignment="Right" Click="HideMaskButton_Click" Margin="0,0,10,0">
+                                            HorizontalAlignment="Right" Click="HideMaskButton_Click" Margin="0,0,10,0" ToolTip="Hide difference mask">
                                         <iconPacks:PackIconMicrons Kind="Hide" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
                                     <Button x:Name="CloseDocCompareButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
-                                            HorizontalAlignment="Right" Click="CloseDocCompareButton_Click" Margin="0,0,10,0">
+                                            HorizontalAlignment="Right" Click="CloseDocCompareButton_Click" Margin="0,0,10,0" ToolTip="Show difference mask">
                                         <iconPacks:PackIconMaterial Kind="WindowClose" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
                                 </Grid>

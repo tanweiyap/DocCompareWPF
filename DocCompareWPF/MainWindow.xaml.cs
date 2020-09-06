@@ -94,6 +94,8 @@ namespace DocCompareWPF
             {
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
+                DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
+                DocCompareSideScrollViewer.ScrollToVerticalOffset(0);
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -193,6 +195,14 @@ namespace DocCompareWPF
                 if (documents[0].readPPT() == 0)
                 {
                     doc1Loaded = true;
+                }
+                else
+                {
+                    MessageBox.Show("Error loading file: " + documents[0].filePath, "Error", MessageBoxButton.OK);
+                    Dispatcher.Invoke(() =>
+                    {
+                        ProgressBarDoc1.Visibility = Visibility.Hidden;
+                    });                    
                 }
 
             }
@@ -326,6 +336,14 @@ namespace DocCompareWPF
                 if (documents[1].readPPT() == 0)
                 {
                     doc2Loaded = true;
+                }
+                else
+                {
+                    MessageBox.Show("Error loading file: " + documents[1].filePath, "Error", MessageBoxButton.OK);
+                    Dispatcher.Invoke(() =>
+                    {
+                        ProgressBarDoc2.Visibility = Visibility.Hidden;
+                    });
                 }
 
             }

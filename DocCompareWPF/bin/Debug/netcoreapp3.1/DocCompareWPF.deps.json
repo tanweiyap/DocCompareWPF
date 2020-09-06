@@ -279,6 +279,22 @@
             "fileVersion": "1.0.0.0"
           }
         }
+      },
+      "Interop.Microsoft.Office.Interop.PowerPoint/2.12.0.0": {
+        "runtime": {
+          "Interop.Microsoft.Office.Interop.PowerPoint.dll": {
+            "assemblyVersion": "2.12.0.0",
+            "fileVersion": "2.12.0.0"
+          }
+        }
+      },
+      "Interop.Microsoft.Office.Core/2.8.0.0": {
+        "runtime": {
+          "Interop.Microsoft.Office.Core.dll": {
+            "assemblyVersion": "2.8.0.0",
+            "fileVersion": "2.8.0.0"
+          }
+        }
       }
     }
   },
@@ -399,6 +415,16 @@
       "sha512": ""
     },
     "DocConvert/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Interop.Microsoft.Office.Interop.PowerPoint/2.12.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Interop.Microsoft.Office.Core/2.8.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

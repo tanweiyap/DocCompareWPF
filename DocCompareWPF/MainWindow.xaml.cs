@@ -92,6 +92,8 @@ namespace DocCompareWPF
         {
             if (documents[0].filePath != null && documents[1].filePath != null && docCompareRunning == false)
             {
+                docCompareGrid.Visibility = Visibility.Hidden;
+                docCompareSideGridShown = 0;
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -183,6 +185,16 @@ namespace DocCompareWPF
                 {
                     doc1Loaded = true;
                 }
+
+            }
+
+            if (documents[0].fileType == Document.FileTypes.PPT)
+            {
+                if (documents[0].readPPT() == 0)
+                {
+                    doc1Loaded = true;
+                }
+
             }
 
             if (doc1Loaded == true)
@@ -307,6 +319,15 @@ namespace DocCompareWPF
                 {
                     doc2Loaded = true;
                 }
+            }
+
+            if (documents[1].fileType == Document.FileTypes.PPT)
+            {
+                if (documents[1].readPPT() == 0)
+                {
+                    doc2Loaded = true;
+                }
+
             }
 
             if (doc2Loaded == true)
@@ -537,22 +558,25 @@ namespace DocCompareWPF
 
                         if (documents[0].docCompareIndices[i] != -1 && showMask == true)
                         {
-                            thisImage = new Image();
-                            stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", documents[0].docCompareIndices[i].ToString() + "_" + documents[1].docCompareIndices[i].ToString() + ".png")));
-                            bitmap = new BitmapImage();
-                            bitmap.BeginInit();
-                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                            bitmap.StreamSource = stream;
-                            bitmap.EndInit();
-                            stream.Close();
-                            thisImage.Source = bitmap;
-                            thisImage.Margin = new Thickness(10, 10, 10, 10);
-                            thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
-                            thisImage.VerticalAlignment = VerticalAlignment.Stretch;
+                            if (File.Exists(Path.Join(workingDir, Path.Join("compare", documents[0].docCompareIndices[i].ToString() + "_" + documents[1].docCompareIndices[i].ToString() + ".png"))))
+                            {
+                                thisImage = new Image();
+                                stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", documents[0].docCompareIndices[i].ToString() + "_" + documents[1].docCompareIndices[i].ToString() + ".png")));
+                                bitmap = new BitmapImage();
+                                bitmap.BeginInit();
+                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                bitmap.StreamSource = stream;
+                                bitmap.EndInit();
+                                stream.Close();
+                                thisImage.Source = bitmap;
+                                thisImage.Margin = new Thickness(10, 10, 10, 10);
+                                thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
+                                thisImage.VerticalAlignment = VerticalAlignment.Stretch;
 
-                            //thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                            Grid.SetColumn(thisImage, 2);
-                            thisGrid.Children.Add(thisImage);
+                                //thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                                Grid.SetColumn(thisImage, 2);
+                                thisGrid.Children.Add(thisImage);
+                            }
                         }
                     }
 
@@ -617,24 +641,27 @@ namespace DocCompareWPF
                         thisGrid.Children.Add(thisImage);
                         if (documents[0].docCompareIndices[i] != -1 && showMask == true)
                         {
-                            thisImage = new Image();
-                            stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", documents[0].docCompareIndices[i].ToString() + "_" + documents[1].docCompareIndices[i].ToString() + ".png")));
-                            bitmap = new BitmapImage();
-                            bitmap.BeginInit();
-                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                            bitmap.StreamSource = stream;
-                            bitmap.EndInit();
+                            if (File.Exists(Path.Join(workingDir, Path.Join("compare", documents[0].docCompareIndices[i].ToString() + "_" + documents[1].docCompareIndices[i].ToString() + ".png"))))
+                            {
+                                thisImage = new Image();
+                                stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", documents[0].docCompareIndices[i].ToString() + "_" + documents[1].docCompareIndices[i].ToString() + ".png")));
+                                bitmap = new BitmapImage();
+                                bitmap.BeginInit();
+                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                bitmap.StreamSource = stream;
+                                bitmap.EndInit();
 
-                            stream.Close();
-                            thisImage.Source = bitmap;
-                            thisImage.Margin = new Thickness(10, 10, 10, 10);
-                            
-                            //thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
-                            //thisImage.VerticalAlignment = VerticalAlignment.Stretch;
+                                stream.Close();
+                                thisImage.Source = bitmap;
+                                thisImage.Margin = new Thickness(10, 10, 10, 10);
 
-                            //thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                            Grid.SetColumn(thisImage, 2);
-                            thisGrid.Children.Add(thisImage);
+                                //thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
+                                //thisImage.VerticalAlignment = VerticalAlignment.Stretch;
+
+                                //thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                                Grid.SetColumn(thisImage, 2);
+                                thisGrid.Children.Add(thisImage);
+                            }
                         }
                     }
 
@@ -652,6 +679,8 @@ namespace DocCompareWPF
                     docCompareChildPanel2.Children.Add(thisGrid);
                 }
                 DocCompareSideScrollViewer.Content = docCompareChildPanel2;
+
+                docCompareGrid.Visibility = Visibility.Visible;
             });
         }
 

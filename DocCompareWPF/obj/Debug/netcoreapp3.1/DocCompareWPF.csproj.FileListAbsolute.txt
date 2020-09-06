@@ -62,3 +62,5 @@ C:\Users\weiyap\Documents\ProjectSV\DocCompareWPF\DocCompareWPF\bin\Debug\netcor
 C:\Users\weiyap\Documents\ProjectSV\DocCompareWPF\DocCompareWPF\bin\Debug\netcoreapp3.1\OpenCvSharp.dll
 C:\Users\weiyap\Documents\ProjectSV\DocCompareWPF\DocCompareWPF\bin\Debug\netcoreapp3.1\System.Runtime.CompilerServices.Unsafe.dll
 C:\Users\weiyap\Documents\ProjectSV\DocCompareWPF\DocCompareWPF\obj\Debug\netcoreapp3.1\DocCompareWPF.csproj.CoreCompileInputs.cache
+C:\Users\weiyap\Documents\ProjectSV\DocCompareWPF\DocCompareWPF\bin\Debug\netcoreapp3.1\Interop.Microsoft.Office.Interop.PowerPoint.dll
+C:\Users\weiyap\Documents\ProjectSV\DocCompareWPF\DocCompareWPF\bin\Debug\netcoreapp3.1\Interop.Microsoft.Office.Core.dll

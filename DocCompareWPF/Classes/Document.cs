@@ -118,6 +118,14 @@ namespace DocCompareWPF.Classes
             return ret;
         }
                 
+        public int readPPT()
+        {
+            PPTConvertClass pptConvertClass = new PPTConvertClass();
+            int ret = pptConvertClass.convertPPTToImages(filePath, imageFolder);
+
+            return ret;
+        }
+
         public void clearFolder()
         {
             DirectoryInfo di = new DirectoryInfo(imageFolder);

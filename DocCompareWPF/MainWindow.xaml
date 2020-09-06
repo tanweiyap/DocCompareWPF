@@ -192,7 +192,7 @@
                                 <Label Grid.Column="1" Margin="10,0,0,0">Comparing documents</Label>
                             </Grid>
                         </materialDesign:Card>
-                        <Grid>
+                        <Grid x:Name="docCompareGrid">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="25"/>
                                 <RowDefinition/>

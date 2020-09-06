@@ -1,10 +1,13 @@
 ﻿using DocCompareWPF.Classes;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
@@ -25,12 +28,12 @@ namespace DocCompareWPF
 
         List<Document> documents;
         string workingDir = Path.Join(Directory.GetCurrentDirectory(), "temp");
-        bool doc1Loaded, doc2Loaded, doc1Processed, doc2Processed, docCompareRunning;
+        bool doc1Loaded, doc2Loaded, doc1Processed, doc2Processed, docCompareRunning, showMask;
         ArrayList pageIndices;
-        int totalLen;
+        int totalLen, docCompareSideGridShown;
 
         // Stack panel for viewing documents in scrollviewer control
-        StackPanel childPanel1, childPanel2;
+        StackPanel childPanel1, childPanel2, docCompareChildPanel1, docCompareChildPanel2;
         Thread threadDoc1, threadDoc2, threadCompare;
 
         public MainWindow()
@@ -39,6 +42,7 @@ namespace DocCompareWPF
             documents = new List<Document>();
             doc1Processed = true;
             doc2Processed = true;
+            showMask = true;
 
             // Add dummy documents
             for (int i = 0; i < 2; i++)
@@ -86,14 +90,14 @@ namespace DocCompareWPF
 
         private void SidePanelDocCompareButton_Click(object sender, RoutedEventArgs e)
         {
-            SetVisiblePanel(SidePanels.DOCCOMPARE);
-            Application.Current.Dispatcher.Invoke(() =>
+            if (documents[0].filePath != null && documents[1].filePath != null && docCompareRunning == false)
             {
-                ProgressBarDocCompare.Visibility = Visibility.Visible;
-            });
+                SetVisiblePanel(SidePanels.DOCCOMPARE);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ProgressBarDocCompare.Visibility = Visibility.Visible;
+                });
 
-            if (doc1Loaded == true && doc2Loaded == true && docCompareRunning == false)
-            {
                 threadCompare = new Thread(new ThreadStart(CompareDocsThread));
                 threadCompare.Start();
             }
@@ -126,7 +130,7 @@ namespace DocCompareWPF
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                if(doc1Processed == true)
+                if (doc1Processed == true)
                     e.Effects = DragDropEffects.Copy;
                 else
                     e.Effects = DragDropEffects.None;
@@ -185,7 +189,7 @@ namespace DocCompareWPF
             {
                 DisplayImage(0);
             }
-            
+
         }
 
         private void CloseDoc1Button_Click(object sender, RoutedEventArgs e)
@@ -221,9 +225,44 @@ namespace DocCompareWPF
             }
         }
 
+        private void ShowMaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            showMask = true;
+            DisplayComparisonResult();
+            ShowMaskButton.Visibility = Visibility.Hidden;
+            HideMaskButton.Visibility = Visibility.Visible;
+        }
+
+        private void HideMaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            showMask = false;
+            DisplayComparisonResult();
+            ShowMaskButton.Visibility = Visibility.Visible;
+            HideMaskButton.Visibility = Visibility.Hidden;
+        }
+
         private void CloseDocCompareButton_Click(object sender, RoutedEventArgs e)
         {
+            SetVisiblePanel(SidePanels.DRAGDROP);
+        }
 
+        private void DocCompareMainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            double accuHeight = 0;
+
+            for (int i = 0; i < docCompareChildPanel1.Children.Count; i++)
+            {
+                Size currSize = docCompareChildPanel1.Children[i].DesiredSize;
+                accuHeight += currSize.Height;
+
+                if (accuHeight > DocCompareMainScrollViewer.VerticalOffset)
+                {
+                    DocComparePageNumberLabel.Content = (i + 1).ToString() + " / " + docCompareChildPanel1.Children.Count.ToString();
+                    docCompareSideGridShown = i;
+                    highlightSideGrid();
+                    break;
+                }
+            }
         }
 
         private void DocCompareDragDropZone2_Drop(object sender, DragEventArgs e)
@@ -321,7 +360,7 @@ namespace DocCompareWPF
 
                 if (totalLen != 0) // ? comparion successful
                 {
-                    for(int i = totalLen - 1; i >= 0; i--)
+                    for (int i = totalLen - 1; i >= 0; i--)
                     {
                         documents[0].docCompareIndices.Add((int)pageIndices[i]);
                         documents[1].docCompareIndices.Add((int)pageIndices[i + totalLen]);
@@ -333,10 +372,12 @@ namespace DocCompareWPF
                 Dispatcher.Invoke(() =>
                 {
                     DisplayComparisonResult();
+                    highlightSideGrid();
                     ProgressBarDocCompare.Visibility = Visibility.Hidden;
                 });
 
-            }catch
+            }
+            catch
             {
                 docCompareRunning = false;
             }
@@ -437,77 +478,18 @@ namespace DocCompareWPF
             int pageCounter = 0;
             Dispatcher.Invoke(() =>
             {
-                StackPanel childPanel = new StackPanel();
-                StackPanel childPanel2 = new StackPanel();
-                childPanel.Background = Brushes.Gray;
-                childPanel.HorizontalAlignment = HorizontalAlignment.Stretch;
-                childPanel2.Background = Brushes.Gray;
-                childPanel2.HorizontalAlignment = HorizontalAlignment.Stretch;
+                DocCompareNameLabel1.Content = Path.GetFileName(documents[0].filePath);
+                DocCompareNameLabel2.Content = Path.GetFileName(documents[1].filePath);
+
+                docCompareChildPanel1 = new StackPanel();
+                docCompareChildPanel2 = new StackPanel();
+                docCompareChildPanel1.Background = Brushes.Gray;
+                docCompareChildPanel1.HorizontalAlignment = HorizontalAlignment.Stretch;
+                docCompareChildPanel2.Background = Brushes.Gray;
+                docCompareChildPanel2.HorizontalAlignment = HorizontalAlignment.Stretch;
                 Image thisImage;
                 FileStream stream;
                 BitmapImage bitmap;
-
-                for (int i = 0; i < totalLen; i++) // going through all the pages of the longest document
-                {
-                    Grid thisGrid = new Grid();
-                    thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc1
-                    thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc2
-
-                    if(documents[0].docCompareIndices[i] != -1) // doc 1 has a valid page
-                    {
-                        thisImage = new Image();
-                        stream = File.OpenRead(Path.Join(documents[0].imageFolder, documents[0].docCompareIndices[i].ToString() + ".jpg"));
-                        bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = stream;
-                        bitmap.EndInit();
-                        stream.Close();
-                        thisImage.Source = bitmap;
-                        if (pageCounter == 0)
-                        {
-                            thisImage.Margin = new Thickness(10, 10, 10, 10);
-                        }
-                        else
-                        {
-                            thisImage.Margin = new Thickness(10, 0, 10, 10);
-                        }
-
-                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                        Grid.SetColumn(thisImage, 0);
-                        thisGrid.Children.Add(thisImage);
-                    }
-
-                    if (documents[1].docCompareIndices[i] != -1) // doc 2 has a valid page
-                    {
-                        thisImage = new Image();
-                        stream = File.OpenRead(Path.Join(documents[1].imageFolder, documents[1].docCompareIndices[i].ToString() + ".jpg"));
-                        bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = stream;
-                        bitmap.EndInit();
-                        stream.Close();
-                        thisImage.Source = bitmap;
-                        if (pageCounter == 0)
-                        {
-                            thisImage.Margin = new Thickness(10, 10, 10, 10);
-                        }
-                        else
-                        {
-                            thisImage.Margin = new Thickness(10, 0, 10, 10);
-                        }
-
-                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                        Grid.SetColumn(thisImage, 1);
-                        thisGrid.Children.Add(thisImage);
-                    }
-
-                    pageCounter++;
-                    childPanel.Children.Add(thisGrid);
-                }
-
-                DocCompareMainScrollViewer.Content = childPanel;
 
                 for (int i = 0; i < totalLen; i++) // going through all the pages of the longest document
                 {
@@ -526,16 +508,9 @@ namespace DocCompareWPF
                         bitmap.EndInit();
                         stream.Close();
                         thisImage.Source = bitmap;
-                        if (pageCounter == 0)
-                        {
-                            thisImage.Margin = new Thickness(10, 10, 10, 10);
-                        }
-                        else
-                        {
-                            thisImage.Margin = new Thickness(10, 0, 10, 10);
-                        }
-
+                        thisImage.Margin = new Thickness(10, 10, 10, 10);
                         thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        thisImage.VerticalAlignment = VerticalAlignment.Center;
                         Grid.SetColumn(thisImage, 0);
                         thisGrid.Children.Add(thisImage);
                     }
@@ -551,24 +526,180 @@ namespace DocCompareWPF
                         bitmap.EndInit();
                         stream.Close();
                         thisImage.Source = bitmap;
-                        if (pageCounter == 0)
+                        thisImage.Margin = new Thickness(10, 10, 10, 10);
+
+                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        thisImage.VerticalAlignment = VerticalAlignment.Center;
+                        Grid.SetColumn(thisImage, 1);
+                        thisGrid.Children.Add(thisImage);
+
+                        if (documents[0].docCompareIndices[i] != -1 && showMask == true)
                         {
+                            thisImage = new Image();
+                            stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", documents[0].docCompareIndices[i].ToString() + "_" + documents[1].docCompareIndices[i].ToString() + ".png")));
+                            bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.StreamSource = stream;
+                            bitmap.EndInit();
+                            stream.Close();
+                            thisImage.Source = bitmap;
                             thisImage.Margin = new Thickness(10, 10, 10, 10);
+                            thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
+                            thisImage.VerticalAlignment = VerticalAlignment.Stretch;
+
+                            //thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                            Grid.SetColumn(thisImage, 2);
+                            thisGrid.Children.Add(thisImage);
                         }
-                        else
-                        {
-                            thisImage.Margin = new Thickness(10, 0, 10, 10);
-                        }
+                    }
+
+                    pageCounter++;
+                    docCompareChildPanel1.Children.Add(thisGrid);
+                }
+
+                DocCompareMainScrollViewer.Content = docCompareChildPanel1;
+                pageCounter = 0;
+
+                // side panel
+                for (int i = 0; i < totalLen; i++) // going through all the pages of the longest document
+                {
+                    /*
+                    Grid topGrid = new Grid();
+                    topGrid.RowDefinitions.Add(new RowDefinition()); // doc1
+                    topGrid.RowDefinitions.Add(new RowDefinition()); // page number
+                    */
+                    Grid thisGrid = new Grid();
+                    thisGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) }); // page number
+                    thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc1
+                    thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc2
+                    thisGrid.MouseLeftButtonDown += (sen, ev) => { handleMouseClickOnSideScrollView(sen, ev); };
+                    thisGrid.Name = "SideGrid" + i.ToString();
+                    //Grid.SetRow(thisGrid, 0);
+
+                    if (documents[0].docCompareIndices[i] != -1) // doc 1 has a valid page
+                    {
+                        thisImage = new Image();
+                        stream = File.OpenRead(Path.Join(documents[0].imageFolder, documents[0].docCompareIndices[i].ToString() + ".jpg"));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        stream.Close();
+                        thisImage.Source = bitmap;
+                        thisImage.Margin = new Thickness(10, 10, 10, 10);
 
                         thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
                         Grid.SetColumn(thisImage, 1);
                         thisGrid.Children.Add(thisImage);
                     }
 
+                    if (documents[1].docCompareIndices[i] != -1) // doc 2 has a valid page
+                    {
+                        thisImage = new Image();
+                        stream = File.OpenRead(Path.Join(documents[1].imageFolder, documents[1].docCompareIndices[i].ToString() + ".jpg"));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        stream.Close();
+                        thisImage.Source = bitmap;
+                        thisImage.Margin = new Thickness(10, 10, 10, 10);
+
+                        double h = bitmap.PixelHeight;
+                        double w = bitmap.PixelWidth;
+                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        Grid.SetColumn(thisImage, 2);
+                        thisGrid.Children.Add(thisImage);
+                        if (documents[0].docCompareIndices[i] != -1 && showMask == true)
+                        {
+                            thisImage = new Image();
+                            stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", documents[0].docCompareIndices[i].ToString() + "_" + documents[1].docCompareIndices[i].ToString() + ".png")));
+                            bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.StreamSource = stream;
+                            bitmap.EndInit();
+
+                            stream.Close();
+                            thisImage.Source = bitmap;
+                            thisImage.Margin = new Thickness(10, 10, 10, 10);
+                            
+                            //thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
+                            //thisImage.VerticalAlignment = VerticalAlignment.Stretch;
+
+                            //thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                            Grid.SetColumn(thisImage, 2);
+                            thisGrid.Children.Add(thisImage);
+                        }
+                    }
+
                     pageCounter++;
-                    childPanel2.Children.Add(thisGrid);
+
+                    Label thisLabel = new Label();
+                    thisLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                    thisLabel.VerticalAlignment = VerticalAlignment.Center;
+                    thisLabel.Content = (i + 1).ToString();
+                    thisLabel.MinWidth = 20;
+                    Grid.SetColumn(thisLabel, 0);
+
+                    thisGrid.Children.Add(thisLabel);
+                    //topGrid.Children.Add(thisGrid);
+                    docCompareChildPanel2.Children.Add(thisGrid);
                 }
-                DocCompareSideScrollViewer.Content = childPanel2;
+                DocCompareSideScrollViewer.Content = docCompareChildPanel2;
+            });
+        }
+
+        private void handleMouseClickOnSideScrollView(object sender, MouseButtonEventArgs e)
+        {
+            Grid grid = sender as Grid;
+            string[] splittedName = grid.Name.Split("SideGrid");
+
+            double accuHeight = 0;
+            for (int i = 0; i < int.Parse(splittedName[1]); i++)
+            {
+                Size currSize = docCompareChildPanel1.Children[i].DesiredSize;
+                accuHeight += currSize.Height;
+            }
+
+            DocCompareMainScrollViewer.ScrollToVerticalOffset(accuHeight);
+
+            docCompareSideGridShown = int.Parse(splittedName[1]);
+            highlightSideGrid();
+        }
+
+        private void highlightSideGrid()
+        {
+            double accuHeight = 0;
+            Dispatcher.Invoke(() =>
+            {
+                for (int i = 0; i < docCompareChildPanel2.Children.Count; i++)
+                {
+                    Grid thisGrid;
+                    if (i == docCompareSideGridShown)
+                    {
+                        thisGrid = docCompareChildPanel2.Children[i] as Grid;
+                        thisGrid.Background = Brushes.LightGray;
+
+                        Size thisSize = thisGrid.DesiredSize;
+
+                        DocCompareSideScrollViewer.ScrollToVerticalOffset(accuHeight);
+                        accuHeight += thisSize.Height;
+                    }
+                    else
+                    {
+                        thisGrid = docCompareChildPanel2.Children[i] as Grid;
+                        thisGrid.Background = Brushes.Transparent;
+
+                        Size thisSize = thisGrid.DesiredSize;
+                        accuHeight += thisSize.Height;
+                    }
+
+
+                }
             });
         }
     }

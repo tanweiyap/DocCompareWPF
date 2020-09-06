@@ -91,9 +91,9 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50"/>
+                                        <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50" />
                                         <Label x:Name="DocCompareDropZone1Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop a file here</Label>
-                                    </Grid>                                    
+                                    </Grid>
                                 </materialDesign:ColorZone>
                                 <Grid x:Name="Doc1Grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Hidden">
                                     <Grid.RowDefinitions>
@@ -109,9 +109,9 @@
                                             </Grid.ColumnDefinitions>
                                             <Label x:Name="Doc1NameLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
                                             <Button x:Name="CloseDoc1Button" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc1Button_Click">
-                                                <iconPacks:PackIconMaterial Kind="WindowClose" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <iconPacks:PackIconMaterial Kind="WindowClose" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center"  Foreground="White"/>
                                             </Button>
-                                        </Grid>                                        
+                                        </Grid>
                                     </materialDesign:ColorZone>
                                     <ScrollViewer x:Name="DocCompareScrollViewer1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer1_ScrollChanged">
                                     </ScrollViewer>
@@ -158,7 +158,7 @@
                                             </Grid.ColumnDefinitions>
                                             <Label x:Name="Doc2NameLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
                                             <Button x:Name="CloseDoc2Button" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc2Button_Click">
-                                                <iconPacks:PackIconMaterial Kind="WindowClose" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                                <iconPacks:PackIconMaterial Kind="WindowClose" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
                                         </Grid>
                                     </materialDesign:ColorZone>
@@ -206,20 +206,29 @@
                                         <ColumnDefinition MaxWidth="200" MinWidth="200"/>
                                     </Grid.ColumnDefinitions>
                                     <Label x:Name="DocCompareNameLabel1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
-                                    <Label x:Name="DocCompareNameLabel2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                                    <Label x:Name="DocCompareNameLabel2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                                    <Button x:Name="ShowMaskButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                            HorizontalAlignment="Right" Click="ShowMaskButton_Click" Margin="0,0,10,0" Visibility="Hidden">
+                                        <iconPacks:PackIconMicrons Kind="Show" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                    </Button>
+                                    <Button x:Name="HideMaskButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                            HorizontalAlignment="Right" Click="HideMaskButton_Click" Margin="0,0,10,0">
+                                        <iconPacks:PackIconMicrons Kind="Hide" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                    </Button>
                                     <Button x:Name="CloseDocCompareButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Right" Click="CloseDocCompareButton_Click" Margin="0,0,10,0">
-                                        <iconPacks:PackIconMaterial Kind="WindowClose" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <iconPacks:PackIconMaterial Kind="WindowClose" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
                                 </Grid>
                             </materialDesign:ColorZone>
                             <Grid x:Name="DocCompareScrollViewerGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition MaxWidth="200" MinWidth="200"/>
-                                </Grid.ColumnDefinitions>           
-                                <ScrollViewer x:Name="DocCompareMainScrollViewer" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                                <ScrollViewer x:Name="DocCompareSideScrollViewer" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                                    <ColumnDefinition Width="497*"/>
+                                    <ColumnDefinition Width="22*"/>
+                                    <ColumnDefinition MaxWidth="200" MinWidth="200" Width="100*"/>
+                                </Grid.ColumnDefinitions>
+                                <ScrollViewer x:Name="DocCompareMainScrollViewer" Grid.Column="0" ScrollChanged="DocCompareMainScrollViewer_ScrollChanged" Grid.ColumnSpan="2"/>
+                                <ScrollViewer x:Name="DocCompareSideScrollViewer" Grid.Column="2"/>
                             </Grid>
                             <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid>
@@ -228,7 +237,7 @@
                                         <ColumnDefinition MinWidth="200" MaxWidth="200"/>
                                     </Grid.ColumnDefinitions>
                                     <Label x:Name="DocComparePageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
-                                </Grid>                                
+                                </Grid>
                             </materialDesign:ColorZone>
                         </Grid>
                     </Grid>

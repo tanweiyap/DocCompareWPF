@@ -395,12 +395,13 @@ namespace DocCompareWPF
                     childPanel1.HorizontalAlignment = HorizontalAlignment.Stretch;
 
                     DirectoryInfo di = new DirectoryInfo(documents[0].imageFolder);
+                    FileInfo[] fi = di.GetFiles();
 
-                    foreach (FileInfo file in di.EnumerateFiles())
+                    for (int i = 0; i < fi.Length; i++)
                     {
                         Image thisImage = new Image();
 
-                        var stream = File.OpenRead(file.FullName);
+                        var stream = File.OpenRead(Path.Join(documents[0].imageFolder, i.ToString() + ".jpg"));
                         var bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
@@ -437,11 +438,12 @@ namespace DocCompareWPF
                     childPanel2.HorizontalAlignment = HorizontalAlignment.Stretch;
 
                     DirectoryInfo di = new DirectoryInfo(documents[1].imageFolder);
+                    FileInfo[] fi = di.GetFiles();
 
-                    foreach (FileInfo file in di.EnumerateFiles())
+                    for (int i = 0; i < fi.Length; i++)
                     {
                         Image thisImage = new Image();
-                        var stream = File.OpenRead(file.FullName);
+                        var stream = File.OpenRead(Path.Join(documents[1].imageFolder, i.ToString() + ".jpg"));
                         var bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;

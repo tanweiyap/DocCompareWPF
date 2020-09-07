@@ -13,7 +13,7 @@
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="32" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}"/>
     </WindowChrome.WindowChrome>
-    <Border Style="{StaticResource WindowMainPanelStyle}" BorderBrush="Black">
+    <Border Style="{StaticResource WindowMainPanelStyle}" BorderBrush="Black" UseLayoutRounding="True" SnapsToDevicePixels="True">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="32"/>
@@ -107,7 +107,11 @@
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <Label x:Name="Doc1NameLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                                            <Label x:Name="Doc1NameLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="30,0,30,0"></Label>
+                                            <Button x:Name="OpenDoc1OriginalButton1" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                            HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
+                                                <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                            </Button>
                                             <Button x:Name="CloseDoc1Button" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc1Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center"  Foreground="White"/>
                                             </Button>
@@ -156,7 +160,11 @@
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <Label x:Name="Doc2NameLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                                            <Label x:Name="Doc2NameLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="30,0,30,0"></Label>
+                                            <Button x:Name="OpenDoc2OriginalButton2" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                            HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
+                                                <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                            </Button>
                                             <Button x:Name="CloseDoc2Button" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc2Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
@@ -205,8 +213,12 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition MaxWidth="200" MinWidth="200"/>
                                     </Grid.ColumnDefinitions>
-                                    <Label x:Name="DocCompareNameLabel1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
-                                    <Label x:Name="DocCompareNameLabel2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                                    <Label x:Name="DocCompareNameLabel1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="30,0,0,0"></Label>
+                                    <Button x:Name="OpenDoc1OriginalButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="0" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                            HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
+                                        <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                    </Button>
+                                    <Label x:Name="DocCompareNameLabel2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="30,0,30,0"></Label>
                                     <Button x:Name="ShowMaskButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Right" Click="ShowMaskButton_Click" Margin="0,0,10,0" Visibility="Hidden" ToolTip="Show difference mask">
                                         <iconPacks:PackIconMicrons Kind="Show" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
@@ -214,6 +226,10 @@
                                     <Button x:Name="HideMaskButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Right" Click="HideMaskButton_Click" Margin="0,0,10,0" ToolTip="Hide difference mask">
                                         <iconPacks:PackIconMicrons Kind="Hide" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                    </Button>
+                                    <Button x:Name="OpenDoc2OriginalButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                            HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
+                                        <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
                                     <Button x:Name="CloseDocCompareButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Right" Click="CloseDocCompareButton_Click" Margin="0,0,10,0" ToolTip="Close comparison">

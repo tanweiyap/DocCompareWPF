@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -60,6 +61,8 @@ namespace DocCompareWPF
             // GUI stuff
             DragDropPanel.Visibility = Visibility.Visible;
             DocComparePanel.Visibility = Visibility.Hidden;
+            OpenDoc1OriginalButton1.IsEnabled = false;
+            OpenDoc2OriginalButton2.IsEnabled = false;
         }
 
         private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
@@ -213,6 +216,10 @@ namespace DocCompareWPF
             if (doc1Loaded == true)
             {
                 DisplayImage(0);
+                Dispatcher.Invoke(() =>
+                {
+                    OpenDoc1OriginalButton1.IsEnabled = true;
+                });
             }
 
         }
@@ -223,6 +230,7 @@ namespace DocCompareWPF
             documents[0].imageFolder = Path.Join(workingDir, "doc1");
             doc1Loaded = false;
             doc1Processed = true;
+            OpenDoc1OriginalButton1.IsEnabled = false;
             Doc1Grid.Visibility = Visibility.Hidden;
         }
 
@@ -232,6 +240,7 @@ namespace DocCompareWPF
             documents[1].imageFolder = Path.Join(workingDir, "doc2");
             doc2Loaded = false;
             doc2Processed = true;
+            OpenDoc2OriginalButton2.IsEnabled = false;
             Doc2Grid.Visibility = Visibility.Hidden;
         }
 
@@ -264,6 +273,22 @@ namespace DocCompareWPF
             DisplayComparisonResult();
             ShowMaskButton.Visibility = Visibility.Visible;
             HideMaskButton.Visibility = Visibility.Hidden;
+        }
+
+        private void OpenDoc1OriginalButton_Click(object sender, RoutedEventArgs e)
+        {
+            Process fileopener = new Process();
+            fileopener.StartInfo.FileName = "explorer";
+            fileopener.StartInfo.Arguments = "\"" + documents[0].filePath + "\"";
+            fileopener.Start();
+        }
+
+        private void OpenDoc2OriginalButton_Click(object sender, RoutedEventArgs e)
+        {
+            Process fileopener = new Process();
+            fileopener.StartInfo.FileName = "explorer";
+            fileopener.StartInfo.Arguments = "\"" + documents[1].filePath + "\"";
+            fileopener.Start();
         }
 
         private void CloseDocCompareButton_Click(object sender, RoutedEventArgs e)
@@ -357,6 +382,10 @@ namespace DocCompareWPF
             if (doc2Loaded == true)
             {
                 DisplayImage(1);
+                Dispatcher.Invoke(() =>
+                {
+                    OpenDoc2OriginalButton2.IsEnabled = true;
+                });
             }
         }
 

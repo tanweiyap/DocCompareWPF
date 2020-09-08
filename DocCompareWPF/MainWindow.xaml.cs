@@ -25,6 +25,7 @@ namespace DocCompareWPF
             DRAGDROP,
             DOCCOMPARE,
             FILE_EXPLORER,
+            SETTINGS,
         };
 
         List<Document> documents;
@@ -59,8 +60,7 @@ namespace DocCompareWPF
             documents[1].imageFolder = Path.Join(workingDir, "doc2");
 
             // GUI stuff
-            DragDropPanel.Visibility = Visibility.Visible;
-            DocComparePanel.Visibility = Visibility.Hidden;
+            SetVisiblePanel(SidePanels.DRAGDROP);
             OpenDoc1OriginalButton1.IsEnabled = false;
             OpenDoc2OriginalButton2.IsEnabled = false;
         }
@@ -112,23 +112,41 @@ namespace DocCompareWPF
 
         private void SetVisiblePanel(SidePanels p_sidePanel)
         {
-            //Brush brush = FindResource("SidePanelActiveBackground") as Brush;
+            Brush brush = FindResource("SidePanelActiveBackground") as Brush;
 
             switch (p_sidePanel)
             {
                 case SidePanels.DRAGDROP:
-                    //SidePanelDocCompareBackground.Background = brush;
+                    SidePanelOpenDocBackground.Background = brush;
+                    SidePanelDocCompareBackground.Background = Brushes.Transparent;
+                    SettingsButtonBackground.Background = Brushes.Transparent;
                     DragDropPanel.Visibility = Visibility.Visible;
                     DocComparePanel.Visibility = Visibility.Hidden;
+                    SettingsPanel.Visibility = Visibility.Hidden;
                     break;
                 case SidePanels.DOCCOMPARE:
-                    //SidePanelDocCompareBackground.Background = brush;
+                    SidePanelOpenDocBackground.Background = Brushes.Transparent;
+                    SidePanelDocCompareBackground.Background = brush;
+                    SettingsButtonBackground.Background = Brushes.Transparent;
                     DragDropPanel.Visibility = Visibility.Hidden;
                     DocComparePanel.Visibility = Visibility.Visible;
+                    SettingsPanel.Visibility = Visibility.Hidden;
+                    break;
+                case SidePanels.SETTINGS:
+                    SidePanelOpenDocBackground.Background = Brushes.Transparent;
+                    SidePanelDocCompareBackground.Background = Brushes.Transparent;
+                    SettingsButtonBackground.Background = brush;
+                    DragDropPanel.Visibility = Visibility.Hidden;
+                    DocComparePanel.Visibility = Visibility.Hidden;
+                    SettingsPanel.Visibility = Visibility.Visible;
                     break;
                 default:
-                    //SidePanelDocCompareBackground.Background = Brushes.Transparent;
+                    SidePanelOpenDocBackground.Background = Brushes.Transparent;
+                    SidePanelDocCompareBackground.Background = Brushes.Transparent;
+                    SettingsButtonBackground.Background = Brushes.Transparent;
                     DragDropPanel.Visibility = Visibility.Hidden;
+                    DocComparePanel.Visibility = Visibility.Hidden;
+                    SettingsPanel.Visibility = Visibility.Hidden;
                     break;
             }
         }
@@ -291,7 +309,12 @@ namespace DocCompareWPF
             fileopener.Start();
         }
 
-        private void CloseDocCompareButton_Click(object sender, RoutedEventArgs e)
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetVisiblePanel(SidePanels.SETTINGS);
+        }
+
+        private void SidePanelOpenDocButton_Click(object sender, RoutedEventArgs e)
         {
             SetVisiblePanel(SidePanels.DRAGDROP);
         }
@@ -648,12 +671,16 @@ namespace DocCompareWPF
                     topGrid.RowDefinitions.Add(new RowDefinition()); // doc1
                     topGrid.RowDefinitions.Add(new RowDefinition()); // page number
                     */
+                    Border thisBorder = new Border();
+                    thisBorder.BorderBrush = Brushes.Transparent;
+                    thisBorder.BorderThickness = new Thickness(0);
                     Grid thisGrid = new Grid();
                     thisGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) }); // page number
                     thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc1
                     thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc2
                     thisGrid.MouseLeftButtonDown += (sen, ev) => { handleMouseClickOnSideScrollView(sen, ev); };
                     thisGrid.Name = "SideGrid" + i.ToString();
+                    thisBorder.Child = thisGrid;
                     //Grid.SetRow(thisGrid, 0);
 
                     if (documents[0].docCompareIndices[i] != -1) // doc 1 has a valid page
@@ -714,6 +741,10 @@ namespace DocCompareWPF
                                 //thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
                                 Grid.SetColumn(thisImage, 2);
                                 thisGrid.Children.Add(thisImage);
+
+                                //thisBorder.BorderBrush = Brushes.Red;
+                                thisBorder.Background = new SolidColorBrush(Color.FromArgb(128, 255, 30, 30));
+                                //thisBorder.BorderThickness = new Thickness(2);
                             }
                         }
                     }
@@ -729,7 +760,7 @@ namespace DocCompareWPF
 
                     thisGrid.Children.Add(thisLabel);
                     //topGrid.Children.Add(thisGrid);
-                    docCompareChildPanel2.Children.Add(thisGrid);
+                    docCompareChildPanel2.Children.Add(thisBorder);
                 }
                 DocCompareSideScrollViewer.Content = docCompareChildPanel2;
 
@@ -762,10 +793,12 @@ namespace DocCompareWPF
             {
                 for (int i = 0; i < docCompareChildPanel2.Children.Count; i++)
                 {
+                    Border thisBorder;
                     Grid thisGrid;
                     if (i == docCompareSideGridShown)
                     {
-                        thisGrid = docCompareChildPanel2.Children[i] as Grid;
+                        thisBorder = docCompareChildPanel2.Children[i] as Border;
+                        thisGrid = thisBorder.Child as Grid;
                         thisGrid.Background = Brushes.LightGray;
 
                         Size thisSize = thisGrid.DesiredSize;
@@ -775,7 +808,8 @@ namespace DocCompareWPF
                     }
                     else
                     {
-                        thisGrid = docCompareChildPanel2.Children[i] as Grid;
+                        thisBorder = docCompareChildPanel2.Children[i] as Border;
+                        thisGrid = thisBorder.Child as Grid;
                         thisGrid.Background = Brushes.Transparent;
 
                         Size thisSize = thisGrid.DesiredSize;

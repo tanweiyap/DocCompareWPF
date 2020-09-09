@@ -91,7 +91,7 @@
                     </Grid>
                 </materialDesign:ColorZone>
                 <Grid x:Name="MainPanel" Grid.Row="1">
-                    <Grid x:Name="DragDropPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DragDropPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
@@ -149,7 +149,7 @@
                                 </materialDesign:Card>
                             </Grid>
                         </materialDesign:ColorZone>
-                        <materialDesign:ColorZone x:Name="DocCompareSecondDocZone" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White">
+                        <materialDesign:ColorZone x:Name="DocCompareSecondDocZone" Visibility="Visible" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White">
                             <Grid x:Name="DocCompareDragDropZone2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True" DragOver="DocCompareDragDropZone2_DragOver" Drop="DocCompareDragDropZone2_Drop">
                                 <materialDesign:ColorZone x:Name="DocCompareColorZone2" Margin="20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                                           CornerRadius="20" BorderBrush="Gray" BorderThickness="1">
@@ -174,7 +174,8 @@
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <Label x:Name="Doc2NameLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="30,0,30,0"></Label>
+                                            <ComboBox x:Name="Doc2NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Inverted" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="30,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged">
+                                            </ComboBox>
                                             <Button x:Name="OpenDoc2OriginalButton2" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
                                                 <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
@@ -271,7 +272,7 @@
                             </materialDesign:ColorZone>
                         </Grid>
                     </Grid>
-                    <Grid x:Name="SettingsPanel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="SettingsPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="220"/>
                             <ColumnDefinition/>

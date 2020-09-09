@@ -19,6 +19,7 @@ namespace DocCompareWPF.Classes
         public FileTypes fileType;
         public List<int> docCompareIndices;
         public string docID;
+        public bool loaded;
 
         public Document()
         {

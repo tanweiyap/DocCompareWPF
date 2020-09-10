@@ -31,15 +31,16 @@ namespace DocCompareWPF
 
         List<Document> documents;
         string workingDir = Path.Join(Directory.GetCurrentDirectory(), "temp");
-        bool docCompareRunning, showMask;
+        bool docCompareRunning, showMask, docProcessRunning;
         ArrayList pageIndices;
         int totalLen, docCompareSideGridShown;
         int MAX_DOC_COUNT = 3;
         int secondDocToShow = 1;
+        int firstDocToShow = 0;
 
         // Stack panel for viewing documents in scrollviewer control
         StackPanel childPanel1, childPanel2, docCompareChildPanel1, docCompareChildPanel2;
-        Thread threadDoc1, threadDoc2, threadCompare;
+        Thread threadDoc1, threadCompare;
 
         public MainWindow()
         {
@@ -54,6 +55,7 @@ namespace DocCompareWPF
                 Directory.CreateDirectory(Path.Join(workingDir, "doc" + (i + 1).ToString()));
                 documents[i].imageFolder = Path.Join(workingDir, "doc" + (i + 1).ToString());
                 documents[i].docID = "doc" + (i + 1).ToString();
+                documents[i].clearFolder();
             }
 
             // create the temporary folders for converted images
@@ -109,7 +111,7 @@ namespace DocCompareWPF
 
         private void SidePanelDocCompareButton_Click(object sender, RoutedEventArgs e)
         {
-            if (documents[0].filePath != null && documents[secondDocToShow].filePath != null && docCompareRunning == false)
+            if (documents[firstDocToShow].filePath != null && documents[secondDocToShow].filePath != null && docCompareRunning == false)
             {
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
@@ -171,10 +173,7 @@ namespace DocCompareWPF
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                if (documents[0].loaded == true)
-                    e.Effects = DragDropEffects.Copy;
-                else
-                    e.Effects = DragDropEffects.None;
+                e.Effects = DragDropEffects.Copy;
             }
             else
             {
@@ -196,10 +195,13 @@ namespace DocCompareWPF
                         Doc1Grid.Visibility = Visibility.Hidden;
                         ProgressBarDoc1.Visibility = Visibility.Visible;
                         ShowDragDropZone2();
+
+                        //updateDocSelectionComboBox();
                     });
 
-                    documents[0].filePath = data[0];
-                    documents[0].loaded = false;
+                    documents[firstDocToShow].filePath = data[0];
+                    documents[firstDocToShow].loaded = false;
+                    documents[firstDocToShow].processed = false;
 
                 }
                 else
@@ -208,6 +210,7 @@ namespace DocCompareWPF
                     {
                         documents[i].filePath = data[i];
                         documents[i].loaded = false;
+                        documents[i].processed = false;
                     }
 
                     Application.Current.Dispatcher.Invoke(() =>
@@ -216,19 +219,8 @@ namespace DocCompareWPF
                         ProgressBarDoc1.Visibility = Visibility.Visible;
                         Doc2Grid.Visibility = Visibility.Hidden;
                         ProgressBarDoc2.Visibility = Visibility.Visible;
+                        //updateDocSelectionComboBox();
                         ShowDragDropZone2();
-
-                        // update combo box
-                        ObservableCollection<string> items = new ObservableCollection<string>();
-                        for (int i = 1; i < documents.Count; i++)
-                        {
-                            if (documents[i].filePath != null)
-                            {
-                                items.Add(Path.GetFileName(documents[i].filePath));
-                            }
-                        }
-                        Doc2NameLabelComboBox.ItemsSource = items;
-
                     });
                 }
 
@@ -239,6 +231,7 @@ namespace DocCompareWPF
 
         private void processDocThread()
         {
+            docProcessRunning = true;
             // Going through documents in stack, check if reloading needed
             for (int i = 0; i < documents.Count; i++)
             {
@@ -258,56 +251,79 @@ namespace DocCompareWPF
                             ret = documents[i].readPPT();
                             break;
                     }
-
-                    if (ret == 0)
-                    {
-                        if (i == 0)
-                        {
-                            DisplayImage(0);
-                            Dispatcher.Invoke(() =>
-                            {
-                                OpenDoc1OriginalButton1.IsEnabled = true;
-                            });
-                        }
-                        else
-                        {
-                            DisplayImage(1);
-                            Dispatcher.Invoke(() =>
-                            {
-                                OpenDoc2OriginalButton2.IsEnabled = true;
-                            });
-                        }
-                    }
                 }
             }
 
+            Dispatcher.Invoke(() =>
+            {
+                DisplayImageLeft(firstDocToShow);
+                Dispatcher.Invoke(() =>
+                {
+                    OpenDoc1OriginalButton1.IsEnabled = true;
+                });
+
+                DisplayImageRight(secondDocToShow);
+                Dispatcher.Invoke(() =>
+                {
+                    OpenDoc2OriginalButton2.IsEnabled = true;
+                });
+
+                ProgressBarDoc1.Visibility = Visibility.Hidden;
+                ProgressBarDoc2.Visibility = Visibility.Hidden;
+                updateDocSelectionComboBox();
+            });
+            docProcessRunning = false;
         }
 
         private void CloseDoc1Button_Click(object sender, RoutedEventArgs e)
         {
-            documents[0] = new Document();
-            documents[0].imageFolder = Path.Join(workingDir, "doc1");
-            documents[0].loaded = false;
-            OpenDoc1OriginalButton1.IsEnabled = false;
-            Doc1Grid.Visibility = Visibility.Hidden;
-            if (documents[1].filePath == null)
+            string docID = documents[firstDocToShow].docID;
+            documents.RemoveAt(firstDocToShow);
+            documents.Add(new Document());
+            documents[documents.Count - 1].imageFolder = Path.Join(workingDir, docID);
+            documents[documents.Count - 1].docID = docID;
+
+            // update combo box
+            updateDocSelectionComboBox();
+            firstDocToShow = 0;
+
+            if (documents[firstDocToShow].filePath != null)
             {
-                HideDragDropZone2();
+                DisplayImageLeft(firstDocToShow);
+            }
+            else
+            {
+                OpenDoc1OriginalButton1.IsEnabled = false;
+                Doc1Grid.Visibility = Visibility.Hidden;
+                if (documents[0].filePath == null)
+                {
+                    HideDragDropZone2();
+                }
+            }
+
+            if(documents[secondDocToShow].filePath == null)
+            {
+                secondDocToShow = 1;
+                Doc2Grid.Visibility = Visibility.Hidden;
+                DocCompareDragDropZone2.Visibility = Visibility.Visible;
             }
         }
 
         private void CloseDoc2Button_Click(object sender, RoutedEventArgs e)
         {
+            string docID = documents[secondDocToShow].docID;
             documents.RemoveAt(secondDocToShow);
             documents.Add(new Document());
-            documents[documents.Count - 1].imageFolder = Path.Join(workingDir, "doc" + (documents.Count).ToString());
-            documents[documents.Count - 1].docID = "doc" + (documents.Count).ToString();
+            documents[documents.Count - 1].imageFolder = Path.Join(workingDir, docID);
+            documents[documents.Count - 1].docID = docID;
 
+            // update combo box
+            updateDocSelectionComboBox();
             secondDocToShow = 1;
 
             if (documents[secondDocToShow].filePath != null)
             {
-                DisplayImage(secondDocToShow);
+                DisplayImageRight(secondDocToShow);
             }
             else
             {
@@ -324,10 +340,7 @@ namespace DocCompareWPF
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                if (documents[1].loaded == true && docCompareRunning == false)
-                    e.Effects = DragDropEffects.Copy;
-                else
-                    e.Effects = DragDropEffects.None;
+                e.Effects = DragDropEffects.Copy;
             }
             else
             {
@@ -355,7 +368,7 @@ namespace DocCompareWPF
         {
             Process fileopener = new Process();
             fileopener.StartInfo.FileName = "explorer";
-            fileopener.StartInfo.Arguments = "\"" + documents[0].filePath + "\"";
+            fileopener.StartInfo.Arguments = "\"" + documents[firstDocToShow].filePath + "\"";
             fileopener.Start();
         }
 
@@ -396,6 +409,31 @@ namespace DocCompareWPF
             }
         }
 
+        private void updateDocSelectionComboBox()
+        {
+            // update combo box left
+            ObservableCollection<string> items = new ObservableCollection<string>();
+            for (int i = 0; i < documents.Count; i++)
+            {
+                if (documents[i].filePath != null && i != secondDocToShow)
+                {
+                    items.Add(Path.GetFileName(documents[i].filePath));
+                }
+            }
+            Doc1NameLabelComboBox.ItemsSource = items;
+
+            // update combo box right
+            items = new ObservableCollection<string>();
+            for (int i = 0; i < documents.Count; i++)
+            {
+                if (documents[i].filePath != null && i != firstDocToShow)
+                {
+                    items.Add(Path.GetFileName(documents[i].filePath));
+                }
+            }
+            Doc2NameLabelComboBox.ItemsSource = items;
+        }
+
         private void DocCompareDragDropZone2_Drop(object sender, DragEventArgs e)
         {
             if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -409,11 +447,13 @@ namespace DocCompareWPF
                     {
                         documents[1].filePath = data[0];
                         documents[1].loaded = false;
+                        documents[1].processed = false;
                     }
                     else
                     {
                         documents[2].filePath = data[0];
                         documents[2].loaded = false;
+                        documents[2].processed = false;
                     }
 
                     Application.Current.Dispatcher.Invoke(() =>
@@ -421,16 +461,7 @@ namespace DocCompareWPF
                         Doc2Grid.Visibility = Visibility.Hidden;
                         ProgressBarDoc2.Visibility = Visibility.Visible;
 
-                        // update combo box
-                        ObservableCollection<string> items = new ObservableCollection<string>();
-                        for (int i = 1; i < documents.Count; i++)
-                        {
-                            if (documents[i].filePath != null)
-                            {
-                                items.Add(Path.GetFileName(documents[i].filePath));
-                            }
-                        }
-                        Doc2NameLabelComboBox.ItemsSource = items;
+                        //updateDocSelectionComboBox();
 
                     });
                 }
@@ -440,6 +471,7 @@ namespace DocCompareWPF
                     {
                         documents[i].filePath = data[i];
                         documents[i].loaded = false;
+                        documents[i].processed = false;
                     }
 
                     Application.Current.Dispatcher.Invoke(() =>
@@ -449,16 +481,7 @@ namespace DocCompareWPF
                         Doc2Grid.Visibility = Visibility.Hidden;
                         ProgressBarDoc2.Visibility = Visibility.Visible;
 
-                        // update combo box
-                        ObservableCollection<string> items = new ObservableCollection<string>();
-                        for (int i = 1; i < documents.Count; i++)
-                        {
-                            if (documents[i].filePath != null)
-                            {
-                                items.Add(Path.GetFileName(documents[i].filePath));
-                            }
-                        }
-                        Doc2NameLabelComboBox.ItemsSource = items;
+                        //updateDocSelectionComboBox();
 
                     });
                 }
@@ -472,12 +495,35 @@ namespace DocCompareWPF
         {
             try
             {
-                secondDocToShow = Doc2NameLabelComboBox.SelectedIndex + 1;
-                DisplayImage(secondDocToShow);
+                string fileName = Doc2NameLabelComboBox.SelectedItem.ToString();
+                secondDocToShow = documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
+                DisplayImageRight(secondDocToShow);
+                updateDocSelectionComboBox();
             }
             catch
             {
+                secondDocToShow = 1;
+                DisplayImageRight(secondDocToShow);
+                Doc2NameLabelComboBox.SelectedIndex = 0;
+                updateDocSelectionComboBox();
+            }
+        }
 
+        private void Doc1NameLabelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                string fileName = Doc1NameLabelComboBox.SelectedItem.ToString();
+                firstDocToShow = documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
+                DisplayImageLeft(firstDocToShow);
+                updateDocSelectionComboBox();
+            }
+            catch
+            {
+                firstDocToShow = 0;
+                DisplayImageLeft(firstDocToShow);
+                Doc1NameLabelComboBox.SelectedIndex = 0;
+                updateDocSelectionComboBox();
             }
         }
 
@@ -520,15 +566,15 @@ namespace DocCompareWPF
             try
             {
                 docCompareRunning = true;
-                Document.compareDocs(documents[0].imageFolder, documents[secondDocToShow].imageFolder, Path.Join(workingDir, "compare"), out pageIndices, out totalLen);
-                documents[0].docCompareIndices = new List<int>();
+                Document.compareDocs(documents[firstDocToShow].imageFolder, documents[secondDocToShow].imageFolder, Path.Join(workingDir, "compare"), out pageIndices, out totalLen);
+                documents[firstDocToShow].docCompareIndices = new List<int>();
                 documents[secondDocToShow].docCompareIndices = new List<int>();
 
                 if (totalLen != 0) // ? comparion successful
                 {
                     for (int i = totalLen - 1; i >= 0; i--)
                     {
-                        documents[0].docCompareIndices.Add((int)pageIndices[i]);
+                        documents[firstDocToShow].docCompareIndices.Add((int)pageIndices[i]);
                         documents[secondDocToShow].docCompareIndices.Add((int)pageIndices[i + totalLen]);
                     }
                 }
@@ -549,26 +595,25 @@ namespace DocCompareWPF
             }
         }
 
-        private void DisplayImage(int docIndex)
+        private void DisplayImageLeft(int docIndex)
         {
             Dispatcher.Invoke(() =>
             {
-                int pageCounter = 0;
-                if (docIndex == 0)
+                if (documents[docIndex].filePath != null)
                 {
-                    Doc1NameLabel.Content = Path.GetFileName(documents[0].filePath);
+                    int pageCounter = 0;
                     childPanel1 = new StackPanel();
                     childPanel1.Background = Brushes.Gray;
                     childPanel1.HorizontalAlignment = HorizontalAlignment.Stretch;
 
-                    DirectoryInfo di = new DirectoryInfo(documents[0].imageFolder);
+                    DirectoryInfo di = new DirectoryInfo(documents[docIndex].imageFolder);
                     FileInfo[] fi = di.GetFiles();
 
                     for (int i = 0; i < fi.Length; i++)
                     {
                         Image thisImage = new Image();
 
-                        var stream = File.OpenRead(Path.Join(documents[0].imageFolder, i.ToString() + ".jpg"));
+                        var stream = File.OpenRead(Path.Join(documents[docIndex].imageFolder, i.ToString() + ".jpg"));
                         var bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
@@ -593,12 +638,18 @@ namespace DocCompareWPF
                     DocCompareScrollViewer1.Content = childPanel1;
                     DocCompareScrollViewer1.ScrollToVerticalOffset(0);
                     Doc1Grid.Visibility = Visibility.Visible;
-                    ProgressBarDoc1.Visibility = Visibility.Hidden;
                     //DocCompareColorZone1.Visibility = Visibility.Hidden;
                 }
-                else
+            });
+        }
+
+        private void DisplayImageRight(int docIndex)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (documents[docIndex].filePath != null)
                 {
-                    //Doc2NameLabel.Content = Path.GetFileName(documents[doc].filePath);
+                    int pageCounter = 0;
                     childPanel2 = new StackPanel();
                     childPanel2.Background = Brushes.Gray;
                     childPanel2.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -634,8 +685,8 @@ namespace DocCompareWPF
                     DocCompareScrollViewer2.Content = childPanel2;
                     Doc2Grid.Visibility = Visibility.Visible;
                     DocCompareScrollViewer2.ScrollToVerticalOffset(0);
-                    ProgressBarDoc2.Visibility = Visibility.Hidden;
-                    //DocCompareColorZone2.Visibility = Visibility.Hidden;
+                    //ProgressBarDoc2.Visibility = Visibility.Hidden;
+                    //DocCompareColorZone2.Visibility = Visibility.Hidden
                 }
             });
         }
@@ -645,7 +696,7 @@ namespace DocCompareWPF
             int pageCounter = 0;
             Dispatcher.Invoke(() =>
             {
-                DocCompareNameLabel1.Content = Path.GetFileName(documents[0].filePath);
+                DocCompareNameLabel1.Content = Path.GetFileName(documents[firstDocToShow].filePath);
                 DocCompareNameLabel2.Content = Path.GetFileName(documents[secondDocToShow].filePath);
 
                 docCompareChildPanel1 = new StackPanel();
@@ -664,10 +715,10 @@ namespace DocCompareWPF
                     thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc1
                     thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc2
 
-                    if (documents[0].docCompareIndices[i] != -1) // doc 1 has a valid page
+                    if (documents[firstDocToShow].docCompareIndices[i] != -1) // doc 1 has a valid page
                     {
                         thisImage = new Image();
-                        stream = File.OpenRead(Path.Join(documents[0].imageFolder, documents[0].docCompareIndices[i].ToString() + ".jpg"));
+                        stream = File.OpenRead(Path.Join(documents[firstDocToShow].imageFolder, documents[firstDocToShow].docCompareIndices[i].ToString() + ".jpg"));
                         bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
@@ -700,12 +751,12 @@ namespace DocCompareWPF
                         Grid.SetColumn(thisImage, 1);
                         thisGrid.Children.Add(thisImage);
 
-                        if (documents[0].docCompareIndices[i] != -1 && showMask == true)
+                        if (documents[firstDocToShow].docCompareIndices[i] != -1 && showMask == true)
                         {
-                            if (File.Exists(Path.Join(workingDir, Path.Join("compare", documents[0].docCompareIndices[i].ToString() + "_" + documents[secondDocToShow].docCompareIndices[i].ToString() + ".png"))))
+                            if (File.Exists(Path.Join(workingDir, Path.Join("compare", documents[firstDocToShow].docCompareIndices[i].ToString() + "_" + documents[secondDocToShow].docCompareIndices[i].ToString() + ".png"))))
                             {
                                 thisImage = new Image();
-                                stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", documents[0].docCompareIndices[i].ToString() + "_" + documents[secondDocToShow].docCompareIndices[i].ToString() + ".png")));
+                                stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", documents[firstDocToShow].docCompareIndices[i].ToString() + "_" + documents[secondDocToShow].docCompareIndices[i].ToString() + ".png")));
                                 bitmap = new BitmapImage();
                                 bitmap.BeginInit();
                                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
@@ -751,10 +802,10 @@ namespace DocCompareWPF
                     thisBorder.Child = thisGrid;
                     //Grid.SetRow(thisGrid, 0);
 
-                    if (documents[0].docCompareIndices[i] != -1) // doc 1 has a valid page
+                    if (documents[firstDocToShow].docCompareIndices[i] != -1) // doc 1 has a valid page
                     {
                         thisImage = new Image();
-                        stream = File.OpenRead(Path.Join(documents[0].imageFolder, documents[0].docCompareIndices[i].ToString() + ".jpg"));
+                        stream = File.OpenRead(Path.Join(documents[firstDocToShow].imageFolder, documents[firstDocToShow].docCompareIndices[i].ToString() + ".jpg"));
                         bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
@@ -787,12 +838,12 @@ namespace DocCompareWPF
                         thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
                         Grid.SetColumn(thisImage, 2);
                         thisGrid.Children.Add(thisImage);
-                        if (documents[0].docCompareIndices[i] != -1 && showMask == true)
+                        if (documents[firstDocToShow].docCompareIndices[i] != -1 && showMask == true)
                         {
-                            if (File.Exists(Path.Join(workingDir, Path.Join("compare", documents[0].docCompareIndices[i].ToString() + "_" + documents[secondDocToShow].docCompareIndices[i].ToString() + ".png"))))
+                            if (File.Exists(Path.Join(workingDir, Path.Join("compare", documents[firstDocToShow].docCompareIndices[i].ToString() + "_" + documents[secondDocToShow].docCompareIndices[i].ToString() + ".png"))))
                             {
                                 thisImage = new Image();
-                                stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", documents[0].docCompareIndices[i].ToString() + "_" + documents[secondDocToShow].docCompareIndices[i].ToString() + ".png")));
+                                stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", documents[firstDocToShow].docCompareIndices[i].ToString() + "_" + documents[secondDocToShow].docCompareIndices[i].ToString() + ".png")));
                                 bitmap = new BitmapImage();
                                 bitmap.BeginInit();
                                 bitmap.CacheOption = BitmapCacheOption.OnLoad;

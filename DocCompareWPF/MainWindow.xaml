@@ -121,7 +121,9 @@
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <Label x:Name="Doc1NameLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="30,0,30,0"></Label>
+                                            <ComboBox x:Name="Doc1NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="30,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
+                                                      IsEditable="False">
+                                            </ComboBox>
                                             <Button x:Name="OpenDoc1OriginalButton1" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
                                                 <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
@@ -174,7 +176,8 @@
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc2NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Inverted" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="30,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged">
+                                            <ComboBox x:Name="Doc2NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="30,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged"
+                                                      IsEditable="False">
                                             </ComboBox>
                                             <Button x:Name="OpenDoc2OriginalButton2" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">

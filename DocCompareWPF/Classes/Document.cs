@@ -19,7 +19,7 @@ namespace DocCompareWPF.Classes
         public FileTypes fileType;
         public List<int> docCompareIndices;
         public string docID;
-        public bool loaded;
+        public bool loaded, processed;
 
         public Document()
         {
@@ -115,7 +115,8 @@ namespace DocCompareWPF.Classes
         {            
             PDFConvertClass pdfClass = new PDFConvertClass();
             int ret = pdfClass.convertPDFtoImages(filePath, imageFolder);
-
+            if (ret == 0)
+                processed = true;
             return ret;
         }
                 
@@ -126,6 +127,8 @@ namespace DocCompareWPF.Classes
             try
             {
                 ret = pptConvertClass.convertPPTToImages(filePath, imageFolder);
+                if (ret == 0)
+                    processed = true;
             }
             catch
             {

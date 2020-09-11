@@ -1,4 +1,5 @@
 ﻿using DocCompareWPF.Classes;
+using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace DocCompareWPF
 
         List<Document> documents;
         string workingDir = Path.Join(Directory.GetCurrentDirectory(), "temp");
-        bool docCompareRunning, showMask, docProcessRunning;
+        bool docCompareRunning, showMask;
         ArrayList pageIndices;
         int totalLen, docCompareSideGridShown;
         int MAX_DOC_COUNT = 3;
@@ -230,7 +231,6 @@ namespace DocCompareWPF
 
         private void processDocThread()
         {
-            docProcessRunning = true;
             // Going through documents in stack, check if reloading needed
             for (int i = 0; i < documents.Count; i++)
             {
@@ -271,7 +271,6 @@ namespace DocCompareWPF
                 ProgressBarDoc2.Visibility = Visibility.Hidden;
                 updateDocSelectionComboBox();
             });
-            docProcessRunning = false;
         }
 
         private void CloseDoc1Button_Click(object sender, RoutedEventArgs e)
@@ -460,7 +459,21 @@ namespace DocCompareWPF
                         Doc2Grid.Visibility = Visibility.Hidden;
                         ProgressBarDoc2.Visibility = Visibility.Visible;
 
-                        //updateDocSelectionComboBox();
+                    });
+                }
+                else if (data.Length == 2)
+                {
+                    for (int i = 1; i < MAX_DOC_COUNT; i++)
+                    {
+                        documents[i].filePath = data[i-1];
+                        documents[i].loaded = false;
+                        documents[i].processed = false;
+                    }
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Doc2Grid.Visibility = Visibility.Hidden;
+                        ProgressBarDoc2.Visibility = Visibility.Visible;
 
                     });
                 }
@@ -479,8 +492,6 @@ namespace DocCompareWPF
                         ProgressBarDoc1.Visibility = Visibility.Visible;
                         Doc2Grid.Visibility = Visibility.Hidden;
                         ProgressBarDoc2.Visibility = Visibility.Visible;
-
-                        //updateDocSelectionComboBox();
 
                     });
                 }
@@ -540,6 +551,125 @@ namespace DocCompareWPF
                     Doc2PageNumberLabel.Content = (i + 1).ToString() + " / " + childPanel2.Children.Count.ToString();
                     break;
                 }
+            }
+        }
+
+        private void BrowseFileButton1_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "PDF and PPT files (*.pdf, *.ppt)|*.pdf;*.ppt;*.pptx|PDF files (*.pdf)|*.pdf| PPT files (*.ppt)|*.ppt;*pptx|All files|*.*";
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            openFileDialog.Multiselect = true;
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string[] filenames = openFileDialog.FileNames;
+
+                if (filenames.Length == 1) // only one file drop
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Doc1Grid.Visibility = Visibility.Hidden;
+                        ProgressBarDoc1.Visibility = Visibility.Visible;
+                        ShowDragDropZone2();
+                    });
+
+                    documents[firstDocToShow].filePath = filenames[0];
+                    documents[firstDocToShow].loaded = false;
+                    documents[firstDocToShow].processed = false;
+
+                }
+                else
+                {
+                    for (int i = 0; i < Math.Min(MAX_DOC_COUNT, filenames.Length); i++)
+                    {
+                        documents[i].filePath = filenames[i];
+                        documents[i].loaded = false;
+                        documents[i].processed = false;
+                    }
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Doc1Grid.Visibility = Visibility.Hidden;
+                        ProgressBarDoc1.Visibility = Visibility.Visible;
+                        Doc2Grid.Visibility = Visibility.Hidden;
+                        ProgressBarDoc2.Visibility = Visibility.Visible;
+                        ShowDragDropZone2();
+                    });
+                }
+
+                threadDoc1 = new Thread(new ThreadStart(processDocThread));
+                threadDoc1.Start();
+            }
+        }
+
+        private void BrowseFileButton2_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "PDF and PPT files (*.pdf, *.ppt)|*.pdf;*.ppt;*.pptx|PDF files (*.pdf)|*.pdf| PPT files (*.ppt)|*.ppt;*pptx|All files|*.*";
+            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            openFileDialog.Multiselect = true;
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string[] filenames = openFileDialog.FileNames;
+
+                if (filenames.Length == 1) // only one file drop
+                {
+                    if (documents[1].filePath == null)
+                    {
+                        documents[1].filePath = filenames[0];
+                        documents[1].loaded = false;
+                        documents[1].processed = false;
+                    }
+                    else
+                    {
+                        documents[2].filePath = filenames[0];
+                        documents[2].loaded = false;
+                        documents[2].processed = false;
+                    }
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Doc2Grid.Visibility = Visibility.Hidden;
+                        ProgressBarDoc2.Visibility = Visibility.Visible;
+                    });
+                }
+                else if(filenames.Length == 2)
+                {
+                    for (int i = 1; i < MAX_DOC_COUNT; i++)
+                    {
+                        documents[i].filePath = filenames[i-1];
+                        documents[i].loaded = false;
+                        documents[i].processed = false;
+                    }
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Doc2Grid.Visibility = Visibility.Hidden;
+                        ProgressBarDoc2.Visibility = Visibility.Visible;
+                    });
+                }
+                else
+                {
+                    for (int i = 0; i < Math.Min(MAX_DOC_COUNT, filenames.Length); i++)
+                    {
+                        documents[i].filePath = filenames[i];
+                        documents[i].loaded = false;
+                        documents[i].processed = false;
+                    }
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Doc1Grid.Visibility = Visibility.Hidden;
+                        ProgressBarDoc1.Visibility = Visibility.Visible;
+                        Doc2Grid.Visibility = Visibility.Hidden;
+                        ProgressBarDoc2.Visibility = Visibility.Visible;
+                    });
+                }
+
+                threadDoc1 = new Thread(new ThreadStart(processDocThread));
+                threadDoc1.Start();
             }
         }
 
@@ -637,7 +767,6 @@ namespace DocCompareWPF
                     DocCompareScrollViewer1.Content = childPanel1;
                     DocCompareScrollViewer1.ScrollToVerticalOffset(0);
                     Doc1Grid.Visibility = Visibility.Visible;
-                    //DocCompareColorZone1.Visibility = Visibility.Hidden;
                 }
             });
         }
@@ -684,8 +813,6 @@ namespace DocCompareWPF
                     DocCompareScrollViewer2.Content = childPanel2;
                     Doc2Grid.Visibility = Visibility.Visible;
                     DocCompareScrollViewer2.ScrollToVerticalOffset(0);
-                    //ProgressBarDoc2.Visibility = Visibility.Hidden;
-                    //DocCompareColorZone2.Visibility = Visibility.Hidden
                 }
             });
         }
@@ -767,7 +894,6 @@ namespace DocCompareWPF
                                 thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
                                 thisImage.VerticalAlignment = VerticalAlignment.Stretch;
 
-                                //thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
                                 Grid.SetColumn(thisImage, 2);
                                 thisGrid.Children.Add(thisImage);
                             }

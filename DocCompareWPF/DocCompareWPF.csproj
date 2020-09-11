@@ -16,12 +16,50 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="DocCompareDLL">
-      <HintPath>..\..\DocCompareDLL\DocCompareDLL\bin\Debug\netcoreapp3.1\DocCompareDLL.dll</HintPath>
-    </Reference>
-    <Reference Include="DocConvert">
-      <HintPath>..\..\DocConvert\DocConvert\bin\Debug\netcoreapp3.1\DocConvert.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\DocCompareDLL\DocCompareDLL.csproj" />
+    <ProjectReference Include="..\DocConvert\DocConvert.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="freetype6.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="jpeg62.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="libcairo-2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="libexpat-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="libfontconfig-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="libgcc_s_dw2-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="libpixman-1-0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="libpng16-16.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="libpoppler-79.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="libpoppler-cpp-0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="libstdc++-6.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="libtiff3.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="zlib1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

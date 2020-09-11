@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Interop.Microsoft.Office.Core">
+      <HintPath>bin\Debug\netcoreapp3.1\Interop.Microsoft.Office.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.Microsoft.Office.Interop.PowerPoint">
+      <HintPath>bin\Debug\netcoreapp3.1\Interop.Microsoft.Office.Interop.PowerPoint.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

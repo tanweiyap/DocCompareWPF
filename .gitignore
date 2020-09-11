@@ -1,0 +1,7 @@
+DocConvert/obj/**
+DocConvert/bin/**
+DocCompareWPF/bin/**
+DocCompareWPF/obj/**
+DocCompareDLL/obj/**
+DocCompareDLL/bin/**
+.vs/**

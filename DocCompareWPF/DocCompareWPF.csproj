@@ -24,6 +24,12 @@
     <None Update="freetype6.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Interop.Microsoft.Office.Core.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Interop.Microsoft.Office.Interop.PowerPoint.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="jpeg62.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

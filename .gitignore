@@ -5,3 +5,4 @@ DocCompareWPF/obj/**
 DocCompareDLL/obj/**
 DocCompareDLL/bin/**
 .vs/**
+.vs/DocCompareWPF/v16/.suo

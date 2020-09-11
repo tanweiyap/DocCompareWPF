@@ -7,11 +7,22 @@
 
   <ItemGroup>
     <Reference Include="Interop.Microsoft.Office.Core">
-      <HintPath>bin\Debug\netcoreapp3.1\Interop.Microsoft.Office.Core.dll</HintPath>
+      <HintPath>Interop.Microsoft.Office.Core.dll</HintPath>
+      <Private>true</Private>
     </Reference>
     <Reference Include="Interop.Microsoft.Office.Interop.PowerPoint">
-      <HintPath>bin\Debug\netcoreapp3.1\Interop.Microsoft.Office.Interop.PowerPoint.dll</HintPath>
+      <HintPath>Interop.Microsoft.Office.Interop.PowerPoint.dll</HintPath>
+      <Private>true</Private>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Interop.Microsoft.Office.Core.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Interop.Microsoft.Office.Interop.PowerPoint.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -25,108 +25,56 @@ namespace DocCompareWPF.Classes
         {
         }
 
-        public void detectFileType()
+        public void DetectFileType()
         {
             string extension = Path.GetExtension(filePath);
-            switch(extension)
+            fileType = extension switch
             {
-                case ".ppt":
-                    fileType = FileTypes.PPT;
-                    break;
-                case ".pptx":
-                    fileType = FileTypes.PPT;
-                    break;
-                case ".PPT":
-                    fileType = FileTypes.PPT;
-                    break;
-                case ".PPTX":
-                    fileType = FileTypes.PPT;
-                    break;
-                case ".doc":
-                    fileType = FileTypes.WORD;
-                    break;
-                case ".docx":
-                    fileType = FileTypes.WORD;
-                    break;
-                case ".DOC":
-                    fileType = FileTypes.WORD;
-                    break;
-                case ".DOCX":
-                    fileType = FileTypes.WORD;
-                    break;
-                case ".xls":
-                    fileType = FileTypes.EXCEL;
-                    break;
-                case ".xlsx":
-                    fileType = FileTypes.EXCEL;
-                    break;
-                case ".XLS":
-                    fileType = FileTypes.EXCEL;
-                    break;
-                case ".XLSX":
-                    fileType = FileTypes.EXCEL;
-                    break;
-                case ".pdf":
-                    fileType = FileTypes.PDF;
-                    break;
-                case ".PDF":
-                    fileType = FileTypes.PDF;
-                    break;
-                case ".txt":
-                    fileType = FileTypes.TXT;
-                    break;
-                case ".jpg":
-                    fileType = FileTypes.PIC;
-                    break;
-                case ".jpeg":
-                    fileType = FileTypes.PIC;
-                    break;
-                case ".JPG":
-                    fileType = FileTypes.PIC;
-                    break;
-                case ".JPEG":
-                    fileType = FileTypes.PIC;
-                    break;
-                case ".bmp":
-                    fileType = FileTypes.PIC;
-                    break;
-                case ".BMP":
-                    fileType = FileTypes.PIC;
-                    break;
-                case ".png":
-                    fileType = FileTypes.PIC;
-                    break;
-                case ".PNG":
-                    fileType = FileTypes.PIC;
-                    break;
-                case ".gif":
-                    fileType = FileTypes.PIC;
-                    break;
-                case ".GIF":
-                    fileType = FileTypes.PIC;
-                    break;
-                default:
-                    fileType = FileTypes.UNKNOWN;
-                    break;
-            }
+                ".ppt" => FileTypes.PPT,
+                ".pptx" => FileTypes.PPT,
+                ".PPT" => FileTypes.PPT,
+                ".PPTX" => FileTypes.PPT,
+                ".doc" => FileTypes.WORD,
+                ".docx" => FileTypes.WORD,
+                ".DOC" => FileTypes.WORD,
+                ".DOCX" => FileTypes.WORD,
+                ".xls" => FileTypes.EXCEL,
+                ".xlsx" => FileTypes.EXCEL,
+                ".XLS" => FileTypes.EXCEL,
+                ".XLSX" => FileTypes.EXCEL,
+                ".pdf" => FileTypes.PDF,
+                ".PDF" => FileTypes.PDF,
+                ".txt" => FileTypes.TXT,
+                ".jpg" => FileTypes.PIC,
+                ".jpeg" => FileTypes.PIC,
+                ".JPG" => FileTypes.PIC,
+                ".JPEG" => FileTypes.PIC,
+                ".bmp" => FileTypes.PIC,
+                ".BMP" => FileTypes.PIC,
+                ".png" => FileTypes.PIC,
+                ".PNG" => FileTypes.PIC,
+                ".gif" => FileTypes.PIC,
+                ".GIF" => FileTypes.PIC,
+                _ => FileTypes.UNKNOWN,
+            };
         }
 
-        public int readPDF()
+        public int ReadPDF()
         {            
             PDFConvertClass pdfClass = new PDFConvertClass();
-            int ret = pdfClass.convertPDFtoImages(filePath, imageFolder);
+            int ret = pdfClass.ConvertPDFtoImages(filePath, imageFolder);
             if (ret == 0)
                 processed = true;
             return ret;
         }
                 
-        public int readPPT()
+        public int ReadPPT()
         {
             PPTConvertClass pptConvertClass = new PPTConvertClass();
             int ret = -1;
             try
             {
-                ret = pptConvertClass.convertPPTToImages(filePath, imageFolder);
+                ret = pptConvertClass.ConvertPPTToImages(filePath, imageFolder);
                 if (ret == 0)
                     processed = true;
             }
@@ -138,7 +86,7 @@ namespace DocCompareWPF.Classes
             return ret;
         }
 
-        public void clearFolder()
+        public void ClearFolder()
         {
             DirectoryInfo di = new DirectoryInfo(imageFolder);
             foreach (FileInfo file in di.EnumerateFiles())
@@ -147,7 +95,7 @@ namespace DocCompareWPF.Classes
             }
         }
 
-        public static int compareDocs(string doc1ImageFolder, string doc2ImageFolder, string outputFolder, out ArrayList pageIndices, out int totalLen)
+        public static int CompareDocs(string doc1ImageFolder, string doc2ImageFolder, string outputFolder, out ArrayList pageIndices, out int totalLen)
         {
             int ret = -1;
             int totalLength = 0;

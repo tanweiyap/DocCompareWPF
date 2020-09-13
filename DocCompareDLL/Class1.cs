@@ -179,8 +179,10 @@ namespace DocCompareDLL
 			//}
 			return max_score;
         }
-		public static ArrayList docCompare(ref string folder1, ref string folder2, ref string outfolder, ref int seqlen)
+		public static ArrayList docCompare(ref string folder1, ref string folder2, ref string outfolder, ref int seqlen, int[,] force_pairs = null)
 		{
+
+			force_pairs = force_pairs ?? new int[0,0]; //{ { 5, 5 }, { 6, 6 }, { 7, 7 }, { 8, 8 } };
 
 			ArrayList doc1 = new ArrayList(); //all images of fist document
 			ArrayList doc2 = new ArrayList(); //all images of second document
@@ -319,8 +321,23 @@ namespace DocCompareDLL
 				{
 					av_non1 = sum_non1 / n_non1;
 				}
+
 				//else sum_non1 will be 0...
 				double gap_penalty = 0.5 * av_non1;
+
+				//catch single page, alignment should be tried without gap!
+				if (n == 1 || m == 1)
+				{
+					gap_penalty = -0.5;
+				}
+
+                //change distanceMatrix where fore_pairs is set
+                for (int i = 0; i < (int)force_pairs.GetLength(0); i++)
+				{
+					distanceMatrix[force_pairs[i, 0], force_pairs[i, 1]] = 100;
+				}
+
+				//distanceMatrix[5, 5] = 100;
 
 				//create scoring matrix according to NMW algorithm.Directly
 				//store the 'where from?' info: 0 : sequence i, 1 : sequence j, 2 : diagonal

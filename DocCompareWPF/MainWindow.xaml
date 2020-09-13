@@ -91,8 +91,9 @@
                     </Grid>
                 </materialDesign:ColorZone>
                 <Grid x:Name="MainPanel" Grid.Row="1">
-                    <Grid x:Name="DragDropPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DragDropPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
@@ -230,6 +231,73 @@
                                 </materialDesign:Card>
                             </Grid>
                         </materialDesign:ColorZone>
+                        <materialDesign:ColorZone x:Name="DocCompareThirdDocZone" Visibility="Visible" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White">
+                            <Grid x:Name="DocCompareDragDropZone3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True" DragOver="DocCompareDragDropZone3_DragOver" Drop="DocCompareDragDropZone3_Drop">
+                                <materialDesign:ColorZone x:Name="DocCompareColorZone3" Margin="20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                          CornerRadius="20" BorderBrush="Gray" BorderThickness="1">
+                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50"/>
+                                        <Label x:Name="DocCompareDropZone3Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop a file here</Label>
+                                        <Button x:Name="BrowseFileButton3" Grid.Row="2" Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
+                                                Click="BrowseFileButton3_Click">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <iconPacks:PackIconUnicons Kind="FolderOpen" VerticalAlignment="Center"/>
+                                                <Label  Margin="10,0,0,0" Grid.Column="1" VerticalAlignment="Center">Browse Files</Label>
+                                            </Grid>
+                                        </Button>
+                                    </Grid>
+                                </materialDesign:ColorZone>
+                                <Grid x:Name="Doc3Grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Visibility="Hidden">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="25"/>
+                                        <RowDefinition/>
+                                        <RowDefinition Height="25"/>
+                                    </Grid.RowDefinitions>
+                                    <materialDesign:ColorZone Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition Width="30"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ComboBox x:Name="Doc3NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="30,0,30,0" SelectedIndex="0" SelectionChanged="Doc3NameLabelComboBox_SelectionChanged"
+                                                      IsEditable="False">
+                                            </ComboBox>
+                                            <Button x:Name="OpenDoc3OriginalButton3" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                            HorizontalAlignment="Left" Click="OpenDoc3OriginalButton3_Click" Margin="10,0,0,0" ToolTip="Open original">
+                                                <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                            </Button>
+                                            <Button x:Name="CloseDoc3Button" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc3Button_Click">
+                                                <iconPacks:PackIconMaterial Kind="WindowClose" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                            </Button>
+                                        </Grid>
+                                    </materialDesign:ColorZone>
+                                    <ScrollViewer x:Name="DocCompareScrollViewer3" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer3_ScrollChanged">
+                                    </ScrollViewer>
+                                    <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Label x:Name="Doc3PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                                    </materialDesign:ColorZone>
+                                </Grid>
+                                <materialDesign:Card x:Name="ProgressBarDoc3" UniformCornerRadius="14" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden">
+                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Value="50" IsIndeterminate="True" />
+                                        <Label Grid.Column="1" Margin="10,0,0,0">Loading</Label>
+                                    </Grid>
+                                </materialDesign:Card>
+                            </Grid>
+                        </materialDesign:ColorZone>
                     </Grid>
                     <Grid x:Name="DocComparePanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <materialDesign:Card x:Name="ProgressBarDocCompare" UniformCornerRadius="14" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
@@ -260,7 +328,9 @@
                                             HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
                                         <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
-                                    <Label x:Name="DocCompareNameLabel2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="30,0,30,0"></Label>
+                                    <ComboBox x:Name="DocCompareNameLabel2ComboBox" materialDesign:ColorZoneAssist.Mode="Dark" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="30,0,30,0" SelectedIndex="0" SelectionChanged="DocCompareNameLabel2ComboBox_SelectionChanged"
+                                                      IsEditable="False">
+                                    </ComboBox>
                                     <Button x:Name="ShowMaskButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Right" Click="ShowMaskButton_Click" Margin="0,0,10,0" Visibility="Hidden" ToolTip="Show difference mask">
                                         <iconPacks:PackIconMicrons Kind="Show" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
@@ -299,7 +369,7 @@
                             </materialDesign:ColorZone>
                         </Grid>
                     </Grid>
-                    <Grid x:Name="SettingsPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="SettingsPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="220"/>
                             <ColumnDefinition/>
@@ -344,9 +414,71 @@
                                 </Button>
                             </Grid>
                         </materialDesign:ColorZone>
-                        <Grid x:Name="SettingsDocBrowsingPanel" Grid.Column="1">
-                            
+                        <Grid x:Name="SettingsDocBrowsingPanel" Grid.Column="1" Margin="25">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Label FontWeight="Bold" FontSize="18">Default folder</Label>
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="150"/>
+                                </Grid.ColumnDefinitions>
+                                <Label x:Name="SettingsDefaultFolderTextBox" Margin="20,0,0,0"></Label>
+                                <Button x:Name="SettingsBrowDefaultFolderButton" Grid.Column="1" Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Center" Margin="5,0,0,0"
+                                                Click="SettingsBrowDefaultFolderButton_Click" Height="35" Width="140" HorizontalContentAlignment="Stretch">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="20"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <iconPacks:PackIconUnicons Kind="FolderOpen" VerticalAlignment="Center"/>
+                                        <Label  Margin="10,0,0,0" Grid.Column="1" VerticalAlignment="Center">Browse</Label>
+                                    </Grid>
+                                </Button>
+                            </Grid>                            
+                            <Label FontWeight="Bold" FontSize="18" Grid.Row="2">Appearance</Label>                            
+                            <CheckBox x:Name="SettingsShowThirdPanelCheckBox" Grid.Row="3" Margin="20,0,0,0" Checked="SettingsShowThirdPanelCheckBox_Checked" Unchecked="SettingsShowThirdPanelCheckBox_Unchecked"> Show third preview panel</CheckBox>
                         </Grid>                        
+                    </Grid>
+                    <Grid x:Name="SelectReferenceDocPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="50"/>
+                            </Grid.RowDefinitions>
+                            <materialDesign:ColorZone Grid.Row="0" Grid.Column="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Label Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" >Select the reference document</Label>
+                            </materialDesign:ColorZone>
+                            <ListBox x:Name="RefDocListBox" Grid.Row="1" SelectedIndex="0" SelectionChanged="RefDocListBox_SelectionChanged" >
+                            </ListBox>
+                            <Button x:Name="RefDocProceedButton" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Click="RefDocProceedButton_Click">Proceed</Button>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition/>
+                                <RowDefinition Height="25"/>
+                            </Grid.RowDefinitions>
+                            
+                            <materialDesign:ColorZone Grid.Row="0" Grid.Column="1" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Label Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" >Preview</Label>
+                            </materialDesign:ColorZone>
+                            <ScrollViewer x:Name="RefDocScrollViewer" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="RefDocScrollViewer_ScrollChanged">
+                            </ScrollViewer>
+                            <materialDesign:ColorZone Grid.Row="2" Grid.Column="1" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Label x:Name="RefDocPageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                            </materialDesign:ColorZone>
+                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>

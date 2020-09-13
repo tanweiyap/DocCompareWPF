@@ -13,7 +13,7 @@ namespace DocConvert
 
         }
 
-        public int convertPDFtoImages(string filePath, string outputPath)
+        public int ConvertPDFtoImages(string filePath, string outputPath)
         {
             int ret = -1;
             string popplerPath = Directory.GetCurrentDirectory();
@@ -43,7 +43,7 @@ namespace DocConvert
             return ret;
         }
 
-        public int convertPPTToImages(string filePath, string outputPath)
+        public int ConvertPPTToImages(string filePath, string outputPath)
         {
             int ret = -1;
 
@@ -82,16 +82,18 @@ namespace DocConvert
 
         }
 
-        public int convertPPTToImages(string filePath, string outputPath)
+        public int ConvertPPTToImages(string filePath, string outputPath)
         {
             int ret = -1;
 
             // check file existence
             if (File.Exists(filePath))
             {
-                Application pptApplication = new Application();
-                pptApplication.DisplayAlerts = Microsoft.Office.Interop.PowerPoint.PpAlertLevel.ppAlertsNone; //get rid of pop ups
-                pptApplication.AutomationSecurity = MsoAutomationSecurity.msoAutomationSecurityForceDisable; //get rid of even more pop ups
+                Application pptApplication = new Application
+                {
+                    DisplayAlerts = Microsoft.Office.Interop.PowerPoint.PpAlertLevel.ppAlertsNone, //get rid of pop ups
+                    AutomationSecurity = MsoAutomationSecurity.msoAutomationSecurityForceDisable //get rid of even more pop ups
+                };
                 Presentation pptPresentation = pptApplication.Presentations
                 .Open(filePath, MsoTriState.msoFalse, MsoTriState.msoFalse
                 , MsoTriState.msoFalse);

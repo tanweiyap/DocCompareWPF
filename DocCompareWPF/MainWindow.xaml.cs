@@ -1172,47 +1172,50 @@ namespace DocCompareWPF
         {
             Dispatcher.Invoke(() =>
             {
-                if (docs.documents[docIndex].filePath != null)
+                if (docs.documents.Count != 0)
                 {
-                    int pageCounter = 0;
-                    childPanel1 = new StackPanel
+                    if (docs.documents[docIndex].filePath != null)
                     {
-                        Background = Brushes.Gray,
-                        HorizontalAlignment = HorizontalAlignment.Stretch
-                    };
-
-                    DirectoryInfo di = new DirectoryInfo(docs.documents[docIndex].imageFolder);
-                    FileInfo[] fi = di.GetFiles();
-
-                    for (int i = 0; i < fi.Length; i++)
-                    {
-                        Image thisImage = new Image();
-
-                        var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"));
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = stream;
-                        bitmap.EndInit();
-                        stream.Close();
-                        thisImage.Source = bitmap;
-                        if (pageCounter == 0)
+                        int pageCounter = 0;
+                        childPanel1 = new StackPanel
                         {
-                            thisImage.Margin = new Thickness(10, 10, 10, 10);
-                        }
-                        else
+                            Background = Brushes.Gray,
+                            HorizontalAlignment = HorizontalAlignment.Stretch
+                        };
+
+                        DirectoryInfo di = new DirectoryInfo(docs.documents[docIndex].imageFolder);
+                        FileInfo[] fi = di.GetFiles();
+
+                        for (int i = 0; i < fi.Length; i++)
                         {
-                            thisImage.Margin = new Thickness(10, 0, 10, 10);
+                            Image thisImage = new Image();
+
+                            var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"));
+                            var bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.StreamSource = stream;
+                            bitmap.EndInit();
+                            stream.Close();
+                            thisImage.Source = bitmap;
+                            if (pageCounter == 0)
+                            {
+                                thisImage.Margin = new Thickness(10, 10, 10, 10);
+                            }
+                            else
+                            {
+                                thisImage.Margin = new Thickness(10, 0, 10, 10);
+                            }
+
+                            thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                            childPanel1.Children.Add(thisImage);
+                            pageCounter++;
                         }
 
-                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                        childPanel1.Children.Add(thisImage);
-                        pageCounter++;
+                        DocCompareScrollViewer1.Content = childPanel1;
+                        DocCompareScrollViewer1.ScrollToVerticalOffset(0);
+                        Doc1Grid.Visibility = Visibility.Visible;
                     }
-
-                    DocCompareScrollViewer1.Content = childPanel1;
-                    DocCompareScrollViewer1.ScrollToVerticalOffset(0);
-                    Doc1Grid.Visibility = Visibility.Visible;
                 }
             });
         }
@@ -1220,46 +1223,49 @@ namespace DocCompareWPF
         {
             Dispatcher.Invoke(() =>
             {
-                if (docs.documents[docIndex].filePath != null)
+                if (docs.documents.Count != 0)
                 {
-                    int pageCounter = 0;
-                    childPanel2 = new StackPanel
+                    if (docs.documents[docIndex].filePath != null)
                     {
-                        Background = Brushes.Gray,
-                        HorizontalAlignment = HorizontalAlignment.Stretch
-                    };
-
-                    DirectoryInfo di = new DirectoryInfo(docs.documents[docIndex].imageFolder);
-                    FileInfo[] fi = di.GetFiles();
-
-                    for (int i = 0; i < fi.Length; i++)
-                    {
-                        Image thisImage = new Image();
-                        var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"));
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = stream;
-                        bitmap.EndInit();
-                        stream.Close();
-                        thisImage.Source = bitmap;
-                        if (pageCounter == 0)
+                        int pageCounter = 0;
+                        childPanel2 = new StackPanel
                         {
-                            thisImage.Margin = new Thickness(10, 10, 10, 10);
-                        }
-                        else
+                            Background = Brushes.Gray,
+                            HorizontalAlignment = HorizontalAlignment.Stretch
+                        };
+
+                        DirectoryInfo di = new DirectoryInfo(docs.documents[docIndex].imageFolder);
+                        FileInfo[] fi = di.GetFiles();
+
+                        for (int i = 0; i < fi.Length; i++)
                         {
-                            thisImage.Margin = new Thickness(10, 0, 10, 10);
+                            Image thisImage = new Image();
+                            var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"));
+                            var bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.StreamSource = stream;
+                            bitmap.EndInit();
+                            stream.Close();
+                            thisImage.Source = bitmap;
+                            if (pageCounter == 0)
+                            {
+                                thisImage.Margin = new Thickness(10, 10, 10, 10);
+                            }
+                            else
+                            {
+                                thisImage.Margin = new Thickness(10, 0, 10, 10);
+                            }
+
+                            thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                            childPanel2.Children.Add(thisImage);
+                            pageCounter++;
                         }
 
-                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                        childPanel2.Children.Add(thisImage);
-                        pageCounter++;
+                        DocCompareScrollViewer2.Content = childPanel2;
+                        Doc2Grid.Visibility = Visibility.Visible;
+                        DocCompareScrollViewer2.ScrollToVerticalOffset(0);
                     }
-
-                    DocCompareScrollViewer2.Content = childPanel2;
-                    Doc2Grid.Visibility = Visibility.Visible;
-                    DocCompareScrollViewer2.ScrollToVerticalOffset(0);
                 }
             });
         }
@@ -1268,46 +1274,49 @@ namespace DocCompareWPF
         {
             Dispatcher.Invoke(() =>
             {
-                if (docs.documents[docIndex].filePath != null)
+                if (docs.documents.Count != 0)
                 {
-                    int pageCounter = 0;
-                    childPanel3 = new StackPanel
+                    if (docs.documents[docIndex].filePath != null)
                     {
-                        Background = Brushes.Gray,
-                        HorizontalAlignment = HorizontalAlignment.Stretch
-                    };
-
-                    DirectoryInfo di = new DirectoryInfo(docs.documents[docIndex].imageFolder);
-                    FileInfo[] fi = di.GetFiles();
-
-                    for (int i = 0; i < fi.Length; i++)
-                    {
-                        Image thisImage = new Image();
-                        var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"));
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = stream;
-                        bitmap.EndInit();
-                        stream.Close();
-                        thisImage.Source = bitmap;
-                        if (pageCounter == 0)
+                        int pageCounter = 0;
+                        childPanel3 = new StackPanel
                         {
-                            thisImage.Margin = new Thickness(10, 10, 10, 10);
-                        }
-                        else
+                            Background = Brushes.Gray,
+                            HorizontalAlignment = HorizontalAlignment.Stretch
+                        };
+
+                        DirectoryInfo di = new DirectoryInfo(docs.documents[docIndex].imageFolder);
+                        FileInfo[] fi = di.GetFiles();
+
+                        for (int i = 0; i < fi.Length; i++)
                         {
-                            thisImage.Margin = new Thickness(10, 0, 10, 10);
+                            Image thisImage = new Image();
+                            var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"));
+                            var bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.StreamSource = stream;
+                            bitmap.EndInit();
+                            stream.Close();
+                            thisImage.Source = bitmap;
+                            if (pageCounter == 0)
+                            {
+                                thisImage.Margin = new Thickness(10, 10, 10, 10);
+                            }
+                            else
+                            {
+                                thisImage.Margin = new Thickness(10, 0, 10, 10);
+                            }
+
+                            thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                            childPanel3.Children.Add(thisImage);
+                            pageCounter++;
                         }
 
-                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                        childPanel3.Children.Add(thisImage);
-                        pageCounter++;
+                        DocCompareScrollViewer3.Content = childPanel3;
+                        Doc3Grid.Visibility = Visibility.Visible;
+                        DocCompareScrollViewer3.ScrollToVerticalOffset(0);
                     }
-
-                    DocCompareScrollViewer3.Content = childPanel3;
-                    Doc3Grid.Visibility = Visibility.Visible;
-                    DocCompareScrollViewer3.ScrollToVerticalOffset(0);
                 }
             });
         }

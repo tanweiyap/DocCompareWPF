@@ -26,7 +26,8 @@ namespace DocCompareWPF.Classes
             workingDir = p_workingDir;
 
             DirectoryInfo di = new DirectoryInfo(workingDir);
-            di.Delete(true);
+            if (di.Exists == true)
+                di.Delete(true);
             Directory.CreateDirectory(workingDir);
 
             Directory.CreateDirectory(Path.Join(workingDir, "compare"));
@@ -44,7 +45,8 @@ namespace DocCompareWPF.Classes
             workingDir = p_workingDir;
 
             DirectoryInfo di = new DirectoryInfo(workingDir);
-            di.Delete(true);
+            if(di.Exists == true)
+                di.Delete(true);
             Directory.CreateDirectory(workingDir);
 
             Directory.CreateDirectory(Path.Join(workingDir, "compare"));

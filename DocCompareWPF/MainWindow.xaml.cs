@@ -298,6 +298,8 @@ namespace DocCompareWPF
                     {
                         Doc2Grid.Visibility = Visibility.Hidden;
                         ProgressBarDoc2.Visibility = Visibility.Visible;
+                        Doc3Grid.Visibility = Visibility.Hidden;
+                        DocCompareDragDropZone3.Visibility = Visibility.Visible;
                         ShowDragDropZone3();
                     });
                 }
@@ -343,6 +345,8 @@ namespace DocCompareWPF
                     {
                         Doc2Grid.Visibility = Visibility.Hidden;
                         ProgressBarDoc2.Visibility = Visibility.Visible;
+                        Doc3Grid.Visibility = Visibility.Hidden;
+                        DocCompareDragDropZone3.Visibility = Visibility.Visible;
                         ShowDragDropZone3();
                     });
                 }
@@ -846,6 +850,8 @@ namespace DocCompareWPF
                     {
                         Doc2Grid.Visibility = Visibility.Hidden;
                         ProgressBarDoc2.Visibility = Visibility.Visible;
+                        Doc3Grid.Visibility = Visibility.Hidden;
+                        DocCompareDragDropZone3.Visibility = Visibility.Visible;
                         ShowDragDropZone3();
                     });
                 }
@@ -909,6 +915,8 @@ namespace DocCompareWPF
                     {
                         Doc2Grid.Visibility = Visibility.Hidden;
                         ProgressBarDoc2.Visibility = Visibility.Visible;
+                        Doc3Grid.Visibility = Visibility.Hidden;
+                        DocCompareDragDropZone3.Visibility = Visibility.Visible;
                         ShowDragDropZone3();
                     });
                 }
@@ -982,6 +990,8 @@ namespace DocCompareWPF
                     {
                         Doc3Grid.Visibility = Visibility.Hidden;
                         ProgressBarDoc3.Visibility = Visibility.Visible;
+                        Doc3Grid.Visibility = Visibility.Hidden;
+                        DocCompareDragDropZone3.Visibility = Visibility.Visible;
                     });
                 }
 
@@ -1153,7 +1163,8 @@ namespace DocCompareWPF
             DisplayImageLeft(docs.documentsToShow[0]);
             DisplayImageMiddle(docs.documentsToShow[1]);
             DisplayImageRight(docs.documentsToShow[2]);
-            ShowDragDropZone3();
+            if(docs.documents.Count >= 3)
+                ShowDragDropZone3();
             UpdateDocSelectionComboBox();
         }
 

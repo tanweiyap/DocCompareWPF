@@ -94,8 +94,7 @@ namespace DocCompareDLL
 			Cv2.Resize(output[0], diffHighlights, orig_size);
 
 		}
-		//returns length of alignment. alignment will store the alignment and is size: (2* length of alignment)
-
+		
 		//get similarity score for two strings
 		static int needle_wunsch(string refSeq, string alignSeq)
         {
@@ -179,6 +178,8 @@ namespace DocCompareDLL
 			//}
 			return max_score;
         }
+		//returns length of alignment. alignment will store the alignment and is size: (2* length of alignment)
+
 		public static ArrayList docCompare(ref string folder1, ref string folder2, ref string outfolder, ref int seqlen, int[,] force_pairs = null)
 		{
 

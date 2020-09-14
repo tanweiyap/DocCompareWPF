@@ -434,11 +434,14 @@ namespace DocCompareWPF
 
                 if (settings.numPanelsDragDrop == 3)
                 {
-                    DisplayImageRight(docs.documentsToShow[2]);
-                    Dispatcher.Invoke(() =>
+                    if (docs.documents.Count >= 3)
                     {
-                        OpenDoc3OriginalButton3.IsEnabled = true;
-                    });
+                        DisplayImageRight(docs.documentsToShow[2]);
+                        Dispatcher.Invoke(() =>
+                        {
+                            OpenDoc3OriginalButton3.IsEnabled = true;
+                        });
+                    }
                 }
 
                 ProgressBarDoc1.Visibility = Visibility.Hidden;

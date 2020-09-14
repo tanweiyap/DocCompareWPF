@@ -1150,6 +1150,11 @@ namespace DocCompareWPF
             settings.numPanelsDragDrop = 3;
             SaveSettings();
             docs.documentsToShow = new List<int>() { 0, 1, 2 };
+            DisplayImageLeft(docs.documentsToShow[0]);
+            DisplayImageMiddle(docs.documentsToShow[1]);
+            DisplayImageRight(docs.documentsToShow[2]);
+            ShowDragDropZone3();
+            UpdateDocSelectionComboBox();
         }
 
         private void SettingsShowThirdPanelCheckBox_Unchecked(object sender, RoutedEventArgs e)
@@ -1157,6 +1162,10 @@ namespace DocCompareWPF
             settings.numPanelsDragDrop = 2;
             SaveSettings();
             docs.documentsToShow = new List<int>() { 0, 1 };
+            DisplayImageLeft(docs.documentsToShow[0]);
+            DisplayImageMiddle(docs.documentsToShow[1]);
+            HideDragDropZone3();
+            UpdateDocSelectionComboBox();
         }
 
         private void DisplayImageLeft(int docIndex)

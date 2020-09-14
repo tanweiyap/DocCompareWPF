@@ -573,7 +573,8 @@ namespace DocCompareWPF
 
             if (docs.documentsToShow[2] == -1)
             {
-                HideDragDropZone3();
+                DocCompareDragDropZone3.Visibility = Visibility.Visible;
+                Doc3Grid.Visibility = Visibility.Hidden;
             }
         }
 
@@ -1160,11 +1161,20 @@ namespace DocCompareWPF
             settings.numPanelsDragDrop = 3;
             SaveSettings();
             docs.documentsToShow = new List<int>() { 0, 1, 2 };
-            DisplayImageLeft(docs.documentsToShow[0]);
-            DisplayImageMiddle(docs.documentsToShow[1]);
-            DisplayImageRight(docs.documentsToShow[2]);
-            if(docs.documents.Count >= 3)
+            if (docs.documents.Count >= 1)
+                DisplayImageLeft(docs.documentsToShow[0]);
+            if (docs.documents.Count >= 2)
+                DisplayImageMiddle(docs.documentsToShow[1]);
+            if (docs.documents.Count >= 2)
+            {
                 ShowDragDropZone3();
+                Doc3Grid.Visibility = Visibility.Hidden;
+                DocCompareDragDropZone3.Visibility = Visibility.Visible;
+            }
+
+            if(docs.documents.Count >= 3)
+                DisplayImageRight(docs.documentsToShow[2]);
+
             UpdateDocSelectionComboBox();
         }
 
@@ -1183,7 +1193,7 @@ namespace DocCompareWPF
         {
             Dispatcher.Invoke(() =>
             {
-                if (docs.documents.Count != 0)
+                if (docs.documents.Count >= 1)
                 {
                     if (docs.documents[docIndex].filePath != null)
                     {
@@ -1234,7 +1244,7 @@ namespace DocCompareWPF
         {
             Dispatcher.Invoke(() =>
             {
-                if (docs.documents.Count != 0)
+                if (docs.documents.Count >= 2)
                 {
                     if (docs.documents[docIndex].filePath != null)
                     {
@@ -1285,7 +1295,7 @@ namespace DocCompareWPF
         {
             Dispatcher.Invoke(() =>
             {
-                if (docs.documents.Count != 0)
+                if (docs.documents.Count >= 3)
                 {
                     if (docs.documents[docIndex].filePath != null)
                     {

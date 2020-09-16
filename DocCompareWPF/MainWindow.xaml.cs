@@ -464,6 +464,7 @@ namespace DocCompareWPF
             DisplayComparisonResult();
             ShowMaskButton.Visibility = Visibility.Hidden;
             HideMaskButton.Visibility = Visibility.Visible;
+            HighlightingDisableTip.Visibility = Visibility.Hidden;
         }
 
         private void HideMaskButton_Click(object sender, RoutedEventArgs e)
@@ -472,6 +473,7 @@ namespace DocCompareWPF
             DisplayComparisonResult();
             ShowMaskButton.Visibility = Visibility.Visible;
             HideMaskButton.Visibility = Visibility.Hidden;
+            HighlightingDisableTip.Visibility = Visibility.Visible;
         }
 
         private void OpenDoc1OriginalButton_Click(object sender, RoutedEventArgs e)

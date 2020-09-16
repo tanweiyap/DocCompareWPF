@@ -1059,6 +1059,36 @@ namespace DocCompareWPF
                             threadCompare = new Thread(new ThreadStart(CompareDocsThread));
                             threadCompare.Start();
                             break;
+                        case 4:
+                            for (int i = 0; i < docs.documentsToShow.Count; i++)
+                            {
+                                if (docs.documentsToShow[i] == docs.documentsToCompare[1])
+                                {
+                                    switch (i)
+                                    {
+                                        case 0:
+                                            DisplayImageLeft(docs.documentsToShow[0]);
+                                            break;
+                                        case 1:
+                                            DisplayImageMiddle(docs.documentsToShow[1]);
+                                            break;
+                                        case 2:
+                                            DisplayImageRight(docs.documentsToShow[2]);
+                                            break;
+                                    }
+                                }
+                            }
+
+                            ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                            docCompareGrid.Visibility = Visibility.Hidden;
+                            docCompareSideGridShown = 0;
+                            DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
+                            DocCompareSideScrollViewer.ScrollToVerticalOffset(0);
+                            SetVisiblePanel(SidePanels.DOCCOMPARE);
+                            ProgressBarDocCompare.Visibility = Visibility.Visible;
+                            threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                            threadCompare.Start();
+                            break;
                     }
                 });
             }
@@ -1113,7 +1143,7 @@ namespace DocCompareWPF
             ProgressBarDocCompareReload.Visibility = Visibility.Visible;
 
             docs.docToReload = docs.documentsToCompare[1];
-            docs.displayToReload = 3;
+            docs.displayToReload = 4;
 
             threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
             threadLoadDocs.Start();

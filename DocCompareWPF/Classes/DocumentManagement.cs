@@ -130,7 +130,7 @@ namespace DocCompareWPF.Classes
                 documentsToShow[0] = -1;
             }
 
-            for(int i = 0; i < 3; i++)
+            for(int i = 0; i < documentsToShow.Count; i++)
             {
                 if(documentsToShow[i] == -1)
                 {

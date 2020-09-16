@@ -461,31 +461,55 @@ namespace DocCompareWPF
             UpdateDocSelectionComboBox();
             if (docs.documentsToShow[0] != -1)
                 DisplayImageLeft(docs.documentsToShow[0]);
-            if (docs.documentsToShow[1] != -1)
-                DisplayImageMiddle(docs.documentsToShow[1]);
-            if (docs.documentsToShow[2] != -1)
-                DisplayImageRight(docs.documentsToShow[2]);
-
-            if (docs.documentsToShow[0] == -1)
+            else
             {
                 Doc1Grid.Visibility = Visibility.Hidden;
                 DocCompareDragDropZone1.Visibility = Visibility.Visible;
             }
 
-            if (docs.documentsToShow[1] == -1)
+            if (docs.documents.Count >= 2)
+            {
+                if (docs.documentsToShow[1] != -1)
+                    DisplayImageMiddle(docs.documentsToShow[1]);
+
+                if (docs.documentsToShow[1] == -1)
+                {
+                    Doc2Grid.Visibility = Visibility.Hidden;
+                    DocCompareDragDropZone2.Visibility = Visibility.Visible;
+                }
+            }
+            else
             {
                 Doc2Grid.Visibility = Visibility.Hidden;
                 DocCompareDragDropZone2.Visibility = Visibility.Visible;
             }
 
-            if (docs.documentsToShow[2] == -1)
+            if (docs.documents.Count >= 3)
             {
-                HideDragDropZone3();
+                if (docs.documentsToShow[2] != -1)
+                    DisplayImageRight(docs.documentsToShow[2]);
+
+                if (docs.documentsToShow[2] == -1)
+                {
+                    HideDragDropZone3();
+                }
+            }
+            else
+            {
+                if (settings.numPanelsDragDrop == 3 && docs.documents.Count >= 2)
+                {
+                    Doc3Grid.Visibility = Visibility.Hidden;
+                    DocCompareDragDropZone3.Visibility = Visibility.Visible;
+                    ShowDragDropZone3();
+                }
+                else
+                    HideDragDropZone3();
             }
 
             if (docs.documents.Count == 0)
             {
                 HideDragDropZone2();
+                HideDragDropZone3();
             }
             /*
             if (documents[firstDocToShow].filePath != null)
@@ -515,21 +539,57 @@ namespace DocCompareWPF
         {
             docs.RemoveDocument(docs.documentsToShow[1], 1);
             UpdateDocSelectionComboBox();
+
             if (docs.documentsToShow[0] != -1)
                 DisplayImageLeft(docs.documentsToShow[0]);
-            if (docs.documentsToShow[1] != -1)
-                DisplayImageMiddle(docs.documentsToShow[1]);
-            if (docs.documentsToShow[2] != -1)
-                DisplayImageRight(docs.documentsToShow[2]);
+            else
+            {
+                Doc1Grid.Visibility = Visibility.Hidden;
+                DocCompareDragDropZone1.Visibility = Visibility.Visible;
+            }
 
-            if (docs.documentsToShow[1] == -1)
+            if (docs.documents.Count >= 2)
+            {
+                if (docs.documentsToShow[1] != -1)
+                    DisplayImageMiddle(docs.documentsToShow[1]);
+
+                if (docs.documentsToShow[1] == -1)
+                {
+                    Doc2Grid.Visibility = Visibility.Hidden;
+                    DocCompareDragDropZone2.Visibility = Visibility.Visible;
+                }
+            }
+            else
             {
                 Doc2Grid.Visibility = Visibility.Hidden;
                 DocCompareDragDropZone2.Visibility = Visibility.Visible;
             }
 
-            if (docs.documentsToShow[2] == -1)
+            if (docs.documents.Count >= 3)
             {
+                if (docs.documentsToShow[2] != -1)
+                    DisplayImageRight(docs.documentsToShow[2]);
+
+                if (docs.documentsToShow[2] == -1)
+                {
+                    HideDragDropZone3();
+                }
+            }
+            else
+            {
+                if (settings.numPanelsDragDrop == 3 && docs.documents.Count >= 2)
+                {
+                    Doc3Grid.Visibility = Visibility.Hidden;
+                    DocCompareDragDropZone3.Visibility = Visibility.Visible;
+                    ShowDragDropZone3();
+                }
+                else
+                    HideDragDropZone3();
+            }
+
+            if (docs.documents.Count == 0)
+            {
+                HideDragDropZone2();
                 HideDragDropZone3();
             }
 
@@ -564,17 +624,58 @@ namespace DocCompareWPF
         {
             docs.RemoveDocument(docs.documentsToShow[2], 2);
             UpdateDocSelectionComboBox();
+
             if (docs.documentsToShow[0] != -1)
                 DisplayImageLeft(docs.documentsToShow[0]);
-            if (docs.documentsToShow[1] != -1)
-                DisplayImageMiddle(docs.documentsToShow[1]);
-            if (docs.documentsToShow[2] != -1)
-                DisplayImageRight(docs.documentsToShow[2]);
-
-            if (docs.documentsToShow[2] == -1)
+            else
             {
-                DocCompareDragDropZone3.Visibility = Visibility.Visible;
-                Doc3Grid.Visibility = Visibility.Hidden;
+                Doc1Grid.Visibility = Visibility.Hidden;
+                DocCompareDragDropZone1.Visibility = Visibility.Visible;
+            }
+
+            if (docs.documents.Count >= 2)
+            {
+                if (docs.documentsToShow[1] != -1)
+                    DisplayImageMiddle(docs.documentsToShow[1]);
+
+                if (docs.documentsToShow[1] == -1)
+                {
+                    Doc2Grid.Visibility = Visibility.Hidden;
+                    DocCompareDragDropZone2.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                Doc2Grid.Visibility = Visibility.Hidden;
+                DocCompareDragDropZone2.Visibility = Visibility.Visible;
+            }
+
+            if (docs.documents.Count >= 3)
+            {
+                if (docs.documentsToShow[2] != -1)
+                    DisplayImageRight(docs.documentsToShow[2]);
+
+                if (docs.documentsToShow[2] == -1)
+                {
+                    HideDragDropZone3();
+                }
+            }
+            else
+            {
+                if (settings.numPanelsDragDrop == 3 && docs.documents.Count >= 2)
+                {
+                    Doc3Grid.Visibility = Visibility.Hidden;
+                    DocCompareDragDropZone3.Visibility = Visibility.Visible;
+                    ShowDragDropZone3();
+                }
+                else
+                    HideDragDropZone3();
+            }
+
+            if (docs.documents.Count == 0)
+            {
+                HideDragDropZone2();
+                HideDragDropZone3();
             }
         }
 

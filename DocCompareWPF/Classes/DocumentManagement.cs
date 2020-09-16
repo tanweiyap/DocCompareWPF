@@ -13,6 +13,8 @@ namespace DocCompareWPF.Classes
         public ArrayList pageCompareIndices;
         public int totalLen;
         public string workingDir;
+        public int docToReload;
+        public int displayToReload;
 
         public DocumentManagement(string p_workingDir, AppSettings settings)
         {

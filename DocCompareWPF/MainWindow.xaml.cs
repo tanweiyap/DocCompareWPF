@@ -48,7 +48,7 @@ namespace DocCompareWPF
         {
             InitializeComponent();
             showMask = true;
-            
+
             // GUI stuff
             SetVisiblePanel(SidePanels.DRAGDROP);
             SidePanelDocCompareButton.IsEnabled = false;
@@ -741,7 +741,7 @@ namespace DocCompareWPF
             };
 
             if (openFileDialog.ShowDialog() == true)
-            {                
+            {
                 string[] filenames = openFileDialog.FileNames;
                 lastUsedDirectory = Path.GetDirectoryName(filenames[0]);
 
@@ -995,7 +995,7 @@ namespace DocCompareWPF
                 DocCompareDragDropZone3.Visibility = Visibility.Visible;
             }
 
-            if(docs.documents.Count >= 3)
+            if (docs.documents.Count >= 3)
                 DisplayImageRight(docs.documentsToShow[2]);
 
             UpdateDocSelectionComboBox();
@@ -1010,6 +1010,113 @@ namespace DocCompareWPF
             DisplayImageMiddle(docs.documentsToShow[1]);
             HideDragDropZone3();
             UpdateDocSelectionComboBox();
+        }
+
+        private void ReloadDocThread()
+        {
+            if (docs.documents[docs.docToReload].ReloadDocument() == 0)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    switch (docs.displayToReload)
+                    {
+                        case 0:
+                            DisplayImageLeft(docs.documentsToShow[0]);
+                            break;
+                        case 1:
+                            DisplayImageMiddle(docs.documentsToShow[1]);
+                            break;
+                        case 2:
+                            DisplayImageRight(docs.documentsToShow[2]);
+                            break;
+                        case 3:
+                            for (int i = 0; i < docs.documentsToShow.Count; i++)
+                            {
+                                if (docs.documentsToShow[i] == docs.documentsToCompare[0])
+                                {
+                                    switch (i)
+                                    {
+                                        case 0:
+                                            DisplayImageLeft(docs.documentsToShow[0]);
+                                            break;
+                                        case 1:
+                                            DisplayImageMiddle(docs.documentsToShow[1]);
+                                            break;
+                                        case 2:
+                                            DisplayImageRight(docs.documentsToShow[2]);
+                                            break;
+                                    }
+                                }
+                            }
+
+                            ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                            docCompareGrid.Visibility = Visibility.Hidden;
+                            docCompareSideGridShown = 0;
+                            DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
+                            DocCompareSideScrollViewer.ScrollToVerticalOffset(0);
+                            SetVisiblePanel(SidePanels.DOCCOMPARE);
+                            ProgressBarDocCompare.Visibility = Visibility.Visible;
+                            threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                            threadCompare.Start();
+                            break;
+                    }
+                });
+            }
+        }
+
+        private void ReloadDoc1Button_Click(object sender, RoutedEventArgs e)
+        {
+            ProgressBarDoc1.Visibility = Visibility.Visible;
+
+            docs.docToReload = docs.documentsToShow[0];
+            docs.displayToReload = 0;
+
+            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
+            threadLoadDocs.Start();
+        }
+
+        private void ReloadDoc2Button_Click(object sender, RoutedEventArgs e)
+        {
+            ProgressBarDoc2.Visibility = Visibility.Visible;
+
+            docs.docToReload = docs.documentsToShow[1];
+            docs.displayToReload = 1;
+
+            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
+            threadLoadDocs.Start();
+        }
+
+        private void ReloadDoc3Button_Click(object sender, RoutedEventArgs e)
+        {
+            ProgressBarDoc3.Visibility = Visibility.Visible;
+
+            docs.docToReload = docs.documentsToShow[2];
+            docs.displayToReload = 2;
+
+            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
+            threadLoadDocs.Start();
+        }
+
+        private void ReloadDocCompare1Button_Click(object sender, RoutedEventArgs e)
+        {
+            ProgressBarDocCompareReload.Visibility = Visibility.Visible;
+
+            docs.docToReload = docs.documentsToCompare[0];
+            docs.displayToReload = 3;
+
+            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
+            threadLoadDocs.Start();
+        }
+
+        private void ReloadDocCompare2Button_Click(object sender, RoutedEventArgs e)
+        {
+            ProgressBarDocCompareReload.Visibility = Visibility.Visible;
+
+            docs.docToReload = docs.documentsToCompare[1];
+            docs.displayToReload = 3;
+
+            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
+            threadLoadDocs.Start();
         }
 
         private void DisplayImageLeft(int docIndex)
@@ -1059,6 +1166,7 @@ namespace DocCompareWPF
                         DocCompareScrollViewer1.Content = childPanel1;
                         DocCompareScrollViewer1.ScrollToVerticalOffset(0);
                         Doc1Grid.Visibility = Visibility.Visible;
+                        ProgressBarDoc1.Visibility = Visibility.Hidden;
                     }
                 }
             });
@@ -1109,6 +1217,7 @@ namespace DocCompareWPF
                         DocCompareScrollViewer2.Content = childPanel2;
                         Doc2Grid.Visibility = Visibility.Visible;
                         DocCompareScrollViewer2.ScrollToVerticalOffset(0);
+                        ProgressBarDoc2.Visibility = Visibility.Hidden;
                     }
                 }
             });
@@ -1160,6 +1269,7 @@ namespace DocCompareWPF
                         DocCompareScrollViewer3.Content = childPanel3;
                         Doc3Grid.Visibility = Visibility.Visible;
                         DocCompareScrollViewer3.ScrollToVerticalOffset(0);
+                        ProgressBarDoc3.Visibility = Visibility.Hidden;
                     }
                 }
             });
@@ -1410,6 +1520,7 @@ namespace DocCompareWPF
                 DocCompareSideScrollViewer.Content = docCompareChildPanel2;
 
                 docCompareGrid.Visibility = Visibility.Visible;
+                ProgressBarDocCompare.Visibility = Visibility.Hidden;
             });
         }
 
@@ -1449,8 +1560,8 @@ namespace DocCompareWPF
 
                         Size thisSize = thisGrid.DesiredSize;
 
-                        if(accuHeight - windowsHeight/2 > 0)
-                            DocCompareSideScrollViewer.ScrollToVerticalOffset(accuHeight - windowsHeight/2);
+                        if (accuHeight - windowsHeight / 2 > 0)
+                            DocCompareSideScrollViewer.ScrollToVerticalOffset(accuHeight - windowsHeight / 2);
                         else
                             DocCompareSideScrollViewer.ScrollToVerticalOffset(0);
 

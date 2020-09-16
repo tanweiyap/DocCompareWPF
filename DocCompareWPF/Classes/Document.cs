@@ -95,6 +95,24 @@ namespace DocCompareWPF.Classes
             }
         }
 
+        public int ReloadDocument()
+        {
+            int ret = -1;
+            ClearFolder();
+            switch(fileType)
+            {
+                case FileTypes.PDF:
+                    ret = ReadPDF();
+                    break;
+                case FileTypes.PPT:
+                    ret = ReadPPT();
+                    break;
+                default:
+                    return -1;
+            }
+            return ret;
+        }
+
         public static int CompareDocs(string doc1ImageFolder, string doc2ImageFolder, string outputFolder, out ArrayList pageIndices, out int totalLen)
         {
             int ret = -1;

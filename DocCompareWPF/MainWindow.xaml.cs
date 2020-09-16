@@ -42,12 +42,13 @@ namespace DocCompareWPF
 
         // App settings
         AppSettings settings;
+        string lastUsedDirectory;
 
         public MainWindow()
         {
             InitializeComponent();
             showMask = true;
-
+            
             // GUI stuff
             SetVisiblePanel(SidePanels.DRAGDROP);
             SidePanelDocCompareButton.IsEnabled = false;
@@ -58,6 +59,7 @@ namespace DocCompareWPF
             try
             {
                 LoadSettings();
+                lastUsedDirectory = settings.defaultFolder;
             }
             catch
             {
@@ -66,6 +68,7 @@ namespace DocCompareWPF
                     defaultFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                     numPanelsDragDrop = 3
                 };
+
 
                 SaveSettings();
             }
@@ -427,6 +430,8 @@ namespace DocCompareWPF
 
             if (docs.documents.Count == 0)
             {
+                Doc1Grid.Visibility = Visibility.Hidden;
+                DocCompareDragDropZone1.Visibility = Visibility.Visible;
                 HideDragDropZone2();
                 HideDragDropZone3();
             }
@@ -725,16 +730,20 @@ namespace DocCompareWPF
 
         private void BrowseFileButton1_Click(object sender, RoutedEventArgs e)
         {
+            if (Directory.Exists(lastUsedDirectory) == false)
+                lastUsedDirectory = settings.defaultFolder;
+
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "PDF and PPT files (*.pdf, *.ppt)|*.pdf;*.ppt;*.pptx|PDF files (*.pdf)|*.pdf| PPT files (*.ppt)|*.ppt;*pptx|All files|*.*",
-                InitialDirectory = settings.defaultFolder,
+                InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };
 
             if (openFileDialog.ShowDialog() == true)
-            {
+            {                
                 string[] filenames = openFileDialog.FileNames;
+                lastUsedDirectory = Path.GetDirectoryName(filenames[0]);
 
                 foreach (string file in filenames)
                 {
@@ -753,16 +762,20 @@ namespace DocCompareWPF
 
         private void BrowseFileButton2_Click(object sender, RoutedEventArgs e)
         {
+            if (Directory.Exists(lastUsedDirectory) == false)
+                lastUsedDirectory = settings.defaultFolder;
+
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "PDF and PPT files (*.pdf, *.ppt)|*.pdf;*.ppt;*.pptx|PDF files (*.pdf)|*.pdf| PPT files (*.ppt)|*.ppt;*pptx|All files|*.*",
-                InitialDirectory = settings.defaultFolder,
+                InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };
 
             if (openFileDialog.ShowDialog() == true)
             {
                 string[] filenames = openFileDialog.FileNames;
+                lastUsedDirectory = Path.GetDirectoryName(filenames[0]);
 
                 foreach (string file in filenames)
                 {
@@ -781,16 +794,20 @@ namespace DocCompareWPF
 
         private void BrowseFileButton3_Click(object sender, RoutedEventArgs e)
         {
+            if (Directory.Exists(lastUsedDirectory) == false)
+                lastUsedDirectory = settings.defaultFolder;
+
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "PDF and PPT files (*.pdf, *.ppt)|*.pdf;*.ppt;*.pptx|PDF files (*.pdf)|*.pdf| PPT files (*.ppt)|*.ppt;*pptx|All files|*.*",
-                InitialDirectory = settings.defaultFolder,
+                InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };
 
             if (openFileDialog.ShowDialog() == true)
             {
                 string[] filenames = openFileDialog.FileNames;
+                lastUsedDirectory = Path.GetDirectoryName(filenames[0]);
 
                 foreach (string file in filenames)
                 {

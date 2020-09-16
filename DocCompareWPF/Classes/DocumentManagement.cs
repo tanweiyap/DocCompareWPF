@@ -70,7 +70,7 @@ namespace DocCompareWPF.Classes
             List<string> docShown = new List<string>();
             for(int i = 0; i < documentsToShow.Count; i++)
             {
-                if(documentsToShow[i] != -1)
+                if(documentsToShow[i] != -1 && i < documents.Count)
                 {
                     docShown.Add(documents[documentsToShow[i]].docID);
                 }

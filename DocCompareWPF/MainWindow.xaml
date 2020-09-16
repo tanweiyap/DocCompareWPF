@@ -483,7 +483,7 @@
                 </Grid>
             </Grid>
             <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource StatusBarBackground}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <Label VerticalAlignment="Center" Margin="20,0,0,0" FontWeight="Bold" FontSize="14">Copyright © HopieTech 2020</Label>
+                <Label VerticalAlignment="Center" Margin="20,0,0,0" FontWeight="Bold" FontSize="14">Copyright © HopieTech 2020 v0.0</Label>
             </materialDesign:ColorZone>
         </Grid>
     </Border>

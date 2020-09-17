@@ -519,7 +519,7 @@ namespace DocCompareWPF
                 Size currSize = docCompareChildPanel1.Children[i].DesiredSize;
                 accuHeight += currSize.Height;
 
-                if (accuHeight > DocCompareMainScrollViewer.VerticalOffset)
+                if (accuHeight > DocCompareMainScrollViewer.VerticalOffset + DocCompareMainScrollViewer.ActualHeight/3)
                 {
                     DocComparePageNumberLabel.Content = (i + 1).ToString() + " / " + docCompareChildPanel1.Children.Count.ToString();
                     docCompareSideGridShown = i;

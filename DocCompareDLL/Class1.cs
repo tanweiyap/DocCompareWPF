@@ -76,18 +76,20 @@ namespace DocCompareDLL
 
 			Cv2.CvtColor(a, a, ColorConversionCodes.BGR2BGRA);
 			//here, wemix the channels to get a semi-transparent, red overlay
-			Mat full = 0 * channels[0] + 255;
-			Mat no = 0 * channels[0];
-			Mat al_ch = channels[0] * 0.5;
+			Mat rot = 0 * channels[0] + 255;
+			Mat gruen = 0 * channels[0] + 44;
+			Mat blau = 0 * channels[0] + 108;
 
-			Mat[] input = { no, full, al_ch };
+			Mat al_ch = channels[0] * 0.7;
+
+			Mat[] input = { blau, gruen, rot, al_ch };
 			Mat[] output = { a };
 
 			int[] from_to = {
 								0, 0, //zeros to channel B
-								0, 1, //zeros to channel G
-								1, 2, //ones to channel R
-								2, 3  //contours to channel Alpha
+								1, 1, //zeros to channel G
+								2, 2, //ones to channel R
+								3, 3  //contours to channel Alpha
 			};
 			Cv2.MixChannels(input, output, from_to);
 			//finally, to output...

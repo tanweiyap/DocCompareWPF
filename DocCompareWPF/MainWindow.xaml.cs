@@ -1527,7 +1527,7 @@ namespace DocCompareWPF
                                     thisGrid.Children.Add(thisImage);
                                 }
                                 //thisBorder.BorderBrush = Brushes.Red;
-                                thisBorder.Background = new SolidColorBrush(Color.FromArgb(128, 255, 30, 30));
+                                thisBorder.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
                                 //thisBorder.BorderThickness = new Thickness(2);
                             }
                         }

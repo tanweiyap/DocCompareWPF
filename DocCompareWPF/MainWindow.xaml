@@ -9,11 +9,11 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="DocCompare" Height="800" Width="1280" WindowStyle="None">
+        Title="DocCompare" Height="800" Width="1280" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged">
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="32" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}"/>
+        <WindowChrome CaptionHeight="{Binding ActualHeight,ElementName=TitleBar}"/>
     </WindowChrome.WindowChrome>
-    <Border Style="{StaticResource WindowMainPanelStyle}" BorderBrush="Black" UseLayoutRounding="True" SnapsToDevicePixels="True">
+    <Border BorderBrush="Black" UseLayoutRounding="True" SnapsToDevicePixels="True" BorderThickness="1">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="32"/>

@@ -69,11 +69,10 @@ namespace DocCompareWPF
                     numPanelsDragDrop = 3
                 };
 
-
                 SaveSettings();
             }
 
-            docs = new DocumentManagement(MAX_DOC_COUNT, workingDir, settings);
+            docs = new DocumentManagement(settings.maxDocCount, workingDir, settings);
 
             Dispatcher.Invoke(() =>
             {
@@ -147,7 +146,7 @@ namespace DocCompareWPF
             WindowMaximizeButton.Visibility = Visibility.Hidden;
             WindowRestoreButton.Visibility = Visibility.Visible;
             WindowState = WindowState.Maximized;
-            MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+            MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight - 7;
         }
 
         private void WindowMinimizeButton_Click(object sender, RoutedEventArgs e)
@@ -1168,6 +1167,15 @@ namespace DocCompareWPF
 
             threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
             threadLoadDocs.Start();
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            if(WindowState == WindowState.Normal)
+            {
+                WindowMaximizeButton.Visibility = Visibility.Visible;
+                WindowRestoreButton.Visibility = Visibility.Hidden;
+            }
         }
 
         private void DisplayImageLeft(int docIndex)

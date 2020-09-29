@@ -22,5 +22,8 @@ namespace DocCompareWPF.Classes
 
         [ProtoMember(5)]
         public bool isProVersion = false;
+
+        [ProtoMember(6)]
+        public int maxDocCount = 5;
     }
 }

@@ -389,7 +389,7 @@
                                 </Grid.ColumnDefinitions>
                                 <ScrollViewer x:Name="DocCompareMainScrollViewer" Grid.Column="0" ScrollChanged="DocCompareMainScrollViewer_ScrollChanged"/>
                                 <ScrollViewer x:Name="DocCompareSideScrollViewer" Grid.Column="1"/>
-                                <materialDesign:ColorZone Padding="10" CornerRadius="10" x:Name="HighlightingDisableTip" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,20,10" Opacity="0.7" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden">Highlighting disabled</materialDesign:ColorZone>
+                                <materialDesign:ColorZone Padding="10" CornerRadius="10" x:Name="HighlightingDisableTip" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.7" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" BorderBrush="Black" BorderThickness="1">Highlighting disabled</materialDesign:ColorZone>
                             </Grid>
                             <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid>

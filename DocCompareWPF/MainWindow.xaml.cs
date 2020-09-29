@@ -4,6 +4,7 @@ using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -286,9 +287,14 @@ namespace DocCompareWPF
 
                 foreach (string file in data)
                 {
-                    if (docs.documents.Find(x => x.filePath == file) == null) // doc does not exist
+                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
                     {
                         docs.AddDocument(file);
+                    }
+                    else
+                    {
+                        ShowMaxDocCountWarningBox();
+                        break;
                     }
                 }
 
@@ -304,11 +310,19 @@ namespace DocCompareWPF
             {
                 var data = e.Data.GetData(DataFormats.FileDrop) as string[];
 
+                if (data.Length > settings.maxDocCount)
+                    ShowMaxDocCountWarningBox();
+
                 foreach (string file in data)
                 {
-                    if (docs.documents.Find(x => x.filePath == file) == null) // doc does not exist
+                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
                     {
                         docs.AddDocument(file);
+                    }
+                    else
+                    {
+                        ShowMaxDocCountWarningBox();
+                        break;
                     }
                 }
 
@@ -325,11 +339,16 @@ namespace DocCompareWPF
             {
                 var data = e.Data.GetData(DataFormats.FileDrop) as string[];
 
-                foreach (string file in data)
+                foreach(string file in data)
                 {
-                    if (docs.documents.Find(x => x.filePath == file) == null) // doc does not exist
+                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
                     {
                         docs.AddDocument(file);
+                    }
+                    else
+                    {
+                        ShowMaxDocCountWarningBox();
+                        break;
                     }
                 }
 
@@ -424,7 +443,7 @@ namespace DocCompareWPF
                 DocCompareDragDropZone2.Visibility = Visibility.Visible;
             }
 
-            if (docs.documents.Count >= 3)
+            if (docs.documents.Count >= 3 && settings.numPanelsDragDrop == 3)
             {
                 if (docs.documentsToShow[2] != -1)
                     DisplayImageRight(docs.documentsToShow[2]);
@@ -748,6 +767,11 @@ namespace DocCompareWPF
             }
         }
 
+        private void ShowMaxDocCountWarningBox()
+        {
+            MessageBox.Show("You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded. Subscribe to the Pro-version to view unlimited documents.", "Get Pro-Version", MessageBoxButton.OK);
+        }
+
         private void BrowseFileButton1_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(lastUsedDirectory) == false)
@@ -767,9 +791,14 @@ namespace DocCompareWPF
 
                 foreach (string file in filenames)
                 {
-                    if (docs.documents.Find(x => x.filePath == file) == null) // doc does not exist
+                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
                     {
                         docs.AddDocument(file);
+                    }
+                    else
+                    {
+                        ShowMaxDocCountWarningBox();
+                        break;
                     }
                 }
 
@@ -796,12 +825,17 @@ namespace DocCompareWPF
             {
                 string[] filenames = openFileDialog.FileNames;
                 lastUsedDirectory = Path.GetDirectoryName(filenames[0]);
-
+                
                 foreach (string file in filenames)
                 {
-                    if (docs.documents.Find(x => x.filePath == file) == null) // doc does not exist
+                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
                     {
                         docs.AddDocument(file);
+                    }
+                    else
+                    {
+                        ShowMaxDocCountWarningBox();
+                        break;
                     }
                 }
 
@@ -828,12 +862,17 @@ namespace DocCompareWPF
             {
                 string[] filenames = openFileDialog.FileNames;
                 lastUsedDirectory = Path.GetDirectoryName(filenames[0]);
-
+                
                 foreach (string file in filenames)
                 {
-                    if (docs.documents.Find(x => x.filePath == file) == null) // doc does not exist
+                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
                     {
                         docs.AddDocument(file);
+                    }
+                    else
+                    {
+                        ShowMaxDocCountWarningBox();
+                        break;
                     }
                 }
 
@@ -1180,6 +1219,7 @@ namespace DocCompareWPF
 
         private void DisplayImageLeft(int docIndex)
         {
+            Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
             Dispatcher.Invoke(() =>
             {
                 if (docs.documents.Count >= 1)
@@ -1189,7 +1229,7 @@ namespace DocCompareWPF
                         int pageCounter = 0;
                         childPanel1 = new StackPanel
                         {
-                            Background = Brushes.Gray,
+                            Background = brush,
                             HorizontalAlignment = HorizontalAlignment.Stretch
                         };
 
@@ -1232,6 +1272,7 @@ namespace DocCompareWPF
         }
         private void DisplayImageMiddle(int docIndex)
         {
+            Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
             Dispatcher.Invoke(() =>
             {
                 if (docs.documents.Count >= 2)
@@ -1241,7 +1282,7 @@ namespace DocCompareWPF
                         int pageCounter = 0;
                         childPanel2 = new StackPanel
                         {
-                            Background = Brushes.Gray,
+                            Background = brush,
                             HorizontalAlignment = HorizontalAlignment.Stretch
                         };
 
@@ -1284,6 +1325,7 @@ namespace DocCompareWPF
 
         private void DisplayImageRight(int docIndex)
         {
+            Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
             Dispatcher.Invoke(() =>
             {
                 if (docs.documents.Count >= 3)
@@ -1293,7 +1335,7 @@ namespace DocCompareWPF
                         int pageCounter = 0;
                         childPanel3 = new StackPanel
                         {
-                            Background = Brushes.Gray,
+                            Background = brush,
                             HorizontalAlignment = HorizontalAlignment.Stretch
                         };
 
@@ -1336,6 +1378,7 @@ namespace DocCompareWPF
 
         private void DisplayRefDoc(int docIndex)
         {
+            Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
             Dispatcher.Invoke(() =>
             {
                 if (docs.documents[docIndex].filePath != null)
@@ -1343,7 +1386,7 @@ namespace DocCompareWPF
                     int pageCounter = 0;
                     refDocPanel = new StackPanel
                     {
-                        Background = Brushes.Gray,
+                        Background = brush,
                         HorizontalAlignment = HorizontalAlignment.Stretch
                     };
 
@@ -1384,15 +1427,17 @@ namespace DocCompareWPF
         private void DisplayComparisonResult()
         {
             int pageCounter = 0;
+            Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
+
             Dispatcher.Invoke(() =>
             {
                 DocCompareNameLabel1.Content = Path.GetFileName(docs.documents[docs.documentsToCompare[0]].filePath);
 
                 docCompareChildPanel1 = new StackPanel();
                 docCompareChildPanel2 = new StackPanel();
-                docCompareChildPanel1.Background = Brushes.Gray;
+                docCompareChildPanel1.Background = brush;
                 docCompareChildPanel1.HorizontalAlignment = HorizontalAlignment.Stretch;
-                docCompareChildPanel2.Background = Brushes.Gray;
+                docCompareChildPanel2.Background = brush;
                 docCompareChildPanel2.HorizontalAlignment = HorizontalAlignment.Stretch;
                 Image thisImage;
                 FileStream stream;
@@ -1603,6 +1648,7 @@ namespace DocCompareWPF
 
         private void HighlightSideGrid()
         {
+            Brush brush = FindResource("SideGridActiveBackground") as Brush;
             double accuHeight = 0;
             double windowsHeight = DocCompareSideScrollViewer.ActualHeight;
             Dispatcher.Invoke(() =>
@@ -1615,7 +1661,7 @@ namespace DocCompareWPF
                     {
                         thisBorder = docCompareChildPanel2.Children[i] as Border;
                         thisGrid = thisBorder.Child as Grid;
-                        thisGrid.Background = Brushes.LightGray;
+                        thisGrid.Background = brush;
 
                         Size thisSize = thisGrid.DesiredSize;
 

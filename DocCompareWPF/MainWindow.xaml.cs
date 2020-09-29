@@ -83,6 +83,16 @@ namespace DocCompareWPF
                     SettingsShowThirdPanelCheckBox.IsChecked = false;
 
                 SettingsDefaultFolderTextBox.Content = settings.defaultFolder;
+
+                if(settings.isProVersion == true)
+                {
+                    SettingsShowThirdPanelCheckBox.IsEnabled = true;
+                }
+                else
+                {
+                    SettingsShowThirdPanelCheckBox.IsEnabled = false;
+                }
+
             });
         }
 
@@ -156,23 +166,32 @@ namespace DocCompareWPF
         {
             if (docs.documents.Count >= 2 && docCompareRunning == false)
             {
-                SetVisiblePanel(SidePanels.REFDOC);
-
-                // populate list box
-                ObservableCollection<string> items = new ObservableCollection<string>();
-                foreach (Document doc in docs.documents)
+                if (settings.isProVersion == true && settings.canSelectRefDoc == true)
                 {
-                    items.Add(Path.GetFileName(doc.filePath));
-                }
+                    SetVisiblePanel(SidePanels.REFDOC);
 
-                RefDocListBox.ItemsSource = items;
-                RefDocListBox.SelectedIndex = 0;
+                    // populate list box
+                    ObservableCollection<string> items = new ObservableCollection<string>();
+                    foreach (Document doc in docs.documents)
+                    {
+                        items.Add(Path.GetFileName(doc.filePath));
+                    }
+
+                    RefDocListBox.ItemsSource = items;
+                    RefDocListBox.SelectedIndex = 0;
+                }
+                else
+                {
+                    docs.documentsToCompare[0] = 0; // default using the first document selected
+                    UpdateDocCompareComboBox();
+                    SetVisiblePanel(SidePanels.DOCCOMPARE);
+                }
             }
         }
 
         private void SetVisiblePanel(SidePanels p_sidePanel)
         {
-            Brush brush = FindResource("SidePanelActiveBackground") as Brush;
+            Brush brush = FindResource("SecondaryAccentBrush") as Brush;
 
             switch (p_sidePanel)
             {

@@ -97,7 +97,7 @@ namespace DocCompareWPF.Classes
 
         public int ReloadDocument()
         {
-            int ret = -1;
+            int ret;
             ClearFolder();
             switch(fileType)
             {

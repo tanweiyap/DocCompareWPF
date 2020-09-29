@@ -1,5 +1,6 @@
 ﻿using DocCompareWPF.Classes;
 using Microsoft.Win32;
+using Microsoft.Win32.SafeHandles;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,6 @@ namespace DocCompareWPF
         private readonly string workingDir = Path.Join(Directory.GetCurrentDirectory(), "temp");
         private bool docCompareRunning, showMask;
         private int docCompareSideGridShown;
-        private readonly int MAX_DOC_COUNT = 5;
 
         // Stack panel for viewing documents in scrollviewer control in comparison view
         StackPanel childPanel1, childPanel2, childPanel3, refDocPanel, docCompareChildPanel1, docCompareChildPanel2;
@@ -53,7 +53,6 @@ namespace DocCompareWPF
             // GUI stuff
             SetVisiblePanel(SidePanels.DRAGDROP);
             SidePanelDocCompareButton.IsEnabled = false;
-
             HideDragDropZone2();
             HideDragDropZone3();
 
@@ -1424,6 +1423,70 @@ namespace DocCompareWPF
             });
         }
 
+        private void SideGridMouseEnter(object sender, MouseEventArgs args)
+        {
+            Grid img = sender as Grid;
+            string imgName = img.Name;
+            string[] splittedName;
+            string nameToLook = "";
+
+            if (imgName.Contains("Left"))
+            {
+                splittedName = imgName.Split("Left");
+                nameToLook = "SideButtonLeft" + splittedName[1]; 
+            }
+
+            if (imgName.Contains("Right"))
+            {
+                splittedName = imgName.Split("Right");
+                nameToLook = "SideButtonRight" + splittedName[1];
+            }
+
+            foreach(object child in img.Children)
+            {
+                if(child is Button)
+                {
+                    if ((child as Button).Name == nameToLook)
+                    {
+                        Button foundLabel = child as Button;
+                        foundLabel.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+        }
+
+        private void SideGridMouseLeave(object sender, MouseEventArgs args)
+        {
+            Grid img = sender as Grid;
+            string imgName = img.Name;
+            string[] splittedName;
+            string nameToLook = "";
+
+            if (imgName.Contains("Left"))
+            {
+                splittedName = imgName.Split("Left");
+                nameToLook = "SideButtonLeft" + splittedName[1];
+            }
+
+            if (imgName.Contains("Right"))
+            {
+                splittedName = imgName.Split("Right");
+                nameToLook = "SideButtonRight" + splittedName[1];
+            }
+
+            foreach (object child in img.Children)
+            {
+                if (child is Button)
+                {
+                    if ((child as Button).Name == nameToLook)
+                    {
+                        Button foundLabel = child as Button;
+                        foundLabel.Visibility = Visibility.Hidden;
+                    }
+                }
+            }
+        }
+
         private void DisplayComparisonResult()
         {
             int pageCounter = 0;
@@ -1445,7 +1508,10 @@ namespace DocCompareWPF
 
                 for (int i = 0; i < docs.totalLen; i++) // going through all the pages of the longest document
                 {
-                    Grid thisGrid = new Grid();
+                    Grid thisGrid = new Grid
+                    {
+                        IsHitTestVisible = true
+                    };
                     thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc1
                     thisGrid.ColumnDefinitions.Add(new ColumnDefinition()); // doc2
 
@@ -1464,6 +1530,7 @@ namespace DocCompareWPF
                         thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
                         thisImage.VerticalAlignment = VerticalAlignment.Center;
                         Grid.SetColumn(thisImage, 0);
+
                         thisGrid.Children.Add(thisImage);
                     }
 
@@ -1539,6 +1606,10 @@ namespace DocCompareWPF
 
                     if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1) // doc 1 has a valid page
                     {
+                        Grid imageGrid = new Grid()
+                        {
+                            Name = "SideImageLeft" + i.ToString(),
+                        };
                         thisImage = new Image();
                         stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg"));
                         bitmap = new BitmapImage();
@@ -1548,15 +1619,36 @@ namespace DocCompareWPF
                         bitmap.EndInit();
                         stream.Close();
                         thisImage.Source = bitmap;
-                        thisImage.Margin = new Thickness(10, 10, 10, 10);
+                        imageGrid.Margin = new Thickness(10, 10, 10, 10);
 
-                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                        Grid.SetColumn(thisImage, 1);
-                        thisGrid.Children.Add(thisImage);
+                        imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        Grid.SetColumn(imageGrid, 1);
+
+                        imageGrid.Children.Add(thisImage);
+                        thisGrid.Children.Add(imageGrid);
+
+                        Button test = new Button()
+                        {
+                            Height = 25,
+                            Width = 25,
+                            Padding = new Thickness(0,0,0,0),
+                            ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
+                            Foreground = Brushes.White,
+                            Opacity = 0.5,
+                            Visibility = Visibility.Hidden,
+                            Name = "SideButtonLeft" + i.ToString(),
+                            IsHitTestVisible = true,
+                        };
+                        //Grid.SetColumn(test, 1);
+                        imageGrid.Children.Add(test);
+
+                        imageGrid.MouseEnter += SideGridMouseEnter;
+                        imageGrid.MouseLeave += SideGridMouseLeave;
                     }
 
                     if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1) // doc 2 has a valid page
                     {
+                        Grid imageGrid = new Grid();
                         thisImage = new Image();
                         stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg"));
                         bitmap = new BitmapImage();
@@ -1566,13 +1658,15 @@ namespace DocCompareWPF
                         bitmap.EndInit();
                         stream.Close();
                         thisImage.Source = bitmap;
-                        thisImage.Margin = new Thickness(10, 10, 10, 10);
+                        imageGrid.Margin = new Thickness(10, 10, 10, 10);
 
                         double h = bitmap.PixelHeight;
                         double w = bitmap.PixelWidth;
-                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                        Grid.SetColumn(thisImage, 2);
-                        thisGrid.Children.Add(thisImage);
+                        imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        Grid.SetColumn(imageGrid, 2);
+                        imageGrid.Children.Add(thisImage);
+                        thisGrid.Children.Add(imageGrid);
+
                         if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
                         {
                             if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
@@ -1589,14 +1683,14 @@ namespace DocCompareWPF
 
                                     stream.Close();
                                     thisImage.Source = bitmap;
-                                    thisImage.Margin = new Thickness(10, 10, 10, 10);
+                                    imageGrid.Margin = new Thickness(10, 10, 10, 10);
 
                                     //thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
                                     //thisImage.VerticalAlignment = VerticalAlignment.Stretch;
 
                                     //thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                                    Grid.SetColumn(thisImage, 2);
-                                    thisGrid.Children.Add(thisImage);
+                                    //Grid.SetColumn(thisImage, 2);
+                                    imageGrid.Children.Add(thisImage);
                                 }
                                 //thisBorder.BorderBrush = Brushes.Red;
                                 thisBorder.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
@@ -1604,6 +1698,23 @@ namespace DocCompareWPF
                             }
                         }
 
+                        imageGrid.Name = "SideImageRight" + i.ToString();
+                        imageGrid.MouseEnter += SideGridMouseEnter;
+                        imageGrid.MouseLeave += SideGridMouseLeave;
+
+                        Button test2 = new Button()
+                        {
+                            Height = 25,
+                            Width = 25,
+                            Padding = new Thickness(0, 0, 0, 0),
+                            ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
+                            Foreground = Brushes.White,
+                            Opacity = 0.5,
+                            Visibility = Visibility.Hidden,
+                            Name = "SideButtonRight" + i.ToString(),
+                        };
+                        //Grid.SetColumn(test2, 2);
+                        imageGrid.Children.Add(test2);
                     }
 
                     pageCounter++;

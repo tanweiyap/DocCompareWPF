@@ -46,8 +46,8 @@ namespace DocCompareWPF
         // Stack panel for viewing documents in scrollviewer control in comparison view
         StackPanel childPanel1, childPanel2, childPanel3, refDocPanel, docCompareChildPanel1, docCompareChildPanel2;
         Thread threadLoadDocs, threadCompare;
-        string seletedSideGridButtonName1 = "";
-        string seletedSideGridButtonName2 = "";
+        string selectedSideGridButtonName1 = "";
+        string selectedSideGridButtonName2 = "";
         bool inForceAlignMode;
         SideGridSelection sideGridSelectedLeftOrRight;
 
@@ -1491,7 +1491,7 @@ namespace DocCompareWPF
                             {
                                 if(nameToLook.Contains("Left") )
                                 {
-                                    if(nameToLook != seletedSideGridButtonName1)
+                                    if(nameToLook != selectedSideGridButtonName1)
                                         foundButton.Visibility = Visibility.Hidden;
                                     else
                                         foundButton.Visibility = Visibility.Visible;
@@ -1505,7 +1505,7 @@ namespace DocCompareWPF
                             {
                                 if (nameToLook.Contains("Right"))
                                 {
-                                    if (nameToLook != seletedSideGridButtonName1)
+                                    if (nameToLook != selectedSideGridButtonName1)
                                         foundButton.Visibility = Visibility.Hidden;
                                     else
                                         foundButton.Visibility = Visibility.Visible;
@@ -1553,7 +1553,7 @@ namespace DocCompareWPF
                         }
                         else
                         {
-                            if(nameToLook == seletedSideGridButtonName1)
+                            if(nameToLook == selectedSideGridButtonName1)
                             {
                                 foundButton.Visibility = Visibility.Visible;
                             }else
@@ -1571,8 +1571,8 @@ namespace DocCompareWPF
             Button button = sender as Button;
             if (inForceAlignMode == false)
             {
-                seletedSideGridButtonName1 = button.Name;
-                if (seletedSideGridButtonName1.Contains("Left"))
+                selectedSideGridButtonName1 = button.Name;
+                if (selectedSideGridButtonName1.Contains("Left"))
                 {
                     sideGridSelectedLeftOrRight = SideGridSelection.LEFT;
                 }
@@ -1589,45 +1589,58 @@ namespace DocCompareWPF
             }
             else
             {
-                seletedSideGridButtonName2 = button.Name;
-                inForceAlignMode = false;
-                Dispatcher.Invoke(() =>
+                selectedSideGridButtonName2 = button.Name;
+
+                if (selectedSideGridButtonName2 == selectedSideGridButtonName1)
                 {
-                    UnMaskSideGridFromForceAlignMode();
-                });
-
-                int source, target;
-                string[] splittedNameTarget;
-                string[] splittedNameRef;
-
-                if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
-                {
-                    splittedNameRef = seletedSideGridButtonName1.Split("Left");
-                    splittedNameTarget = seletedSideGridButtonName2.Split("Right");
-
-                    source = docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedNameRef[1])];
-                    target = docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedNameTarget[1])];
-                    docs.AddForceAligmentPairs(source, target);
+                    inForceAlignMode = false;
+                    Dispatcher.Invoke(() =>
+                    {
+                        UnMaskSideGridFromForceAlignMode();
+                    });
+                    return;
                 }
                 else
                 {
-                    splittedNameRef = seletedSideGridButtonName2.Split("Left");
-                    splittedNameTarget = seletedSideGridButtonName1.Split("Right");
+                    inForceAlignMode = false;
+                    Dispatcher.Invoke(() =>
+                    {
+                        UnMaskSideGridFromForceAlignMode();
+                    });
 
-                    source = docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedNameRef[1])];
-                    target = docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedNameTarget[1])];
-                    docs.AddForceAligmentPairs(source, target);
+                    int source, target;
+                    string[] splittedNameTarget;
+                    string[] splittedNameRef;
+
+                    if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                    {
+                        splittedNameRef = selectedSideGridButtonName1.Split("Left");
+                        splittedNameTarget = selectedSideGridButtonName2.Split("Right");
+
+                        source = docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedNameRef[1])];
+                        target = docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedNameTarget[1])];
+                        docs.AddForceAligmentPairs(source, target);
+                    }
+                    else
+                    {
+                        splittedNameRef = selectedSideGridButtonName2.Split("Left");
+                        splittedNameTarget = selectedSideGridButtonName1.Split("Right");
+
+                        source = docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedNameRef[1])];
+                        target = docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedNameTarget[1])];
+                        docs.AddForceAligmentPairs(source, target);
+                    }
+
+                    ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                    docCompareGrid.Visibility = Visibility.Hidden;
+                    docCompareSideGridShown = 0;
+                    DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
+                    DocCompareSideScrollViewer.ScrollToVerticalOffset(0);
+                    SetVisiblePanel(SidePanels.DOCCOMPARE);
+                    ProgressBarDocCompare.Visibility = Visibility.Visible;
+                    threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                    threadCompare.Start();
                 }
-
-                ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
-                docCompareGrid.Visibility = Visibility.Hidden;
-                docCompareSideGridShown = 0;
-                DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
-                DocCompareSideScrollViewer.ScrollToVerticalOffset(0);
-                SetVisiblePanel(SidePanels.DOCCOMPARE);
-                ProgressBarDocCompare.Visibility = Visibility.Visible;
-                threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                threadCompare.Start();
 
             }
         }
@@ -1666,7 +1679,7 @@ namespace DocCompareWPF
                         if(sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
                         {
                             splittedNameTarget = thisTargetGrid.Name.Split("Left");
-                            splittedNameRef= seletedSideGridButtonName1.Split("Left");
+                            splittedNameRef= selectedSideGridButtonName1.Split("Left");
 
                             if(thisTargetGrid.Name.Contains("Left") && splittedNameTarget[1] != splittedNameRef[1])
                             {
@@ -1682,7 +1695,7 @@ namespace DocCompareWPF
                         else
                         {
                             splittedNameTarget = thisTargetGrid.Name.Split("Right");
-                            splittedNameRef = seletedSideGridButtonName1.Split("Right");
+                            splittedNameRef = selectedSideGridButtonName1.Split("Right");
 
                             if (thisTargetGrid.Name.Contains("Right") && splittedNameTarget[1] != splittedNameRef[1])
                             {

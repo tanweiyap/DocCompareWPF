@@ -15,6 +15,7 @@ namespace DocCompareWPF.Classes
         public string workingDir;
         public int docToReload;
         public int displayToReload;
+        public List<List<int>> forceAlignmentIndices;
 
         public DocumentManagement(string p_workingDir, AppSettings settings)
         {
@@ -33,6 +34,7 @@ namespace DocCompareWPF.Classes
             Directory.CreateDirectory(workingDir);
 
             Directory.CreateDirectory(Path.Join(workingDir, "compare"));
+            forceAlignmentIndices = new List<List<int>>();
         }
 
         public DocumentManagement(int p_maxDocCount, string p_workingDir, AppSettings settings)
@@ -52,6 +54,7 @@ namespace DocCompareWPF.Classes
             Directory.CreateDirectory(workingDir);
 
             Directory.CreateDirectory(Path.Join(workingDir, "compare"));
+            forceAlignmentIndices = new List<List<int>>();
         }
 
         public void AddDocument(string p_filePath)
@@ -140,6 +143,27 @@ namespace DocCompareWPF.Classes
                     documentsToShow.Add(-1);
                 }
             }
+        }
+
+        public void AddForceAligmentPairs(int source, int target)
+        {
+            forceAlignmentIndices.Add(new List<int>() { source, target });
+        }
+
+        public void RemoveForceAligmentPairs(int source)
+        {
+            int index = -1;
+            for(int i = 0; i< forceAlignmentIndices.Count; i++)
+            {
+                if(forceAlignmentIndices[i][0] == source)
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            if(index != -1)
+                forceAlignmentIndices.RemoveAt(index);
         }
     }
 }

@@ -345,7 +345,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
                                         <ColumnDefinition/>
-                                        <ColumnDefinition MaxWidth="200" MinWidth="200"/>
+                                        <ColumnDefinition MaxWidth="300" MinWidth="300"/>
                                     </Grid.ColumnDefinitions>
                                     <Label x:Name="DocCompareNameLabel1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="35,0,0,0"></Label>
                                     <Button x:Name="OpenDoc1OriginalButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="0" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
@@ -385,7 +385,7 @@
                             <Grid x:Name="DocCompareScrollViewerGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
-                                    <ColumnDefinition MaxWidth="200" MinWidth="200"/>
+                                    <ColumnDefinition MaxWidth="300" MinWidth="300"/>
                                 </Grid.ColumnDefinitions>
                                 <ScrollViewer x:Name="DocCompareMainScrollViewer" Grid.Column="0" ScrollChanged="DocCompareMainScrollViewer_ScrollChanged"/>
                                 <ScrollViewer x:Name="DocCompareSideScrollViewer" Grid.Column="1"/>
@@ -395,7 +395,7 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
-                                        <ColumnDefinition MinWidth="200" MaxWidth="200"/>
+                                        <ColumnDefinition MinWidth="300" MaxWidth="300"/>
                                     </Grid.ColumnDefinitions>
                                     <Label x:Name="DocComparePageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
                                 </Grid>

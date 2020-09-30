@@ -113,7 +113,7 @@ namespace DocCompareWPF.Classes
             return ret;
         }
 
-        public static int CompareDocs(string doc1ImageFolder, string doc2ImageFolder, string outputFolder, out ArrayList pageIndices, out int totalLen)
+        public static int CompareDocs(string doc1ImageFolder, string doc2ImageFolder, string outputFolder, out ArrayList pageIndices, out int totalLen, int[,] forceIndices)
         {
             int ret = -1;
             int totalLength = 0;
@@ -125,7 +125,7 @@ namespace DocCompareWPF.Classes
                 file.Delete();
             }
 
-            pageIndices = DocCompareClass.docCompare(ref doc1ImageFolder, ref doc2ImageFolder, ref outputFolder, ref totalLength);
+            pageIndices = DocCompareClass.docCompare(ref doc1ImageFolder, ref doc2ImageFolder, ref outputFolder, ref totalLength, forceIndices);
 
             if (pageIndices != null) //? successful?
             {

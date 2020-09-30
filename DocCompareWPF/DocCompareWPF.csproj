@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Icons\linkIcon.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MahApps.Metro" Version="2.2.0" />
     <PackageReference Include="MahApps.Metro.IconPacks" Version="4.4.0" />
     <PackageReference Include="MaterialDesignThemes.MahApps" Version="0.1.4" />
@@ -23,10 +19,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DocCompareDLL\DocCompareDLL.csproj" />
     <ProjectReference Include="..\DocConvert\DocConvert.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Icons\linkIcon.png" />
   </ItemGroup>
 
   <ItemGroup>

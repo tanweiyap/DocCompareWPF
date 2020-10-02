@@ -51,6 +51,7 @@ namespace DocCompareWPF
         string selectedSideGridButtonName2 = "";
         bool inForceAlignMode;
         SideGridSelection sideGridSelectedLeftOrRight;
+        double scrollPosLeft, scrollPosRight;
 
         // App settings
         AppSettings settings;
@@ -1226,6 +1227,7 @@ namespace DocCompareWPF
         private void ReloadDocCompare1Button_Click(object sender, RoutedEventArgs e)
         {
             ProgressBarDocCompareReload.Visibility = Visibility.Visible;
+            docs.forceAlignmentIndices = new List<List<int>>();
 
             docs.docToReload = docs.documentsToCompare[0];
             docs.displayToReload = 3;
@@ -1237,7 +1239,7 @@ namespace DocCompareWPF
         private void ReloadDocCompare2Button_Click(object sender, RoutedEventArgs e)
         {
             ProgressBarDocCompareReload.Visibility = Visibility.Visible;
-
+            docs.forceAlignmentIndices = new List<List<int>>();
             docs.docToReload = docs.documentsToCompare[1];
             docs.displayToReload = 4;
 
@@ -1635,6 +1637,9 @@ namespace DocCompareWPF
             Button button = sender as Button;
             if (inForceAlignMode == false)
             {
+                scrollPosLeft = docCompareChildPanelLeft.VerticalOffset;
+                scrollPosRight = docCompareChildPanelRight.VerticalOffset;
+
                 selectedSideGridButtonName1 = button.Name;
                 if (selectedSideGridButtonName1.Contains("Left"))
                 {
@@ -1666,6 +1671,17 @@ namespace DocCompareWPF
                     {
                         UnMaskSideGridFromForceAlignMode();
                         EnableRemoveForceAlignButton();
+
+                        if(sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                        {
+                            DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosLeft);
+                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosLeft);
+                        }else
+                        {
+                            DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosRight);
+                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosRight);
+                        }
+
                     });
                     return;
                 }
@@ -1722,12 +1738,26 @@ namespace DocCompareWPF
         {
             if (inForceAlignMode == false)
                 DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(DocCompareSideScrollViewerRight.VerticalOffset);
+            else
+            {
+                if(sideGridSelectedLeftOrRight == SideGridSelection.RIGHT)
+                {
+                    DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosRight);
+                }
+            }
         }
 
         private void DocCompareSideScrollViewerLeft_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (inForceAlignMode == false)
                 DocCompareSideScrollViewerRight.ScrollToVerticalOffset(DocCompareSideScrollViewerLeft.VerticalOffset);
+            else
+            {
+                if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                {
+                    DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosLeft);
+                }
+            }
         }
 
         private void DisableSideScrollLeft()

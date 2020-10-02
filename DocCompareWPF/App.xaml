@@ -38,7 +38,7 @@
                     <sys:Double x:Key="SmallIconSize">18</sys:Double>
                     <sys:Double x:Key="BarButtonHeight">18</sys:Double>
                     <DataTemplate x:Key="ForceAlignIcon">
-                        <iconPacks:PackIconOcticons Kind="Link" Width="15" Height="15"/>
+                        <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15"/>
                     </DataTemplate>
 
                     <Style x:Key="WindowMainPanelStyle" TargetType="{x:Type Border}">

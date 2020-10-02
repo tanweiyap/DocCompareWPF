@@ -313,7 +313,7 @@
                             </Grid>
                         </materialDesign:ColorZone>
                     </Grid>
-                    <Grid x:Name="DocComparePanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DocComparePanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <materialDesign:Card x:Name="ProgressBarDocCompare" UniformCornerRadius="14" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
@@ -385,10 +385,12 @@
                             <Grid x:Name="DocCompareScrollViewerGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
-                                    <ColumnDefinition MaxWidth="300" MinWidth="300"/>
+                                    <ColumnDefinition MaxWidth="140" MinWidth="140"/>
+                                    <ColumnDefinition MaxWidth="160" MinWidth="160"/>
                                 </Grid.ColumnDefinitions>
                                 <ScrollViewer x:Name="DocCompareMainScrollViewer" Grid.Column="0" ScrollChanged="DocCompareMainScrollViewer_ScrollChanged"/>
-                                <ScrollViewer x:Name="DocCompareSideScrollViewer" Grid.Column="1"/>
+                                <ScrollViewer x:Name="DocCompareSideScrollViewerLeft" Background="Transparent" Style="{StaticResource MahApps.Styles.ScrollViewer}" Grid.Column="1" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" ScrollChanged="DocCompareSideScrollViewerLeft_ScrollChanged" Margin="0" HorizontalContentAlignment="Left" BorderThickness="0" Width="150"/>
+                                <ScrollViewer x:Name="DocCompareSideScrollViewerRight" Background="Transparent" Style="{StaticResource MahApps.Styles.ScrollViewer}" Grid.Column="2" ScrollChanged="DocCompareSideScrollViewerRight_ScrollChanged" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Hidden" Padding="0" Margin="0" HorizontalContentAlignment="Stretch" BorderThickness="0" Width="160"/>
                                 <materialDesign:ColorZone Padding="10" CornerRadius="10" x:Name="HighlightingDisableTip" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.7" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" BorderBrush="Black" BorderThickness="1">Highlighting disabled</materialDesign:ColorZone>
                             </Grid>
                             <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

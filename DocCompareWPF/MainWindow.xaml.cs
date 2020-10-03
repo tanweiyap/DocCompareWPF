@@ -1637,8 +1637,8 @@ namespace DocCompareWPF
             Button button = sender as Button;
             if (inForceAlignMode == false)
             {
-                scrollPosLeft = docCompareChildPanelLeft.VerticalOffset;
-                scrollPosRight = docCompareChildPanelRight.VerticalOffset;
+                scrollPosLeft = DocCompareSideScrollViewerLeft.VerticalOffset;
+                scrollPosRight = DocCompareSideScrollViewerRight.VerticalOffset;
 
                 selectedSideGridButtonName1 = button.Name;
                 if (selectedSideGridButtonName1.Contains("Left"))
@@ -1666,7 +1666,7 @@ namespace DocCompareWPF
 
                 if (selectedSideGridButtonName2 == selectedSideGridButtonName1) // click on original page again
                 {
-                    inForceAlignMode = false;
+                    
                     Dispatcher.Invoke(() =>
                     {
                         UnMaskSideGridFromForceAlignMode();
@@ -1674,15 +1674,16 @@ namespace DocCompareWPF
 
                         if(sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
                         {
-                            DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosLeft);
+                            //DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosLeft);
                             DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosLeft);
                         }else
                         {
                             DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosRight);
-                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosRight);
+                            //DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosRight);
                         }
 
                     });
+                    inForceAlignMode = false;
                     return;
                 }
                 else // another page selected

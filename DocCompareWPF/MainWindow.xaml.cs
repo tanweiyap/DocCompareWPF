@@ -1689,14 +1689,7 @@ namespace DocCompareWPF
                 else // another page selected
                 {
                     inForceAlignMode = false;
-                    Dispatcher.Invoke(() =>
-                    {
-                        UnMaskSideGridFromForceAlignMode();
-                        EnableRemoveForceAlignButton();
-                        EnableSideScrollLeft();
-                        EnableSideScrollRight();
-                    });
-
+                    
                     int source, target;
                     string[] splittedNameTarget;
                     string[] splittedNameRef;
@@ -1730,8 +1723,15 @@ namespace DocCompareWPF
                     ProgressBarDocCompare.Visibility = Visibility.Visible;
                     threadCompare = new Thread(new ThreadStart(CompareDocsThread));
                     threadCompare.Start();
-                }
 
+                    Dispatcher.Invoke(() =>
+                    {
+                        UnMaskSideGridFromForceAlignMode();
+                        EnableRemoveForceAlignButton();
+                        EnableSideScrollLeft();
+                        EnableSideScrollRight();
+                    });
+                }
             }
         }
 
@@ -1784,6 +1784,21 @@ namespace DocCompareWPF
         private void UnMaskSideGridFromForceAlignMode()
         {
             foreach (object obj in docCompareChildPanelLeft.Children)
+            {
+                //Border thisBorder = obj as Border;
+                //Grid thisGrid = thisBorder.Child as Grid;
+                Grid thisGrid = obj as Grid;
+                foreach (object obj2 in thisGrid.Children)
+                {
+                    if (obj2 is Grid)
+                    {
+                        Grid thisTargetGrid = obj2 as Grid;
+                        thisTargetGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 }; ;
+                    }
+                }
+            }
+
+            foreach (object obj in docCompareChildPanelRight.Children)
             {
                 //Border thisBorder = obj as Border;
                 //Grid thisGrid = thisBorder.Child as Grid;

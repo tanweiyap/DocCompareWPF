@@ -1,4 +1,5 @@
 ﻿using DocCompareWPF.Classes;
+using MahApps.Metro.IconPacks;
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 using ProtoBuf;
@@ -177,6 +178,8 @@ namespace DocCompareWPF
         {
             if (docs.documents.Count >= 2 && docCompareRunning == false)
             {
+                inForceAlignMode = false;
+
                 if (settings.isProVersion == true && settings.canSelectRefDoc == true)
                 {
                     SetVisiblePanel(SidePanels.REFDOC);
@@ -1481,58 +1484,68 @@ namespace DocCompareWPF
                 nameToLook = "SideButtonRight" + splittedName[1];
             }
 
-            string[] splittedForceAlignDocName;
-            if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+            int selfInd = int.Parse(splittedName[1]);
+
+            int refInd = 0;
+            if (inForceAlignMode)
             {
-                splittedForceAlignDocName = selectedSideGridButtonName1.Split("Left");
-            }
-            else
-            {
-                splittedForceAlignDocName = selectedSideGridButtonName1.Split("Right");
+                string[] splittedRefName;
+                if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                {
+                    splittedRefName = selectedSideGridButtonName1.Split("Left");
+                    refInd = int.Parse(splittedRefName[1]);
+                }
+                else
+                {
+                    splittedRefName = selectedSideGridButtonName1.Split("Right");
+                    refInd = int.Parse(splittedRefName[1]);
+                }
             }
 
-            int selfInd = int.Parse(splittedName[1]);
-            int lowerInd = 0;
-            int upperInd = docs.totalLen;
+            int lowerIndLeft = 0;
+            int lowerIndRight = 0;
+            int upperIndLeft = docs.totalLen;
+            int upperIndRight = docs.totalLen;
 
             if (inForceAlignMode == true)
             {
-                int ind = int.Parse(splittedForceAlignDocName[1]);
-                for (int i = 0; i < docs.totalLen; i++)
+                foreach (List<int> pair in docs.forceAlignmentIndices)
                 {
+                    int pairLeft = docs.documents[docs.documentsToCompare[0]].docCompareIndices.FindIndex(x => x == pair[0]);
+                    int pairRight = docs.documents[docs.documentsToCompare[1]].docCompareIndices.FindIndex(x => x == pair[1]);
+
                     if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
                     {
-                        foreach (List<int> pair in docs.forceAlignmentIndices)
+                        if (pairLeft > lowerIndLeft && pairLeft <= refInd)
                         {
-                            if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
-                            {
-
-                                if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= pair[1] && i > lowerInd && i < ind)
-                                    lowerInd = i;
-
-                                if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] <= pair[1] && i < upperInd && i > ind)
-                                    upperInd = i;
-                            }
+                            lowerIndLeft = pairLeft;
+                            lowerIndRight = pairRight;
                         }
 
+                        if (pairLeft < upperIndLeft && pairLeft >= refInd)
+                        {
+                            upperIndLeft = pairLeft;
+                            upperIndRight = pairRight;
+                        }
                     }
                     else
                     {
-                        foreach (List<int> pair in docs.forceAlignmentIndices)
+                        if (pairRight > lowerIndRight && pairRight <= refInd)
                         {
-                            if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
-                            {
-                                if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] >= pair[0] && i > lowerInd && i < ind)
-                                    lowerInd = i;
+                            lowerIndLeft = pairLeft; 
+                            lowerIndRight= pairRight;
+                        }
 
-                                if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] <= pair[0] && i < upperInd && i > ind)
-                                    upperInd = i;
-                            }
+                        if (pairRight < upperIndRight && pairRight >= refInd)
+                        {
+                            upperIndLeft = pairLeft;
+                            upperIndRight = pairRight;
                         }
                     }
                 }
-
             }
+
+
             foreach (object child in img.Children)
             {
                 if (child is Button)
@@ -1557,10 +1570,25 @@ namespace DocCompareWPF
                                 }
                                 else
                                 {
-                                    if (lowerInd <= selfInd && selfInd <= upperInd)
+                                    if (lowerIndRight <= selfInd && selfInd <= upperIndLeft)
                                         foundButton.Visibility = Visibility.Visible;
                                     else
-                                        foundButton.Visibility = Visibility.Hidden;
+                                    {
+                                        //foundButton.Visibility = Visibility.Hidden;
+                                        
+                                        nameToLook = "SideButtonInvalidRight" + splittedName[1];
+                                        foreach (object child2 in img.Children)
+                                        {
+                                            if(child2 is Button)
+                                            {
+                                                if((child2 as Button).Name == nameToLook)
+                                                {
+                                                    foundButton = child2 as Button;
+                                                    foundButton.Visibility = Visibility.Visible;
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             else
@@ -1574,10 +1602,26 @@ namespace DocCompareWPF
                                 }
                                 else
                                 {
-                                    if (lowerInd <= selfInd && selfInd <= upperInd)
+                                    if (lowerIndRight <= selfInd && selfInd <= upperIndRight)
                                         foundButton.Visibility = Visibility.Visible;
                                     else
-                                        foundButton.Visibility = Visibility.Hidden;
+                                    {
+                                        //foundButton.Visibility = Visibility.Hidden;
+                                        
+                                        nameToLook = "SideButtonInvalidLeft" + splittedName[1];
+                                        foreach (object child2 in img.Children)
+                                        {
+                                            if (child2 is Button)
+                                            {
+                                                if ((child2 as Button).Name == nameToLook)
+                                                {
+                                                    foundButton = child2 as Button;
+                                                    foundButton.Visibility = Visibility.Visible;
+                                                }
+                                            }
+                                        }
+                                        
+                                    }
                                 }
                             }
                         }
@@ -1592,24 +1636,27 @@ namespace DocCompareWPF
             string imgName = img.Name;
             string[] splittedName;
             string nameToLook = "";
+            string nameToLook2 = "";
 
             if (imgName.Contains("Left"))
             {
                 splittedName = imgName.Split("Left");
                 nameToLook = "SideButtonLeft" + splittedName[1];
+                nameToLook2 = "SideButtonInvalidLeft" + splittedName[1];
             }
 
             if (imgName.Contains("Right"))
             {
                 splittedName = imgName.Split("Right");
                 nameToLook = "SideButtonRight" + splittedName[1];
+                nameToLook2 = "SideButtonInvalidRight" + splittedName[1];
             }
 
             foreach (object child in img.Children)
             {
                 if (child is Button)
                 {
-                    if ((child as Button).Name == nameToLook)
+                    if ((child as Button).Name == nameToLook || (child as Button).Name == nameToLook2)
                     {
                         Button foundButton = child as Button;
                         if (inForceAlignMode == false)
@@ -1618,7 +1665,7 @@ namespace DocCompareWPF
                         }
                         else
                         {
-                            if (nameToLook == selectedSideGridButtonName1)
+                            if (foundButton.Name == selectedSideGridButtonName1)
                             {
                                 foundButton.Visibility = Visibility.Visible;
                             }
@@ -1666,17 +1713,18 @@ namespace DocCompareWPF
 
                 if (selectedSideGridButtonName2 == selectedSideGridButtonName1) // click on original page again
                 {
-                    
+
                     Dispatcher.Invoke(() =>
                     {
                         UnMaskSideGridFromForceAlignMode();
                         EnableRemoveForceAlignButton();
 
-                        if(sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                        if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
                         {
                             //DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosLeft);
                             DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosLeft);
-                        }else
+                        }
+                        else
                         {
                             DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosRight);
                             //DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosRight);
@@ -1689,7 +1737,7 @@ namespace DocCompareWPF
                 else // another page selected
                 {
                     inForceAlignMode = false;
-                    
+
                     int source, target;
                     string[] splittedNameTarget;
                     string[] splittedNameRef;
@@ -1720,7 +1768,7 @@ namespace DocCompareWPF
                     DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
                     DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
                     SetVisiblePanel(SidePanels.DOCCOMPARE);
-                    ProgressBarDocCompare.Visibility = Visibility.Visible;
+                    ProgressBarDocCompareAlign.Visibility = Visibility.Visible;
                     threadCompare = new Thread(new ThreadStart(CompareDocsThread));
                     threadCompare.Start();
 
@@ -1741,7 +1789,7 @@ namespace DocCompareWPF
                 DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(DocCompareSideScrollViewerRight.VerticalOffset);
             else
             {
-                if(sideGridSelectedLeftOrRight == SideGridSelection.RIGHT)
+                if (sideGridSelectedLeftOrRight == SideGridSelection.RIGHT)
                 {
                     DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosRight);
                 }
@@ -1774,6 +1822,31 @@ namespace DocCompareWPF
         private void DisableSideScrollRight()
         {
             //DocCompareSideScrollViewerRight.IsEnabled = false;
+        }
+
+        private void RemoveAllForceAlignButton_Click(object sender, RoutedEventArgs e)
+        {
+            docs.forceAlignmentIndices = new List<List<int>>();
+            inForceAlignMode = false;
+
+            ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+            docCompareGrid.Visibility = Visibility.Hidden;
+            docCompareSideGridShown = 0;
+            DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
+            DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
+            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
+            SetVisiblePanel(SidePanels.DOCCOMPARE);
+            ProgressBarDocCompareAlign.Visibility = Visibility.Visible;
+            threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+            threadCompare.Start();
+
+            Dispatcher.Invoke(() =>
+            {
+                UnMaskSideGridFromForceAlignMode();
+                EnableRemoveForceAlignButton();
+                EnableSideScrollLeft();
+                EnableSideScrollRight();
+            });
         }
 
         private void EnableSideScrollRight()
@@ -1908,7 +1981,7 @@ namespace DocCompareWPF
 
         private void EnableRemoveForceAlignButton()
         {
-            foreach (object obj in docCompareChildPanelLeft.Children)
+            foreach (object obj in docCompareChildPanelRight.Children)
             {
                 //Border thisBorder = obj as Border;
                 //Grid thisGrid = thisBorder.Child as Grid;
@@ -1926,7 +1999,7 @@ namespace DocCompareWPF
 
         private void DisableRemoveForceAlignButton()
         {
-            foreach (object obj in docCompareChildPanelLeft.Children)
+            foreach (object obj in docCompareChildPanelRight.Children)
             {
                 //Border thisBorder = obj as Border;
                 //Grid thisGrid = thisBorder.Child as Grid;
@@ -2178,6 +2251,28 @@ namespace DocCompareWPF
 
                             //Grid.SetColumn(test, 1);
                             imageGrid.Children.Add(test);
+                            
+                            test = new Button()
+                            {
+                                Height = 25,
+                                Width = 25,
+                                Padding = new Thickness(0, 0, 0, 0),
+                                ContentTemplate = (DataTemplate)FindResource("ForceAlignInvalidIcon"),
+                                Foreground = Brushes.White,
+                                //Background = Brushes.Transparent,
+                                Opacity = 0.5,
+                                Visibility = Visibility.Hidden,
+                                Name = "SideButtonInvalidLeft" + i.ToString(),
+                                IsHitTestVisible = true,
+                                HorizontalAlignment = HorizontalAlignment.Right,
+                                VerticalAlignment = VerticalAlignment.Bottom,
+                                ToolTip = "Invalid page combination",
+                                IsEnabled = false,
+                            };
+
+
+                            //Grid.SetColumn(test, 1);
+                            imageGrid.Children.Add(test);
                         }
                         imageGrid.MouseEnter += SideGridMouseEnter;
                         imageGrid.MouseLeave += SideGridMouseLeave;
@@ -2285,6 +2380,26 @@ namespace DocCompareWPF
 
                             //Grid.SetColumn(test2, 2);
                             imageGrid.Children.Add(test2);
+
+                            test2 = new Button()
+                            {
+                                Height = 25,
+                                Width = 25,
+                                Padding = new Thickness(0, 0, 0, 0),
+                                ContentTemplate = (DataTemplate)FindResource("ForceAlignInvalidIcon"),
+                                Foreground = Brushes.White,
+                                //Background = Brushes.Transparent,
+                                Opacity = 0.5,
+                                Visibility = Visibility.Hidden,
+                                Name = "SideButtonInvalidRight" + i.ToString(),
+                                HorizontalAlignment = HorizontalAlignment.Right,
+                                VerticalAlignment = VerticalAlignment.Bottom,
+                                ToolTip = "Invalid page combination",
+                                IsEnabled = false,
+                            };
+                            
+                            //Grid.SetColumn(test2, 2);
+                            imageGrid.Children.Add(test2);
                         }
                     }
                     else // we use doc 1 as dummy
@@ -2335,6 +2450,7 @@ namespace DocCompareWPF
 
                 docCompareGrid.Visibility = Visibility.Visible;
                 ProgressBarDocCompare.Visibility = Visibility.Hidden;
+                ProgressBarDocCompareAlign.Visibility = Visibility.Hidden;
             });
         }
 

@@ -334,6 +334,16 @@
                                 <Label Grid.Column="1" Margin="10,0,0,0">Reloading documents</Label>
                             </Grid>
                         </materialDesign:Card>
+                        <materialDesign:Card x:Name="ProgressBarDocCompareAlign" UniformCornerRadius="14" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden">
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Value="50" IsIndeterminate="True" />
+                                <Label Grid.Column="1" Margin="10,0,0,0">Aligning documents</Label>
+                            </Grid>
+                        </materialDesign:Card>
                         <Grid x:Name="docCompareGrid">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="{StaticResource TopBarHeight}"/>
@@ -380,6 +390,10 @@
                                             HorizontalAlignment="Right" Click="CloseDocCompareButton_Click" Margin="0,0,10,0" ToolTip="Close comparison">
                                         <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </-->
+                                    <Button x:Name="RemoveAllForceAlignButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
+                                            HorizontalAlignment="Right" Click="RemoveAllForceAlignButton_Click" Margin="0,0,10,0" ToolTip="Remove all force alignments">
+                                        <iconPacks:PackIconFontAwesome Kind="UnlinkSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                    </Button>
                                 </Grid>
                             </materialDesign:ColorZone>
                             <Grid x:Name="DocCompareScrollViewerGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

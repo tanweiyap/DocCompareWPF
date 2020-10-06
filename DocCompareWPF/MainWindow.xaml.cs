@@ -1,18 +1,14 @@
 ﻿using DocCompareWPF.Classes;
-using MahApps.Metro.IconPacks;
 using Microsoft.Win32;
-using Microsoft.Win32.SafeHandles;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
@@ -25,38 +21,33 @@ namespace DocCompareWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        enum SidePanels
-        {
-            DRAGDROP,
-            DOCCOMPARE,
-            REFDOC,
-            FILE_EXPLORER,
-            SETTINGS,
-        };
-
-        enum SideGridSelection
-        {
-            LEFT,
-            RIGHT,
-        };
-
         private readonly DocumentManagement docs;
+
         private readonly string workingDir = Path.Join(Directory.GetCurrentDirectory(), "temp");
-        private bool docCompareRunning, showMask;
-        private int docCompareSideGridShown;
 
         // Stack panel for viewing documents in scrollviewer control in comparison view
-        StackPanel childPanel1, childPanel2, childPanel3, refDocPanel, docCompareChildPanel1, docCompareChildPanelLeft, docCompareChildPanelRight;
-        Thread threadLoadDocs, threadCompare;
-        string selectedSideGridButtonName1 = "";
-        string selectedSideGridButtonName2 = "";
-        bool inForceAlignMode;
-        SideGridSelection sideGridSelectedLeftOrRight;
-        double scrollPosLeft, scrollPosRight;
+        private StackPanel childPanel1, childPanel2, childPanel3, refDocPanel, docCompareChildPanel1, docCompareChildPanelLeft, docCompareChildPanelRight;
+
+        private bool docCompareRunning, showMask;
+
+        private int docCompareSideGridShown;
+
+        private bool inForceAlignMode;
+
+        private string lastUsedDirectory;
+
+        private double scrollPosLeft, scrollPosRight;
+
+        private string selectedSideGridButtonName1 = "";
+
+        private string selectedSideGridButtonName2 = "";
 
         // App settings
-        AppSettings settings;
-        string lastUsedDirectory;
+        private AppSettings settings;
+
+        private SideGridSelection sideGridSelectedLeftOrRight;
+
+        private Thread threadLoadDocs, threadCompare;
 
         public MainWindow()
         {
@@ -104,701 +95,23 @@ namespace DocCompareWPF
                 {
                     SettingsShowThirdPanelCheckBox.IsEnabled = false;
                 }
-
             });
         }
 
-        private void SaveSettings()
+        private enum SideGridSelection
         {
-            using var file = File.Create("AppSettings.bin");
-            Serializer.Serialize(file, settings);
-        }
+            LEFT,
+            RIGHT,
+        };
 
-        private void LoadSettings()
+        private enum SidePanels
         {
-            settings = new AppSettings();
-            using var file = File.OpenRead("AppSettings.bin");
-            settings = Serializer.Deserialize<AppSettings>(file);
-        }
-
-        private void ShowDragDropZone2()
-        {
-            DocCompareSecondDocZone.Visibility = Visibility.Visible;
-            DragDropPanel.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
-        }
-
-        private void HideDragDropZone2()
-        {
-            DocCompareSecondDocZone.Visibility = Visibility.Collapsed;
-            DragDropPanel.ColumnDefinitions[1].Width = new GridLength(0, GridUnitType.Star);
-        }
-
-        private void ShowDragDropZone3()
-        {
-            if (settings.numPanelsDragDrop == 3)
-            {
-                DocCompareThirdDocZone.Visibility = Visibility.Visible;
-                DragDropPanel.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
-            }
-        }
-
-        private void HideDragDropZone3()
-        {
-            DocCompareThirdDocZone.Visibility = Visibility.Collapsed;
-            DragDropPanel.ColumnDefinitions[2].Width = new GridLength(0, GridUnitType.Star);
-        }
-
-        private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            //TODO: implement handling for query before closing
-            Close();
-        }
-
-        private void WindowMaximizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            WindowMaximizeButton.Visibility = Visibility.Hidden;
-            WindowRestoreButton.Visibility = Visibility.Visible;
-            WindowState = WindowState.Maximized;
-            MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight - 7;
-        }
-
-        private void WindowMinimizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
-        private void WindowRestoreButton_Click(object sender, RoutedEventArgs e)
-        {
-            WindowMaximizeButton.Visibility = Visibility.Visible;
-            WindowRestoreButton.Visibility = Visibility.Hidden;
-            WindowState = WindowState.Normal;
-        }
-
-        private void SidePanelDocCompareButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (docs.documents.Count >= 2 && docCompareRunning == false)
-            {
-                inForceAlignMode = false;
-
-                if (settings.isProVersion == true && settings.canSelectRefDoc == true)
-                {
-                    SetVisiblePanel(SidePanels.REFDOC);
-
-                    // populate list box
-                    ObservableCollection<string> items = new ObservableCollection<string>();
-                    foreach (Document doc in docs.documents)
-                    {
-                        items.Add(Path.GetFileName(doc.filePath));
-                    }
-
-                    RefDocListBox.ItemsSource = items;
-                    RefDocListBox.SelectedIndex = 0;
-                }
-                else
-                {
-                    docs.documentsToCompare[0] = docs.documentsToShow[0]; // default using the first document selected
-                    docs.documentsToCompare[1] = docs.documentsToShow[1]; // default using the first document selected
-                    UpdateDocCompareComboBox();
-                    SetVisiblePanel(SidePanels.DOCCOMPARE);
-                    docs.forceAlignmentIndices = new List<List<int>>();
-                    ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
-                    docCompareGrid.Visibility = Visibility.Hidden;
-                    docCompareSideGridShown = 0;
-                    DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
-                    DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
-                    DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
-                    ProgressBarDocCompare.Visibility = Visibility.Visible;
-                    threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                    threadCompare.Start();
-                }
-            }
-        }
-
-        private void SetVisiblePanel(SidePanels p_sidePanel)
-        {
-            Brush brush = FindResource("SecondaryAccentBrush") as Brush;
-
-            switch (p_sidePanel)
-            {
-                case SidePanels.DRAGDROP:
-                    SidePanelOpenDocBackground.Background = brush;
-                    SidePanelDocCompareBackground.Background = Brushes.Transparent;
-                    SettingsButtonBackground.Background = Brushes.Transparent;
-                    DragDropPanel.Visibility = Visibility.Visible;
-                    DocComparePanel.Visibility = Visibility.Hidden;
-                    SettingsPanel.Visibility = Visibility.Hidden;
-                    SelectReferenceDocPanel.Visibility = Visibility.Hidden;
-                    break;
-                case SidePanels.DOCCOMPARE:
-                    SidePanelOpenDocBackground.Background = Brushes.Transparent;
-                    SidePanelDocCompareBackground.Background = brush;
-                    SettingsButtonBackground.Background = Brushes.Transparent;
-                    DragDropPanel.Visibility = Visibility.Hidden;
-                    DocComparePanel.Visibility = Visibility.Visible;
-                    SettingsPanel.Visibility = Visibility.Hidden;
-                    SelectReferenceDocPanel.Visibility = Visibility.Hidden;
-                    break;
-                case SidePanels.SETTINGS:
-                    SidePanelOpenDocBackground.Background = Brushes.Transparent;
-                    SidePanelDocCompareBackground.Background = Brushes.Transparent;
-                    SettingsButtonBackground.Background = brush;
-                    DragDropPanel.Visibility = Visibility.Hidden;
-                    DocComparePanel.Visibility = Visibility.Hidden;
-                    SettingsPanel.Visibility = Visibility.Visible;
-                    SelectReferenceDocPanel.Visibility = Visibility.Hidden;
-                    break;
-                case SidePanels.REFDOC:
-                    SidePanelOpenDocBackground.Background = Brushes.Transparent;
-                    SidePanelDocCompareBackground.Background = brush;
-                    SettingsButtonBackground.Background = Brushes.Transparent;
-                    DragDropPanel.Visibility = Visibility.Hidden;
-                    DocComparePanel.Visibility = Visibility.Hidden;
-                    SettingsPanel.Visibility = Visibility.Hidden;
-                    SelectReferenceDocPanel.Visibility = Visibility.Visible;
-                    break;
-                default:
-                    SidePanelOpenDocBackground.Background = Brushes.Transparent;
-                    SidePanelDocCompareBackground.Background = Brushes.Transparent;
-                    SettingsButtonBackground.Background = Brushes.Transparent;
-                    DragDropPanel.Visibility = Visibility.Hidden;
-                    DocComparePanel.Visibility = Visibility.Hidden;
-                    SettingsPanel.Visibility = Visibility.Hidden;
-                    SelectReferenceDocPanel.Visibility = Visibility.Hidden;
-                    break;
-            }
-        }
-
-        private void DocCompareDragDropZone1_DragOver(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effects = DragDropEffects.Copy;
-            }
-            else
-            {
-                e.Effects = DragDropEffects.None;
-            }
-        }
-
-        private void DocCompareDragDropZone2_DragOver(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effects = DragDropEffects.Copy;
-            }
-            else
-            {
-                e.Effects = DragDropEffects.None;
-            }
-        }
-
-        private void DocCompareDragDropZone3_DragOver(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effects = DragDropEffects.Copy;
-            }
-            else
-            {
-                e.Effects = DragDropEffects.None;
-            }
-        }
-
-        private void DocCompareDragDropZone1_Drop(object sender, DragEventArgs e)
-        {
-            if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                var data = e.Data.GetData(DataFormats.FileDrop) as string[];
-
-                foreach (string file in data)
-                {
-                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
-                    {
-                        docs.AddDocument(file);
-                    }
-                    else
-                    {
-                        ShowMaxDocCountWarningBox();
-                        break;
-                    }
-                }
-
-                LoadFilesCommonPart();
-
-                threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
-                threadLoadDocs.Start();
-            }
-        }
-        private void DocCompareDragDropZone2_Drop(object sender, DragEventArgs e)
-        {
-            if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                var data = e.Data.GetData(DataFormats.FileDrop) as string[];
-
-                if (data.Length > settings.maxDocCount)
-                    ShowMaxDocCountWarningBox();
-
-                foreach (string file in data)
-                {
-                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
-                    {
-                        docs.AddDocument(file);
-                    }
-                    else
-                    {
-                        ShowMaxDocCountWarningBox();
-                        break;
-                    }
-                }
-
-                LoadFilesCommonPart();
-
-                threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
-                threadLoadDocs.Start();
-            }
-        }
-
-        private void DocCompareDragDropZone3_Drop(object sender, DragEventArgs e)
-        {
-            if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                var data = e.Data.GetData(DataFormats.FileDrop) as string[];
-
-                foreach (string file in data)
-                {
-                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
-                    {
-                        docs.AddDocument(file);
-                    }
-                    else
-                    {
-                        ShowMaxDocCountWarningBox();
-                        break;
-                    }
-                }
-
-                LoadFilesCommonPart();
-
-                threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
-                threadLoadDocs.Start();
-            }
-        }
-
-        private void ProcessDocThread()
-        {
-            // Going through documents in stack, check if reloading needed
-            for (int i = 0; i < docs.documents.Count; i++)
-            {
-                if (docs.documents[i].loaded == false && docs.documents[i].filePath != null)
-                {
-                    docs.documents[i].loaded = true;
-                    docs.documents[i].ClearFolder();
-                    docs.documents[i].DetectFileType();
-
-                    int ret = -1;
-                    switch (docs.documents[i].fileType)
-                    {
-                        case Document.FileTypes.PDF:
-                            ret = docs.documents[i].ReadPDF();
-                            break;
-                        case Document.FileTypes.PPT:
-                            ret = docs.documents[i].ReadPPT();
-                            break;
-                    }
-                }
-            }
-
-            Dispatcher.Invoke(() =>
-            {
-                DisplayImageLeft(docs.documentsToShow[0]);
-                Dispatcher.Invoke(() =>
-                {
-                    OpenDoc1OriginalButton1.IsEnabled = true;
-                });
-
-                DisplayImageMiddle(docs.documentsToShow[1]);
-                Dispatcher.Invoke(() =>
-                {
-                    OpenDoc2OriginalButton2.IsEnabled = true;
-                });
-
-                if (settings.numPanelsDragDrop == 3)
-                {
-                    if (docs.documents.Count >= 3)
-                    {
-                        DisplayImageRight(docs.documentsToShow[2]);
-                        Dispatcher.Invoke(() =>
-                        {
-                            OpenDoc3OriginalButton3.IsEnabled = true;
-                        });
-                    }
-                }
-
-                ProgressBarDoc1.Visibility = Visibility.Hidden;
-                ProgressBarDoc2.Visibility = Visibility.Hidden;
-                ProgressBarDoc3.Visibility = Visibility.Hidden;
-                UpdateDocSelectionComboBox();
-            });
-        }
-
-        private void CloseDocumentCommonPart()
-        {
-            if (docs.documentsToShow[0] != -1)
-                DisplayImageLeft(docs.documentsToShow[0]);
-            else
-            {
-                Doc1Grid.Visibility = Visibility.Hidden;
-                DocCompareDragDropZone1.Visibility = Visibility.Visible;
-            }
-
-            if (docs.documents.Count >= 2)
-            {
-                if (docs.documentsToShow[1] != -1)
-                    DisplayImageMiddle(docs.documentsToShow[1]);
-
-                if (docs.documentsToShow[1] == -1)
-                {
-                    Doc2Grid.Visibility = Visibility.Hidden;
-                    DocCompareDragDropZone2.Visibility = Visibility.Visible;
-                }
-            }
-            else
-            {
-                Doc2Grid.Visibility = Visibility.Hidden;
-                DocCompareDragDropZone2.Visibility = Visibility.Visible;
-            }
-
-            if (docs.documents.Count >= 3 && settings.numPanelsDragDrop == 3)
-            {
-                if (docs.documentsToShow[2] != -1)
-                    DisplayImageRight(docs.documentsToShow[2]);
-
-                if (docs.documentsToShow[2] == -1)
-                {
-                    HideDragDropZone3();
-                }
-            }
-            else
-            {
-                if (settings.numPanelsDragDrop == 3 && docs.documents.Count >= 2)
-                {
-                    Doc3Grid.Visibility = Visibility.Hidden;
-                    DocCompareDragDropZone3.Visibility = Visibility.Visible;
-                    ShowDragDropZone3();
-                }
-                else
-                    HideDragDropZone3();
-            }
-
-            if (docs.documents.Count == 0)
-            {
-                Doc1Grid.Visibility = Visibility.Hidden;
-                DocCompareDragDropZone1.Visibility = Visibility.Visible;
-                HideDragDropZone2();
-                HideDragDropZone3();
-            }
-        }
-
-        private void CloseDoc1Button_Click(object sender, RoutedEventArgs e)
-        {
-            docs.RemoveDocument(docs.documentsToShow[0], 0);
-            UpdateDocSelectionComboBox();
-            CloseDocumentCommonPart();
-        }
-
-        private void CloseDoc2Button_Click(object sender, RoutedEventArgs e)
-        {
-            docs.RemoveDocument(docs.documentsToShow[1], 1);
-            UpdateDocSelectionComboBox();
-            CloseDocumentCommonPart();
-        }
-
-        private void CloseDoc3Button_Click(object sender, RoutedEventArgs e)
-        {
-            docs.RemoveDocument(docs.documentsToShow[2], 2);
-            UpdateDocSelectionComboBox();
-            CloseDocumentCommonPart();
-        }
-
-        private void ShowMaskButton_Click(object sender, RoutedEventArgs e)
-        {
-            showMask = true;
-            DisplayComparisonResult();
-            HighlightSideGrid();
-            ShowMaskButton.Visibility = Visibility.Hidden;
-            HideMaskButton.Visibility = Visibility.Visible;
-            HighlightingDisableTip.Visibility = Visibility.Hidden;
-        }
-
-        private void HideMaskButton_Click(object sender, RoutedEventArgs e)
-        {
-            showMask = false;
-            DisplayComparisonResult();
-            HighlightSideGrid();
-            ShowMaskButton.Visibility = Visibility.Visible;
-            HideMaskButton.Visibility = Visibility.Hidden;
-            HighlightingDisableTip.Visibility = Visibility.Visible;
-        }
-
-        private void OpenDoc1OriginalButton_Click(object sender, RoutedEventArgs e)
-        {
-            Process fileopener = new Process();
-            fileopener.StartInfo.FileName = "explorer";
-            fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToShow[0]].filePath + "\"";
-            fileopener.Start();
-        }
-
-        private void OpenDoc2OriginalButton_Click(object sender, RoutedEventArgs e)
-        {
-            Process fileopener = new Process();
-            fileopener.StartInfo.FileName = "explorer";
-            fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToShow[1]].filePath + "\"";
-            fileopener.Start();
-        }
-
-        private void OpenDoc3OriginalButton3_Click(object sender, RoutedEventArgs e)
-        {
-            Process fileopener = new Process();
-            fileopener.StartInfo.FileName = "explorer";
-            fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToShow[2]].filePath + "\"";
-            fileopener.Start();
-        }
-
-        private void SettingsButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetVisiblePanel(SidePanels.SETTINGS);
-        }
-
-        private void SidePanelOpenDocButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetVisiblePanel(SidePanels.DRAGDROP);
-        }
-
-        private void DocCompareMainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
-        {
-            double accuHeight = 0;
-
-            for (int i = 0; i < docCompareChildPanel1.Children.Count; i++)
-            {
-                Size currSize = docCompareChildPanel1.Children[i].DesiredSize;
-                accuHeight += currSize.Height;
-
-                if (accuHeight > DocCompareMainScrollViewer.VerticalOffset + DocCompareMainScrollViewer.ActualHeight / 3)
-                {
-                    DocComparePageNumberLabel.Content = (i + 1).ToString() + " / " + docCompareChildPanel1.Children.Count.ToString();
-                    docCompareSideGridShown = i;
-                    HighlightSideGrid();
-                    break;
-                }
-            }
-        }
-
-        private void UpdateDocCompareComboBox()
-        {
-            // update combo box left
-            ObservableCollection<string> items = new ObservableCollection<string>();
-            for (int i = 0; i < docs.documents.Count; i++)
-            {
-                if (i != docs.documentsToCompare[0])
-                {
-                    items.Add(Path.GetFileName(docs.documents[i].filePath));
-                }
-            }
-            DocCompareNameLabel2ComboBox.ItemsSource = items;
-            DocCompareNameLabel2ComboBox.SelectedIndex = docs.documentsToCompare[1];
-        }
-
-        private void UpdateDocSelectionComboBox()
-        {
-            // update combo box left
-            ObservableCollection<string> items = new ObservableCollection<string>();
-            for (int i = 0; i < docs.documents.Count; i++)
-            {
-                bool ok = true;
-                for (int j = 0; j < docs.documentsToShow.Count; j++)
-                {
-                    if (j != 0)
-                    {
-                        if (i != docs.documentsToShow[j])
-                        {
-                            ok &= true;
-                        }
-                        else
-                        {
-                            ok &= false;
-                        }
-                    }
-                }
-
-                if (ok == true)
-                    items.Add(Path.GetFileName(docs.documents[i].filePath));
-            }
-            Doc1NameLabelComboBox.ItemsSource = items;
-
-            // update combo box middle
-            items = new ObservableCollection<string>();
-            for (int i = 0; i < docs.documents.Count; i++)
-            {
-                bool ok = true;
-                for (int j = 0; j < docs.documentsToShow.Count; j++)
-                {
-                    if (j != 1)
-                    {
-                        if (i != docs.documentsToShow[j])
-                        {
-                            ok &= true;
-                        }
-                        else
-                        {
-                            ok &= false;
-                        }
-                    }
-                }
-
-                if (ok == true)
-                    items.Add(Path.GetFileName(docs.documents[i].filePath));
-            }
-            Doc2NameLabelComboBox.ItemsSource = items;
-
-            if (settings.numPanelsDragDrop == 3)
-            {
-                // update combo box right
-                items = new ObservableCollection<string>();
-                for (int i = 0; i < docs.documents.Count; i++)
-                {
-                    bool ok = true;
-                    for (int j = 0; j < docs.documentsToShow.Count; j++)
-                    {
-                        if (j != 2)
-                        {
-                            if (i != docs.documentsToShow[j])
-                            {
-                                ok &= true;
-                            }
-                            else
-                            {
-                                ok &= false;
-                            }
-                        }
-                    }
-
-                    if (ok == true)
-                        items.Add(Path.GetFileName(docs.documents[i].filePath));
-                }
-                Doc3NameLabelComboBox.ItemsSource = items;
-            }
-        }
-
-        private void Doc1NameLabelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                string fileName = Doc1NameLabelComboBox.SelectedItem.ToString();
-                docs.documentsToShow[0] = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
-                DisplayImageLeft(docs.documentsToShow[0]);
-                UpdateDocSelectionComboBox();
-            }
-            catch
-            {
-                Doc1NameLabelComboBox.SelectedIndex = 0;
-                UpdateDocSelectionComboBox();
-                /*
-                docs.documentsToShow[0] = 0;
-                DisplayImageLeft(docs.documentsToShow[0]);
-                
-                */
-            }
-        }
-
-        private void Doc2NameLabelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                string fileName = Doc2NameLabelComboBox.SelectedItem.ToString();
-                docs.documentsToShow[1] = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
-                DisplayImageMiddle(docs.documentsToShow[1]);
-                UpdateDocSelectionComboBox();
-            }
-            catch
-            {
-                Doc2NameLabelComboBox.SelectedIndex = 0;
-                UpdateDocSelectionComboBox();
-                /*
-                docs.documentsToShow[1] = 1;
-                DisplayImageMiddle(docs.documentsToShow[1]);
-                
-                */
-            }
-        }
-
-        private void Doc3NameLabelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                string fileName = Doc3NameLabelComboBox.SelectedItem.ToString();
-                docs.documentsToShow[2] = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
-                DisplayImageRight(docs.documentsToShow[2]);
-                UpdateDocSelectionComboBox();
-            }
-            catch
-            {
-                Doc3NameLabelComboBox.SelectedIndex = 0;
-                UpdateDocSelectionComboBox();
-                /*
-                docs.documentsToShow[2] = 1;
-                DisplayImageRight(docs.documentsToShow[2]);
-                
-                */
-            }
-        }
-
-        private void LoadFilesCommonPart()
-        {
-            if (docs.documents.Count >= 2)
-                SidePanelDocCompareButton.IsEnabled = true;
-
-            if (settings.numPanelsDragDrop == 3)
-                docs.documentsToShow = new List<int>() { 0, 1, 2 };
-            else
-                docs.documentsToShow = new List<int>() { 0, 1 };
-
-            if (docs.documents.Count >= 1)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Doc1Grid.Visibility = Visibility.Hidden;
-                    ProgressBarDoc1.Visibility = Visibility.Visible;
-                    ShowDragDropZone2();
-                });
-            }
-
-            if (docs.documents.Count >= 2)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Doc2Grid.Visibility = Visibility.Hidden;
-                    ProgressBarDoc2.Visibility = Visibility.Visible;
-                    Doc3Grid.Visibility = Visibility.Hidden;
-                    DocCompareDragDropZone3.Visibility = Visibility.Visible;
-                    ShowDragDropZone3();
-                });
-            }
-
-            if (docs.documents.Count >= 3)
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    Doc3Grid.Visibility = Visibility.Hidden;
-                    ProgressBarDoc3.Visibility = Visibility.Visible;
-                });
-            }
-        }
-
-        private void ShowMaxDocCountWarningBox()
-        {
-            MessageBox.Show("You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded. Subscribe to the Pro-version to view unlimited documents.", "Get Pro-Version", MessageBoxButton.OK);
-        }
-
+            DRAGDROP,
+            DOCCOMPARE,
+            REFDOC,
+            FILE_EXPLORER,
+            SETTINGS,
+        };
         private void BrowseFileButton1_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(lastUsedDirectory) == false)
@@ -910,54 +223,82 @@ namespace DocCompareWPF
             }
         }
 
-        private void DocCompareScrollViewer1_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void CloseDoc1Button_Click(object sender, RoutedEventArgs e)
         {
-            double accuHeight = 0;
-
-            for (int i = 0; i < childPanel1.Children.Count; i++)
-            {
-                Size currSize = childPanel1.Children[i].DesiredSize;
-                accuHeight += currSize.Height;
-
-                if (accuHeight > DocCompareScrollViewer1.VerticalOffset)
-                {
-                    Doc1PageNumberLabel.Content = (i + 1).ToString() + " / " + childPanel1.Children.Count.ToString();
-                    break;
-                }
-            }
+            docs.RemoveDocument(docs.documentsToShow[0], 0);
+            UpdateDocSelectionComboBox();
+            CloseDocumentCommonPart();
         }
 
-        private void DocCompareScrollViewer2_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void CloseDoc2Button_Click(object sender, RoutedEventArgs e)
         {
-            double accuHeight = 0;
-
-            for (int i = 0; i < childPanel2.Children.Count; i++)
-            {
-                Size currSize = childPanel2.Children[i].DesiredSize;
-                accuHeight += currSize.Height;
-
-                if (accuHeight > DocCompareScrollViewer2.VerticalOffset)
-                {
-                    Doc2PageNumberLabel.Content = (i + 1).ToString() + " / " + childPanel2.Children.Count.ToString();
-                    break;
-                }
-            }
+            docs.RemoveDocument(docs.documentsToShow[1], 1);
+            UpdateDocSelectionComboBox();
+            CloseDocumentCommonPart();
         }
 
-        private void DocCompareScrollViewer3_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void CloseDoc3Button_Click(object sender, RoutedEventArgs e)
         {
-            double accuHeight = 0;
+            docs.RemoveDocument(docs.documentsToShow[2], 2);
+            UpdateDocSelectionComboBox();
+            CloseDocumentCommonPart();
+        }
 
-            for (int i = 0; i < childPanel3.Children.Count; i++)
+        private void CloseDocumentCommonPart()
+        {
+            if (docs.documentsToShow[0] != -1)
+                DisplayImageLeft(docs.documentsToShow[0]);
+            else
             {
-                Size currSize = childPanel3.Children[i].DesiredSize;
-                accuHeight += currSize.Height;
+                Doc1Grid.Visibility = Visibility.Hidden;
+                DocCompareDragDropZone1.Visibility = Visibility.Visible;
+            }
 
-                if (accuHeight > DocCompareScrollViewer3.VerticalOffset)
+            if (docs.documents.Count >= 2)
+            {
+                if (docs.documentsToShow[1] != -1)
+                    DisplayImageMiddle(docs.documentsToShow[1]);
+
+                if (docs.documentsToShow[1] == -1)
                 {
-                    Doc3PageNumberLabel.Content = (i + 1).ToString() + " / " + childPanel3.Children.Count.ToString();
-                    break;
+                    Doc2Grid.Visibility = Visibility.Hidden;
+                    DocCompareDragDropZone2.Visibility = Visibility.Visible;
                 }
+            }
+            else
+            {
+                Doc2Grid.Visibility = Visibility.Hidden;
+                DocCompareDragDropZone2.Visibility = Visibility.Visible;
+            }
+
+            if (docs.documents.Count >= 3 && settings.numPanelsDragDrop == 3)
+            {
+                if (docs.documentsToShow[2] != -1)
+                    DisplayImageRight(docs.documentsToShow[2]);
+
+                if (docs.documentsToShow[2] == -1)
+                {
+                    HideDragDropZone3();
+                }
+            }
+            else
+            {
+                if (settings.numPanelsDragDrop == 3 && docs.documents.Count >= 2)
+                {
+                    Doc3Grid.Visibility = Visibility.Hidden;
+                    DocCompareDragDropZone3.Visibility = Visibility.Visible;
+                    ShowDragDropZone3();
+                }
+                else
+                    HideDragDropZone3();
+            }
+
+            if (docs.documents.Count == 0)
+            {
+                Doc1Grid.Visibility = Visibility.Hidden;
+                DocCompareDragDropZone1.Visibility = Visibility.Visible;
+                HideDragDropZone2();
+                HideDragDropZone3();
             }
         }
 
@@ -977,7 +318,7 @@ namespace DocCompareWPF
                 docs.documents[docs.documentsToCompare[0]].docCompareIndices = new List<int>();
                 docs.documents[docs.documentsToCompare[1]].docCompareIndices = new List<int>();
 
-                if (docs.totalLen != 0) // ? comparion successful
+                if (docs.totalLen != 0)
                 {
                     for (int i = docs.totalLen - 1; i >= 0; i--)
                     {
@@ -994,7 +335,6 @@ namespace DocCompareWPF
                     HighlightSideGrid();
                     ProgressBarDocCompare.Visibility = Visibility.Hidden;
                 });
-
             }
             catch
             {
@@ -1002,261 +342,416 @@ namespace DocCompareWPF
             }
         }
 
-        private void RefDocScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void DisableRemoveForceAlignButton()
         {
-            double accuHeight = 0;
-
-            for (int i = 0; i < refDocPanel.Children.Count; i++)
+            foreach (object obj in docCompareChildPanelRight.Children)
             {
-                Size currSize = refDocPanel.Children[i].DesiredSize;
-                accuHeight += currSize.Height;
-
-                if (accuHeight > RefDocScrollViewer.VerticalOffset)
+                //Border thisBorder = obj as Border;
+                //Grid thisGrid = thisBorder.Child as Grid;
+                Grid thisGrid = obj as Grid;
+                foreach (object obj2 in thisGrid.Children)
                 {
-                    RefDocPageNumberLabel.Content = (i + 1).ToString() + " / " + refDocPanel.Children.Count.ToString();
-                    break;
-                }
-            }
-        }
-
-        private void RefDocProceedButton_Click(object sender, RoutedEventArgs e)
-        {
-            docs.documentsToCompare[0] = RefDocListBox.SelectedIndex;
-            UpdateDocCompareComboBox();
-            SetVisiblePanel(SidePanels.DOCCOMPARE);
-        }
-
-        private void RefDocListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                int ind = RefDocListBox.SelectedIndex;
-                DisplayRefDoc(ind);
-
-            }
-            catch
-            {
-
-            }
-        }
-
-        private void DocCompareNameLabel2ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                string fileName = DocCompareNameLabel2ComboBox.SelectedItem.ToString();
-                if (docs.documentsToCompare[1] != docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName))
-                {
-                    docs.documentsToCompare[1] = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
-                    docs.forceAlignmentIndices = new List<List<int>>();
-                }
-
-                docCompareGrid.Visibility = Visibility.Hidden;
-                docCompareSideGridShown = 0;
-                DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
-                DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
-                DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
-                SetVisiblePanel(SidePanels.DOCCOMPARE);
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    ProgressBarDocCompare.Visibility = Visibility.Visible;
-                });
-
-                threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                threadCompare.Start();
-
-
-            }
-            catch
-            {
-
-            }
-        }
-
-        private void SettingsBrowDefaultFolderButton_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void SettingsShowThirdPanelCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            settings.numPanelsDragDrop = 3;
-            SaveSettings();
-            docs.documentsToShow = new List<int>() { 0, 1, 2 };
-            if (docs.documents.Count >= 1)
-                DisplayImageLeft(docs.documentsToShow[0]);
-            if (docs.documents.Count >= 2)
-                DisplayImageMiddle(docs.documentsToShow[1]);
-            if (docs.documents.Count >= 2)
-            {
-                ShowDragDropZone3();
-                Doc3Grid.Visibility = Visibility.Hidden;
-                DocCompareDragDropZone3.Visibility = Visibility.Visible;
-            }
-
-            if (docs.documents.Count >= 3)
-                DisplayImageRight(docs.documentsToShow[2]);
-
-            UpdateDocSelectionComboBox();
-        }
-
-        private void SettingsShowThirdPanelCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            settings.numPanelsDragDrop = 2;
-            SaveSettings();
-            docs.documentsToShow = new List<int>() { 0, 1 };
-            DisplayImageLeft(docs.documentsToShow[0]);
-            DisplayImageMiddle(docs.documentsToShow[1]);
-            HideDragDropZone3();
-            UpdateDocSelectionComboBox();
-        }
-
-        private void ReloadDocThread()
-        {
-            if (docs.documents[docs.docToReload].ReloadDocument() == 0)
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    switch (docs.displayToReload)
+                    if (obj2 is Button)
                     {
-                        case 0:
-                            DisplayImageLeft(docs.documentsToShow[0]);
-                            break;
-                        case 1:
-                            DisplayImageMiddle(docs.documentsToShow[1]);
-                            break;
-                        case 2:
-                            DisplayImageRight(docs.documentsToShow[2]);
-                            break;
-                        case 3:
-                            for (int i = 0; i < docs.documentsToShow.Count; i++)
-                            {
-                                if (docs.documentsToShow[i] == docs.documentsToCompare[0])
-                                {
-                                    switch (i)
-                                    {
-                                        case 0:
-                                            DisplayImageLeft(docs.documentsToShow[0]);
-                                            break;
-                                        case 1:
-                                            DisplayImageMiddle(docs.documentsToShow[1]);
-                                            break;
-                                        case 2:
-                                            DisplayImageRight(docs.documentsToShow[2]);
-                                            break;
-                                    }
-                                }
-                            }
-
-                            ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
-                            docCompareGrid.Visibility = Visibility.Hidden;
-                            docCompareSideGridShown = 0;
-                            DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
-                            DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
-                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
-                            SetVisiblePanel(SidePanels.DOCCOMPARE);
-                            ProgressBarDocCompare.Visibility = Visibility.Visible;
-                            threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                            threadCompare.Start();
-                            break;
-                        case 4:
-                            for (int i = 0; i < docs.documentsToShow.Count; i++)
-                            {
-                                if (docs.documentsToShow[i] == docs.documentsToCompare[1])
-                                {
-                                    switch (i)
-                                    {
-                                        case 0:
-                                            DisplayImageLeft(docs.documentsToShow[0]);
-                                            break;
-                                        case 1:
-                                            DisplayImageMiddle(docs.documentsToShow[1]);
-                                            break;
-                                        case 2:
-                                            DisplayImageRight(docs.documentsToShow[2]);
-                                            break;
-                                    }
-                                }
-                            }
-
-                            ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
-                            docCompareGrid.Visibility = Visibility.Hidden;
-                            docCompareSideGridShown = 0;
-                            DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
-                            DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
-                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
-                            SetVisiblePanel(SidePanels.DOCCOMPARE);
-                            ProgressBarDocCompare.Visibility = Visibility.Visible;
-                            threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                            threadCompare.Start();
-                            break;
+                        Button thisButton = obj2 as Button;
+                        thisButton.IsEnabled = false;
                     }
-                });
+                }
             }
         }
 
-        private void ReloadDoc1Button_Click(object sender, RoutedEventArgs e)
+        private void DisableSideScrollLeft()
         {
-            ProgressBarDoc1.Visibility = Visibility.Visible;
-
-            docs.docToReload = docs.documentsToShow[0];
-            docs.displayToReload = 0;
-
-            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
-            threadLoadDocs.Start();
+            //DocCompareSideScrollViewerLeft.IsEnabled = false;
         }
 
-        private void ReloadDoc2Button_Click(object sender, RoutedEventArgs e)
+        private void DisableSideScrollRight()
         {
-            ProgressBarDoc2.Visibility = Visibility.Visible;
-
-            docs.docToReload = docs.documentsToShow[1];
-            docs.displayToReload = 1;
-
-            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
-            threadLoadDocs.Start();
+            //DocCompareSideScrollViewerRight.IsEnabled = false;
         }
 
-        private void ReloadDoc3Button_Click(object sender, RoutedEventArgs e)
+        private void DisplayComparisonResult()
         {
-            ProgressBarDoc3.Visibility = Visibility.Visible;
+            int pageCounter = 0;
+            Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
 
-            docs.docToReload = docs.documentsToShow[2];
-            docs.displayToReload = 2;
-
-            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
-            threadLoadDocs.Start();
-        }
-
-        private void ReloadDocCompare1Button_Click(object sender, RoutedEventArgs e)
-        {
-            ProgressBarDocCompareReload.Visibility = Visibility.Visible;
-            docs.forceAlignmentIndices = new List<List<int>>();
-
-            docs.docToReload = docs.documentsToCompare[0];
-            docs.displayToReload = 3;
-
-            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
-            threadLoadDocs.Start();
-        }
-
-        private void ReloadDocCompare2Button_Click(object sender, RoutedEventArgs e)
-        {
-            ProgressBarDocCompareReload.Visibility = Visibility.Visible;
-            docs.forceAlignmentIndices = new List<List<int>>();
-            docs.docToReload = docs.documentsToCompare[1];
-            docs.displayToReload = 4;
-
-            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
-            threadLoadDocs.Start();
-        }
-
-        private void Window_StateChanged(object sender, EventArgs e)
-        {
-            if (WindowState == WindowState.Normal)
+            Dispatcher.Invoke(() =>
             {
-                WindowMaximizeButton.Visibility = Visibility.Visible;
-                WindowRestoreButton.Visibility = Visibility.Hidden;
-            }
+                DocCompareNameLabel1.Content = Path.GetFileName(docs.documents[docs.documentsToCompare[0]].filePath);
+
+                docCompareChildPanel1 = new StackPanel
+                {
+                    Background = brush,
+                    HorizontalAlignment = HorizontalAlignment.Stretch
+                };
+                docCompareChildPanelLeft = new StackPanel
+                {
+                    Background = brush,
+                };
+                docCompareChildPanelRight = new StackPanel
+                {
+                    Background = brush,
+                };
+
+                Image thisImage;
+                FileStream stream;
+                BitmapImage bitmap;
+
+                for (int i = 0; i < docs.totalLen; i++) // going through all the pages of the longest document
+                {
+                    Grid thisGrid = new Grid
+                    {
+                        IsHitTestVisible = true
+                    };
+                    thisGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) }); // doc1
+                    thisGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) }); // doc2
+
+                    if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1) // doc 1 has a valid page
+                    {
+                        thisImage = new Image();
+                        stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg"));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        stream.Close();
+                        thisImage.Source = bitmap;
+                        thisImage.Margin = new Thickness(10, 10, 10, 10);
+                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        thisImage.VerticalAlignment = VerticalAlignment.Center;
+                        Grid.SetColumn(thisImage, 0);
+
+                        thisGrid.Children.Add(thisImage);
+                    }
+
+                    if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1) // doc 2 has a valid page
+                    {
+                        thisImage = new Image();
+                        stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg"));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        stream.Close();
+                        thisImage.Source = bitmap;
+                        thisImage.Margin = new Thickness(10, 10, 10, 10);
+
+                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        thisImage.VerticalAlignment = VerticalAlignment.Center;
+                        Grid.SetColumn(thisImage, 1);
+                        thisGrid.Children.Add(thisImage);
+
+                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1 && showMask == true)
+                        {
+                            if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
+                            {
+                                thisImage = new Image();
+                                stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png")));
+                                bitmap = new BitmapImage();
+                                bitmap.BeginInit();
+                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                bitmap.StreamSource = stream;
+                                bitmap.EndInit();
+                                stream.Close();
+                                thisImage.Source = bitmap;
+                                thisImage.Margin = new Thickness(10, 10, 10, 10);
+                                thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
+                                thisImage.VerticalAlignment = VerticalAlignment.Stretch;
+
+                                Grid.SetColumn(thisImage, 2);
+                                thisGrid.Children.Add(thisImage);
+                            }
+                        }
+                    }
+
+                    pageCounter++;
+                    docCompareChildPanel1.Children.Add(thisGrid);
+                }
+
+                DocCompareMainScrollViewer.Content = docCompareChildPanel1;
+                pageCounter = 0;
+
+                // side panel
+
+                for (int i = 0; i < docs.totalLen; i++) // going through all the pages of the longest document
+                {
+                    Grid thisLeftGrid = new Grid()
+                    {
+                        Margin = new Thickness(0),
+                    };
+                    thisLeftGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(20, GridUnitType.Pixel) }); // page number
+                    thisLeftGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(120, GridUnitType.Pixel) }); // doc1
+                    Grid thisRightGrid = new Grid()
+                    {
+                        Margin = new Thickness(0),
+                    };
+
+                    thisRightGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(20, GridUnitType.Pixel) }); // forcealign icon
+                    thisRightGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(120, GridUnitType.Pixel) }); // doc2
+
+                    thisLeftGrid.MouseLeftButtonDown += (sen, ev) => { HandleMouseClickOnSideScrollView(sen, ev); };
+                    thisRightGrid.MouseLeftButtonDown += (sen, ev) => { HandleMouseClickOnSideScrollView(sen, ev); };
+
+                    thisLeftGrid.Name = "LeftSideGrid" + i.ToString();
+                    thisRightGrid.Name = "RightSideGrid" + i.ToString();
+                    bool displayForceAlignButton = true;
+
+                    // force align button
+                    foreach (List<int> ind1 in docs.forceAlignmentIndices)
+                    {
+                        if (ind1[0] == docs.documents[docs.documentsToCompare[0]].docCompareIndices[i])
+                        {
+                            Button removeForceAlignButton = new Button()
+                            {
+                                Height = 20,
+                                Width = 20,
+                                Padding = new Thickness(0, 0, 0, 0),
+                                Margin = new Thickness(0),
+                                ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
+                                Foreground = Brushes.Black,
+                                Background = Brushes.Transparent,
+                                Opacity = 1,
+                                Name = "RemoveForceAlign" + docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString(),
+                                IsHitTestVisible = true,
+                                HorizontalAlignment = HorizontalAlignment.Center,
+                                VerticalAlignment = VerticalAlignment.Center,
+                                ToolTip = "Unlink pages",
+                            };
+                            Grid.SetColumn(removeForceAlignButton, 0);
+                            thisRightGrid.Children.Add(removeForceAlignButton);
+                            removeForceAlignButton.Click += (sen, ev) => { RemoveForceAlignClicked(sen, ev); };
+                        }
+                    }
+
+                    if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1) // doc 1 has a valid page
+                    {
+                        Grid imageGrid = new Grid()
+                        {
+                            Name = "SideImageLeft" + i.ToString(),
+                        };
+                        thisImage = new Image();
+                        stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg"));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        stream.Close();
+                        thisImage.Source = bitmap;
+                        imageGrid.Margin = new Thickness(10, 10, 10, 10);
+
+                        imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        Grid.SetColumn(imageGrid, 1);
+
+                        imageGrid.Children.Add(thisImage);
+                        thisLeftGrid.Children.Add(imageGrid);
+
+                        if (displayForceAlignButton)
+                        {
+                            Button test = new Button()
+                            {
+                                Height = 25,
+                                Width = 25,
+                                Padding = new Thickness(0, 0, 0, 0),
+                                ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
+                                Foreground = Brushes.White,
+                                Opacity = 0.5,
+                                Visibility = Visibility.Hidden,
+                                Name = "SideButtonLeft" + i.ToString(),
+                                IsHitTestVisible = true,
+                                HorizontalAlignment = HorizontalAlignment.Right,
+                                VerticalAlignment = VerticalAlignment.Bottom,
+                                ToolTip = "Link pages"
+                            };
+
+                            test.Click += (sen, ev) => { SideGridButtonMouseClick(sen, ev); };
+
+                            imageGrid.Children.Add(test);
+
+                            test = new Button()
+                            {
+                                Height = 25,
+                                Width = 25,
+                                Padding = new Thickness(0, 0, 0, 0),
+                                ContentTemplate = (DataTemplate)FindResource("ForceAlignInvalidIcon"),
+                                Foreground = Brushes.White,
+                                Opacity = 0.5,
+                                Visibility = Visibility.Hidden,
+                                Name = "SideButtonInvalidLeft" + i.ToString(),
+                                IsHitTestVisible = true,
+                                HorizontalAlignment = HorizontalAlignment.Right,
+                                VerticalAlignment = VerticalAlignment.Bottom,
+                                ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.",
+                            };
+
+                            imageGrid.Children.Add(test);
+                        }
+                        imageGrid.MouseEnter += SideGridMouseEnter;
+                        imageGrid.MouseLeave += SideGridMouseLeave;
+                    }
+                    else // doc2 has a valid page, we use it as dummy
+                    {
+                        Grid imageGrid = new Grid()
+                        {
+                            Name = "SideImageDummyLeft" + i.ToString(),
+                        };
+                        thisImage = new Image();
+                        stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg"));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        stream.Close();
+                        thisImage.Source = bitmap;
+                        imageGrid.Margin = new Thickness(10, 10, 10, 10);
+
+                        imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        Grid.SetColumn(imageGrid, 1);
+
+                        thisImage.Visibility = Visibility.Hidden;
+
+                        imageGrid.Children.Add(thisImage);
+                        thisLeftGrid.Children.Add(imageGrid);
+                    }
+
+                    if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1) // doc 2 has a valid page
+                    {
+                        Grid imageGrid = new Grid();
+                        thisImage = new Image();
+                        stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg"));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        stream.Close();
+                        thisImage.Source = bitmap;
+                        imageGrid.Margin = new Thickness(10, 10, 10, 10);
+
+                        double h = bitmap.PixelHeight;
+                        double w = bitmap.PixelWidth;
+                        imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        Grid.SetColumn(imageGrid, 1);
+                        imageGrid.Children.Add(thisImage);
+                        thisRightGrid.Children.Add(imageGrid);
+
+                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
+                        {
+                            if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
+                            {
+                                if (showMask == true)
+                                {
+                                    thisImage = new Image();
+                                    stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png")));
+                                    bitmap = new BitmapImage();
+                                    bitmap.BeginInit();
+                                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                    bitmap.StreamSource = stream;
+                                    bitmap.EndInit();
+
+                                    stream.Close();
+                                    thisImage.Source = bitmap;
+                                    imageGrid.Margin = new Thickness(10, 10, 10, 10);
+                                    imageGrid.Children.Add(thisImage);
+                                }
+                                thisLeftGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
+                                thisRightGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
+                            }
+                        }
+
+                        imageGrid.Name = "SideImageRight" + i.ToString();
+                        imageGrid.MouseEnter += SideGridMouseEnter;
+                        imageGrid.MouseLeave += SideGridMouseLeave;
+                        if (displayForceAlignButton)
+                        {
+                            Button test2 = new Button()
+                            {
+                                Height = 25,
+                                Width = 25,
+                                Padding = new Thickness(0, 0, 0, 0),
+                                ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
+                                Foreground = Brushes.White,
+                                Opacity = 0.5,
+                                Visibility = Visibility.Hidden,
+                                Name = "SideButtonRight" + i.ToString(),
+                                HorizontalAlignment = HorizontalAlignment.Right,
+                                VerticalAlignment = VerticalAlignment.Bottom,
+                                ToolTip = "Link pages"
+                            };
+                            test2.Click += (sen, ev) => { SideGridButtonMouseClick(sen, ev); };
+
+                            imageGrid.Children.Add(test2);
+
+                            test2 = new Button()
+                            {
+                                Height = 25,
+                                Width = 25,
+                                Padding = new Thickness(0, 0, 0, 0),
+                                ContentTemplate = (DataTemplate)FindResource("ForceAlignInvalidIcon"),
+                                Foreground = Brushes.White,
+                                Opacity = 0.5,
+                                Visibility = Visibility.Hidden,
+                                Name = "SideButtonInvalidRight" + i.ToString(),
+                                HorizontalAlignment = HorizontalAlignment.Right,
+                                VerticalAlignment = VerticalAlignment.Bottom,
+                                ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.",
+                            };
+
+                            imageGrid.Children.Add(test2);
+                        }
+                    }
+                    else // we use doc 1 as dummy
+                    {
+                        Grid imageGrid = new Grid()
+                        {
+                            Name = "SideImageDummyRight" + i.ToString(),
+                        };
+                        thisImage = new Image();
+                        stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg"));
+                        bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        stream.Close();
+                        thisImage.Source = bitmap;
+                        imageGrid.Margin = new Thickness(10, 10, 10, 10);
+
+                        imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                        Grid.SetColumn(imageGrid, 1);
+
+                        thisImage.Visibility = Visibility.Hidden;
+
+                        imageGrid.Children.Add(thisImage);
+                        thisRightGrid.Children.Add(imageGrid);
+                    }
+
+                    pageCounter++;
+
+                    Label thisLabel = new Label
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Content = (i + 1).ToString(),
+                        MinWidth = 20
+                    };
+                    Grid.SetColumn(thisLabel, 0);
+
+                    thisLeftGrid.Children.Add(thisLabel);
+                    docCompareChildPanelLeft.Children.Add(thisLeftGrid);
+                    docCompareChildPanelRight.Children.Add(thisRightGrid);
+                }
+
+                DocCompareSideScrollViewerLeft.Content = docCompareChildPanelLeft;
+                DocCompareSideScrollViewerRight.Content = docCompareChildPanelRight;
+
+                docCompareGrid.Visibility = Visibility.Visible;
+                ProgressBarDocCompare.Visibility = Visibility.Hidden;
+                ProgressBarDocCompareAlign.Visibility = Visibility.Hidden;
+            });
         }
 
         private void DisplayImageLeft(int docIndex)
@@ -1312,6 +807,7 @@ namespace DocCompareWPF
                 }
             });
         }
+
         private void DisplayImageMiddle(int docIndex)
         {
             Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
@@ -1466,6 +962,1116 @@ namespace DocCompareWPF
             });
         }
 
+        private void Doc1NameLabelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                string fileName = Doc1NameLabelComboBox.SelectedItem.ToString();
+                docs.documentsToShow[0] = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
+                DisplayImageLeft(docs.documentsToShow[0]);
+                UpdateDocSelectionComboBox();
+            }
+            catch
+            {
+                Doc1NameLabelComboBox.SelectedIndex = 0;
+                UpdateDocSelectionComboBox();
+            }
+        }
+
+        private void Doc2NameLabelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                string fileName = Doc2NameLabelComboBox.SelectedItem.ToString();
+                docs.documentsToShow[1] = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
+                DisplayImageMiddle(docs.documentsToShow[1]);
+                UpdateDocSelectionComboBox();
+            }
+            catch
+            {
+                Doc2NameLabelComboBox.SelectedIndex = 0;
+                UpdateDocSelectionComboBox();
+            }
+        }
+
+        private void Doc3NameLabelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                string fileName = Doc3NameLabelComboBox.SelectedItem.ToString();
+                docs.documentsToShow[2] = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
+                DisplayImageRight(docs.documentsToShow[2]);
+                UpdateDocSelectionComboBox();
+            }
+            catch
+            {
+                Doc3NameLabelComboBox.SelectedIndex = 0;
+                UpdateDocSelectionComboBox();
+            }
+        }
+
+        private void DocCompareDragDropZone1_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+        }
+
+        private void DocCompareDragDropZone1_Drop(object sender, DragEventArgs e)
+        {
+            if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var data = e.Data.GetData(DataFormats.FileDrop) as string[];
+
+                foreach (string file in data)
+                {
+                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                    {
+                        docs.AddDocument(file);
+                    }
+                    else
+                    {
+                        ShowMaxDocCountWarningBox();
+                        break;
+                    }
+                }
+
+                LoadFilesCommonPart();
+
+                threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
+                threadLoadDocs.Start();
+            }
+        }
+
+        private void DocCompareDragDropZone2_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+        }
+
+        private void DocCompareDragDropZone2_Drop(object sender, DragEventArgs e)
+        {
+            if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var data = e.Data.GetData(DataFormats.FileDrop) as string[];
+
+                if (data.Length > settings.maxDocCount)
+                    ShowMaxDocCountWarningBox();
+
+                foreach (string file in data)
+                {
+                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                    {
+                        docs.AddDocument(file);
+                    }
+                    else
+                    {
+                        ShowMaxDocCountWarningBox();
+                        break;
+                    }
+                }
+
+                LoadFilesCommonPart();
+
+                threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
+                threadLoadDocs.Start();
+            }
+        }
+
+        private void DocCompareDragDropZone3_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+        }
+
+        private void DocCompareDragDropZone3_Drop(object sender, DragEventArgs e)
+        {
+            if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var data = e.Data.GetData(DataFormats.FileDrop) as string[];
+
+                foreach (string file in data)
+                {
+                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                    {
+                        docs.AddDocument(file);
+                    }
+                    else
+                    {
+                        ShowMaxDocCountWarningBox();
+                        break;
+                    }
+                }
+
+                LoadFilesCommonPart();
+
+                threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
+                threadLoadDocs.Start();
+            }
+        }
+
+        private void DocCompareMainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            double accuHeight = 0;
+
+            for (int i = 0; i < docCompareChildPanel1.Children.Count; i++)
+            {
+                Size currSize = docCompareChildPanel1.Children[i].DesiredSize;
+                accuHeight += currSize.Height;
+
+                if (accuHeight > DocCompareMainScrollViewer.VerticalOffset + DocCompareMainScrollViewer.ActualHeight / 3)
+                {
+                    DocComparePageNumberLabel.Content = (i + 1).ToString() + " / " + docCompareChildPanel1.Children.Count.ToString();
+                    docCompareSideGridShown = i;
+                    HighlightSideGrid();
+                    break;
+                }
+            }
+        }
+
+        private void DocCompareNameLabel2ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                string fileName = DocCompareNameLabel2ComboBox.SelectedItem.ToString();
+                if (docs.documentsToCompare[1] != docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName))
+                {
+                    docs.documentsToCompare[1] = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
+                    docs.forceAlignmentIndices = new List<List<int>>();
+                }
+
+                docCompareGrid.Visibility = Visibility.Hidden;
+                docCompareSideGridShown = 0;
+                DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
+                DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
+                DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
+                SetVisiblePanel(SidePanels.DOCCOMPARE);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ProgressBarDocCompare.Visibility = Visibility.Visible;
+                });
+
+                threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                threadCompare.Start();
+            }
+            catch
+            {
+            }
+        }
+
+        private void DocCompareScrollViewer1_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            double accuHeight = 0;
+
+            for (int i = 0; i < childPanel1.Children.Count; i++)
+            {
+                Size currSize = childPanel1.Children[i].DesiredSize;
+                accuHeight += currSize.Height;
+
+                if (accuHeight > DocCompareScrollViewer1.VerticalOffset)
+                {
+                    Doc1PageNumberLabel.Content = (i + 1).ToString() + " / " + childPanel1.Children.Count.ToString();
+                    break;
+                }
+            }
+        }
+
+        private void DocCompareScrollViewer2_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            double accuHeight = 0;
+
+            for (int i = 0; i < childPanel2.Children.Count; i++)
+            {
+                Size currSize = childPanel2.Children[i].DesiredSize;
+                accuHeight += currSize.Height;
+
+                if (accuHeight > DocCompareScrollViewer2.VerticalOffset)
+                {
+                    Doc2PageNumberLabel.Content = (i + 1).ToString() + " / " + childPanel2.Children.Count.ToString();
+                    break;
+                }
+            }
+        }
+
+        private void DocCompareScrollViewer3_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            double accuHeight = 0;
+
+            for (int i = 0; i < childPanel3.Children.Count; i++)
+            {
+                Size currSize = childPanel3.Children[i].DesiredSize;
+                accuHeight += currSize.Height;
+
+                if (accuHeight > DocCompareScrollViewer3.VerticalOffset)
+                {
+                    Doc3PageNumberLabel.Content = (i + 1).ToString() + " / " + childPanel3.Children.Count.ToString();
+                    break;
+                }
+            }
+        }
+
+        private void DocCompareSideScrollViewerLeft_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (inForceAlignMode == false)
+                DocCompareSideScrollViewerRight.ScrollToVerticalOffset(DocCompareSideScrollViewerLeft.VerticalOffset);
+            else
+            {
+                if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                {
+                    DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosLeft);
+                }
+            }
+        }
+
+        private void DocCompareSideScrollViewerRight_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (inForceAlignMode == false)
+                DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(DocCompareSideScrollViewerRight.VerticalOffset);
+            else
+            {
+                if (sideGridSelectedLeftOrRight == SideGridSelection.RIGHT)
+                {
+                    DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosRight);
+                }
+            }
+        }
+
+        private void EnableRemoveForceAlignButton()
+        {
+            foreach (object obj in docCompareChildPanelRight.Children)
+            {
+                //Border thisBorder = obj as Border;
+                //Grid thisGrid = thisBorder.Child as Grid;
+                Grid thisGrid = obj as Grid;
+                foreach (object obj2 in thisGrid.Children)
+                {
+                    if (obj2 is Button)
+                    {
+                        Button thisButton = obj2 as Button;
+                        thisButton.IsEnabled = true;
+                    }
+                }
+            }
+        }
+
+        private void EnableSideScrollLeft()
+        {
+            //DocCompareSideScrollViewerLeft.IsEnabled = true;
+        }
+
+        private void EnableSideScrollRight()
+        {
+            //DocCompareSideScrollViewerRight.IsEnabled = true;
+        }
+
+        private void HandleMouseClickOnSideScrollView(object sender, MouseButtonEventArgs e)
+        {
+            if (inForceAlignMode == false)
+            {
+                Grid grid = sender as Grid;
+                string[] splittedName = grid.Name.Split("SideGrid");
+
+                double accuHeight = 0;
+                for (int i = 0; i < int.Parse(splittedName[1]); i++)
+                {
+                    Size currSize = docCompareChildPanel1.Children[i].DesiredSize;
+                    accuHeight += currSize.Height;
+                }
+
+                DocCompareMainScrollViewer.ScrollToVerticalOffset(accuHeight);
+
+                docCompareSideGridShown = int.Parse(splittedName[1]);
+                HighlightSideGrid();
+            }
+        }
+
+        private void HideDragDropZone2()
+        {
+            DocCompareSecondDocZone.Visibility = Visibility.Collapsed;
+            DragDropPanel.ColumnDefinitions[1].Width = new GridLength(0, GridUnitType.Star);
+        }
+
+        private void HideDragDropZone3()
+        {
+            DocCompareThirdDocZone.Visibility = Visibility.Collapsed;
+            DragDropPanel.ColumnDefinitions[2].Width = new GridLength(0, GridUnitType.Star);
+        }
+
+        private void HideMaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            showMask = false;
+            DisplayComparisonResult();
+            HighlightSideGrid();
+            ShowMaskButton.Visibility = Visibility.Visible;
+            HideMaskButton.Visibility = Visibility.Hidden;
+            HighlightingDisableTip.Visibility = Visibility.Visible;
+        }
+
+        private void HighlightSideGrid()
+        {
+            Brush brush = FindResource("SideGridActiveBackground") as Brush;
+            double accuHeight = 0;
+            double windowsHeight = DocCompareSideScrollViewerRight.ActualHeight;
+            Dispatcher.Invoke(() =>
+            {
+                for (int i = 0; i < docCompareChildPanelRight.Children.Count; i++)
+                {
+                    Grid thisGrid;
+                    if (i == docCompareSideGridShown)
+                    {
+                        thisGrid = docCompareChildPanelRight.Children[i] as Grid;
+                        thisGrid.Background = brush;
+
+                        thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
+                        thisGrid.Background = brush;
+
+                        Size thisSize = thisGrid.DesiredSize;
+
+                        if (accuHeight - windowsHeight / 2 > 0)
+                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(accuHeight - windowsHeight / 2);
+                        else
+                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
+
+                        accuHeight += thisSize.Height;
+                    }
+                    else
+                    {
+                        if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                        {
+                            if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
+                            {
+                                if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
+                                {
+                                    thisGrid = docCompareChildPanelRight.Children[i] as Grid;
+                                    thisGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
+
+                                    thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
+                                    thisGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
+                                    Size thisSize = thisGrid.DesiredSize;
+                                    accuHeight += thisSize.Height;
+                                }
+                                else
+                                {
+                                    thisGrid = docCompareChildPanelRight.Children[i] as Grid;
+                                    thisGrid.Background = Brushes.Transparent;
+
+                                    thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
+                                    thisGrid.Background = Brushes.Transparent;
+                                    Size thisSize = thisGrid.DesiredSize;
+                                    accuHeight += thisSize.Height;
+                                }
+                            }
+                            else
+                            {
+                                thisGrid = docCompareChildPanelRight.Children[i] as Grid;
+                                thisGrid.Background = Brushes.Transparent;
+
+                                thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
+                                thisGrid.Background = Brushes.Transparent;
+                                Size thisSize = thisGrid.DesiredSize;
+                                accuHeight += thisSize.Height;
+                            }
+                        }
+                        else
+                        {
+                            thisGrid = docCompareChildPanelRight.Children[i] as Grid;
+                            thisGrid.Background = Brushes.Transparent;
+
+                            thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
+                            thisGrid.Background = Brushes.Transparent;
+                            Size thisSize = thisGrid.DesiredSize;
+                            accuHeight += thisSize.Height;
+                        }
+                    }
+                }
+            });
+        }
+
+        private void LoadFilesCommonPart()
+        {
+            if (docs.documents.Count >= 2)
+                SidePanelDocCompareButton.IsEnabled = true;
+
+            if (settings.numPanelsDragDrop == 3)
+                docs.documentsToShow = new List<int>() { 0, 1, 2 };
+            else
+                docs.documentsToShow = new List<int>() { 0, 1 };
+
+            if (docs.documents.Count >= 1)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Doc1Grid.Visibility = Visibility.Hidden;
+                    ProgressBarDoc1.Visibility = Visibility.Visible;
+                    ShowDragDropZone2();
+                });
+            }
+
+            if (docs.documents.Count >= 2)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Doc2Grid.Visibility = Visibility.Hidden;
+                    ProgressBarDoc2.Visibility = Visibility.Visible;
+                    Doc3Grid.Visibility = Visibility.Hidden;
+                    DocCompareDragDropZone3.Visibility = Visibility.Visible;
+                    ShowDragDropZone3();
+                });
+            }
+
+            if (docs.documents.Count >= 3)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Doc3Grid.Visibility = Visibility.Hidden;
+                    ProgressBarDoc3.Visibility = Visibility.Visible;
+                });
+            }
+        }
+
+        private void LoadSettings()
+        {
+            settings = new AppSettings();
+            using var file = File.OpenRead("AppSettings.bin");
+            settings = Serializer.Deserialize<AppSettings>(file);
+        }
+
+        private void MaskSideGridInForceAlignMode()
+        {
+            if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+            {
+                foreach (object obj in docCompareChildPanelLeft.Children)
+                {
+                    //Border thisBorder = obj as Border;
+                    //Grid thisGrid = thisBorder.Child as Grid;
+                    Grid thisGrid = obj as Grid;
+                    foreach (object obj2 in thisGrid.Children)
+                    {
+                        if (obj2 is Grid)
+                        {
+                            Grid thisTargetGrid = obj2 as Grid;
+                            string[] splittedNameTarget;
+                            string[] splittedNameRef;
+
+                            splittedNameTarget = thisTargetGrid.Name.Split("Left");
+                            splittedNameRef = selectedSideGridButtonName1.Split("Left");
+
+                            if (thisTargetGrid.Name.Contains("Left") && splittedNameTarget[1] != splittedNameRef[1])
+                            {
+                                thisTargetGrid.Effect = new BlurEffect()
+                                {
+                                    Radius = 5,
+                                };
+                            }
+                            else
+                            {
+                                //thisTargetGrid.Effect = null;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (object obj in docCompareChildPanelRight.Children)
+                {
+                    //Border thisBorder = obj as Border;
+                    //Grid thisGrid = thisBorder.Child as Grid;
+                    Grid thisGrid = obj as Grid;
+                    foreach (object obj2 in thisGrid.Children)
+                    {
+                        if (obj2 is Grid)
+                        {
+                            Grid thisTargetGrid = obj2 as Grid;
+                            string[] splittedNameTarget;
+                            string[] splittedNameRef;
+
+                            splittedNameTarget = thisTargetGrid.Name.Split("Right");
+                            splittedNameRef = selectedSideGridButtonName1.Split("Right");
+
+                            if (thisTargetGrid.Name.Contains("Right") && splittedNameTarget[1] != splittedNameRef[1])
+                            {
+                                thisTargetGrid.Effect = new BlurEffect()
+                                {
+                                    Radius = 5,
+                                };
+                            }
+                            else
+                            {
+                                //thisTargetGrid.Effect = null;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void OpenDoc1OriginalButton_Click(object sender, RoutedEventArgs e)
+        {
+            Process fileopener = new Process();
+            fileopener.StartInfo.FileName = "explorer";
+            fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToShow[0]].filePath + "\"";
+            fileopener.Start();
+        }
+
+        private void OpenDoc2OriginalButton_Click(object sender, RoutedEventArgs e)
+        {
+            Process fileopener = new Process();
+            fileopener.StartInfo.FileName = "explorer";
+            fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToShow[1]].filePath + "\"";
+            fileopener.Start();
+        }
+
+        private void OpenDoc3OriginalButton3_Click(object sender, RoutedEventArgs e)
+        {
+            Process fileopener = new Process();
+            fileopener.StartInfo.FileName = "explorer";
+            fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToShow[2]].filePath + "\"";
+            fileopener.Start();
+        }
+
+        private void ProcessDocThread()
+        {
+            // Going through documents in stack, check if reloading needed
+            for (int i = 0; i < docs.documents.Count; i++)
+            {
+                if (docs.documents[i].loaded == false && docs.documents[i].filePath != null)
+                {
+                    docs.documents[i].loaded = true;
+                    docs.documents[i].ClearFolder();
+                    docs.documents[i].DetectFileType();
+
+                    int ret = -1;
+                    switch (docs.documents[i].fileType)
+                    {
+                        case Document.FileTypes.PDF:
+                            ret = docs.documents[i].ReadPDF();
+                            break;
+
+                        case Document.FileTypes.PPT:
+                            ret = docs.documents[i].ReadPPT();
+                            break;
+                    }
+                }
+            }
+
+            Dispatcher.Invoke(() =>
+            {
+                DisplayImageLeft(docs.documentsToShow[0]);
+                Dispatcher.Invoke(() =>
+                {
+                    OpenDoc1OriginalButton1.IsEnabled = true;
+                });
+
+                DisplayImageMiddle(docs.documentsToShow[1]);
+                Dispatcher.Invoke(() =>
+                {
+                    OpenDoc2OriginalButton2.IsEnabled = true;
+                });
+
+                if (settings.numPanelsDragDrop == 3)
+                {
+                    if (docs.documents.Count >= 3)
+                    {
+                        DisplayImageRight(docs.documentsToShow[2]);
+                        Dispatcher.Invoke(() =>
+                        {
+                            OpenDoc3OriginalButton3.IsEnabled = true;
+                        });
+                    }
+                }
+
+                ProgressBarDoc1.Visibility = Visibility.Hidden;
+                ProgressBarDoc2.Visibility = Visibility.Hidden;
+                ProgressBarDoc3.Visibility = Visibility.Hidden;
+                UpdateDocSelectionComboBox();
+            });
+        }
+
+        private void RefDocListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                int ind = RefDocListBox.SelectedIndex;
+                DisplayRefDoc(ind);
+            }
+            catch
+            {
+            }
+        }
+
+        private void RefDocProceedButton_Click(object sender, RoutedEventArgs e)
+        {
+            docs.documentsToCompare[0] = RefDocListBox.SelectedIndex;
+            UpdateDocCompareComboBox();
+            SetVisiblePanel(SidePanels.DOCCOMPARE);
+        }
+
+        private void RefDocScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            double accuHeight = 0;
+
+            for (int i = 0; i < refDocPanel.Children.Count; i++)
+            {
+                Size currSize = refDocPanel.Children[i].DesiredSize;
+                accuHeight += currSize.Height;
+
+                if (accuHeight > RefDocScrollViewer.VerticalOffset)
+                {
+                    RefDocPageNumberLabel.Content = (i + 1).ToString() + " / " + refDocPanel.Children.Count.ToString();
+                    break;
+                }
+            }
+        }
+
+        private void ReloadDoc1Button_Click(object sender, RoutedEventArgs e)
+        {
+            ProgressBarDoc1.Visibility = Visibility.Visible;
+
+            docs.docToReload = docs.documentsToShow[0];
+            docs.displayToReload = 0;
+
+            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
+            threadLoadDocs.Start();
+        }
+
+        private void ReloadDoc2Button_Click(object sender, RoutedEventArgs e)
+        {
+            ProgressBarDoc2.Visibility = Visibility.Visible;
+
+            docs.docToReload = docs.documentsToShow[1];
+            docs.displayToReload = 1;
+
+            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
+            threadLoadDocs.Start();
+        }
+
+        private void ReloadDoc3Button_Click(object sender, RoutedEventArgs e)
+        {
+            ProgressBarDoc3.Visibility = Visibility.Visible;
+
+            docs.docToReload = docs.documentsToShow[2];
+            docs.displayToReload = 2;
+
+            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
+            threadLoadDocs.Start();
+        }
+
+        private void ReloadDocCompare1Button_Click(object sender, RoutedEventArgs e)
+        {
+            ProgressBarDocCompareReload.Visibility = Visibility.Visible;
+            docs.forceAlignmentIndices = new List<List<int>>();
+
+            docs.docToReload = docs.documentsToCompare[0];
+            docs.displayToReload = 3;
+
+            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
+            threadLoadDocs.Start();
+        }
+
+        private void ReloadDocCompare2Button_Click(object sender, RoutedEventArgs e)
+        {
+            ProgressBarDocCompareReload.Visibility = Visibility.Visible;
+            docs.forceAlignmentIndices = new List<List<int>>();
+            docs.docToReload = docs.documentsToCompare[1];
+            docs.displayToReload = 4;
+
+            threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
+            threadLoadDocs.Start();
+        }
+
+        private void ReloadDocThread()
+        {
+            if (docs.documents[docs.docToReload].ReloadDocument() == 0)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    switch (docs.displayToReload)
+                    {
+                        case 0:
+                            DisplayImageLeft(docs.documentsToShow[0]);
+                            break;
+
+                        case 1:
+                            DisplayImageMiddle(docs.documentsToShow[1]);
+                            break;
+
+                        case 2:
+                            DisplayImageRight(docs.documentsToShow[2]);
+                            break;
+
+                        case 3:
+                            for (int i = 0; i < docs.documentsToShow.Count; i++)
+                            {
+                                if (docs.documentsToShow[i] == docs.documentsToCompare[0])
+                                {
+                                    switch (i)
+                                    {
+                                        case 0:
+                                            DisplayImageLeft(docs.documentsToShow[0]);
+                                            break;
+
+                                        case 1:
+                                            DisplayImageMiddle(docs.documentsToShow[1]);
+                                            break;
+
+                                        case 2:
+                                            DisplayImageRight(docs.documentsToShow[2]);
+                                            break;
+                                    }
+                                }
+                            }
+
+                            ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                            docCompareGrid.Visibility = Visibility.Hidden;
+                            docCompareSideGridShown = 0;
+                            DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
+                            DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
+                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
+                            SetVisiblePanel(SidePanels.DOCCOMPARE);
+                            ProgressBarDocCompare.Visibility = Visibility.Visible;
+                            threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                            threadCompare.Start();
+                            break;
+
+                        case 4:
+                            for (int i = 0; i < docs.documentsToShow.Count; i++)
+                            {
+                                if (docs.documentsToShow[i] == docs.documentsToCompare[1])
+                                {
+                                    switch (i)
+                                    {
+                                        case 0:
+                                            DisplayImageLeft(docs.documentsToShow[0]);
+                                            break;
+
+                                        case 1:
+                                            DisplayImageMiddle(docs.documentsToShow[1]);
+                                            break;
+
+                                        case 2:
+                                            DisplayImageRight(docs.documentsToShow[2]);
+                                            break;
+                                    }
+                                }
+                            }
+
+                            ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                            docCompareGrid.Visibility = Visibility.Hidden;
+                            docCompareSideGridShown = 0;
+                            DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
+                            DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
+                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
+                            SetVisiblePanel(SidePanels.DOCCOMPARE);
+                            ProgressBarDocCompare.Visibility = Visibility.Visible;
+                            threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                            threadCompare.Start();
+                            break;
+                    }
+                });
+            }
+        }
+
+        private void RemoveAllForceAlignButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (docs.forceAlignmentIndices.Count != 0)
+            {
+                docs.forceAlignmentIndices = new List<List<int>>();
+                inForceAlignMode = false;
+
+                ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                docCompareGrid.Visibility = Visibility.Hidden;
+                docCompareSideGridShown = 0;
+                DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
+                DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
+                DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
+                SetVisiblePanel(SidePanels.DOCCOMPARE);
+                ProgressBarDocCompareAlign.Visibility = Visibility.Visible;
+                threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                threadCompare.Start();
+
+                Dispatcher.Invoke(() =>
+                {
+                    UnMaskSideGridFromForceAlignMode();
+                    EnableRemoveForceAlignButton();
+                    EnableSideScrollLeft();
+                    EnableSideScrollRight();
+                });
+            }
+        }
+
+        private void RemoveForceAlignClicked(object sender, RoutedEventArgs args)
+        {
+            if (inForceAlignMode == false)
+            {
+                Button button = sender as Button;
+                string[] splittedName = button.Name.Split("Align");
+                docs.RemoveForceAligmentPairs(int.Parse(splittedName[1]));
+
+                ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                docCompareGrid.Visibility = Visibility.Hidden;
+                docCompareSideGridShown = 0;
+                DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
+                DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
+                DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
+                SetVisiblePanel(SidePanels.DOCCOMPARE);
+                ProgressBarDocCompare.Visibility = Visibility.Visible;
+                threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                threadCompare.Start();
+            }
+        }
+
+        private void SaveSettings()
+        {
+            using var file = File.Create("AppSettings.bin");
+            Serializer.Serialize(file, settings);
+        }
+        private void SettingsBrowDefaultFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetVisiblePanel(SidePanels.SETTINGS);
+        }
+
+        private void SettingsShowThirdPanelCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            settings.numPanelsDragDrop = 3;
+            SaveSettings();
+            docs.documentsToShow = new List<int>() { 0, 1, 2 };
+            if (docs.documents.Count >= 1)
+                DisplayImageLeft(docs.documentsToShow[0]);
+            if (docs.documents.Count >= 2)
+                DisplayImageMiddle(docs.documentsToShow[1]);
+            if (docs.documents.Count >= 2)
+            {
+                ShowDragDropZone3();
+                Doc3Grid.Visibility = Visibility.Hidden;
+                DocCompareDragDropZone3.Visibility = Visibility.Visible;
+            }
+
+            if (docs.documents.Count >= 3)
+                DisplayImageRight(docs.documentsToShow[2]);
+
+            UpdateDocSelectionComboBox();
+        }
+
+        private void SettingsShowThirdPanelCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            settings.numPanelsDragDrop = 2;
+            SaveSettings();
+            docs.documentsToShow = new List<int>() { 0, 1 };
+            DisplayImageLeft(docs.documentsToShow[0]);
+            DisplayImageMiddle(docs.documentsToShow[1]);
+            HideDragDropZone3();
+            UpdateDocSelectionComboBox();
+        }
+
+        private void SetVisiblePanel(SidePanels p_sidePanel)
+        {
+            Brush brush = FindResource("SecondaryAccentBrush") as Brush;
+
+            switch (p_sidePanel)
+            {
+                case SidePanels.DRAGDROP:
+                    SidePanelOpenDocBackground.Background = brush;
+                    SidePanelDocCompareBackground.Background = Brushes.Transparent;
+                    SettingsButtonBackground.Background = Brushes.Transparent;
+                    DragDropPanel.Visibility = Visibility.Visible;
+                    DocComparePanel.Visibility = Visibility.Hidden;
+                    SettingsPanel.Visibility = Visibility.Hidden;
+                    SelectReferenceDocPanel.Visibility = Visibility.Hidden;
+                    break;
+
+                case SidePanels.DOCCOMPARE:
+                    SidePanelOpenDocBackground.Background = Brushes.Transparent;
+                    SidePanelDocCompareBackground.Background = brush;
+                    SettingsButtonBackground.Background = Brushes.Transparent;
+                    DragDropPanel.Visibility = Visibility.Hidden;
+                    DocComparePanel.Visibility = Visibility.Visible;
+                    SettingsPanel.Visibility = Visibility.Hidden;
+                    SelectReferenceDocPanel.Visibility = Visibility.Hidden;
+                    break;
+
+                case SidePanels.SETTINGS:
+                    SidePanelOpenDocBackground.Background = Brushes.Transparent;
+                    SidePanelDocCompareBackground.Background = Brushes.Transparent;
+                    SettingsButtonBackground.Background = brush;
+                    DragDropPanel.Visibility = Visibility.Hidden;
+                    DocComparePanel.Visibility = Visibility.Hidden;
+                    SettingsPanel.Visibility = Visibility.Visible;
+                    SelectReferenceDocPanel.Visibility = Visibility.Hidden;
+                    break;
+
+                case SidePanels.REFDOC:
+                    SidePanelOpenDocBackground.Background = Brushes.Transparent;
+                    SidePanelDocCompareBackground.Background = brush;
+                    SettingsButtonBackground.Background = Brushes.Transparent;
+                    DragDropPanel.Visibility = Visibility.Hidden;
+                    DocComparePanel.Visibility = Visibility.Hidden;
+                    SettingsPanel.Visibility = Visibility.Hidden;
+                    SelectReferenceDocPanel.Visibility = Visibility.Visible;
+                    break;
+
+                default:
+                    SidePanelOpenDocBackground.Background = Brushes.Transparent;
+                    SidePanelDocCompareBackground.Background = Brushes.Transparent;
+                    SettingsButtonBackground.Background = Brushes.Transparent;
+                    DragDropPanel.Visibility = Visibility.Hidden;
+                    DocComparePanel.Visibility = Visibility.Hidden;
+                    SettingsPanel.Visibility = Visibility.Hidden;
+                    SelectReferenceDocPanel.Visibility = Visibility.Hidden;
+                    break;
+            }
+        }
+
+        private void ShowDragDropZone2()
+        {
+            DocCompareSecondDocZone.Visibility = Visibility.Visible;
+            DragDropPanel.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
+        }
+        private void ShowDragDropZone3()
+        {
+            if (settings.numPanelsDragDrop == 3)
+            {
+                DocCompareThirdDocZone.Visibility = Visibility.Visible;
+                DragDropPanel.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
+            }
+        }
+        private void ShowMaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            showMask = true;
+            DisplayComparisonResult();
+            HighlightSideGrid();
+            ShowMaskButton.Visibility = Visibility.Hidden;
+            HideMaskButton.Visibility = Visibility.Visible;
+            HighlightingDisableTip.Visibility = Visibility.Hidden;
+        }
+
+        private void ShowMaxDocCountWarningBox()
+        {
+            MessageBox.Show("You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded. Subscribe to the Pro-version to view unlimited documents.", "Get Pro-Version", MessageBoxButton.OK);
+        }
+
+        private void SideGridButtonMouseClick(object sender, RoutedEventArgs args)
+        {
+            Button button = sender as Button;
+            if (inForceAlignMode == false)
+            {
+                scrollPosLeft = DocCompareSideScrollViewerLeft.VerticalOffset;
+                scrollPosRight = DocCompareSideScrollViewerRight.VerticalOffset;
+
+                selectedSideGridButtonName1 = button.Name;
+                if (selectedSideGridButtonName1.Contains("Left"))
+                {
+                    sideGridSelectedLeftOrRight = SideGridSelection.LEFT;
+                    Dispatcher.Invoke(() => { DisableSideScrollLeft(); });
+                }
+                else
+                {
+                    sideGridSelectedLeftOrRight = SideGridSelection.RIGHT;
+                    Dispatcher.Invoke(() => { DisableSideScrollRight(); });
+                }
+
+                inForceAlignMode = true;
+                Dispatcher.Invoke(() =>
+                {
+                    MaskSideGridInForceAlignMode();
+                    DisableRemoveForceAlignButton();
+                });
+            }
+            else
+            {
+                selectedSideGridButtonName2 = button.Name;
+
+                if (selectedSideGridButtonName2 == selectedSideGridButtonName1) // click on original page again
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        UnMaskSideGridFromForceAlignMode();
+                        EnableRemoveForceAlignButton();
+
+                        if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                        {
+                            //DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosLeft);
+                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosLeft);
+                        }
+                        else
+                        {
+                            DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosRight);
+                            //DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosRight);
+                        }
+                    });
+                    inForceAlignMode = false;
+                    return;
+                }
+                else // another page selected
+                {
+                    inForceAlignMode = false;
+
+                    int source, target;
+                    string[] splittedNameTarget;
+                    string[] splittedNameRef;
+
+                    if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                    {
+                        splittedNameRef = selectedSideGridButtonName1.Split("Left");
+                        splittedNameTarget = selectedSideGridButtonName2.Split("Right");
+
+                        source = docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedNameRef[1])];
+                        target = docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedNameTarget[1])];
+                        docs.AddForceAligmentPairs(source, target);
+                    }
+                    else
+                    {
+                        splittedNameRef = selectedSideGridButtonName2.Split("Left");
+                        splittedNameTarget = selectedSideGridButtonName1.Split("Right");
+
+                        source = docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedNameRef[1])];
+                        target = docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedNameTarget[1])];
+                        docs.AddForceAligmentPairs(source, target);
+                    }
+
+                    ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                    docCompareGrid.Visibility = Visibility.Hidden;
+                    docCompareSideGridShown = 0;
+                    DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
+                    DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
+                    DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
+                    SetVisiblePanel(SidePanels.DOCCOMPARE);
+                    ProgressBarDocCompareAlign.Visibility = Visibility.Visible;
+                    threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                    threadCompare.Start();
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        UnMaskSideGridFromForceAlignMode();
+                        EnableRemoveForceAlignButton();
+                        EnableSideScrollLeft();
+                        EnableSideScrollRight();
+                    });
+                }
+            }
+        }
+
         private void SideGridMouseEnter(object sender, MouseEventArgs args)
         {
             Grid img = sender as Grid;
@@ -1515,7 +2121,7 @@ namespace DocCompareWPF
                 foreach (List<int> pair in docs.forceAlignmentIndices)
                 {
                     pairLeft = docs.documents[docs.documentsToCompare[0]].docCompareIndices.FindIndex(x => x == pair[0]);
-                    pairRight = docs.documents[docs.documentsToCompare[1]].docCompareIndices.FindIndex(x => x == pair[1]);                    
+                    pairRight = docs.documents[docs.documentsToCompare[1]].docCompareIndices.FindIndex(x => x == pair[1]);
 
                     if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
                     {
@@ -1541,8 +2147,8 @@ namespace DocCompareWPF
 
                         if (pairRight > lowerIndRight && pairRight <= refInd)
                         {
-                            lowerIndLeft = pairLeft; 
-                            lowerIndRight= pairRight;
+                            lowerIndLeft = pairLeft;
+                            lowerIndRight = pairRight;
                         }
 
                         if (pairRight < upperIndRight && pairRight >= refInd)
@@ -1553,7 +2159,6 @@ namespace DocCompareWPF
                     }
                 }
             }
-
 
             foreach (object child in img.Children)
             {
@@ -1582,20 +2187,21 @@ namespace DocCompareWPF
                                     if (lowerIndRight <= selfInd && selfInd <= upperIndLeft && isLinkedPage == false)
                                         foundButton.Visibility = Visibility.Visible;
                                     else
-                                    {                                           
+                                    {
                                         nameToLook = "SideButtonInvalidRight" + splittedName[1];
                                         foreach (object child2 in img.Children)
                                         {
-                                            if(child2 is Button)
+                                            if (child2 is Button)
                                             {
-                                                if((child2 as Button).Name == nameToLook)
-                                                {                                                    
+                                                if ((child2 as Button).Name == nameToLook)
+                                                {
                                                     foundButton = child2 as Button;
 
                                                     if (isLinkedPage == true)
                                                     {
                                                         foundButton.ToolTip = "Page linked. Please remove existing link first.";
-                                                    }else
+                                                    }
+                                                    else
                                                     {
                                                         foundButton.ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.";
                                                     }
@@ -1644,7 +2250,6 @@ namespace DocCompareWPF
                                                 }
                                             }
                                         }
-                                        
                                     }
                                 }
                             }
@@ -1703,179 +2308,49 @@ namespace DocCompareWPF
             }
         }
 
-        private void SideGridButtonMouseClick(object sender, RoutedEventArgs args)
+        private void SidePanelDocCompareButton_Click(object sender, RoutedEventArgs e)
         {
-            Button button = sender as Button;
-            if (inForceAlignMode == false)
+            if (docs.documents.Count >= 2 && docCompareRunning == false)
             {
-                scrollPosLeft = DocCompareSideScrollViewerLeft.VerticalOffset;
-                scrollPosRight = DocCompareSideScrollViewerRight.VerticalOffset;
+                inForceAlignMode = false;
 
-                selectedSideGridButtonName1 = button.Name;
-                if (selectedSideGridButtonName1.Contains("Left"))
+                if (settings.isProVersion == true && settings.canSelectRefDoc == true)
                 {
-                    sideGridSelectedLeftOrRight = SideGridSelection.LEFT;
-                    Dispatcher.Invoke(() => { DisableSideScrollLeft(); });
+                    SetVisiblePanel(SidePanels.REFDOC);
 
+                    // populate list box
+                    ObservableCollection<string> items = new ObservableCollection<string>();
+                    foreach (Document doc in docs.documents)
+                    {
+                        items.Add(Path.GetFileName(doc.filePath));
+                    }
+
+                    RefDocListBox.ItemsSource = items;
+                    RefDocListBox.SelectedIndex = 0;
                 }
                 else
                 {
-                    sideGridSelectedLeftOrRight = SideGridSelection.RIGHT;
-                    Dispatcher.Invoke(() => { DisableSideScrollRight(); });
-                }
-
-                inForceAlignMode = true;
-                Dispatcher.Invoke(() =>
-                {
-                    MaskSideGridInForceAlignMode();
-                    DisableRemoveForceAlignButton();
-                });
-            }
-            else
-            {
-                selectedSideGridButtonName2 = button.Name;
-
-                if (selectedSideGridButtonName2 == selectedSideGridButtonName1) // click on original page again
-                {
-
-                    Dispatcher.Invoke(() =>
-                    {
-                        UnMaskSideGridFromForceAlignMode();
-                        EnableRemoveForceAlignButton();
-
-                        if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
-                        {
-                            //DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosLeft);
-                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosLeft);
-                        }
-                        else
-                        {
-                            DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosRight);
-                            //DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosRight);
-                        }
-
-                    });
-                    inForceAlignMode = false;
-                    return;
-                }
-                else // another page selected
-                {
-                    inForceAlignMode = false;
-
-                    int source, target;
-                    string[] splittedNameTarget;
-                    string[] splittedNameRef;
-
-                    if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
-                    {
-                        splittedNameRef = selectedSideGridButtonName1.Split("Left");
-                        splittedNameTarget = selectedSideGridButtonName2.Split("Right");
-
-                        source = docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedNameRef[1])];
-                        target = docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedNameTarget[1])];
-                        docs.AddForceAligmentPairs(source, target);
-                    }
-                    else
-                    {
-                        splittedNameRef = selectedSideGridButtonName2.Split("Left");
-                        splittedNameTarget = selectedSideGridButtonName1.Split("Right");
-
-                        source = docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedNameRef[1])];
-                        target = docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedNameTarget[1])];
-                        docs.AddForceAligmentPairs(source, target);
-                    }
-
+                    docs.documentsToCompare[0] = docs.documentsToShow[0]; // default using the first document selected
+                    docs.documentsToCompare[1] = docs.documentsToShow[1]; // default using the first document selected
+                    UpdateDocCompareComboBox();
+                    SetVisiblePanel(SidePanels.DOCCOMPARE);
+                    docs.forceAlignmentIndices = new List<List<int>>();
                     ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                     docCompareGrid.Visibility = Visibility.Hidden;
                     docCompareSideGridShown = 0;
                     DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
                     DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
                     DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
-                    SetVisiblePanel(SidePanels.DOCCOMPARE);
-                    ProgressBarDocCompareAlign.Visibility = Visibility.Visible;
+                    ProgressBarDocCompare.Visibility = Visibility.Visible;
                     threadCompare = new Thread(new ThreadStart(CompareDocsThread));
                     threadCompare.Start();
-
-                    Dispatcher.Invoke(() =>
-                    {
-                        UnMaskSideGridFromForceAlignMode();
-                        EnableRemoveForceAlignButton();
-                        EnableSideScrollLeft();
-                        EnableSideScrollRight();
-                    });
                 }
             }
         }
 
-        private void DocCompareSideScrollViewerRight_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        private void SidePanelOpenDocButton_Click(object sender, RoutedEventArgs e)
         {
-            if (inForceAlignMode == false)
-                DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(DocCompareSideScrollViewerRight.VerticalOffset);
-            else
-            {
-                if (sideGridSelectedLeftOrRight == SideGridSelection.RIGHT)
-                {
-                    DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosRight);
-                }
-            }
-        }
-
-        private void DocCompareSideScrollViewerLeft_ScrollChanged(object sender, ScrollChangedEventArgs e)
-        {
-            if (inForceAlignMode == false)
-                DocCompareSideScrollViewerRight.ScrollToVerticalOffset(DocCompareSideScrollViewerLeft.VerticalOffset);
-            else
-            {
-                if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
-                {
-                    DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosLeft);
-                }
-            }
-        }
-
-        private void DisableSideScrollLeft()
-        {
-            //DocCompareSideScrollViewerLeft.IsEnabled = false;
-        }
-
-        private void EnableSideScrollLeft()
-        {
-            //DocCompareSideScrollViewerLeft.IsEnabled = true;
-        }
-
-        private void DisableSideScrollRight()
-        {
-            //DocCompareSideScrollViewerRight.IsEnabled = false;
-        }
-
-        private void RemoveAllForceAlignButton_Click(object sender, RoutedEventArgs e)
-        {
-            docs.forceAlignmentIndices = new List<List<int>>();
-            inForceAlignMode = false;
-
-            ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
-            docCompareGrid.Visibility = Visibility.Hidden;
-            docCompareSideGridShown = 0;
-            DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
-            DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
-            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
-            SetVisiblePanel(SidePanels.DOCCOMPARE);
-            ProgressBarDocCompareAlign.Visibility = Visibility.Visible;
-            threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-            threadCompare.Start();
-
-            Dispatcher.Invoke(() =>
-            {
-                UnMaskSideGridFromForceAlignMode();
-                EnableRemoveForceAlignButton();
-                EnableSideScrollLeft();
-                EnableSideScrollRight();
-            });
-        }
-
-        private void EnableSideScrollRight()
-        {
-            //DocCompareSideScrollViewerRight.IsEnabled = true;
+            SetVisiblePanel(SidePanels.DRAGDROP);
         }
 
         private void UnMaskSideGridFromForceAlignMode()
@@ -1911,693 +2386,146 @@ namespace DocCompareWPF
             }
         }
 
-        private void MaskSideGridInForceAlignMode()
+        private void UpdateDocCompareComboBox()
         {
-            if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+            // update combo box left
+            ObservableCollection<string> items = new ObservableCollection<string>();
+            int selectedDocInd = 0;
+            for (int i = 0; i < docs.documents.Count; i++)
             {
-                foreach (object obj in docCompareChildPanelLeft.Children)
+                if (i != docs.documentsToCompare[0])
                 {
-                    //Border thisBorder = obj as Border;
-                    //Grid thisGrid = thisBorder.Child as Grid;
-                    Grid thisGrid = obj as Grid;
-                    foreach (object obj2 in thisGrid.Children)
-                    {
-                        if (obj2 is Grid)
-                        {
-                            Grid thisTargetGrid = obj2 as Grid;
-                            string[] splittedNameTarget;
-                            string[] splittedNameRef;
+                    items.Add(Path.GetFileName(docs.documents[i].filePath));
 
-
-                            splittedNameTarget = thisTargetGrid.Name.Split("Left");
-                            splittedNameRef = selectedSideGridButtonName1.Split("Left");
-
-                            if (thisTargetGrid.Name.Contains("Left") && splittedNameTarget[1] != splittedNameRef[1])
-                            {
-                                thisTargetGrid.Effect = new BlurEffect()
-                                {
-                                    Radius = 5,
-                                };
-                            }
-                            else
-                            {
-                                //thisTargetGrid.Effect = null;
-                            }
-                        }
-                    }
+                    if (i == docs.documentsToCompare[1])
+                        selectedDocInd = items.Count - 1;
                 }
             }
-            else
-            {
-                foreach (object obj in docCompareChildPanelRight.Children)
-                {
-                    //Border thisBorder = obj as Border;
-                    //Grid thisGrid = thisBorder.Child as Grid;
-                    Grid thisGrid = obj as Grid;
-                    foreach (object obj2 in thisGrid.Children)
-                    {
-                        if (obj2 is Grid)
-                        {
-                            Grid thisTargetGrid = obj2 as Grid;
-                            string[] splittedNameTarget;
-                            string[] splittedNameRef;
 
-                            splittedNameTarget = thisTargetGrid.Name.Split("Right");
-                            splittedNameRef = selectedSideGridButtonName1.Split("Right");
-
-                            if (thisTargetGrid.Name.Contains("Right") && splittedNameTarget[1] != splittedNameRef[1])
-                            {
-                                thisTargetGrid.Effect = new BlurEffect()
-                                {
-                                    Radius = 5,
-                                };
-                            }
-                            else
-                            {
-                                //thisTargetGrid.Effect = null;
-                            }
-                        }
-                    }
-                }
-            }
+            DocCompareNameLabel2ComboBox.ItemsSource = items;
+            DocCompareNameLabel2ComboBox.SelectedIndex = selectedDocInd;
         }
 
-        private void RemoveForceAlignClicked(object sender, RoutedEventArgs args)
+        private void UpdateDocSelectionComboBox()
         {
-            if (inForceAlignMode == false)
+            // update combo box left
+            ObservableCollection<string> items = new ObservableCollection<string>();
+            for (int i = 0; i < docs.documents.Count; i++)
             {
-                Button button = sender as Button;
-                string[] splittedName = button.Name.Split("Align");
-                docs.RemoveForceAligmentPairs(int.Parse(splittedName[1]));
-
-                ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
-                docCompareGrid.Visibility = Visibility.Hidden;
-                docCompareSideGridShown = 0;
-                DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
-                DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(0);
-                DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
-                SetVisiblePanel(SidePanels.DOCCOMPARE);
-                ProgressBarDocCompare.Visibility = Visibility.Visible;
-                threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                threadCompare.Start();
-            }
-        }
-
-        private void EnableRemoveForceAlignButton()
-        {
-            foreach (object obj in docCompareChildPanelRight.Children)
-            {
-                //Border thisBorder = obj as Border;
-                //Grid thisGrid = thisBorder.Child as Grid;
-                Grid thisGrid = obj as Grid;
-                foreach (object obj2 in thisGrid.Children)
+                bool ok = true;
+                for (int j = 0; j < docs.documentsToShow.Count; j++)
                 {
-                    if (obj2 is Button)
+                    if (j != 0)
                     {
-                        Button thisButton = obj2 as Button;
-                        thisButton.IsEnabled = true;
-                    }
-                }
-            }
-        }
-
-        private void DisableRemoveForceAlignButton()
-        {
-            foreach (object obj in docCompareChildPanelRight.Children)
-            {
-                //Border thisBorder = obj as Border;
-                //Grid thisGrid = thisBorder.Child as Grid;
-                Grid thisGrid = obj as Grid;
-                foreach (object obj2 in thisGrid.Children)
-                {
-                    if (obj2 is Button)
-                    {
-                        Button thisButton = obj2 as Button;
-                        thisButton.IsEnabled = false;
-                    }
-                }
-            }
-        }
-
-        private void DisplayComparisonResult()
-        {
-            int pageCounter = 0;
-            Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
-
-            Dispatcher.Invoke(() =>
-            {
-                DocCompareNameLabel1.Content = Path.GetFileName(docs.documents[docs.documentsToCompare[0]].filePath);
-
-                docCompareChildPanel1 = new StackPanel
-                {
-                    Background = brush,
-                    HorizontalAlignment = HorizontalAlignment.Stretch
-                };
-                docCompareChildPanelLeft = new StackPanel
-                {
-                    Background = brush,
-                    //HorizontalAlignment = HorizontalAlignment.Stretch,
-                    //Margin = new Thickness(0),
-                };
-                docCompareChildPanelRight = new StackPanel
-                {
-                    Background = brush,
-                    //HorizontalAlignment = HorizontalAlignment.Stretch,
-                    //Margin = new Thickness(0),
-                };
-
-                Image thisImage;
-                FileStream stream;
-                BitmapImage bitmap;
-
-                for (int i = 0; i < docs.totalLen; i++) // going through all the pages of the longest document
-                {
-                    Grid thisGrid = new Grid
-                    {
-                        IsHitTestVisible = true
-                    };
-                    thisGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) }); // doc1
-                    thisGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) }); // doc2
-
-                    if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1) // doc 1 has a valid page
-                    {
-                        thisImage = new Image();
-                        stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg"));
-                        bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = stream;
-                        bitmap.EndInit();
-                        stream.Close();
-                        thisImage.Source = bitmap;
-                        thisImage.Margin = new Thickness(10, 10, 10, 10);
-                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                        thisImage.VerticalAlignment = VerticalAlignment.Center;
-                        Grid.SetColumn(thisImage, 0);
-
-                        thisGrid.Children.Add(thisImage);
-                    }
-
-                    if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1) // doc 2 has a valid page
-                    {
-                        thisImage = new Image();
-                        stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg"));
-                        bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = stream;
-                        bitmap.EndInit();
-                        stream.Close();
-                        thisImage.Source = bitmap;
-                        thisImage.Margin = new Thickness(10, 10, 10, 10);
-
-                        thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                        thisImage.VerticalAlignment = VerticalAlignment.Center;
-                        Grid.SetColumn(thisImage, 1);
-                        thisGrid.Children.Add(thisImage);
-
-                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1 && showMask == true)
+                        if (i != docs.documentsToShow[j])
                         {
-                            if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
-                            {
-                                thisImage = new Image();
-                                stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png")));
-                                bitmap = new BitmapImage();
-                                bitmap.BeginInit();
-                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                                bitmap.StreamSource = stream;
-                                bitmap.EndInit();
-                                stream.Close();
-                                thisImage.Source = bitmap;
-                                thisImage.Margin = new Thickness(10, 10, 10, 10);
-                                thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
-                                thisImage.VerticalAlignment = VerticalAlignment.Stretch;
-
-                                Grid.SetColumn(thisImage, 2);
-                                thisGrid.Children.Add(thisImage);
-                            }
-                        }
-                    }
-
-                    pageCounter++;
-                    docCompareChildPanel1.Children.Add(thisGrid);
-                }
-
-                DocCompareMainScrollViewer.Content = docCompareChildPanel1;
-                pageCounter = 0;
-
-                // side panel
-
-                for (int i = 0; i < docs.totalLen; i++) // going through all the pages of the longest document
-                {
-                    /*
-                    Grid topGrid = new Grid();
-                    topGrid.RowDefinitions.Add(new RowDefinition()); // doc1
-                    topGrid.RowDefinitions.Add(new RowDefinition()); // page number
-                    */
-                    /*Border thisBorderLeft = new Border
-                    {
-                        BorderBrush = Brushes.Transparent,
-                        BorderThickness = new Thickness(0),
-                        Padding = new Thickness(0),
-                        Margin = new Thickness(0),
-                        MaxWidth = 130,
-                    };
-
-                    Border thisBorderRight = new Border
-                    {
-                        BorderBrush = Brushes.Transparent,
-                        BorderThickness = new Thickness(0),
-                        Padding = new Thickness(0),
-                        Margin = new Thickness(0),
-                        MaxWidth = 130,
-                    };
-                    */
-                    Grid thisLeftGrid = new Grid()
-                    {
-                        Margin = new Thickness(0),
-                        //MaxWidth = 130,
-                    };
-                    thisLeftGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(20, GridUnitType.Pixel) }); // page number
-                    thisLeftGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(120, GridUnitType.Pixel) }); // doc1
-                    Grid thisRightGrid = new Grid()
-                    {
-                        Margin = new Thickness(0),
-                        //MaxWidth = 130,
-                    };
-
-                    thisRightGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(20, GridUnitType.Pixel) }); // forcealign icon
-                    thisRightGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(120, GridUnitType.Pixel) }); // doc2
-
-                    thisLeftGrid.MouseLeftButtonDown += (sen, ev) => { HandleMouseClickOnSideScrollView(sen, ev); };
-                    thisRightGrid.MouseLeftButtonDown += (sen, ev) => { HandleMouseClickOnSideScrollView(sen, ev); };
-
-                    thisLeftGrid.Name = "LeftSideGrid" + i.ToString();
-                    thisRightGrid.Name = "RightSideGrid" + i.ToString();
-                    /*
-                    thisBorderLeft.Child = thisLeftGrid;
-                    thisBorderRight.Child = thisRightGrid;
-                    */
-                    //Grid.SetRow(thisGrid, 0);
-                    bool displayForceAlignButton = true;
-
-                    // force align button
-                    foreach (List<int> ind1 in docs.forceAlignmentIndices)
-                    {
-                        if (ind1[0] == docs.documents[docs.documentsToCompare[0]].docCompareIndices[i])
-                        {
-                            Button removeForceAlignButton = new Button()
-                            {
-                                Height = 20,
-                                Width = 20,
-                                Padding = new Thickness(0, 0, 0, 0),
-                                Margin = new Thickness(0),
-                                ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
-                                Foreground = Brushes.Black,
-                                Background = Brushes.Transparent,
-                                Opacity = 1,
-                                Name = "RemoveForceAlign" + docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString(),
-                                IsHitTestVisible = true,
-                                HorizontalAlignment = HorizontalAlignment.Center,
-                                VerticalAlignment = VerticalAlignment.Center,
-                                ToolTip = "Unlink pages",
-                            };
-                            Grid.SetColumn(removeForceAlignButton, 0);
-                            thisRightGrid.Children.Add(removeForceAlignButton);
-                            //displayForceAlignButton = false;
-                            removeForceAlignButton.Click += (sen, ev) => { RemoveForceAlignClicked(sen, ev); };
-                        }
-                    }
-
-                    if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1) // doc 1 has a valid page
-                    {
-                        Grid imageGrid = new Grid()
-                        {
-                            Name = "SideImageLeft" + i.ToString(),
-                        };
-                        thisImage = new Image();
-                        stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg"));
-                        bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = stream;
-                        bitmap.EndInit();
-                        stream.Close();
-                        thisImage.Source = bitmap;
-                        imageGrid.Margin = new Thickness(10, 10, 10, 10);
-
-                        imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                        Grid.SetColumn(imageGrid, 1);
-
-                        imageGrid.Children.Add(thisImage);
-                        thisLeftGrid.Children.Add(imageGrid);
-
-                        if (displayForceAlignButton)
-                        {
-                            Button test = new Button()
-                            {
-                                Height = 25,
-                                Width = 25,
-                                Padding = new Thickness(0, 0, 0, 0),
-                                ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
-                                Foreground = Brushes.White,
-                                //Background = Brushes.Transparent,
-                                Opacity = 0.5,
-                                Visibility = Visibility.Hidden,
-                                Name = "SideButtonLeft" + i.ToString(),
-                                IsHitTestVisible = true,
-                                HorizontalAlignment = HorizontalAlignment.Right,
-                                VerticalAlignment = VerticalAlignment.Bottom,
-                                ToolTip = "Link pages"
-                            };
-
-                            test.Click += (sen, ev) => { SideGridButtonMouseClick(sen, ev); };
-
-                            //Grid.SetColumn(test, 1);
-                            imageGrid.Children.Add(test);
-                            
-                            test = new Button()
-                            {
-                                Height = 25,
-                                Width = 25,
-                                Padding = new Thickness(0, 0, 0, 0),
-                                ContentTemplate = (DataTemplate)FindResource("ForceAlignInvalidIcon"),
-                                Foreground = Brushes.White,
-                                //Background = Brushes.Transparent,
-                                Opacity = 0.5,
-                                Visibility = Visibility.Hidden,
-                                Name = "SideButtonInvalidLeft" + i.ToString(),
-                                IsHitTestVisible = true,
-                                HorizontalAlignment = HorizontalAlignment.Right,
-                                VerticalAlignment = VerticalAlignment.Bottom,
-                                ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.",
-                                //IsEnabled = false,
-                            };
-
-
-                            //Grid.SetColumn(test, 1);
-                            imageGrid.Children.Add(test);
-                        }
-                        imageGrid.MouseEnter += SideGridMouseEnter;
-                        imageGrid.MouseLeave += SideGridMouseLeave;
-                    }
-                    else // doc2 has a valid page, we use it as dummy
-                    {
-                        Grid imageGrid = new Grid()
-                        {
-                            Name = "SideImageDummyLeft" + i.ToString(),
-                        };
-                        thisImage = new Image();
-                        stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg"));
-                        bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = stream;
-                        bitmap.EndInit();
-                        stream.Close();
-                        thisImage.Source = bitmap;
-                        imageGrid.Margin = new Thickness(10, 10, 10, 10);
-
-                        imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                        Grid.SetColumn(imageGrid, 1);
-
-                        thisImage.Visibility = Visibility.Hidden;
-
-                        imageGrid.Children.Add(thisImage);
-                        thisLeftGrid.Children.Add(imageGrid);
-                    }
-
-                    if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1) // doc 2 has a valid page
-                    {
-                        Grid imageGrid = new Grid();
-                        thisImage = new Image();
-                        stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg"));
-                        bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = stream;
-                        bitmap.EndInit();
-                        stream.Close();
-                        thisImage.Source = bitmap;
-                        imageGrid.Margin = new Thickness(10, 10, 10, 10);
-
-                        double h = bitmap.PixelHeight;
-                        double w = bitmap.PixelWidth;
-                        imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                        Grid.SetColumn(imageGrid, 1);
-                        imageGrid.Children.Add(thisImage);
-                        thisRightGrid.Children.Add(imageGrid);
-
-                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
-                        {
-                            if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
-                            {
-                                if (showMask == true)
-                                {
-                                    thisImage = new Image();
-                                    stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png")));
-                                    bitmap = new BitmapImage();
-                                    bitmap.BeginInit();
-                                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                                    bitmap.StreamSource = stream;
-                                    bitmap.EndInit();
-
-                                    stream.Close();
-                                    thisImage.Source = bitmap;
-                                    imageGrid.Margin = new Thickness(10, 10, 10, 10);
-
-                                    //thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
-                                    //thisImage.VerticalAlignment = VerticalAlignment.Stretch;
-
-                                    //thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                                    //Grid.SetColumn(thisImage, 2);
-                                    imageGrid.Children.Add(thisImage);
-                                }
-                                //thisBorder.BorderBrush = Brushes.Red;
-                                thisLeftGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
-                                thisRightGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
-                                //thisBorder.BorderThickness = new Thickness(2);
-                            }
-                        }
-
-                        imageGrid.Name = "SideImageRight" + i.ToString();
-                        imageGrid.MouseEnter += SideGridMouseEnter;
-                        imageGrid.MouseLeave += SideGridMouseLeave;
-                        if (displayForceAlignButton)
-                        {
-                            Button test2 = new Button()
-                            {
-                                Height = 25,
-                                Width = 25,
-                                Padding = new Thickness(0, 0, 0, 0),
-                                ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
-                                Foreground = Brushes.White,
-                                //Background = Brushes.Transparent,
-                                Opacity = 0.5,
-                                Visibility = Visibility.Hidden,
-                                Name = "SideButtonRight" + i.ToString(),
-                                HorizontalAlignment = HorizontalAlignment.Right,
-                                VerticalAlignment = VerticalAlignment.Bottom,
-                                ToolTip = "Link pages"
-                            };
-                            test2.Click += (sen, ev) => { SideGridButtonMouseClick(sen, ev); };
-
-                            //Grid.SetColumn(test2, 2);
-                            imageGrid.Children.Add(test2);
-
-                            test2 = new Button()
-                            {
-                                Height = 25,
-                                Width = 25,
-                                Padding = new Thickness(0, 0, 0, 0),
-                                ContentTemplate = (DataTemplate)FindResource("ForceAlignInvalidIcon"),
-                                Foreground = Brushes.White,
-                                //Background = Brushes.Transparent,
-                                Opacity = 0.5,
-                                Visibility = Visibility.Hidden,
-                                Name = "SideButtonInvalidRight" + i.ToString(),
-                                HorizontalAlignment = HorizontalAlignment.Right,
-                                VerticalAlignment = VerticalAlignment.Bottom,
-                                ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.",
-                                //IsEnabled = false,
-                            };
-                            
-                            //Grid.SetColumn(test2, 2);
-                            imageGrid.Children.Add(test2);
-                        }
-                    }
-                    else // we use doc 1 as dummy
-                    {
-                        Grid imageGrid = new Grid()
-                        {
-                            Name = "SideImageDummyRight" + i.ToString(),
-                        };
-                        thisImage = new Image();
-                        stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg"));
-                        bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmap.StreamSource = stream;
-                        bitmap.EndInit();
-                        stream.Close();
-                        thisImage.Source = bitmap;
-                        imageGrid.Margin = new Thickness(10, 10, 10, 10);
-
-                        imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                        Grid.SetColumn(imageGrid, 1);
-
-                        thisImage.Visibility = Visibility.Hidden;
-
-                        imageGrid.Children.Add(thisImage);
-                        thisRightGrid.Children.Add(imageGrid);
-                    }
-
-                    pageCounter++;
-
-                    Label thisLabel = new Label
-                    {
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center,
-                        Content = (i + 1).ToString(),
-                        MinWidth = 20
-                    };
-                    Grid.SetColumn(thisLabel, 0);
-
-                    thisLeftGrid.Children.Add(thisLabel);
-                    //topGrid.Children.Add(thisGrid);
-                    docCompareChildPanelLeft.Children.Add(thisLeftGrid);
-                    docCompareChildPanelRight.Children.Add(thisRightGrid);
-                }
-
-                DocCompareSideScrollViewerLeft.Content = docCompareChildPanelLeft;
-                DocCompareSideScrollViewerRight.Content = docCompareChildPanelRight;
-
-                docCompareGrid.Visibility = Visibility.Visible;
-                ProgressBarDocCompare.Visibility = Visibility.Hidden;
-                ProgressBarDocCompareAlign.Visibility = Visibility.Hidden;
-            });
-        }
-
-        private void HandleMouseClickOnSideScrollView(object sender, MouseButtonEventArgs e)
-        {
-            if (inForceAlignMode == false)
-            {
-                Grid grid = sender as Grid;
-                string[] splittedName = grid.Name.Split("SideGrid");
-
-                double accuHeight = 0;
-                for (int i = 0; i < int.Parse(splittedName[1]); i++)
-                {
-                    Size currSize = docCompareChildPanel1.Children[i].DesiredSize;
-                    accuHeight += currSize.Height;
-                }
-
-                DocCompareMainScrollViewer.ScrollToVerticalOffset(accuHeight);
-
-                docCompareSideGridShown = int.Parse(splittedName[1]);
-                HighlightSideGrid();
-            }
-        }
-
-        private void HighlightSideGrid()
-        {
-            Brush brush = FindResource("SideGridActiveBackground") as Brush;
-            double accuHeight = 0;
-            double windowsHeight = DocCompareSideScrollViewerRight.ActualHeight;
-            Dispatcher.Invoke(() =>
-            {
-                for (int i = 0; i < docCompareChildPanelRight.Children.Count; i++)
-                {
-                    //Border thisBorder;
-                    Grid thisGrid;
-                    if (i == docCompareSideGridShown)
-                    {
-                        //thisBorder = docCompareChildPanelRight.Children[i] as Border;
-                        thisGrid = docCompareChildPanelRight.Children[i] as Grid;
-                        //thisGrid = thisBorder.Child as Grid;
-                        thisGrid.Background = brush;
-
-                        //thisBorder = docCompareChildPanelLeft.Children[i] as Border;
-                        thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
-                        //thisGrid = thisBorder.Child as Grid;
-                        thisGrid.Background = brush;
-
-                        Size thisSize = thisGrid.DesiredSize;
-
-                        if (accuHeight - windowsHeight / 2 > 0)
-                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(accuHeight - windowsHeight / 2);
-                        else
-                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
-
-                        accuHeight += thisSize.Height;
-                    }
-                    else
-                    {
-                        //thisBorder = docCompareChildPanelRight.Children[i] as Border;
-
-                        if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
-                        {
-                            if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
-                            {
-                                if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
-                                {
-                                    thisGrid = docCompareChildPanelRight.Children[i] as Grid;
-                                    //thisGrid = thisBorder.Child as Grid;
-                                    thisGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
-
-                                    //thisBorder = docCompareChildPanelLeft.Children[i] as Border;
-                                    thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
-                                    //thisGrid = thisBorder.Child as Grid;
-                                    thisGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
-                                    Size thisSize = thisGrid.DesiredSize;
-                                    accuHeight += thisSize.Height;
-                                }
-                                else
-                                {
-                                    thisGrid = docCompareChildPanelRight.Children[i] as Grid;
-                                    //thisGrid = thisBorder.Child as Grid;
-                                    thisGrid.Background = Brushes.Transparent;
-
-                                    //thisBorder = docCompareChildPanelLeft.Children[i] as Border;
-                                    thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
-                                    //thisGrid = thisBorder.Child as Grid;
-                                    thisGrid.Background = Brushes.Transparent;
-                                    Size thisSize = thisGrid.DesiredSize;
-                                    accuHeight += thisSize.Height;
-                                }
-                            }
-                            else
-                            {
-                                thisGrid = docCompareChildPanelRight.Children[i] as Grid;
-                                //thisGrid = thisBorder.Child as Grid;
-                                thisGrid.Background = Brushes.Transparent;
-
-                                //thisBorder = docCompareChildPanelLeft.Children[i] as Border;
-                                thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
-                                //thisGrid = thisBorder.Child as Grid;
-                                thisGrid.Background = Brushes.Transparent;
-                                Size thisSize = thisGrid.DesiredSize;
-                                accuHeight += thisSize.Height;
-                            }
+                            ok &= true;
                         }
                         else
                         {
-                            thisGrid = docCompareChildPanelRight.Children[i] as Grid;
-                            //thisGrid = thisBorder.Child as Grid;
-                            thisGrid.Background = Brushes.Transparent;
-
-                            //thisBorder = docCompareChildPanelLeft.Children[i] as Border;
-                            thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
-                            //thisGrid = thisBorder.Child as Grid;
-                            thisGrid.Background = Brushes.Transparent;
-                            Size thisSize = thisGrid.DesiredSize;
-                            accuHeight += thisSize.Height;
+                            ok &= false;
                         }
-
-
                     }
                 }
-            });
+
+                if (ok == true)
+                    items.Add(Path.GetFileName(docs.documents[i].filePath));
+            }
+            Doc1NameLabelComboBox.ItemsSource = items;
+
+            // update combo box middle
+            items = new ObservableCollection<string>();
+            for (int i = 0; i < docs.documents.Count; i++)
+            {
+                bool ok = true;
+                for (int j = 0; j < docs.documentsToShow.Count; j++)
+                {
+                    if (j != 1)
+                    {
+                        if (i != docs.documentsToShow[j])
+                        {
+                            ok &= true;
+                        }
+                        else
+                        {
+                            ok &= false;
+                        }
+                    }
+                }
+
+                if (ok == true)
+                    items.Add(Path.GetFileName(docs.documents[i].filePath));
+            }
+            Doc2NameLabelComboBox.ItemsSource = items;
+
+            if (settings.numPanelsDragDrop == 3)
+            {
+                // update combo box right
+                items = new ObservableCollection<string>();
+                for (int i = 0; i < docs.documents.Count; i++)
+                {
+                    bool ok = true;
+                    for (int j = 0; j < docs.documentsToShow.Count; j++)
+                    {
+                        if (j != 2)
+                        {
+                            if (i != docs.documentsToShow[j])
+                            {
+                                ok &= true;
+                            }
+                            else
+                            {
+                                ok &= false;
+                            }
+                        }
+                    }
+
+                    if (ok == true)
+                        items.Add(Path.GetFileName(docs.documents[i].filePath));
+                }
+                Doc3NameLabelComboBox.ItemsSource = items;
+            }
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            if (WindowState == WindowState.Normal)
+            {
+                WindowMaximizeButton.Visibility = Visibility.Visible;
+                WindowRestoreButton.Visibility = Visibility.Hidden;
+            }
+
+            if (WindowState == WindowState.Maximized)
+            {
+                WindowMaximizeButton.Visibility = Visibility.Hidden;
+                WindowRestoreButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: implement handling for query before closing
+            Close();
+        }
+
+        private void WindowMaximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            WindowMaximizeButton.Visibility = Visibility.Hidden;
+            WindowRestoreButton.Visibility = Visibility.Visible;
+            WindowState = WindowState.Maximized;
+            MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight - 7;
+        }
+
+        private void WindowMinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void WindowRestoreButton_Click(object sender, RoutedEventArgs e)
+        {
+            WindowMaximizeButton.Visibility = Visibility.Visible;
+            WindowRestoreButton.Visibility = Visibility.Hidden;
+            WindowState = WindowState.Normal;
         }
     }
 }

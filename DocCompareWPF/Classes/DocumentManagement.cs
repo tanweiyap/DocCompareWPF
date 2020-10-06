@@ -4,26 +4,26 @@ using System.IO;
 
 namespace DocCompareWPF.Classes
 {
-    class DocumentManagement
+    internal class DocumentManagement
     {
+        public int displayToReload;
+        public int docToReload;
         public List<Document> documents;
-        public int MAX_DOC_COUNT = 5;
-        public List<int> documentsToShow;
         public List<int> documentsToCompare;
+        public List<int> documentsToShow;
+        public List<List<int>> forceAlignmentIndices;
+        public int MAX_DOC_COUNT = 5;
         public ArrayList pageCompareIndices;
         public int totalLen;
         public string workingDir;
-        public int docToReload;
-        public int displayToReload;
-        public List<List<int>> forceAlignmentIndices;
 
         public DocumentManagement(string p_workingDir, AppSettings settings)
         {
             documents = new List<Document>();
-            if(settings.numPanelsDragDrop == 3)
+            if (settings.numPanelsDragDrop == 3)
                 documentsToShow = new List<int>() { 0, 1, 2 };
             else
-                documentsToShow = new List<int>() { 0, 1};
+                documentsToShow = new List<int>() { 0, 1 };
 
             documentsToCompare = new List<int>() { 0, 1 };
             workingDir = p_workingDir;
@@ -49,7 +49,7 @@ namespace DocCompareWPF.Classes
             workingDir = p_workingDir;
 
             DirectoryInfo di = new DirectoryInfo(workingDir);
-            if(di.Exists == true)
+            if (di.Exists == true)
                 di.Delete(true);
             Directory.CreateDirectory(workingDir);
 
@@ -69,13 +69,18 @@ namespace DocCompareWPF.Classes
             documents.Add(document);
         }
 
+        public void AddForceAligmentPairs(int source, int target)
+        {
+            forceAlignmentIndices.Add(new List<int>() { source, target });
+        }
+
         public void RemoveDocument(int index, int viewID)
         {
             //string[] docShown = new string[3] { documents[documentsToShow[0]].docID, documents[documentsToShow[1]].docID, documents[documentsToShow[2]].docID };
             List<string> docShown = new List<string>();
-            for(int i = 0; i < documentsToShow.Count; i++)
+            for (int i = 0; i < documentsToShow.Count; i++)
             {
-                if(documentsToShow[i] != -1 && i < documents.Count)
+                if (documentsToShow[i] != -1 && i < documents.Count)
                 {
                     docShown.Add(documents[documentsToShow[i]].docID);
                 }
@@ -88,16 +93,16 @@ namespace DocCompareWPF.Classes
             documents.RemoveAt(index);
 
             // we now check for docs to show
-            for(int i = 0; i< docShown.Count; i++)
+            for (int i = 0; i < docShown.Count; i++)
             {
-                if(i == viewID) // view, where the doc was removed
+                if (i == viewID) // view, where the doc was removed
                 {
                     string docIDToConsider;
-                    for(int j = 0; j < documents.Count; j++)
+                    for (int j = 0; j < documents.Count; j++)
                     {
                         docIDToConsider = documents[j].docID;
                         bool ok = false;
-                        for(int k = 0; k < docShown.Count; k++)
+                        for (int k = 0; k < docShown.Count; k++)
                         {
                             if (k != viewID)
                             {
@@ -130,39 +135,33 @@ namespace DocCompareWPF.Classes
                 }
             }
 
-            if(documents.Count == 0)
+            if (documents.Count == 0)
             {
                 documentsToShow[0] = -1;
             }
 
-            for(int i = 0; i < documentsToShow.Count; i++)
+            for (int i = 0; i < documentsToShow.Count; i++)
             {
-                if(documentsToShow[i] == -1)
+                if (documentsToShow[i] == -1)
                 {
                     documentsToShow.RemoveAt(i);
                     documentsToShow.Add(-1);
                 }
             }
         }
-
-        public void AddForceAligmentPairs(int source, int target)
-        {
-            forceAlignmentIndices.Add(new List<int>() { source, target });
-        }
-
         public void RemoveForceAligmentPairs(int source)
         {
             int index = -1;
-            for(int i = 0; i< forceAlignmentIndices.Count; i++)
+            for (int i = 0; i < forceAlignmentIndices.Count; i++)
             {
-                if(forceAlignmentIndices[i][0] == source)
+                if (forceAlignmentIndices[i][0] == source)
                 {
                     index = i;
                     break;
                 }
             }
 
-            if(index != -1)
+            if (index != -1)
                 forceAlignmentIndices.RemoveAt(index);
         }
     }

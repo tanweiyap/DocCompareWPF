@@ -1,28 +1,64 @@
-﻿using DocConvert;
-using DocCompareDLL;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
+﻿using DocCompareDLL;
+using DocConvert;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 
 namespace DocCompareWPF.Classes
 {
-    class Document
+    internal class Document
     {
+        public List<int> docCompareIndices;
+
+        public string docID;
+
+        public string filePath;
+
+        public FileTypes fileType;
+
+        public string imageFolder;
+
+        public bool loaded, processed;
+
+        public Document()
+        {
+        }
+
         public enum FileTypes
         {
             PDF, PPT, WORD, EXCEL, PIC, TXT, UNKNOWN
         };
 
-        public string filePath;
-        public string imageFolder;
-        public FileTypes fileType;
-        public List<int> docCompareIndices;
-        public string docID;
-        public bool loaded, processed;
-
-        public Document()
+        public static int CompareDocs(string doc1ImageFolder, string doc2ImageFolder, string outputFolder, out ArrayList pageIndices, out int totalLen, int[,] forceIndices)
         {
+            int ret = -1;
+            int totalLength = 0;
+            totalLen = new int();
+
+            DirectoryInfo di = new DirectoryInfo(outputFolder);
+            foreach (FileInfo file in di.EnumerateFiles())
+            {
+                file.Delete();
+            }
+
+            pageIndices = DocCompareClass.DocCompare(ref doc1ImageFolder, ref doc2ImageFolder, ref outputFolder, ref totalLength, forceIndices);
+
+            if (pageIndices != null) //? successful?
+            {
+                totalLen = totalLength;
+                ret = 0;
+            }
+
+            return ret;
+        }
+
+        public void ClearFolder()
+        {
+            DirectoryInfo di = new DirectoryInfo(imageFolder);
+            foreach (FileInfo file in di.EnumerateFiles())
+            {
+                file.Delete();
+            }
         }
 
         public void DetectFileType()
@@ -60,14 +96,14 @@ namespace DocCompareWPF.Classes
         }
 
         public int ReadPDF()
-        {            
+        {
             PDFConvertClass pdfClass = new PDFConvertClass();
             int ret = pdfClass.ConvertPDFtoImages(filePath, imageFolder);
             if (ret == 0)
                 processed = true;
             return ret;
         }
-                
+
         public int ReadPPT()
         {
             PPTConvertClass pptConvertClass = new PPTConvertClass();
@@ -85,54 +121,23 @@ namespace DocCompareWPF.Classes
 
             return ret;
         }
-
-        public void ClearFolder()
-        {
-            DirectoryInfo di = new DirectoryInfo(imageFolder);
-            foreach (FileInfo file in di.EnumerateFiles())
-            {
-                file.Delete();
-            }
-        }
-
         public int ReloadDocument()
         {
             int ret;
             ClearFolder();
-            switch(fileType)
+            switch (fileType)
             {
                 case FileTypes.PDF:
                     ret = ReadPDF();
                     break;
+
                 case FileTypes.PPT:
                     ret = ReadPPT();
                     break;
+
                 default:
                     return -1;
             }
-            return ret;
-        }
-
-        public static int CompareDocs(string doc1ImageFolder, string doc2ImageFolder, string outputFolder, out ArrayList pageIndices, out int totalLen, int[,] forceIndices)
-        {
-            int ret = -1;
-            int totalLength = 0;
-            totalLen = new int();
-
-            DirectoryInfo di = new DirectoryInfo(outputFolder);
-            foreach (FileInfo file in di.EnumerateFiles())
-            {
-                file.Delete();
-            }
-
-            pageIndices = DocCompareClass.docCompare(ref doc1ImageFolder, ref doc2ImageFolder, ref outputFolder, ref totalLength, forceIndices);
-
-            if (pageIndices != null) //? successful?
-            {
-                totalLen = totalLength;
-                ret = 0;
-            }
-
             return ret;
         }
     }

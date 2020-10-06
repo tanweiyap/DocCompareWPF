@@ -17,31 +17,31 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
 
                 <ResourceDictionary>
-                    <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#2f353a"/>
-                    <SolidColorBrush x:Key="PrimaryHueLightForegroundBrush" Color="#FFFFFF"/>
-                    <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#2f353a"/>
-                    <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="#FFFFFF"/>
-                    <SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="#2f353a"/>
-                    <SolidColorBrush x:Key="PrimaryHueDarkForegroundBrush" Color="#FFFFFF"/>
+                    <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#2f353a" />
+                    <SolidColorBrush x:Key="PrimaryHueLightForegroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#2f353a" />
+                    <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="#2f353a" />
+                    <SolidColorBrush x:Key="PrimaryHueDarkForegroundBrush" Color="#FFFFFF" />
                     <!-- accent -->
-                    <SolidColorBrush x:Key="SecondaryAccentBrush" Color="#5C5B5E"/>
-                    <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="#FFFFFF"/>
-                    <SolidColorBrush x:Key="SideGridActiveBackground" Color="#777777"/>
-                    <SolidColorBrush x:Key="SidePanelActiveButton" Color="#aaaaaa"/>
-                    <SolidColorBrush x:Key="DocumentBackGroundBrush" Color="#E3E3E3"/>
-                    <SolidColorBrush x:Key="StatusBarBackground" Color="LightGray"/>
-                    <SolidColorBrush x:Key="PrimaryPanelBrush" Color="#f5f5f5"/>
-                    <SolidColorBrush x:Key="WarningBackgroundBrush" Color="#ff2c6c"/>
+                    <SolidColorBrush x:Key="SecondaryAccentBrush" Color="#5C5B5E" />
+                    <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="SideGridActiveBackground" Color="#777777" />
+                    <SolidColorBrush x:Key="SidePanelActiveButton" Color="#aaaaaa" />
+                    <SolidColorBrush x:Key="DocumentBackGroundBrush" Color="#E3E3E3" />
+                    <SolidColorBrush x:Key="StatusBarBackground" Color="LightGray" />
+                    <SolidColorBrush x:Key="PrimaryPanelBrush" Color="#f5f5f5" />
+                    <SolidColorBrush x:Key="WarningBackgroundBrush" Color="#ff2c6c" />
 
                     <GridLength x:Key="TopBarHeight">28</GridLength>
                     <GridLength x:Key="BottomBarHeight">28</GridLength>
                     <sys:Double x:Key="SmallIconSize">18</sys:Double>
                     <sys:Double x:Key="BarButtonHeight">18</sys:Double>
                     <DataTemplate x:Key="ForceAlignIcon">
-                        <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15"/>
+                        <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
                     </DataTemplate>
                     <DataTemplate x:Key="ForceAlignInvalidIcon">
-                        <iconPacks:PackIconFontAwesome Kind="BanSolid" Width="15" Height="15"/>
+                        <iconPacks:PackIconFontAwesome Kind="BanSolid" Width="15" Height="15" />
                     </DataTemplate>
 
                     <Style x:Key="WindowMainPanelStyle" TargetType="{x:Type Border}">

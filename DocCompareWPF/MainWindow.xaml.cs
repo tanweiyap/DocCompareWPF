@@ -430,7 +430,7 @@ namespace DocCompareWPF
 
         private void AnimateDiffThread()
         {
-            bool imageToggler = false;
+            bool imageToggler = true;
 
             while (animateDiffRunning)
             {
@@ -495,7 +495,10 @@ namespace DocCompareWPF
                             }
                             else if (thisImg.Name.Contains("Mask"))
                             {
-                                thisImg.Visibility = Visibility.Hidden;
+                                if (imageToggler == false)
+                                    thisImg.Visibility = Visibility.Visible;
+                                else
+                                    thisImg.Visibility = Visibility.Hidden;
                             }
                             else
                             {
@@ -517,7 +520,7 @@ namespace DocCompareWPF
                     }
                 });
 
-                Thread.Sleep(250);
+                Thread.Sleep(500);
             }
         }
 
@@ -1846,8 +1849,7 @@ namespace DocCompareWPF
 
         private void LoadFilesCommonPart()
         {
-            if (docs.documents.Count >= 2)
-                SidePanelDocCompareButton.IsEnabled = true;
+            SidePanelDocCompareButton.IsEnabled = false;
 
             if (settings.numPanelsDragDrop == 3)
                 docs.documentsToShow = new List<int>() { 0, 1, 2 };
@@ -2078,6 +2080,10 @@ namespace DocCompareWPF
                     ProgressBarDoc2.Visibility = Visibility.Hidden;
                     ProgressBarDoc3.Visibility = Visibility.Hidden;
                     UpdateDocSelectionComboBox();
+
+                    if (docs.documents.Count >= 2)
+                        SidePanelDocCompareButton.IsEnabled = true;
+
                 });
             }
             catch
@@ -2640,7 +2646,7 @@ namespace DocCompareWPF
             int pairRight = 0;
             bool isLinkedPage = false;
 
-            if (inForceAlignMode == true)
+            //if (inForceAlignMode == true)
             {
                 foreach (List<int> pair in docs.forceAlignmentIndices)
                 {
@@ -2693,7 +2699,50 @@ namespace DocCompareWPF
                         Button foundButton = child as Button;
                         if (inForceAlignMode == false)
                         {
-                            foundButton.Visibility = Visibility.Visible;
+                            if(isLinkedPage == false)
+                                foundButton.Visibility = Visibility.Visible;
+                            else
+                            {
+                                nameToLook = "SideButtonInvalidLeft" + splittedName[1];
+                                
+                                foreach (object child2 in img.Children)
+                                {
+                                    if (child2 is Button)
+                                    {
+                                        if ((child2 as Button).Name == nameToLook)
+                                        {
+                                            foundButton = child2 as Button;
+
+                                            if (isLinkedPage == true)
+                                            {
+                                                foundButton.ToolTip = "Page linked. Please remove existing link first.";
+                                            }
+
+                                            foundButton.Visibility = Visibility.Visible;
+                                        }
+                                    }
+                                }
+
+                                nameToLook = "SideButtonInvalidRight" + splittedName[1];
+
+                                foreach (object child2 in img.Children)
+                                {
+                                    if (child2 is Button)
+                                    {
+                                        if ((child2 as Button).Name == nameToLook)
+                                        {
+                                            foundButton = child2 as Button;
+
+                                            if (isLinkedPage == true)
+                                            {
+                                                foundButton.ToolTip = "Page linked. Please remove existing link first.";
+                                            }
+
+                                            foundButton.Visibility = Visibility.Visible;
+                                        }
+                                    }
+                                }
+                            }
                         }
                         else
                         {

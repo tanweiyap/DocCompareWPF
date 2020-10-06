@@ -42,6 +42,8 @@
                     </DataTemplate>
                     <DataTemplate x:Key="ForceAlignInvalidIcon">
                         <iconPacks:PackIconFontAwesome Kind="BanSolid" Width="15" Height="15" />
+                    </DataTemplate><DataTemplate x:Key="AnimateDiffIcon">
+                        <iconPacks:PackIconMaterial Kind="VectorDifference" Width="15" Height="15" />
                     </DataTemplate>
 
                     <Style x:Key="WindowMainPanelStyle" TargetType="{x:Type Border}">

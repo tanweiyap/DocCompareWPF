@@ -28,9 +28,9 @@ namespace DocCompareWPF
         // Stack panel for viewing documents in scrollviewer control in comparison view
         private StackPanel childPanel1, childPanel2, childPanel3, refDocPanel, docCompareChildPanel1, docCompareChildPanelLeft, docCompareChildPanelRight;
 
-        private bool docCompareRunning, docProcessRunning, showMask;
+        private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
 
-        private int docCompareSideGridShown, docProcessingCounter;
+        private int docCompareSideGridShown, docProcessingCounter, pageToAnimate;
 
         private bool inForceAlignMode;
 
@@ -45,9 +45,9 @@ namespace DocCompareWPF
         // App settings
         private AppSettings settings;
 
-        private SideGridSelection sideGridSelectedLeftOrRight;
+        private GridSelection sideGridSelectedLeftOrRight, mainGridSelectedLeftOrRight;
 
-        private Thread threadLoadDocs, threadLoadDocsProgress, threadCompare;
+        private Thread threadLoadDocs, threadLoadDocsProgress, threadCompare, threadAnimateDiff;
 
         public MainWindow()
         {
@@ -98,7 +98,7 @@ namespace DocCompareWPF
             });
         }
 
-        private enum SideGridSelection
+        private enum GridSelection
         {
             LEFT,
             RIGHT,
@@ -428,6 +428,154 @@ namespace DocCompareWPF
             //DocCompareSideScrollViewerRight.IsEnabled = false;
         }
 
+        private void AnimateDiffThread()
+        {
+            bool imageToggler = false;
+
+            while (animateDiffRunning)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    // find Grid to animate
+                    Grid parentGrid = new Grid();
+                    Grid childGrid = new Grid();
+                    string[] splittedName;
+
+                    foreach (object child in docCompareChildPanel1.Children)
+                    {
+                        if (child is Grid)
+                        {
+                            Grid localGrid = child as Grid;
+                            splittedName = localGrid.Name.Split("Grid");
+                            if (int.Parse(splittedName[1]) == pageToAnimate)
+                            {
+                                parentGrid = localGrid;
+                                break; // found parent grid
+                            }
+                        }
+                    }
+
+                    // find child grid
+                    foreach (object child in parentGrid.Children)
+                    {
+                        if (child is Grid)
+                        {
+                            if (mainGridSelectedLeftOrRight == GridSelection.LEFT)
+                            {
+                                if ((child as Grid).Name.Contains("Left"))
+                                {
+                                    childGrid = child as Grid;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                if ((child as Grid).Name.Contains("Right"))
+                                {
+                                    childGrid = child as Grid;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    // Turn off Mask and animate
+                    foreach (object child in childGrid.Children)
+                    {
+
+                        if (child is Image)
+                        {
+                            Image thisImg = child as Image;
+                            if (thisImg.Name.Contains("Ani"))
+                            {
+                                if (imageToggler == false)
+                                    thisImg.Visibility = Visibility.Hidden;
+                                else
+                                    thisImg.Visibility = Visibility.Visible;
+                            }
+                            else if (thisImg.Name.Contains("Mask"))
+                            {
+                                thisImg.Visibility = Visibility.Hidden;
+                            }
+                            else
+                            {
+                                if (imageToggler == false)
+                                    thisImg.Visibility = Visibility.Visible;
+                                else
+                                    thisImg.Visibility = Visibility.Hidden;
+                            }
+                        }
+                    }
+
+                    if (imageToggler == false)
+                    {
+                        imageToggler = true;
+                    }
+                    else
+                    {
+                        imageToggler = false;
+                    }
+                });
+
+                Thread.Sleep(250);
+            }
+        }
+
+        private void HandleMainDocCompareAnimateMouseDown(object sender, MouseEventArgs args)
+        {
+            if (sender is Button)
+            {
+                string[] splittedName;
+                if (mainGridSelectedLeftOrRight == GridSelection.LEFT)
+                {
+                    splittedName = (sender as Button).Name.Split("Left");
+                }
+                else
+                {
+                    splittedName = (sender as Button).Name.Split("Right");
+                }
+
+                pageToAnimate = int.Parse(splittedName[1]);
+                animateDiffRunning = true;
+
+                threadAnimateDiff = new Thread(new ThreadStart(AnimateDiffThread));
+                threadAnimateDiff.Start();
+
+            }
+        }
+
+        private void HandleMainDocCompareAnimateMouseRelease(object sender, MouseEventArgs args)
+        {
+            animateDiffRunning = false;
+            if (sender is Button)
+            {
+                Grid parentGrid = (sender as Button).Parent as Grid;
+                foreach (object child in parentGrid.Children)
+                {
+                    if (child is Image)
+                    {
+                        Image thisImg = child as Image;
+                        if (thisImg.Name.Contains("Ani"))
+                            thisImg.Visibility = Visibility.Hidden;
+                        else if (thisImg.Name.Contains("Mask"))
+                        {
+                            if (showMask == false)
+                            {
+                                thisImg.Visibility = Visibility.Hidden;
+                            }
+                            else
+                            {
+                                thisImg.Visibility = Visibility.Visible;
+                            }
+                        }
+                        else
+                            thisImg.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+
+        }
+
         private void DisplayComparisonResult()
         {
             int pageCounter = 0;
@@ -459,14 +607,24 @@ namespace DocCompareWPF
                 {
                     Grid thisGrid = new Grid
                     {
-                        IsHitTestVisible = true
+                        IsHitTestVisible = true,
+                        Name = "MainImgGrid" + i.ToString(),
                     };
                     thisGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) }); // doc1
                     thisGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) }); // doc2
 
                     if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1) // doc 1 has a valid page
                     {
-                        thisImage = new Image();
+                        Grid mainImageGrid = new Grid()
+                        {
+                            Name = "MainImgGridLeft" + i.ToString(),
+                        };
+
+                        thisImage = new Image()
+                        {
+                            Name = "MainImgLeft" + i.ToString(),
+                        };
+
                         stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg"));
                         bitmap = new BitmapImage();
                         bitmap.BeginInit();
@@ -478,14 +636,68 @@ namespace DocCompareWPF
                         thisImage.Margin = new Thickness(10, 10, 10, 10);
                         thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
                         thisImage.VerticalAlignment = VerticalAlignment.Center;
-                        Grid.SetColumn(thisImage, 0);
+                        Grid.SetColumn(mainImageGrid, 0);
+                        mainImageGrid.Children.Add(thisImage);
+                        thisGrid.Children.Add(mainImageGrid);
 
-                        thisGrid.Children.Add(thisImage);
+                        // Image for animating difference
+                        if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                        {
+                            thisImage = new Image()
+                            {
+                                Name = "MainImgAniLeft" + i.ToString(),
+                                Visibility = Visibility.Hidden,
+                            };
+
+                            stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg"));
+                            bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.StreamSource = stream;
+                            bitmap.EndInit();
+                            stream.Close();
+                            thisImage.Source = bitmap;
+                            thisImage.Margin = new Thickness(10, 10, 10, 10);
+                            thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                            thisImage.VerticalAlignment = VerticalAlignment.Center;
+                            mainImageGrid.Children.Add(thisImage);
+                        }
+
+                        Button animateDiffButton = new Button()
+                        {
+                            Height = 25,
+                            Width = 25,
+                            Padding = new Thickness(0, 0, 0, 0),
+                            Margin = new Thickness(15, 15, 0, 0),
+                            ContentTemplate = (DataTemplate)FindResource("AnimateDiffIcon"),
+                            Foreground = Brushes.White,
+                            Opacity = 0.5,
+                            Name = "AnimateDiffLeft" + i.ToString(),
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            VerticalAlignment = VerticalAlignment.Top,
+                            ToolTip = "Click and hold to animate the difference",
+                            Visibility = Visibility.Hidden,
+                        };
+
+                        animateDiffButton.PreviewMouseDown += (sen, ev) => HandleMainDocCompareAnimateMouseDown(sen, ev);
+                        animateDiffButton.PreviewMouseUp += (sen, ev) => HandleMainDocCompareAnimateMouseRelease(sen, ev);
+                        mainImageGrid.Children.Add(animateDiffButton);
+                        mainImageGrid.MouseEnter += (sen, ev) => HandleMainDocCompareGridMouseEnter(sen, ev);
+                        mainImageGrid.MouseLeave += (sen, ev) => HandleMainDocCompareGridMouseLeave(sen, ev);
                     }
 
                     if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1) // doc 2 has a valid page
                     {
-                        thisImage = new Image();
+                        Grid mainImageGrid = new Grid()
+                        {
+                            Name = "MainImgGridRight" + i.ToString(),
+
+                        };
+                        thisImage = new Image()
+                        {
+                            Name = "MainImgRight" + i.ToString(),
+                        };
+
                         stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg"));
                         bitmap = new BitmapImage();
                         bitmap.BeginInit();
@@ -498,14 +710,41 @@ namespace DocCompareWPF
 
                         thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
                         thisImage.VerticalAlignment = VerticalAlignment.Center;
-                        Grid.SetColumn(thisImage, 1);
-                        thisGrid.Children.Add(thisImage);
+                        Grid.SetColumn(mainImageGrid, 1);
+                        mainImageGrid.Children.Add(thisImage);
+                        thisGrid.Children.Add(mainImageGrid);
+
+                        // Image for animating difference
+                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
+                        {
+                            thisImage = new Image()
+                            {
+                                Name = "MainImgAniRight" + i.ToString(),
+                                Visibility = Visibility.Hidden,
+                            };
+
+                            stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg"));
+                            bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.StreamSource = stream;
+                            bitmap.EndInit();
+                            stream.Close();
+                            thisImage.Source = bitmap;
+                            thisImage.Margin = new Thickness(10, 10, 10, 10);
+                            thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                            thisImage.VerticalAlignment = VerticalAlignment.Center;
+                            mainImageGrid.Children.Add(thisImage);
+                        }
 
                         if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1 && showMask == true)
                         {
                             if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
                             {
-                                thisImage = new Image();
+                                thisImage = new Image()
+                                {
+                                    Name = "MainMaskImgRight" + i.ToString(),
+                                };
                                 stream = File.OpenRead(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png")));
                                 bitmap = new BitmapImage();
                                 bitmap.BeginInit();
@@ -518,10 +757,31 @@ namespace DocCompareWPF
                                 thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
                                 thisImage.VerticalAlignment = VerticalAlignment.Stretch;
 
-                                Grid.SetColumn(thisImage, 2);
-                                thisGrid.Children.Add(thisImage);
+                                mainImageGrid.Children.Add(thisImage);
                             }
                         }
+
+                        Button animateDiffButton = new Button()
+                        {
+                            Height = 25,
+                            Width = 25,
+                            Padding = new Thickness(0, 0, 0, 0),
+                            Margin = new Thickness(15, 15, 0, 0),
+                            ContentTemplate = (DataTemplate)FindResource("AnimateDiffIcon"),
+                            Foreground = Brushes.White,
+                            Opacity = 0.5,
+                            Name = "AnimateDiffRight" + i.ToString(),
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            VerticalAlignment = VerticalAlignment.Top,
+                            ToolTip = "Click and hold to animate the difference",
+                            Visibility = Visibility.Hidden,
+                        };
+
+                        animateDiffButton.PreviewMouseDown += (sen, ev) => HandleMainDocCompareAnimateMouseDown(sen, ev);
+                        animateDiffButton.PreviewMouseUp += (sen, ev) => HandleMainDocCompareAnimateMouseRelease(sen, ev);
+                        mainImageGrid.Children.Add(animateDiffButton);
+                        mainImageGrid.MouseEnter += (sen, ev) => HandleMainDocCompareGridMouseEnter(sen, ev);
+                        mainImageGrid.MouseLeave += (sen, ev) => HandleMainDocCompareGridMouseLeave(sen, ev);
                     }
 
                     pageCounter++;
@@ -608,7 +868,7 @@ namespace DocCompareWPF
 
                         if (displayForceAlignButton)
                         {
-                            Button test = new Button()
+                            Button forceAlignButtonLeft = new Button()
                             {
                                 Height = 25,
                                 Width = 25,
@@ -624,11 +884,11 @@ namespace DocCompareWPF
                                 ToolTip = "Link pages"
                             };
 
-                            test.Click += (sen, ev) => { SideGridButtonMouseClick(sen, ev); };
+                            forceAlignButtonLeft.Click += (sen, ev) => { SideGridButtonMouseClick(sen, ev); };
 
-                            imageGrid.Children.Add(test);
+                            imageGrid.Children.Add(forceAlignButtonLeft);
 
-                            test = new Button()
+                            forceAlignButtonLeft = new Button()
                             {
                                 Height = 25,
                                 Width = 25,
@@ -644,7 +904,7 @@ namespace DocCompareWPF
                                 ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.",
                             };
 
-                            imageGrid.Children.Add(test);
+                            imageGrid.Children.Add(forceAlignButtonLeft);
                         }
                         imageGrid.MouseEnter += SideGridMouseEnter;
                         imageGrid.MouseLeave += SideGridMouseLeave;
@@ -725,7 +985,7 @@ namespace DocCompareWPF
                         imageGrid.MouseLeave += SideGridMouseLeave;
                         if (displayForceAlignButton)
                         {
-                            Button test2 = new Button()
+                            Button forceAlignButtonRight = new Button()
                             {
                                 Height = 25,
                                 Width = 25,
@@ -739,11 +999,11 @@ namespace DocCompareWPF
                                 VerticalAlignment = VerticalAlignment.Bottom,
                                 ToolTip = "Link pages"
                             };
-                            test2.Click += (sen, ev) => { SideGridButtonMouseClick(sen, ev); };
+                            forceAlignButtonRight.Click += (sen, ev) => { SideGridButtonMouseClick(sen, ev); };
 
-                            imageGrid.Children.Add(test2);
+                            imageGrid.Children.Add(forceAlignButtonRight);
 
-                            test2 = new Button()
+                            forceAlignButtonRight = new Button()
                             {
                                 Height = 25,
                                 Width = 25,
@@ -758,7 +1018,7 @@ namespace DocCompareWPF
                                 ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.",
                             };
 
-                            imageGrid.Children.Add(test2);
+                            imageGrid.Children.Add(forceAlignButtonRight);
                         }
                     }
                     else // we use doc 1 as dummy
@@ -1348,7 +1608,7 @@ namespace DocCompareWPF
                 DocCompareSideScrollViewerRight.ScrollToVerticalOffset(DocCompareSideScrollViewerLeft.VerticalOffset);
             else
             {
-                if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
                 {
                     DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosLeft);
                 }
@@ -1361,7 +1621,7 @@ namespace DocCompareWPF
                 DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(DocCompareSideScrollViewerRight.VerticalOffset);
             else
             {
-                if (sideGridSelectedLeftOrRight == SideGridSelection.RIGHT)
+                if (sideGridSelectedLeftOrRight == GridSelection.RIGHT)
                 {
                     DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosRight);
                 }
@@ -1396,6 +1656,71 @@ namespace DocCompareWPF
             //DocCompareSideScrollViewerRight.IsEnabled = true;
         }
 
+        private void HandleMainDocCompareGridMouseEnter(object sender, MouseEventArgs args)
+        {
+            if (sender is Grid)
+            {
+                Grid parentGrid = sender as Grid;
+
+                if (parentGrid.Name.Contains("Left"))
+                    mainGridSelectedLeftOrRight = GridSelection.LEFT;
+                else
+                    mainGridSelectedLeftOrRight = GridSelection.RIGHT;
+
+                foreach (object child in parentGrid.Children)
+                {
+                    if (child is Button)
+                    {
+                        Button thisButton = child as Button;
+
+                        if (mainGridSelectedLeftOrRight == GridSelection.LEFT)
+                        {
+                            if (thisButton.Name.Contains("Left"))
+                                thisButton.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            if (thisButton.Name.Contains("Right"))
+                                thisButton.Visibility = Visibility.Visible;
+                        }
+
+                    }
+                }
+            }
+        }
+
+        private void HandleMainDocCompareGridMouseLeave(object sender, MouseEventArgs args)
+        {
+            if (sender is Grid)
+            {
+                Grid parentGrid = sender as Grid;
+
+                if (parentGrid.Name.Contains("Left"))
+                    mainGridSelectedLeftOrRight = GridSelection.LEFT;
+                else
+                    mainGridSelectedLeftOrRight = GridSelection.RIGHT;
+
+                foreach (object child in parentGrid.Children)
+                {
+                    if (child is Button)
+                    {
+                        Button thisButton = child as Button;
+
+                        if (mainGridSelectedLeftOrRight == GridSelection.LEFT)
+                        {
+                            if (thisButton.Name.Contains("Left"))
+                                thisButton.Visibility = Visibility.Hidden;
+                        }
+                        else
+                        {
+                            if (thisButton.Name.Contains("Right"))
+                                thisButton.Visibility = Visibility.Hidden;
+                        }
+
+                    }
+                }
+            }
+        }
         private void HandleMouseClickOnSideScrollView(object sender, MouseButtonEventArgs e)
         {
             if (inForceAlignMode == false)
@@ -1579,7 +1904,7 @@ namespace DocCompareWPF
 
         private void MaskSideGridInForceAlignMode()
         {
-            if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+            if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
             {
                 foreach (object obj in docCompareChildPanelLeft.Children)
                 {
@@ -1683,7 +2008,7 @@ namespace DocCompareWPF
                         ProcessingDocLabel.Text = "Processing: " + Path.GetFileName(docs.documents[docProcessingCounter].filePath);
                     });
 
-                    if (docProcessingCounter == 2)
+                    if (docProcessingCounter == 2 || docProcessRunning == false)
                     {
                         Dispatcher.Invoke(() =>
                         {
@@ -1724,6 +2049,35 @@ namespace DocCompareWPF
                 Dispatcher.Invoke(() =>
                 {
                     ProcessingDocProgressCard.Visibility = Visibility.Hidden;
+
+                    DisplayImageLeft(docs.documentsToShow[0]);
+                    Dispatcher.Invoke(() =>
+                    {
+                        OpenDoc1OriginalButton1.IsEnabled = true;
+                    });
+
+                    DisplayImageMiddle(docs.documentsToShow[1]);
+                    Dispatcher.Invoke(() =>
+                    {
+                        OpenDoc2OriginalButton2.IsEnabled = true;
+                    });
+
+                    if (settings.numPanelsDragDrop == 3)
+                    {
+                        if (docs.documents.Count >= 3)
+                        {
+                            DisplayImageRight(docs.documentsToShow[2]);
+                            Dispatcher.Invoke(() =>
+                            {
+                                OpenDoc3OriginalButton3.IsEnabled = true;
+                            });
+                        }
+                    }
+
+                    ProgressBarDoc1.Visibility = Visibility.Hidden;
+                    ProgressBarDoc2.Visibility = Visibility.Hidden;
+                    ProgressBarDoc3.Visibility = Visibility.Hidden;
+                    UpdateDocSelectionComboBox();
                 });
             }
             catch
@@ -2117,6 +2471,16 @@ namespace DocCompareWPF
             }
         }
 
+        private void ShowExistingDocCountWarningBox(string docName)
+        {
+            MessageBox.Show("You have selected an existing document: " + docName, "Document exists", MessageBoxButton.OK);
+        }
+
+        private void ShowInvalidDocTypeWarningBox(string fileType, string filename)
+        {
+            MessageBox.Show("Unsupported file type of " + fileType + " selected with " + filename + ". This document will be ignored.", "Unsupported file type", MessageBoxButton.OK);
+        }
+
         private void ShowMaskButton_Click(object sender, RoutedEventArgs e)
         {
             showMask = true;
@@ -2131,17 +2495,6 @@ namespace DocCompareWPF
         {
             MessageBox.Show("You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded. Subscribe to the Pro-version to view unlimited documents.", "Get Pro-Version", MessageBoxButton.OK);
         }
-
-        private void ShowInvalidDocTypeWarningBox(string fileType, string filename)
-        {
-            MessageBox.Show("Unsupported file type of " + fileType + " selected with " + filename + ". This document will be ignored.", "Unsupported file type", MessageBoxButton.OK);
-        }
-
-        private void ShowExistingDocCountWarningBox(string docName)
-        {
-            MessageBox.Show("You have selected an existing document: " + docName, "Document exists", MessageBoxButton.OK);
-        }
-
         private void SideGridButtonMouseClick(object sender, RoutedEventArgs args)
         {
             Button button = sender as Button;
@@ -2153,12 +2506,12 @@ namespace DocCompareWPF
                 selectedSideGridButtonName1 = button.Name;
                 if (selectedSideGridButtonName1.Contains("Left"))
                 {
-                    sideGridSelectedLeftOrRight = SideGridSelection.LEFT;
+                    sideGridSelectedLeftOrRight = GridSelection.LEFT;
                     Dispatcher.Invoke(() => { DisableSideScrollLeft(); });
                 }
                 else
                 {
-                    sideGridSelectedLeftOrRight = SideGridSelection.RIGHT;
+                    sideGridSelectedLeftOrRight = GridSelection.RIGHT;
                     Dispatcher.Invoke(() => { DisableSideScrollRight(); });
                 }
 
@@ -2180,7 +2533,7 @@ namespace DocCompareWPF
                         UnMaskSideGridFromForceAlignMode();
                         EnableRemoveForceAlignButton();
 
-                        if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                        if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
                         {
                             //DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosLeft);
                             DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosLeft);
@@ -2202,7 +2555,7 @@ namespace DocCompareWPF
                     string[] splittedNameTarget;
                     string[] splittedNameRef;
 
-                    if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                    if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
                     {
                         splittedNameRef = selectedSideGridButtonName1.Split("Left");
                         splittedNameTarget = selectedSideGridButtonName2.Split("Right");
@@ -2267,7 +2620,7 @@ namespace DocCompareWPF
             if (inForceAlignMode)
             {
                 string[] splittedRefName;
-                if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
                 {
                     splittedRefName = selectedSideGridButtonName1.Split("Left");
                     refInd = int.Parse(splittedRefName[1]);
@@ -2294,7 +2647,7 @@ namespace DocCompareWPF
                     pairLeft = docs.documents[docs.documentsToCompare[0]].docCompareIndices.FindIndex(x => x == pair[0]);
                     pairRight = docs.documents[docs.documentsToCompare[1]].docCompareIndices.FindIndex(x => x == pair[1]);
 
-                    if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                    if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
                     {
                         if (selfInd == pairRight)
                             isLinkedPage |= true;
@@ -2344,7 +2697,7 @@ namespace DocCompareWPF
                         }
                         else
                         {
-                            if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
+                            if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
                             {
                                 if (nameToLook.Contains("Left"))
                                 {

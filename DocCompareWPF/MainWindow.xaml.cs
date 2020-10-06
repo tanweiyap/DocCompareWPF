@@ -55,7 +55,7 @@ namespace DocCompareWPF
             showMask = true;
 
             // GUI stuff
-            SetVisiblePanel(SidePanels.DRAGDROP);            
+            SetVisiblePanel(SidePanels.DRAGDROP);
             SidePanelDocCompareButton.IsEnabled = false;
             HideDragDropZone2();
             HideDragDropZone3();
@@ -112,6 +112,7 @@ namespace DocCompareWPF
             FILE_EXPLORER,
             SETTINGS,
         };
+
         private void BrowseFileButton1_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(lastUsedDirectory) == false)
@@ -127,32 +128,44 @@ namespace DocCompareWPF
             if (openFileDialog.ShowDialog() == true)
             {
                 string[] filenames = openFileDialog.FileNames;
+                string ext;
                 lastUsedDirectory = Path.GetDirectoryName(filenames[0]);
 
                 foreach (string file in filenames)
                 {
-                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                    ext = Path.GetExtension(file);
+                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF")
                     {
-                        docs.AddDocument(file);
-                    }
-                    else if (docs.documents.Count >= settings.maxDocCount)
-                    {
-                        ShowMaxDocCountWarningBox();
-                        break;
+                        ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
                     else
                     {
-                        ShowExistingDocCountWarningBox(file);
+                        if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                        {
+                            docs.AddDocument(file);
+                        }
+                        else if (docs.documents.Count >= settings.maxDocCount)
+                        {
+                            ShowMaxDocCountWarningBox();
+                            break;
+                        }
+                        else
+                        {
+                            ShowExistingDocCountWarningBox(file);
+                        }
                     }
                 }
 
-                LoadFilesCommonPart();
+                if (docs.documents.Count != 0)
+                {
+                    LoadFilesCommonPart();
 
-                threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
-                threadLoadDocs.Start();
+                    threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
+                    threadLoadDocs.Start();
 
-                threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
-                threadLoadDocsProgress.Start();
+                    threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
+                    threadLoadDocsProgress.Start();
+                }
             }
         }
 
@@ -172,31 +185,43 @@ namespace DocCompareWPF
             {
                 string[] filenames = openFileDialog.FileNames;
                 lastUsedDirectory = Path.GetDirectoryName(filenames[0]);
+                string ext;
 
                 foreach (string file in filenames)
                 {
-                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                    ext = Path.GetExtension(file);
+                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF")
                     {
-                        docs.AddDocument(file);
-                    }
-                    else if(docs.documents.Count >= settings.maxDocCount)
-                    {
-                        ShowMaxDocCountWarningBox();
-                        break;
+                        ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
                     else
                     {
-                        ShowExistingDocCountWarningBox(file);
+                        if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                        {
+                            docs.AddDocument(file);
+                        }
+                        else if (docs.documents.Count >= settings.maxDocCount)
+                        {
+                            ShowMaxDocCountWarningBox();
+                            break;
+                        }
+                        else
+                        {
+                            ShowExistingDocCountWarningBox(file);
+                        }
                     }
                 }
 
-                LoadFilesCommonPart();
+                if (docs.documents.Count != 0)
+                {
+                    LoadFilesCommonPart();
 
-                threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
-                threadLoadDocs.Start();
+                    threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
+                    threadLoadDocs.Start();
 
-                threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
-                threadLoadDocsProgress.Start();
+                    threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
+                    threadLoadDocsProgress.Start();
+                }
             }
         }
 
@@ -216,31 +241,43 @@ namespace DocCompareWPF
             {
                 string[] filenames = openFileDialog.FileNames;
                 lastUsedDirectory = Path.GetDirectoryName(filenames[0]);
+                string ext;
 
                 foreach (string file in filenames)
                 {
-                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                    ext = Path.GetExtension(file);
+                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF")
                     {
-                        docs.AddDocument(file);
-                    }
-                    else if (docs.documents.Count >= settings.maxDocCount)
-                    {
-                        ShowMaxDocCountWarningBox();
-                        break;
+                        ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
                     else
                     {
-                        ShowExistingDocCountWarningBox(file);
+                        if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                        {
+                            docs.AddDocument(file);
+                        }
+                        else if (docs.documents.Count >= settings.maxDocCount)
+                        {
+                            ShowMaxDocCountWarningBox();
+                            break;
+                        }
+                        else
+                        {
+                            ShowExistingDocCountWarningBox(file);
+                        }
                     }
                 }
 
-                LoadFilesCommonPart();
+                if (docs.documents.Count != 0)
+                {
+                    LoadFilesCommonPart();
 
-                threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
-                threadLoadDocs.Start();
+                    threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
+                    threadLoadDocs.Start();
 
-                threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
-                threadLoadDocsProgress.Start();
+                    threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
+                    threadLoadDocsProgress.Start();
+                }
             }
         }
 
@@ -1048,32 +1085,43 @@ namespace DocCompareWPF
             if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 var data = e.Data.GetData(DataFormats.FileDrop) as string[];
+                string ext;
 
                 foreach (string file in data)
                 {
-                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                    ext = Path.GetExtension(file);
+                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF")
                     {
-                        docs.AddDocument(file);
-                    }
-                    else if (docs.documents.Count >= settings.maxDocCount)
-                    {
-                        ShowMaxDocCountWarningBox();
-                        break;
+                        ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
                     else
                     {
-                        ShowExistingDocCountWarningBox(file);
-
+                        if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                        {
+                            docs.AddDocument(file);
+                        }
+                        else if (docs.documents.Count >= settings.maxDocCount)
+                        {
+                            ShowMaxDocCountWarningBox();
+                            break;
+                        }
+                        else
+                        {
+                            ShowExistingDocCountWarningBox(file);
+                        }
                     }
                 }
 
-                LoadFilesCommonPart();
+                if (docs.documents.Count != 0)
+                {
+                    LoadFilesCommonPart();
 
-                threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
-                threadLoadDocs.Start();
+                    threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
+                    threadLoadDocs.Start();
 
-                threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
-                threadLoadDocsProgress.Start();
+                    threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
+                    threadLoadDocsProgress.Start();
+                }
             }
         }
 
@@ -1094,34 +1142,46 @@ namespace DocCompareWPF
             if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 var data = e.Data.GetData(DataFormats.FileDrop) as string[];
+                string ext;
 
                 if (data.Length > settings.maxDocCount)
                     ShowMaxDocCountWarningBox();
 
                 foreach (string file in data)
                 {
-                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                    ext = Path.GetExtension(file);
+                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF")
                     {
-                        docs.AddDocument(file);
-                    }
-                    else if (docs.documents.Count >= settings.maxDocCount)
-                    {
-                        ShowMaxDocCountWarningBox();
-                        break;
+                        ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
                     else
                     {
-                        ShowExistingDocCountWarningBox(file);
+                        if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                        {
+                            docs.AddDocument(file);
+                        }
+                        else if (docs.documents.Count >= settings.maxDocCount)
+                        {
+                            ShowMaxDocCountWarningBox();
+                            break;
+                        }
+                        else
+                        {
+                            ShowExistingDocCountWarningBox(file);
+                        }
                     }
                 }
 
-                LoadFilesCommonPart();
+                if (docs.documents.Count != 0)
+                {
+                    LoadFilesCommonPart();
 
-                threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
-                threadLoadDocs.Start();
+                    threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
+                    threadLoadDocs.Start();
 
-                threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
-                threadLoadDocsProgress.Start();
+                    threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
+                    threadLoadDocsProgress.Start();
+                }
             }
         }
 
@@ -1142,31 +1202,43 @@ namespace DocCompareWPF
             if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 var data = e.Data.GetData(DataFormats.FileDrop) as string[];
+                string ext;
 
                 foreach (string file in data)
                 {
-                    if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                    ext = Path.GetExtension(file);
+                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF")
                     {
-                        docs.AddDocument(file);
-                    }
-                    else if (docs.documents.Count >= settings.maxDocCount)
-                    {
-                        ShowMaxDocCountWarningBox();
-                        break;
+                        ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
                     else
                     {
-                        ShowExistingDocCountWarningBox(file);
+                        if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                        {
+                            docs.AddDocument(file);
+                        }
+                        else if (docs.documents.Count >= settings.maxDocCount)
+                        {
+                            ShowMaxDocCountWarningBox();
+                            break;
+                        }
+                        else
+                        {
+                            ShowExistingDocCountWarningBox(file);
+                        }
                     }
                 }
 
-                LoadFilesCommonPart();
+                if (docs.documents.Count != 0)
+                {
+                    LoadFilesCommonPart();
 
-                threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
-                threadLoadDocs.Start();
+                    threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
+                    threadLoadDocs.Start();
 
-                threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
-                threadLoadDocsProgress.Start();
+                    threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
+                    threadLoadDocsProgress.Start();
+                }
             }
         }
 
@@ -1603,7 +1675,7 @@ namespace DocCompareWPF
         {
             try
             {
-                while(docProcessRunning == true)
+                while (docProcessRunning == true)
                 {
                     Dispatcher.Invoke(() =>
                     {
@@ -1647,18 +1719,15 @@ namespace DocCompareWPF
                     }
 
                     Thread.Sleep(10);
-
                 }
 
                 Dispatcher.Invoke(() =>
                 {
                     ProcessingDocProgressCard.Visibility = Visibility.Hidden;
                 });
-
             }
             catch
             {
-
             }
         }
 
@@ -1692,8 +1761,6 @@ namespace DocCompareWPF
             }
 
             docProcessRunning = false;
-
-            
         }
 
         private void RefDocListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1934,6 +2001,7 @@ namespace DocCompareWPF
             using var file = File.Create("AppSettings.bin");
             Serializer.Serialize(file, settings);
         }
+
         private void SettingsBrowDefaultFolderButton_Click(object sender, RoutedEventArgs e)
         {
         }
@@ -2039,6 +2107,7 @@ namespace DocCompareWPF
             DocCompareSecondDocZone.Visibility = Visibility.Visible;
             DragDropPanel.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
         }
+
         private void ShowDragDropZone3()
         {
             if (settings.numPanelsDragDrop == 3)
@@ -2047,6 +2116,7 @@ namespace DocCompareWPF
                 DragDropPanel.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
             }
         }
+
         private void ShowMaskButton_Click(object sender, RoutedEventArgs e)
         {
             showMask = true;
@@ -2060,6 +2130,11 @@ namespace DocCompareWPF
         private void ShowMaxDocCountWarningBox()
         {
             MessageBox.Show("You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded. Subscribe to the Pro-version to view unlimited documents.", "Get Pro-Version", MessageBoxButton.OK);
+        }
+
+        private void ShowInvalidDocTypeWarningBox(string fileType, string filename)
+        {
+            MessageBox.Show("Unsupported file type of " + fileType + " selected with " + filename + ". This document will be ignored.", "Unsupported file type", MessageBoxButton.OK);
         }
 
         private void ShowExistingDocCountWarningBox(string docName)

@@ -28,9 +28,9 @@ namespace DocCompareWPF
         // Stack panel for viewing documents in scrollviewer control in comparison view
         private StackPanel childPanel1, childPanel2, childPanel3, refDocPanel, docCompareChildPanel1, docCompareChildPanelLeft, docCompareChildPanelRight;
 
-        private bool docCompareRunning, showMask;
+        private bool docCompareRunning, docProcessRunning, showMask;
 
-        private int docCompareSideGridShown;
+        private int docCompareSideGridShown, docProcessingCounter;
 
         private bool inForceAlignMode;
 
@@ -47,7 +47,7 @@ namespace DocCompareWPF
 
         private SideGridSelection sideGridSelectedLeftOrRight;
 
-        private Thread threadLoadDocs, threadCompare;
+        private Thread threadLoadDocs, threadLoadDocsProgress, threadCompare;
 
         public MainWindow()
         {
@@ -55,7 +55,7 @@ namespace DocCompareWPF
             showMask = true;
 
             // GUI stuff
-            SetVisiblePanel(SidePanels.DRAGDROP);
+            SetVisiblePanel(SidePanels.DRAGDROP);            
             SidePanelDocCompareButton.IsEnabled = false;
             HideDragDropZone2();
             HideDragDropZone3();
@@ -135,10 +135,14 @@ namespace DocCompareWPF
                     {
                         docs.AddDocument(file);
                     }
-                    else
+                    else if (docs.documents.Count >= settings.maxDocCount)
                     {
                         ShowMaxDocCountWarningBox();
                         break;
+                    }
+                    else
+                    {
+                        ShowExistingDocCountWarningBox(file);
                     }
                 }
 
@@ -146,6 +150,9 @@ namespace DocCompareWPF
 
                 threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
                 threadLoadDocs.Start();
+
+                threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
+                threadLoadDocsProgress.Start();
             }
         }
 
@@ -172,10 +179,14 @@ namespace DocCompareWPF
                     {
                         docs.AddDocument(file);
                     }
-                    else
+                    else if(docs.documents.Count >= settings.maxDocCount)
                     {
                         ShowMaxDocCountWarningBox();
                         break;
+                    }
+                    else
+                    {
+                        ShowExistingDocCountWarningBox(file);
                     }
                 }
 
@@ -183,6 +194,9 @@ namespace DocCompareWPF
 
                 threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
                 threadLoadDocs.Start();
+
+                threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
+                threadLoadDocsProgress.Start();
             }
         }
 
@@ -209,10 +223,14 @@ namespace DocCompareWPF
                     {
                         docs.AddDocument(file);
                     }
-                    else
+                    else if (docs.documents.Count >= settings.maxDocCount)
                     {
                         ShowMaxDocCountWarningBox();
                         break;
+                    }
+                    else
+                    {
+                        ShowExistingDocCountWarningBox(file);
                     }
                 }
 
@@ -220,6 +238,9 @@ namespace DocCompareWPF
 
                 threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
                 threadLoadDocs.Start();
+
+                threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
+                threadLoadDocsProgress.Start();
             }
         }
 
@@ -1034,10 +1055,15 @@ namespace DocCompareWPF
                     {
                         docs.AddDocument(file);
                     }
-                    else
+                    else if (docs.documents.Count >= settings.maxDocCount)
                     {
                         ShowMaxDocCountWarningBox();
                         break;
+                    }
+                    else
+                    {
+                        ShowExistingDocCountWarningBox(file);
+
                     }
                 }
 
@@ -1045,6 +1071,9 @@ namespace DocCompareWPF
 
                 threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
                 threadLoadDocs.Start();
+
+                threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
+                threadLoadDocsProgress.Start();
             }
         }
 
@@ -1075,10 +1104,14 @@ namespace DocCompareWPF
                     {
                         docs.AddDocument(file);
                     }
-                    else
+                    else if (docs.documents.Count >= settings.maxDocCount)
                     {
                         ShowMaxDocCountWarningBox();
                         break;
+                    }
+                    else
+                    {
+                        ShowExistingDocCountWarningBox(file);
                     }
                 }
 
@@ -1086,6 +1119,9 @@ namespace DocCompareWPF
 
                 threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
                 threadLoadDocs.Start();
+
+                threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
+                threadLoadDocsProgress.Start();
             }
         }
 
@@ -1113,10 +1149,14 @@ namespace DocCompareWPF
                     {
                         docs.AddDocument(file);
                     }
-                    else
+                    else if (docs.documents.Count >= settings.maxDocCount)
                     {
                         ShowMaxDocCountWarningBox();
                         break;
+                    }
+                    else
+                    {
+                        ShowExistingDocCountWarningBox(file);
                     }
                 }
 
@@ -1124,6 +1164,9 @@ namespace DocCompareWPF
 
                 threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
                 threadLoadDocs.Start();
+
+                threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
+                threadLoadDocsProgress.Start();
             }
         }
 
@@ -1444,6 +1487,15 @@ namespace DocCompareWPF
                     ProgressBarDoc3.Visibility = Visibility.Visible;
                 });
             }
+
+            docProcessRunning = true;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ProcessingDocProgressCard.Visibility = Visibility.Visible;
+                ProcessingDocProgressbar.Value = 0;
+                ProcessingDocLabel.Text = "Processing: " + Path.GetFileName(docs.documents[0].filePath);
+            });
         }
 
         private void LoadSettings()
@@ -1547,9 +1599,74 @@ namespace DocCompareWPF
             fileopener.Start();
         }
 
+        private void ProcessDocProgressThread()
+        {
+            try
+            {
+                while(docProcessRunning == true)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        ProcessingDocProgressbar.Value = ((double)docProcessingCounter / (double)(docs.documents.Count - 1)) * 100.0;
+                        ProcessingDocLabel.Text = "Processing: " + Path.GetFileName(docs.documents[docProcessingCounter].filePath);
+                    });
+
+                    if (docProcessingCounter == 2)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            DisplayImageLeft(docs.documentsToShow[0]);
+                            Dispatcher.Invoke(() =>
+                            {
+                                OpenDoc1OriginalButton1.IsEnabled = true;
+                            });
+
+                            DisplayImageMiddle(docs.documentsToShow[1]);
+                            Dispatcher.Invoke(() =>
+                            {
+                                OpenDoc2OriginalButton2.IsEnabled = true;
+                            });
+
+                            if (settings.numPanelsDragDrop == 3)
+                            {
+                                if (docs.documents.Count >= 3)
+                                {
+                                    DisplayImageRight(docs.documentsToShow[2]);
+                                    Dispatcher.Invoke(() =>
+                                    {
+                                        OpenDoc3OriginalButton3.IsEnabled = true;
+                                    });
+                                }
+                            }
+
+                            ProgressBarDoc1.Visibility = Visibility.Hidden;
+                            ProgressBarDoc2.Visibility = Visibility.Hidden;
+                            ProgressBarDoc3.Visibility = Visibility.Hidden;
+                            UpdateDocSelectionComboBox();
+                        });
+                    }
+
+                    Thread.Sleep(10);
+
+                }
+
+                Dispatcher.Invoke(() =>
+                {
+                    ProcessingDocProgressCard.Visibility = Visibility.Hidden;
+                });
+
+            }
+            catch
+            {
+
+            }
+        }
+
         private void ProcessDocThread()
         {
             // Going through documents in stack, check if reloading needed
+            docProcessingCounter = 0;
+
             for (int i = 0; i < docs.documents.Count; i++)
             {
                 if (docs.documents[i].loaded == false && docs.documents[i].filePath != null)
@@ -1569,40 +1686,14 @@ namespace DocCompareWPF
                             ret = docs.documents[i].ReadPPT();
                             break;
                     }
+
+                    docProcessingCounter += 1;
                 }
             }
 
-            Dispatcher.Invoke(() =>
-            {
-                DisplayImageLeft(docs.documentsToShow[0]);
-                Dispatcher.Invoke(() =>
-                {
-                    OpenDoc1OriginalButton1.IsEnabled = true;
-                });
+            docProcessRunning = false;
 
-                DisplayImageMiddle(docs.documentsToShow[1]);
-                Dispatcher.Invoke(() =>
-                {
-                    OpenDoc2OriginalButton2.IsEnabled = true;
-                });
-
-                if (settings.numPanelsDragDrop == 3)
-                {
-                    if (docs.documents.Count >= 3)
-                    {
-                        DisplayImageRight(docs.documentsToShow[2]);
-                        Dispatcher.Invoke(() =>
-                        {
-                            OpenDoc3OriginalButton3.IsEnabled = true;
-                        });
-                    }
-                }
-
-                ProgressBarDoc1.Visibility = Visibility.Hidden;
-                ProgressBarDoc2.Visibility = Visibility.Hidden;
-                ProgressBarDoc3.Visibility = Visibility.Hidden;
-                UpdateDocSelectionComboBox();
-            });
+            
         }
 
         private void RefDocListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1969,6 +2060,11 @@ namespace DocCompareWPF
         private void ShowMaxDocCountWarningBox()
         {
             MessageBox.Show("You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded. Subscribe to the Pro-version to view unlimited documents.", "Get Pro-Version", MessageBoxButton.OK);
+        }
+
+        private void ShowExistingDocCountWarningBox(string docName)
+        {
+            MessageBox.Show("You have selected an existing document: " + docName, "Document exists", MessageBoxButton.OK);
         }
 
         private void SideGridButtonMouseClick(object sender, RoutedEventArgs args)

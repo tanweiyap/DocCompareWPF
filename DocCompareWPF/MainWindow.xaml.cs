@@ -70,7 +70,7 @@ namespace DocCompareWPF
                 settings = new AppSettings
                 {
                     defaultFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                    numPanelsDragDrop = 3
+                    numPanelsDragDrop = 2
                 };
 
                 SaveSettings();

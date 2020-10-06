@@ -482,7 +482,6 @@ namespace DocCompareWPF
                     // Turn off Mask and animate
                     foreach (object child in childGrid.Children)
                     {
-
                         if (child is Image)
                         {
                             Image thisImg = child as Image;
@@ -495,10 +494,10 @@ namespace DocCompareWPF
                             }
                             else if (thisImg.Name.Contains("Mask"))
                             {
-                                if (imageToggler == false)
-                                    thisImg.Visibility = Visibility.Visible;
-                                else
-                                    thisImg.Visibility = Visibility.Hidden;
+                                //if (imageToggler == false)
+                                //    thisImg.Visibility = Visibility.Visible;
+                                //else
+                                thisImg.Visibility = Visibility.Hidden;
                             }
                             else
                             {
@@ -543,7 +542,6 @@ namespace DocCompareWPF
 
                 threadAnimateDiff = new Thread(new ThreadStart(AnimateDiffThread));
                 threadAnimateDiff.Start();
-
             }
         }
 
@@ -576,7 +574,6 @@ namespace DocCompareWPF
                     }
                 }
             }
-
         }
 
         private void DisplayComparisonResult()
@@ -694,7 +691,6 @@ namespace DocCompareWPF
                         Grid mainImageGrid = new Grid()
                         {
                             Name = "MainImgGridRight" + i.ToString(),
-
                         };
                         thisImage = new Image()
                         {
@@ -1686,7 +1682,6 @@ namespace DocCompareWPF
                             if (thisButton.Name.Contains("Right"))
                                 thisButton.Visibility = Visibility.Visible;
                         }
-
                     }
                 }
             }
@@ -1719,11 +1714,11 @@ namespace DocCompareWPF
                             if (thisButton.Name.Contains("Right"))
                                 thisButton.Visibility = Visibility.Hidden;
                         }
-
                     }
                 }
             }
         }
+
         private void HandleMouseClickOnSideScrollView(object sender, MouseButtonEventArgs e)
         {
             if (inForceAlignMode == false)
@@ -2083,7 +2078,6 @@ namespace DocCompareWPF
 
                     if (docs.documents.Count >= 2)
                         SidePanelDocCompareButton.IsEnabled = true;
-
                 });
             }
             catch
@@ -2501,6 +2495,7 @@ namespace DocCompareWPF
         {
             MessageBox.Show("You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded. Subscribe to the Pro-version to view unlimited documents.", "Get Pro-Version", MessageBoxButton.OK);
         }
+
         private void SideGridButtonMouseClick(object sender, RoutedEventArgs args)
         {
             Button button = sender as Button;
@@ -2699,12 +2694,12 @@ namespace DocCompareWPF
                         Button foundButton = child as Button;
                         if (inForceAlignMode == false)
                         {
-                            if(isLinkedPage == false)
+                            if (isLinkedPage == false)
                                 foundButton.Visibility = Visibility.Visible;
                             else
                             {
                                 nameToLook = "SideButtonInvalidLeft" + splittedName[1];
-                                
+
                                 foreach (object child2 in img.Children)
                                 {
                                     if (child2 is Button)

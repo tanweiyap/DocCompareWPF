@@ -1506,16 +1506,22 @@ namespace DocCompareWPF
             int lowerIndRight = 0;
             int upperIndLeft = docs.totalLen;
             int upperIndRight = docs.totalLen;
+            int pairLeft = 0;
+            int pairRight = 0;
+            bool isLinkedPage = false;
 
             if (inForceAlignMode == true)
             {
                 foreach (List<int> pair in docs.forceAlignmentIndices)
                 {
-                    int pairLeft = docs.documents[docs.documentsToCompare[0]].docCompareIndices.FindIndex(x => x == pair[0]);
-                    int pairRight = docs.documents[docs.documentsToCompare[1]].docCompareIndices.FindIndex(x => x == pair[1]);
+                    pairLeft = docs.documents[docs.documentsToCompare[0]].docCompareIndices.FindIndex(x => x == pair[0]);
+                    pairRight = docs.documents[docs.documentsToCompare[1]].docCompareIndices.FindIndex(x => x == pair[1]);                    
 
                     if (sideGridSelectedLeftOrRight == SideGridSelection.LEFT)
                     {
+                        if (selfInd == pairRight)
+                            isLinkedPage |= true;
+
                         if (pairLeft > lowerIndLeft && pairLeft <= refInd)
                         {
                             lowerIndLeft = pairLeft;
@@ -1530,6 +1536,9 @@ namespace DocCompareWPF
                     }
                     else
                     {
+                        if (selfInd == pairLeft)
+                            isLinkedPage |= true;
+
                         if (pairRight > lowerIndRight && pairRight <= refInd)
                         {
                             lowerIndLeft = pairLeft; 
@@ -1570,20 +1579,27 @@ namespace DocCompareWPF
                                 }
                                 else
                                 {
-                                    if (lowerIndRight <= selfInd && selfInd <= upperIndLeft)
+                                    if (lowerIndRight <= selfInd && selfInd <= upperIndLeft && isLinkedPage == false)
                                         foundButton.Visibility = Visibility.Visible;
                                     else
-                                    {
-                                        //foundButton.Visibility = Visibility.Hidden;
-                                        
+                                    {                                           
                                         nameToLook = "SideButtonInvalidRight" + splittedName[1];
                                         foreach (object child2 in img.Children)
                                         {
                                             if(child2 is Button)
                                             {
                                                 if((child2 as Button).Name == nameToLook)
-                                                {
+                                                {                                                    
                                                     foundButton = child2 as Button;
+
+                                                    if (isLinkedPage == true)
+                                                    {
+                                                        foundButton.ToolTip = "Page linked. Please remove existing link first.";
+                                                    }else
+                                                    {
+                                                        foundButton.ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.";
+                                                    }
+
                                                     foundButton.Visibility = Visibility.Visible;
                                                 }
                                             }
@@ -1602,12 +1618,10 @@ namespace DocCompareWPF
                                 }
                                 else
                                 {
-                                    if (lowerIndRight <= selfInd && selfInd <= upperIndRight)
+                                    if (lowerIndRight <= selfInd && selfInd <= upperIndRight && isLinkedPage == false)
                                         foundButton.Visibility = Visibility.Visible;
                                     else
                                     {
-                                        //foundButton.Visibility = Visibility.Hidden;
-                                        
                                         nameToLook = "SideButtonInvalidLeft" + splittedName[1];
                                         foreach (object child2 in img.Children)
                                         {
@@ -1616,6 +1630,16 @@ namespace DocCompareWPF
                                                 if ((child2 as Button).Name == nameToLook)
                                                 {
                                                     foundButton = child2 as Button;
+
+                                                    if (isLinkedPage == true)
+                                                    {
+                                                        foundButton.ToolTip = "Page linked. Please remove existing link first.";
+                                                    }
+                                                    else
+                                                    {
+                                                        foundButton.ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.";
+                                                    }
+
                                                     foundButton.Visibility = Visibility.Visible;
                                                 }
                                             }
@@ -2200,7 +2224,7 @@ namespace DocCompareWPF
                             };
                             Grid.SetColumn(removeForceAlignButton, 0);
                             thisRightGrid.Children.Add(removeForceAlignButton);
-                            displayForceAlignButton = false;
+                            //displayForceAlignButton = false;
                             removeForceAlignButton.Click += (sen, ev) => { RemoveForceAlignClicked(sen, ev); };
                         }
                     }
@@ -2244,7 +2268,7 @@ namespace DocCompareWPF
                                 IsHitTestVisible = true,
                                 HorizontalAlignment = HorizontalAlignment.Right,
                                 VerticalAlignment = VerticalAlignment.Bottom,
-                                ToolTip = "Force align pages"
+                                ToolTip = "Link pages"
                             };
 
                             test.Click += (sen, ev) => { SideGridButtonMouseClick(sen, ev); };
@@ -2266,8 +2290,8 @@ namespace DocCompareWPF
                                 IsHitTestVisible = true,
                                 HorizontalAlignment = HorizontalAlignment.Right,
                                 VerticalAlignment = VerticalAlignment.Bottom,
-                                ToolTip = "Invalid page combination",
-                                IsEnabled = false,
+                                ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.",
+                                //IsEnabled = false,
                             };
 
 
@@ -2374,7 +2398,7 @@ namespace DocCompareWPF
                                 Name = "SideButtonRight" + i.ToString(),
                                 HorizontalAlignment = HorizontalAlignment.Right,
                                 VerticalAlignment = VerticalAlignment.Bottom,
-                                ToolTip = "Force align pages"
+                                ToolTip = "Link pages"
                             };
                             test2.Click += (sen, ev) => { SideGridButtonMouseClick(sen, ev); };
 
@@ -2394,8 +2418,8 @@ namespace DocCompareWPF
                                 Name = "SideButtonInvalidRight" + i.ToString(),
                                 HorizontalAlignment = HorizontalAlignment.Right,
                                 VerticalAlignment = VerticalAlignment.Bottom,
-                                ToolTip = "Invalid page combination",
-                                IsEnabled = false,
+                                ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.",
+                                //IsEnabled = false,
                             };
                             
                             //Grid.SetColumn(test2, 2);

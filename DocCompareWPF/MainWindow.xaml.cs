@@ -286,6 +286,11 @@ namespace DocCompareWPF
             docs.RemoveDocument(docs.documentsToShow[0], 0);
             UpdateDocSelectionComboBox();
             CloseDocumentCommonPart();
+
+            if(docs.documents.Count < 2)
+            {
+                SidePanelDocCompareButton.IsEnabled = false;
+            }
         }
 
         private void CloseDoc2Button_Click(object sender, RoutedEventArgs e)
@@ -293,6 +298,11 @@ namespace DocCompareWPF
             docs.RemoveDocument(docs.documentsToShow[1], 1);
             UpdateDocSelectionComboBox();
             CloseDocumentCommonPart();
+
+            if (docs.documents.Count < 2)
+            {
+                SidePanelDocCompareButton.IsEnabled = false;
+            }
         }
 
         private void CloseDoc3Button_Click(object sender, RoutedEventArgs e)
@@ -300,6 +310,11 @@ namespace DocCompareWPF
             docs.RemoveDocument(docs.documentsToShow[2], 2);
             UpdateDocSelectionComboBox();
             CloseDocumentCommonPart();
+
+            if (docs.documents.Count < 2)
+            {
+                SidePanelDocCompareButton.IsEnabled = false;
+            }
         }
 
         private void CloseDocumentCommonPart()
@@ -1768,46 +1783,59 @@ namespace DocCompareWPF
 
         private void HighlightSideGrid()
         {
-            Brush brush = FindResource("SideGridActiveBackground") as Brush;
-            double accuHeight = 0;
-            double windowsHeight = DocCompareSideScrollViewerRight.ActualHeight;
-            Dispatcher.Invoke(() =>
+            try
             {
-                for (int i = 0; i < docCompareChildPanelRight.Children.Count; i++)
+                Brush brush = FindResource("SideGridActiveBackground") as Brush;
+                double accuHeight = 0;
+                double windowsHeight = DocCompareSideScrollViewerRight.ActualHeight;
+                Dispatcher.Invoke(() =>
                 {
-                    Grid thisGrid;
-                    if (i == docCompareSideGridShown)
+                    for (int i = 0; i < docCompareChildPanelRight.Children.Count; i++)
                     {
-                        thisGrid = docCompareChildPanelRight.Children[i] as Grid;
-                        thisGrid.Background = brush;
-
-                        thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
-                        thisGrid.Background = brush;
-
-                        Size thisSize = thisGrid.DesiredSize;
-
-                        if (accuHeight - windowsHeight / 2 > 0)
-                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(accuHeight - windowsHeight / 2);
-                        else
-                            DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
-
-                        accuHeight += thisSize.Height;
-                    }
-                    else
-                    {
-                        if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                        Grid thisGrid;
+                        if (i == docCompareSideGridShown)
                         {
-                            if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
-                            {
-                                if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
-                                {
-                                    thisGrid = docCompareChildPanelRight.Children[i] as Grid;
-                                    thisGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
+                            thisGrid = docCompareChildPanelRight.Children[i] as Grid;
+                            thisGrid.Background = brush;
 
-                                    thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
-                                    thisGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
-                                    Size thisSize = thisGrid.DesiredSize;
-                                    accuHeight += thisSize.Height;
+                            thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
+                            thisGrid.Background = brush;
+
+                            Size thisSize = thisGrid.DesiredSize;
+
+                            if (accuHeight - windowsHeight / 2 > 0)
+                                DocCompareSideScrollViewerRight.ScrollToVerticalOffset(accuHeight - windowsHeight / 2);
+                            else
+                                DocCompareSideScrollViewerRight.ScrollToVerticalOffset(0);
+
+                            accuHeight += thisSize.Height;
+                        }
+                        else
+                        {
+                            if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                            {
+                                if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
+                                {
+                                    if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
+                                    {
+                                        thisGrid = docCompareChildPanelRight.Children[i] as Grid;
+                                        thisGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
+
+                                        thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
+                                        thisGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
+                                        Size thisSize = thisGrid.DesiredSize;
+                                        accuHeight += thisSize.Height;
+                                    }
+                                    else
+                                    {
+                                        thisGrid = docCompareChildPanelRight.Children[i] as Grid;
+                                        thisGrid.Background = Brushes.Transparent;
+
+                                        thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
+                                        thisGrid.Background = Brushes.Transparent;
+                                        Size thisSize = thisGrid.DesiredSize;
+                                        accuHeight += thisSize.Height;
+                                    }
                                 }
                                 else
                                 {
@@ -1831,19 +1859,13 @@ namespace DocCompareWPF
                                 accuHeight += thisSize.Height;
                             }
                         }
-                        else
-                        {
-                            thisGrid = docCompareChildPanelRight.Children[i] as Grid;
-                            thisGrid.Background = Brushes.Transparent;
-
-                            thisGrid = docCompareChildPanelLeft.Children[i] as Grid;
-                            thisGrid.Background = Brushes.Transparent;
-                            Size thisSize = thisGrid.DesiredSize;
-                            accuHeight += thisSize.Height;
-                        }
                     }
-                }
-            });
+                });
+            }
+            catch
+            {
+
+            }
         }
 
         private void LoadFilesCommonPart()

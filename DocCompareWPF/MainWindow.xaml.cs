@@ -699,9 +699,9 @@ namespace DocCompareWPF
                             mainImageGrid.Children.Add(thisImage);
                         }
 
-                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1 && showMask == true)
+                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1 )
                         {
-                            if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
+                            if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))) && showMask == true)
                             {
                                 thisImage = new Image()
                                 {
@@ -719,28 +719,28 @@ namespace DocCompareWPF
                                 thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
                                 thisImage.VerticalAlignment = VerticalAlignment.Stretch;
 
-                                mainImageGrid.Children.Add(thisImage);
-
-                                Button animateDiffButton = new Button()
-                                {
-                                    Height = 25,
-                                    Width = 25,
-                                    Padding = new Thickness(0, 0, 0, 0),
-                                    Margin = new Thickness(15, 15, 0, 0),
-                                    ContentTemplate = (DataTemplate)FindResource("AnimateDiffIcon"),
-                                    Foreground = Brushes.White,
-                                    Opacity = 0.5,
-                                    Name = "AnimateDiffRight" + i.ToString(),
-                                    HorizontalAlignment = HorizontalAlignment.Left,
-                                    VerticalAlignment = VerticalAlignment.Top,
-                                    ToolTip = "Click and hold to animate the difference",
-                                    Visibility = Visibility.Hidden,
-                                };
-
-                                animateDiffButton.PreviewMouseDown += (sen, ev) => HandleMainDocCompareAnimateMouseDown(sen, ev);
-                                animateDiffButton.PreviewMouseUp += (sen, ev) => HandleMainDocCompareAnimateMouseRelease(sen, ev);
-                                mainImageGrid.Children.Add(animateDiffButton);
+                                mainImageGrid.Children.Add(thisImage);                                
                             }
+
+                            Button animateDiffButton = new Button()
+                            {
+                                Height = 25,
+                                Width = 25,
+                                Padding = new Thickness(0, 0, 0, 0),
+                                Margin = new Thickness(15, 15, 0, 0),
+                                ContentTemplate = (DataTemplate)FindResource("AnimateDiffIcon"),
+                                Foreground = Brushes.White,
+                                Opacity = 0.5,
+                                Name = "AnimateDiffRight" + i.ToString(),
+                                HorizontalAlignment = HorizontalAlignment.Left,
+                                VerticalAlignment = VerticalAlignment.Top,
+                                ToolTip = "Click and hold to animate the difference",
+                                Visibility = Visibility.Hidden,
+                            };
+
+                            animateDiffButton.PreviewMouseDown += (sen, ev) => HandleMainDocCompareAnimateMouseDown(sen, ev);
+                            animateDiffButton.PreviewMouseUp += (sen, ev) => HandleMainDocCompareAnimateMouseRelease(sen, ev);
+                            mainImageGrid.Children.Add(animateDiffButton);
                         }
 
                         mainImageGrid.MouseEnter += (sen, ev) => HandleMainDocCompareGridMouseEnter(sen, ev);

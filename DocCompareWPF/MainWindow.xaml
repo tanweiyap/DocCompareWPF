@@ -34,7 +34,7 @@
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <Label FontSize="15" VerticalAlignment="Center" Foreground="White">DocCompare</Label>
+                        <Label x:Name="WindowTitle" FontSize="15" VerticalAlignment="Center" Foreground="White">DocCompare</Label>
                         <Grid Grid.Column="1" MaxWidth="100"  MinWidth="100" HorizontalAlignment="Right">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
@@ -328,7 +328,7 @@
                             </Grid>
                         </materialDesign:ColorZone>
                     </Grid>
-                    <Grid x:Name="DocComparePanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DocComparePanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <materialDesign:Card x:Name="ProgressBarDocCompare" UniformCornerRadius="14" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>

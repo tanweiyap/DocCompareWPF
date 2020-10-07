@@ -23,7 +23,7 @@ namespace DocCompareWPF
     {
         private readonly DocumentManagement docs;
 
-        private readonly string workingDir = Path.Join(Directory.GetCurrentDirectory(), "temp");
+        private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".temp");
 
         // Stack panel for viewing documents in scrollviewer control in comparison view
         private StackPanel childPanel1, childPanel2, childPanel3, refDocPanel, docCompareChildPanel1, docCompareChildPanelLeft, docCompareChildPanelRight;
@@ -53,6 +53,8 @@ namespace DocCompareWPF
         {
             InitializeComponent();
             showMask = true;
+
+            //WindowTitle.Content = workingDir;
 
             // GUI stuff
             SetVisiblePanel(SidePanels.DRAGDROP);
@@ -204,7 +206,7 @@ namespace DocCompareWPF
                     }
                 });
 
-                Thread.Sleep(500);
+                Thread.Sleep(400);
             }
         }
 
@@ -871,6 +873,32 @@ namespace DocCompareWPF
                         }
                         imageGrid.MouseEnter += SideGridMouseEnter;
                         imageGrid.MouseLeave += SideGridMouseLeave;
+
+                        if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                        {
+                            imageGrid = new Grid()
+                            {
+                                Name = "SideImageDummyLeft" + i.ToString(),
+                            };
+                            thisImage = new Image();
+                            stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg"));
+                            bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.StreamSource = stream;
+                            bitmap.EndInit();
+                            stream.Close();
+                            thisImage.Source = bitmap;
+                            imageGrid.Margin = new Thickness(10, 10, 10, 10);
+
+                            imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                            Grid.SetColumn(imageGrid, 1);
+
+                            thisImage.Visibility = Visibility.Hidden;
+
+                            imageGrid.Children.Add(thisImage);
+                            thisLeftGrid.Children.Add(imageGrid);
+                        }
                     }
                     else // doc2 has a valid page, we use it as dummy
                     {
@@ -946,6 +974,33 @@ namespace DocCompareWPF
                         imageGrid.Name = "SideImageRight" + i.ToString();
                         imageGrid.MouseEnter += SideGridMouseEnter;
                         imageGrid.MouseLeave += SideGridMouseLeave;
+
+                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
+                        {
+                            imageGrid = new Grid()
+                            {
+                                Name = "SideImageDummyLeft" + i.ToString(),
+                            };
+                            thisImage = new Image();
+                            stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg"));
+                            bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.StreamSource = stream;
+                            bitmap.EndInit();
+                            stream.Close();
+                            thisImage.Source = bitmap;
+                            imageGrid.Margin = new Thickness(10, 10, 10, 10);
+
+                            imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                            Grid.SetColumn(imageGrid, 1);
+
+                            thisImage.Visibility = Visibility.Hidden;
+
+                            imageGrid.Children.Add(thisImage);
+                            thisLeftGrid.Children.Add(imageGrid);
+                        }
+
                         if (displayForceAlignButton)
                         {
                             Button forceAlignButtonRight = new Button()
@@ -2134,6 +2189,14 @@ namespace DocCompareWPF
                         case Document.FileTypes.PPT:
                             ret = docs.documents[i].ReadPPT();
                             break;
+                    }
+
+                    if (ret == -1)
+                    {
+                        if(docs.documents[i].fileType == Document.FileTypes.PDF)
+                            MessageBox.Show("Error converting PDF", "Error", MessageBoxButton.OK);
+                        else
+                            MessageBox.Show("Error converting PPT","Error", MessageBoxButton.OK);
                     }
 
                     docProcessingCounter += 1;

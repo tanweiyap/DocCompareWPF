@@ -113,6 +113,101 @@ namespace DocCompareWPF
             SETTINGS,
         };
 
+        private void AnimateDiffThread()
+        {
+            bool imageToggler = true;
+
+            while (animateDiffRunning)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    // find Grid to animate
+                    Grid parentGrid = new Grid();
+                    Grid childGrid = new Grid();
+                    string[] splittedName;
+
+                    foreach (object child in docCompareChildPanel1.Children)
+                    {
+                        if (child is Grid)
+                        {
+                            Grid localGrid = child as Grid;
+                            splittedName = localGrid.Name.Split("Grid");
+                            if (int.Parse(splittedName[1]) == pageToAnimate)
+                            {
+                                parentGrid = localGrid;
+                                break; // found parent grid
+                            }
+                        }
+                    }
+
+                    // find child grid
+                    foreach (object child in parentGrid.Children)
+                    {
+                        if (child is Grid)
+                        {
+                            if (mainGridSelectedLeftOrRight == GridSelection.LEFT)
+                            {
+                                if ((child as Grid).Name.Contains("Left"))
+                                {
+                                    childGrid = child as Grid;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                if ((child as Grid).Name.Contains("Right"))
+                                {
+                                    childGrid = child as Grid;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    // Turn off Mask and animate
+                    foreach (object child in childGrid.Children)
+                    {
+                        if (child is Image)
+                        {
+                            Image thisImg = child as Image;
+                            if (thisImg.Name.Contains("Ani"))
+                            {
+                                if (imageToggler == false)
+                                    thisImg.Visibility = Visibility.Hidden;
+                                else
+                                    thisImg.Visibility = Visibility.Visible;
+                            }
+                            else if (thisImg.Name.Contains("Mask"))
+                            {
+                                //if (imageToggler == false)
+                                //    thisImg.Visibility = Visibility.Visible;
+                                //else
+                                thisImg.Visibility = Visibility.Hidden;
+                            }
+                            else
+                            {
+                                if (imageToggler == false)
+                                    thisImg.Visibility = Visibility.Visible;
+                                else
+                                    thisImg.Visibility = Visibility.Hidden;
+                            }
+                        }
+                    }
+
+                    if (imageToggler == false)
+                    {
+                        imageToggler = true;
+                    }
+                    else
+                    {
+                        imageToggler = false;
+                    }
+                });
+
+                Thread.Sleep(500);
+            }
+        }
+
         private void BrowseFileButton1_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(lastUsedDirectory) == false)
@@ -287,7 +382,7 @@ namespace DocCompareWPF
             UpdateDocSelectionComboBox();
             CloseDocumentCommonPart();
 
-            if(docs.documents.Count < 2)
+            if (docs.documents.Count < 2)
             {
                 SidePanelDocCompareButton.IsEnabled = false;
             }
@@ -443,154 +538,6 @@ namespace DocCompareWPF
             //DocCompareSideScrollViewerRight.IsEnabled = false;
         }
 
-        private void AnimateDiffThread()
-        {
-            bool imageToggler = true;
-
-            while (animateDiffRunning)
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    // find Grid to animate
-                    Grid parentGrid = new Grid();
-                    Grid childGrid = new Grid();
-                    string[] splittedName;
-
-                    foreach (object child in docCompareChildPanel1.Children)
-                    {
-                        if (child is Grid)
-                        {
-                            Grid localGrid = child as Grid;
-                            splittedName = localGrid.Name.Split("Grid");
-                            if (int.Parse(splittedName[1]) == pageToAnimate)
-                            {
-                                parentGrid = localGrid;
-                                break; // found parent grid
-                            }
-                        }
-                    }
-
-                    // find child grid
-                    foreach (object child in parentGrid.Children)
-                    {
-                        if (child is Grid)
-                        {
-                            if (mainGridSelectedLeftOrRight == GridSelection.LEFT)
-                            {
-                                if ((child as Grid).Name.Contains("Left"))
-                                {
-                                    childGrid = child as Grid;
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                if ((child as Grid).Name.Contains("Right"))
-                                {
-                                    childGrid = child as Grid;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    // Turn off Mask and animate
-                    foreach (object child in childGrid.Children)
-                    {
-                        if (child is Image)
-                        {
-                            Image thisImg = child as Image;
-                            if (thisImg.Name.Contains("Ani"))
-                            {
-                                if (imageToggler == false)
-                                    thisImg.Visibility = Visibility.Hidden;
-                                else
-                                    thisImg.Visibility = Visibility.Visible;
-                            }
-                            else if (thisImg.Name.Contains("Mask"))
-                            {
-                                //if (imageToggler == false)
-                                //    thisImg.Visibility = Visibility.Visible;
-                                //else
-                                thisImg.Visibility = Visibility.Hidden;
-                            }
-                            else
-                            {
-                                if (imageToggler == false)
-                                    thisImg.Visibility = Visibility.Visible;
-                                else
-                                    thisImg.Visibility = Visibility.Hidden;
-                            }
-                        }
-                    }
-
-                    if (imageToggler == false)
-                    {
-                        imageToggler = true;
-                    }
-                    else
-                    {
-                        imageToggler = false;
-                    }
-                });
-
-                Thread.Sleep(500);
-            }
-        }
-
-        private void HandleMainDocCompareAnimateMouseDown(object sender, MouseEventArgs args)
-        {
-            if (sender is Button)
-            {
-                string[] splittedName;
-                if (mainGridSelectedLeftOrRight == GridSelection.LEFT)
-                {
-                    splittedName = (sender as Button).Name.Split("Left");
-                }
-                else
-                {
-                    splittedName = (sender as Button).Name.Split("Right");
-                }
-
-                pageToAnimate = int.Parse(splittedName[1]);
-                animateDiffRunning = true;
-
-                threadAnimateDiff = new Thread(new ThreadStart(AnimateDiffThread));
-                threadAnimateDiff.Start();
-            }
-        }
-
-        private void HandleMainDocCompareAnimateMouseRelease(object sender, MouseEventArgs args)
-        {
-            animateDiffRunning = false;
-            if (sender is Button)
-            {
-                Grid parentGrid = (sender as Button).Parent as Grid;
-                foreach (object child in parentGrid.Children)
-                {
-                    if (child is Image)
-                    {
-                        Image thisImg = child as Image;
-                        if (thisImg.Name.Contains("Ani"))
-                            thisImg.Visibility = Visibility.Hidden;
-                        else if (thisImg.Name.Contains("Mask"))
-                        {
-                            if (showMask == false)
-                            {
-                                thisImg.Visibility = Visibility.Hidden;
-                            }
-                            else
-                            {
-                                thisImg.Visibility = Visibility.Visible;
-                            }
-                        }
-                        else
-                            thisImg.Visibility = Visibility.Visible;
-                    }
-                }
-            }
-        }
-
         private void DisplayComparisonResult()
         {
             int pageCounter = 0;
@@ -598,7 +545,7 @@ namespace DocCompareWPF
 
             Dispatcher.Invoke(() =>
             {
-                DocCompareNameLabel1.Content = Path.GetFileName(docs.documents[docs.documentsToCompare[0]].filePath);
+                DocCompareNameLabel1.Text = Path.GetFileName(docs.documents[docs.documentsToCompare[0]].filePath);
 
                 docCompareChildPanel1 = new StackPanel
                 {
@@ -698,7 +645,6 @@ namespace DocCompareWPF
                             mainImageGrid.Children.Add(animateDiffButton);
                         }
 
-                        
                         mainImageGrid.MouseEnter += (sen, ev) => HandleMainDocCompareGridMouseEnter(sen, ev);
                         mainImageGrid.MouseLeave += (sen, ev) => HandleMainDocCompareGridMouseLeave(sen, ev);
                     }
@@ -797,7 +743,6 @@ namespace DocCompareWPF
                             }
                         }
 
-                        
                         mainImageGrid.MouseEnter += (sen, ev) => HandleMainDocCompareGridMouseEnter(sen, ev);
                         mainImageGrid.MouseLeave += (sen, ev) => HandleMainDocCompareGridMouseLeave(sen, ev);
                     }
@@ -1674,6 +1619,59 @@ namespace DocCompareWPF
             //DocCompareSideScrollViewerRight.IsEnabled = true;
         }
 
+        private void HandleMainDocCompareAnimateMouseDown(object sender, MouseEventArgs args)
+        {
+            if (sender is Button)
+            {
+                string[] splittedName;
+                if (mainGridSelectedLeftOrRight == GridSelection.LEFT)
+                {
+                    splittedName = (sender as Button).Name.Split("Left");
+                }
+                else
+                {
+                    splittedName = (sender as Button).Name.Split("Right");
+                }
+
+                pageToAnimate = int.Parse(splittedName[1]);
+                animateDiffRunning = true;
+
+                threadAnimateDiff = new Thread(new ThreadStart(AnimateDiffThread));
+                threadAnimateDiff.Start();
+            }
+        }
+
+        private void HandleMainDocCompareAnimateMouseRelease(object sender, MouseEventArgs args)
+        {
+            animateDiffRunning = false;
+            if (sender is Button)
+            {
+                Grid parentGrid = (sender as Button).Parent as Grid;
+                foreach (object child in parentGrid.Children)
+                {
+                    if (child is Image)
+                    {
+                        Image thisImg = child as Image;
+                        if (thisImg.Name.Contains("Ani"))
+                            thisImg.Visibility = Visibility.Hidden;
+                        else if (thisImg.Name.Contains("Mask"))
+                        {
+                            if (showMask == false)
+                            {
+                                thisImg.Visibility = Visibility.Hidden;
+                            }
+                            else
+                            {
+                                thisImg.Visibility = Visibility.Visible;
+                            }
+                        }
+                        else
+                            thisImg.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+        }
+
         private void HandleMainDocCompareGridMouseEnter(object sender, MouseEventArgs args)
         {
             if (sender is Grid)
@@ -1864,7 +1862,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -2027,7 +2024,10 @@ namespace DocCompareWPF
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        ProcessingDocProgressbar.Value = ((double)docProcessingCounter / (double)(docs.documents.Count - 1)) * 100.0;
+                        if (docs.documents.Count == 1)
+                            ProcessingDocProgressbar.Value = 1;
+                        else
+                            ProcessingDocProgressbar.Value = ((double)docProcessingCounter / (double)(docs.documents.Count - 1)) * 100.0;
                         ProcessingDocLabel.Text = "Processing: " + Path.GetFileName(docs.documents[docProcessingCounter].filePath);
                     });
 

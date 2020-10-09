@@ -118,7 +118,7 @@
                                                 </Grid.ColumnDefinitions>
                                                 <iconPacks:PackIconUnicons Kind="FolderOpen" VerticalAlignment="Center"/>
                                                 <Label  Margin="10,0,0,0" Grid.Column="1" VerticalAlignment="Center">Browse Files</Label>
-                                            </Grid>                                            
+                                            </Grid>
                                         </Button>
                                     </Grid>
                                 </materialDesign:ColorZone>
@@ -137,10 +137,10 @@
                                             <ComboBox x:Name="Doc1NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
                                                       IsEditable="False" Padding="30,0,30,0">
                                                 <ComboBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
-                                                </DataTemplate>
-                                            </ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
                                             </ComboBox>
                                             <Button x:Name="OpenDoc1OriginalButton1" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
                                             HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
@@ -418,14 +418,15 @@
                             </materialDesign:ColorZone>
                             <Grid x:Name="DocCompareScrollViewerGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition MaxWidth="140" MinWidth="140"/>
-                                    <ColumnDefinition MaxWidth="160" MinWidth="160"/>
+                                    <ColumnDefinition Width="368*"/>
+                                    <ColumnDefinition Width="121*"/>
+                                    <ColumnDefinition MaxWidth="140" MinWidth="140" Width="70*"/>
+                                    <ColumnDefinition MaxWidth="160" MinWidth="160" Width="80*"/>
                                 </Grid.ColumnDefinitions>
-                                <ScrollViewer x:Name="DocCompareMainScrollViewer" Grid.Column="0" ScrollChanged="DocCompareMainScrollViewer_ScrollChanged"/>
-                                <ScrollViewer x:Name="DocCompareSideScrollViewerLeft" Background="Transparent" Style="{StaticResource MahApps.Styles.ScrollViewer}" Grid.Column="1" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" ScrollChanged="DocCompareSideScrollViewerLeft_ScrollChanged" Margin="0" HorizontalContentAlignment="Left" BorderThickness="0" Width="150"/>
-                                <ScrollViewer x:Name="DocCompareSideScrollViewerRight" Background="Transparent" Style="{StaticResource MahApps.Styles.ScrollViewer}" Grid.Column="2" ScrollChanged="DocCompareSideScrollViewerRight_ScrollChanged" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Hidden" Padding="0" Margin="0" HorizontalContentAlignment="Stretch" BorderThickness="0" Width="160"/>
-                                <materialDesign:ColorZone Padding="10" CornerRadius="10" x:Name="HighlightingDisableTip" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.7" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" BorderBrush="Black" BorderThickness="1">Highlighting disabled</materialDesign:ColorZone>
+                                <ScrollViewer x:Name="DocCompareMainScrollViewer" Grid.Column="0" ScrollChanged="DocCompareMainScrollViewer_ScrollChanged" Grid.ColumnSpan="2"/>
+                                <ScrollViewer x:Name="DocCompareSideScrollViewerLeft" Background="Transparent" Style="{StaticResource MahApps.Styles.ScrollViewer}" Grid.Column="2" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" ScrollChanged="DocCompareSideScrollViewerLeft_ScrollChanged" Margin="0,0,150,0" HorizontalContentAlignment="Left" BorderThickness="0" Width="150" Grid.ColumnSpan="2"/>
+                                <ScrollViewer x:Name="DocCompareSideScrollViewerRight" Background="Transparent" Style="{StaticResource MahApps.Styles.ScrollViewer}" Grid.Column="3" ScrollChanged="DocCompareSideScrollViewerRight_ScrollChanged" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Hidden" Padding="0" HorizontalContentAlignment="Stretch" BorderThickness="0" Width="160"/>
+                                <materialDesign:ColorZone Padding="10" CornerRadius="10" x:Name="HighlightingDisableTip" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.7" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" BorderBrush="Black" BorderThickness="1" Grid.Column="1">Highlighting disabled</materialDesign:ColorZone>
                             </Grid>
                             <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid>
@@ -509,10 +510,10 @@
                                         <Label  Margin="10,0,0,0" Grid.Column="1" VerticalAlignment="Center">Browse</Label>
                                     </Grid>
                                 </Button>
-                            </Grid>                            
-                            <Label FontWeight="Bold" FontSize="18" Grid.Row="2">Appearance</Label>                            
-                            <CheckBox x:Name="SettingsShowThirdPanelCheckBox" Grid.Row="3" Margin="20,0,0,0" Checked="SettingsShowThirdPanelCheckBox_Checked" Unchecked="SettingsShowThirdPanelCheckBox_Unchecked"> Show third preview panel</CheckBox>
-                        </Grid>                        
+                            </Grid>
+                            <Label FontWeight="Bold" FontSize="18" Grid.Row="2">Appearance</Label>
+                            <CheckBox x:Name="SettingsShowThirdPanelCheckBox" Grid.Row="3" Margin="20,0,0,0" Checked="SettingsShowThirdPanelCheckBox_Checked" Unchecked="SettingsShowThirdPanelCheckBox_Unchecked">Show third preview panel</CheckBox>
+                        </Grid>
                     </Grid>
                     <Grid x:Name="SelectReferenceDocPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
@@ -538,7 +539,7 @@
                                 <RowDefinition/>
                                 <RowDefinition Height="{StaticResource BottomBarHeight}"/>
                             </Grid.RowDefinitions>
-                            
+
                             <materialDesign:ColorZone Grid.Row="0" Grid.Column="1" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Label Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" >Preview</Label>
                             </materialDesign:ColorZone>

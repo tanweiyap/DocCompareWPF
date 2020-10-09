@@ -876,10 +876,6 @@ namespace DocCompareWPF
 
                         if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
                         {
-                            imageGrid = new Grid()
-                            {
-                                Name = "SideImageDummyLeft" + i.ToString(),
-                            };
                             thisImage = new Image();
                             stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg"));
                             bitmap = new BitmapImage();
@@ -897,7 +893,6 @@ namespace DocCompareWPF
                             thisImage.Visibility = Visibility.Hidden;
 
                             imageGrid.Children.Add(thisImage);
-                            thisLeftGrid.Children.Add(imageGrid);
                         }
                     }
                     else // doc2 has a valid page, we use it as dummy
@@ -928,7 +923,10 @@ namespace DocCompareWPF
 
                     if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1) // doc 2 has a valid page
                     {
-                        Grid imageGrid = new Grid();
+                        Grid imageGrid = new Grid()
+                        {
+                            Name = "SideImageRight" + i.ToString(),
+                        };
                         thisImage = new Image();
                         stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg"));
                         bitmap = new BitmapImage();
@@ -940,10 +938,9 @@ namespace DocCompareWPF
                         thisImage.Source = bitmap;
                         imageGrid.Margin = new Thickness(10, 10, 10, 10);
 
-                        double h = bitmap.PixelHeight;
-                        double w = bitmap.PixelWidth;
                         imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
                         Grid.SetColumn(imageGrid, 1);
+
                         imageGrid.Children.Add(thisImage);
                         thisRightGrid.Children.Add(imageGrid);
 
@@ -969,36 +966,6 @@ namespace DocCompareWPF
                                 thisLeftGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
                                 thisRightGrid.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
                             }
-                        }
-
-                        imageGrid.Name = "SideImageRight" + i.ToString();
-                        imageGrid.MouseEnter += SideGridMouseEnter;
-                        imageGrid.MouseLeave += SideGridMouseLeave;
-
-                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
-                        {
-                            imageGrid = new Grid()
-                            {
-                                Name = "SideImageDummyLeft" + i.ToString(),
-                            };
-                            thisImage = new Image();
-                            stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg"));
-                            bitmap = new BitmapImage();
-                            bitmap.BeginInit();
-                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                            bitmap.StreamSource = stream;
-                            bitmap.EndInit();
-                            stream.Close();
-                            thisImage.Source = bitmap;
-                            imageGrid.Margin = new Thickness(10, 10, 10, 10);
-
-                            imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                            Grid.SetColumn(imageGrid, 1);
-
-                            thisImage.Visibility = Visibility.Hidden;
-
-                            imageGrid.Children.Add(thisImage);
-                            thisLeftGrid.Children.Add(imageGrid);
                         }
 
                         if (displayForceAlignButton)
@@ -1038,6 +1005,32 @@ namespace DocCompareWPF
 
                             imageGrid.Children.Add(forceAlignButtonRight);
                         }
+
+                        imageGrid.MouseEnter += SideGridMouseEnter;
+                        imageGrid.MouseLeave += SideGridMouseLeave;
+
+                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
+                        {
+                            thisImage = new Image();
+                            stream = File.OpenRead(Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg"));
+                            bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.StreamSource = stream;
+                            bitmap.EndInit();
+                            stream.Close();
+                            thisImage.Source = bitmap;
+                            imageGrid.Margin = new Thickness(10, 10, 10, 10);
+
+                            imageGrid.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                            Grid.SetColumn(imageGrid, 1);
+
+                            thisImage.Visibility = Visibility.Hidden;
+
+                            imageGrid.Children.Add(thisImage);
+                        }
+
+                        
                     }
                     else // we use doc 1 as dummy
                     {

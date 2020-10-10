@@ -1,4 +1,5 @@
 ﻿using DocCompareWPF.Classes;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using ProtoBuf;
 using System;
@@ -66,6 +67,9 @@ namespace DocCompareWPF
             {
                 LoadSettings();
                 lastUsedDirectory = settings.defaultFolder;
+
+                //settings.isProVersion = true;
+                //settings.canSelectRefDoc = true;
             }
             catch
             {
@@ -1085,162 +1089,271 @@ namespace DocCompareWPF
 
         private void DisplayImageLeft(int docIndex)
         {
-            Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
-            Dispatcher.Invoke(() =>
+            if (docIndex != -1)
             {
-                if (docs.documents.Count >= 1)
+                Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
+                Dispatcher.Invoke(() =>
                 {
-                    if (docs.documents[docIndex].filePath != null)
+                    if (docs.documents.Count >= 1)
                     {
-                        int pageCounter = 0;
-                        childPanel1 = new StackPanel
+                        if (docs.documents[docIndex].filePath != null)
                         {
-                            Background = brush,
-                            HorizontalAlignment = HorizontalAlignment.Stretch
-                        };
-
-                        DirectoryInfo di = new DirectoryInfo(docs.documents[docIndex].imageFolder);
-                        FileInfo[] fi = di.GetFiles();
-
-                        for (int i = 0; i < fi.Length; i++)
-                        {
-                            Image thisImage = new Image();
-
-                            var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"));
-                            var bitmap = new BitmapImage();
-                            bitmap.BeginInit();
-                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                            bitmap.StreamSource = stream;
-                            bitmap.EndInit();
-                            stream.Close();
-                            thisImage.Source = bitmap;
-                            if (pageCounter == 0)
+                            int pageCounter = 0;
+                            childPanel1 = new StackPanel
                             {
-                                thisImage.Margin = new Thickness(10, 10, 10, 10);
+                                Background = brush,
+                                HorizontalAlignment = HorizontalAlignment.Stretch,
+                                VerticalAlignment = VerticalAlignment.Stretch,
+                            };
+
+                            DirectoryInfo di = new DirectoryInfo(docs.documents[docIndex].imageFolder);
+                            FileInfo[] fi = di.GetFiles();
+
+                            if (fi.Length != 0)
+                            {
+                                for (int i = 0; i < fi.Length; i++)
+                                {
+                                    Image thisImage = new Image();
+
+                                    var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"));
+                                    var bitmap = new BitmapImage();
+                                    bitmap.BeginInit();
+                                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                    bitmap.StreamSource = stream;
+                                    bitmap.EndInit();
+                                    stream.Close();
+                                    thisImage.Source = bitmap;
+                                    if (pageCounter == 0)
+                                    {
+                                        thisImage.Margin = new Thickness(10, 10, 10, 10);
+                                    }
+                                    else
+                                    {
+                                        thisImage.Margin = new Thickness(10, 0, 10, 10);
+                                    }
+
+                                    thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                                    childPanel1.Children.Add(thisImage);
+                                    pageCounter++;
+                                }
                             }
                             else
                             {
-                                thisImage.Margin = new Thickness(10, 0, 10, 10);
+                                Grid errGrid = new Grid()
+                                {
+                                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                                    VerticalAlignment = VerticalAlignment.Stretch,
+                                    Height = DocCompareScrollViewer1.ActualHeight,
+                                };
+
+                                Card errCard = new Card()
+                                {
+                                    HorizontalAlignment = HorizontalAlignment.Center,
+                                    VerticalAlignment = VerticalAlignment.Center,
+                                    UniformCornerRadius = 5,
+                                    Padding = new Thickness(10),
+                                    Background = FindResource("SecondaryAccentBrush") as Brush,
+                                };
+
+                                Label errLabel = new Label()
+                                {
+                                    Foreground = Brushes.White,
+                                    Content = "There was an error loading this file",
+                                };
+
+                                errCard.Content = errLabel;
+
+                                errGrid.Children.Add(errCard);
+                                childPanel1.Children.Add(errGrid);
+                                childPanel1.Height = DocCompareScrollViewer1.ActualHeight;
                             }
 
-                            thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                            childPanel1.Children.Add(thisImage);
-                            pageCounter++;
+                            DocCompareScrollViewer1.Content = childPanel1;
+                            DocCompareScrollViewer1.ScrollToVerticalOffset(0);
+                            Doc1Grid.Visibility = Visibility.Visible;
+                            ProgressBarDoc1.Visibility = Visibility.Hidden;
                         }
-
-                        DocCompareScrollViewer1.Content = childPanel1;
-                        DocCompareScrollViewer1.ScrollToVerticalOffset(0);
-                        Doc1Grid.Visibility = Visibility.Visible;
-                        ProgressBarDoc1.Visibility = Visibility.Hidden;
                     }
-                }
-            });
+                });
+            }
         }
 
         private void DisplayImageMiddle(int docIndex)
         {
-            Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
-            Dispatcher.Invoke(() =>
+            if (docIndex != -1)
             {
-                if (docs.documents.Count >= 2)
+                Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
+                Dispatcher.Invoke(() =>
                 {
-                    if (docs.documents[docIndex].filePath != null)
+                    if (docs.documents.Count >= 2)
                     {
-                        int pageCounter = 0;
-                        childPanel2 = new StackPanel
+                        if (docs.documents[docIndex].filePath != null)
                         {
-                            Background = brush,
-                            HorizontalAlignment = HorizontalAlignment.Stretch
-                        };
-
-                        DirectoryInfo di = new DirectoryInfo(docs.documents[docIndex].imageFolder);
-                        FileInfo[] fi = di.GetFiles();
-
-                        for (int i = 0; i < fi.Length; i++)
-                        {
-                            Image thisImage = new Image();
-                            var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"));
-                            var bitmap = new BitmapImage();
-                            bitmap.BeginInit();
-                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                            bitmap.StreamSource = stream;
-                            bitmap.EndInit();
-                            stream.Close();
-                            thisImage.Source = bitmap;
-                            if (pageCounter == 0)
+                            int pageCounter = 0;
+                            childPanel2 = new StackPanel
                             {
-                                thisImage.Margin = new Thickness(10, 10, 10, 10);
+                                Background = brush,
+                                HorizontalAlignment = HorizontalAlignment.Stretch
+                            };
+
+                            DirectoryInfo di = new DirectoryInfo(docs.documents[docIndex].imageFolder);
+                            FileInfo[] fi = di.GetFiles();
+
+                            if (fi.Length != 0)
+                            {
+                                for (int i = 0; i < fi.Length; i++)
+                                {
+                                    Image thisImage = new Image();
+                                    var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"));
+                                    var bitmap = new BitmapImage();
+                                    bitmap.BeginInit();
+                                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                    bitmap.StreamSource = stream;
+                                    bitmap.EndInit();
+                                    stream.Close();
+                                    thisImage.Source = bitmap;
+                                    if (pageCounter == 0)
+                                    {
+                                        thisImage.Margin = new Thickness(10, 10, 10, 10);
+                                    }
+                                    else
+                                    {
+                                        thisImage.Margin = new Thickness(10, 0, 10, 10);
+                                    }
+
+                                    thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                                    childPanel2.Children.Add(thisImage);
+                                    pageCounter++;
+                                }
                             }
                             else
                             {
-                                thisImage.Margin = new Thickness(10, 0, 10, 10);
+                                Grid errGrid = new Grid()
+                                {
+                                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                                    VerticalAlignment = VerticalAlignment.Stretch,
+                                    Height = DocCompareScrollViewer1.ActualHeight,
+                                };
+
+                                Card errCard = new Card()
+                                {
+                                    HorizontalAlignment = HorizontalAlignment.Center,
+                                    VerticalAlignment = VerticalAlignment.Center,
+                                    UniformCornerRadius = 5,
+                                    Padding = new Thickness(10),
+                                    Background = FindResource("SecondaryAccentBrush") as Brush,
+                                };
+
+                                Label errLabel = new Label()
+                                {
+                                    Foreground = Brushes.White,
+                                    Content = "There was an error loading this file",
+                                };
+
+                                errCard.Content = errLabel;
+
+                                errGrid.Children.Add(errCard);
+                                childPanel2.Children.Add(errGrid);
+                                childPanel2.Height = DocCompareScrollViewer2.ActualHeight;
                             }
 
-                            thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                            childPanel2.Children.Add(thisImage);
-                            pageCounter++;
+                            DocCompareScrollViewer2.Content = childPanel2;
+                            Doc2Grid.Visibility = Visibility.Visible;
+                            DocCompareScrollViewer2.ScrollToVerticalOffset(0);
+                            ProgressBarDoc2.Visibility = Visibility.Hidden;
                         }
-
-                        DocCompareScrollViewer2.Content = childPanel2;
-                        Doc2Grid.Visibility = Visibility.Visible;
-                        DocCompareScrollViewer2.ScrollToVerticalOffset(0);
-                        ProgressBarDoc2.Visibility = Visibility.Hidden;
                     }
-                }
-            });
+                });
+            }
         }
 
         private void DisplayImageRight(int docIndex)
         {
-            Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
-            Dispatcher.Invoke(() =>
+            if (docIndex != -1)
             {
-                if (docs.documents.Count >= 3)
+                Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
+                Dispatcher.Invoke(() =>
                 {
-                    if (docs.documents[docIndex].filePath != null)
+                    if (docs.documents.Count >= 3)
                     {
-                        int pageCounter = 0;
-                        childPanel3 = new StackPanel
+                        if (docs.documents[docIndex].filePath != null)
                         {
-                            Background = brush,
-                            HorizontalAlignment = HorizontalAlignment.Stretch
-                        };
-
-                        DirectoryInfo di = new DirectoryInfo(docs.documents[docIndex].imageFolder);
-                        FileInfo[] fi = di.GetFiles();
-
-                        for (int i = 0; i < fi.Length; i++)
-                        {
-                            Image thisImage = new Image();
-                            var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"));
-                            var bitmap = new BitmapImage();
-                            bitmap.BeginInit();
-                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                            bitmap.StreamSource = stream;
-                            bitmap.EndInit();
-                            stream.Close();
-                            thisImage.Source = bitmap;
-                            if (pageCounter == 0)
+                            int pageCounter = 0;
+                            childPanel3 = new StackPanel
                             {
-                                thisImage.Margin = new Thickness(10, 10, 10, 10);
+                                Background = brush,
+                                HorizontalAlignment = HorizontalAlignment.Stretch
+                            };
+
+                            DirectoryInfo di = new DirectoryInfo(docs.documents[docIndex].imageFolder);
+                            FileInfo[] fi = di.GetFiles();
+
+                            if (fi.Length != 0)
+                            {
+                                for (int i = 0; i < fi.Length; i++)
+                                {
+                                    Image thisImage = new Image();
+                                    var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"));
+                                    var bitmap = new BitmapImage();
+                                    bitmap.BeginInit();
+                                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                    bitmap.StreamSource = stream;
+                                    bitmap.EndInit();
+                                    stream.Close();
+                                    thisImage.Source = bitmap;
+                                    if (pageCounter == 0)
+                                    {
+                                        thisImage.Margin = new Thickness(10, 10, 10, 10);
+                                    }
+                                    else
+                                    {
+                                        thisImage.Margin = new Thickness(10, 0, 10, 10);
+                                    }
+
+                                    thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
+                                    childPanel3.Children.Add(thisImage);
+                                    pageCounter++;
+                                }
                             }
                             else
                             {
-                                thisImage.Margin = new Thickness(10, 0, 10, 10);
+                                Grid errGrid = new Grid()
+                                {
+                                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                                    VerticalAlignment = VerticalAlignment.Stretch,
+                                    Height = DocCompareScrollViewer1.ActualHeight,
+                                };
+
+                                Card errCard = new Card()
+                                {
+                                    HorizontalAlignment = HorizontalAlignment.Center,
+                                    VerticalAlignment = VerticalAlignment.Center,
+                                    UniformCornerRadius = 5,
+                                    Padding = new Thickness(10),
+                                    Background = FindResource("SecondaryAccentBrush") as Brush,
+                                };
+
+                                Label errLabel = new Label()
+                                {
+                                    Foreground = Brushes.White,
+                                    Content = "There was an error loading this file",
+                                };
+
+                                errCard.Content = errLabel;
+
+                                errGrid.Children.Add(errCard);
+                                childPanel3.Children.Add(errGrid);
+                                childPanel3.Height = DocCompareScrollViewer3.ActualHeight;
                             }
 
-                            thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
-                            childPanel3.Children.Add(thisImage);
-                            pageCounter++;
+                            DocCompareScrollViewer3.Content = childPanel3;
+                            Doc3Grid.Visibility = Visibility.Visible;
+                            DocCompareScrollViewer3.ScrollToVerticalOffset(0);
+                            ProgressBarDoc3.Visibility = Visibility.Hidden;
                         }
-
-                        DocCompareScrollViewer3.Content = childPanel3;
-                        Doc3Grid.Visibility = Visibility.Visible;
-                        DocCompareScrollViewer3.ScrollToVerticalOffset(0);
-                        ProgressBarDoc3.Visibility = Visibility.Hidden;
                     }
-                }
-            });
+                });
+            }
         }
 
         private void DisplayRefDoc(int docIndex)
@@ -1385,6 +1498,8 @@ namespace DocCompareWPF
 
                 if (docs.documents.Count != 0)
                 {
+                    docs.documentsToShow[0] = docs.documents.Count - 1;
+
                     LoadFilesCommonPart();
 
                     threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
@@ -1447,6 +1562,8 @@ namespace DocCompareWPF
                 {
                     LoadFilesCommonPart();
 
+                    docs.documentsToShow[1] = docs.documents.Count - 1;
+
                     threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
                     threadLoadDocs.Start();
 
@@ -1503,6 +1620,8 @@ namespace DocCompareWPF
                 if (docs.documents.Count != 0)
                 {
                     LoadFilesCommonPart();
+
+                    docs.documentsToShow[2] = docs.documents.Count - 1;
 
                     threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
                     threadLoadDocs.Start();
@@ -1916,11 +2035,12 @@ namespace DocCompareWPF
         private void LoadFilesCommonPart()
         {
             SidePanelDocCompareButton.IsEnabled = false;
-
+            /*
             if (settings.numPanelsDragDrop == 3)
                 docs.documentsToShow = new List<int>() { 0, 1, 2 };
             else
                 docs.documentsToShow = new List<int>() { 0, 1 };
+            */
 
             if (docs.documents.Count >= 1)
             {
@@ -2064,6 +2184,30 @@ namespace DocCompareWPF
             fileopener.Start();
         }
 
+        private int FindNextDocToShow()
+        {
+            for(int i = 0; i < docs.documents.Count; i++)
+            {
+                if (docs.documents[i].processed == true)
+                {
+                    if (i != docs.documentsToShow[0] && i != docs.documentsToShow[1])
+                    {
+                        if (docs.documentsToShow.Count == 3)
+                        {
+                            if (i != docs.documentsToShow[2])
+                            {
+                                return i;
+                            }
+                        }
+
+                        return i;
+                    }
+                }
+            }
+
+            return -1;
+        }
+
         private void ProcessDocProgressThread()
         {
             try
@@ -2072,38 +2216,79 @@ namespace DocCompareWPF
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        if (docs.documents.Count == 1)
-                            ProcessingDocProgressbar.Value = 1;
-                        else
-                            ProcessingDocProgressbar.Value = ((double)docProcessingCounter / (double)(docs.documents.Count - 1)) * 100.0;
-                        ProcessingDocLabel.Text = "Processing: " + Path.GetFileName(docs.documents[docProcessingCounter].filePath);
+                        try
+                        {
+                            if (docs.documents.Count == 1)
+                                ProcessingDocProgressbar.Value = 1;
+                            else
+                                ProcessingDocProgressbar.Value = ((double)docProcessingCounter / (double)(docs.documents.Count - 1)) * 100.0;
+
+                            ProcessingDocLabel.Text = "Processing: " + Path.GetFileName(docs.documents[docProcessingCounter].filePath);
+                        }
+                        catch
+                        {
+
+                        }
                     });
 
-                    if (docProcessingCounter == 2 || docProcessRunning == false)
+                    if (docProcessingCounter >= 2 || docProcessRunning == false)
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            DisplayImageLeft(docs.documentsToShow[0]);
-                            Dispatcher.Invoke(() =>
+                            if (docs.documents[docs.documentsToShow[0]].processed == true)
                             {
+                                DisplayImageLeft(docs.documentsToShow[0]);
                                 OpenDoc1OriginalButton1.IsEnabled = true;
-                            });
-
-                            DisplayImageMiddle(docs.documentsToShow[1]);
-                            Dispatcher.Invoke(() =>
+                            }
+                            else
                             {
-                                OpenDoc2OriginalButton2.IsEnabled = true;
-                            });
-
-                            if (settings.numPanelsDragDrop == 3)
-                            {
-                                if (docs.documents.Count >= 3)
+                                if (docs.documents.Count > 1)
                                 {
-                                    DisplayImageRight(docs.documentsToShow[2]);
-                                    Dispatcher.Invoke(() =>
+                                    docs.documentsToShow[0] = FindNextDocToShow();
+                                    DisplayImageLeft(docs.documentsToShow[0]);
+                                    OpenDoc1OriginalButton1.IsEnabled = true;
+                                }
+                            }
+
+                            if (docs.documents.Count > 1)
+                            {
+                                if (docs.documents[docs.documentsToShow[1]].processed == true)
+                                {
+                                    DisplayImageMiddle(docs.documentsToShow[1]);
+                                    OpenDoc2OriginalButton2.IsEnabled = true;
+                                }
+                                else
+                                {
+                                    if (docs.documents.Count > 2)
                                     {
-                                        OpenDoc3OriginalButton3.IsEnabled = true;
-                                    });
+                                        docs.documentsToShow[1] = FindNextDocToShow();
+                                        DisplayImageMiddle(docs.documentsToShow[1]);
+                                        OpenDoc2OriginalButton2.IsEnabled = true;
+                                    }
+                                }
+                            }
+
+                            if (docs.documents.Count > 2)
+                            {
+                                if (settings.numPanelsDragDrop == 3)
+                                {
+                                    if (docs.documents[docs.documentsToShow[2]].processed == true)
+                                    {
+                                        if (docs.documents.Count >= 3)
+                                        {
+                                            DisplayImageRight(docs.documentsToShow[2]);
+                                            OpenDoc3OriginalButton3.IsEnabled = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (docs.documents.Count > 3)
+                                        {
+                                            docs.documentsToShow[2] = FindNextDocToShow();
+                                            DisplayImageRight(docs.documentsToShow[2]);
+                                            OpenDoc3OriginalButton3.IsEnabled = true;
+                                        }
+                                    }
                                 }
                             }
 
@@ -2121,27 +2306,60 @@ namespace DocCompareWPF
                 {
                     ProcessingDocProgressCard.Visibility = Visibility.Hidden;
 
-                    DisplayImageLeft(docs.documentsToShow[0]);
-                    Dispatcher.Invoke(() =>
+                    if (docs.documents[docs.documentsToShow[0]].processed == true)
                     {
+                        DisplayImageLeft(docs.documentsToShow[0]);
                         OpenDoc1OriginalButton1.IsEnabled = true;
-                    });
-
-                    DisplayImageMiddle(docs.documentsToShow[1]);
-                    Dispatcher.Invoke(() =>
+                    }
+                    else
                     {
-                        OpenDoc2OriginalButton2.IsEnabled = true;
-                    });
-
-                    if (settings.numPanelsDragDrop == 3)
-                    {
-                        if (docs.documents.Count >= 3)
+                        if (docs.documents.Count > 1)
                         {
-                            DisplayImageRight(docs.documentsToShow[2]);
-                            Dispatcher.Invoke(() =>
+                            docs.documentsToShow[0] = FindNextDocToShow();
+                            DisplayImageLeft(docs.documentsToShow[0]);
+                            OpenDoc1OriginalButton1.IsEnabled = true;
+                        }
+                    }
+
+                    if (docs.documents.Count > 1)
+                    {
+                        if (docs.documents[docs.documentsToShow[1]].processed == true)
+                        {
+                            DisplayImageMiddle(docs.documentsToShow[1]);
+                            OpenDoc2OriginalButton2.IsEnabled = true;
+                        }
+                        else
+                        {
+                            if(docs.documents.Count > 2)
                             {
-                                OpenDoc3OriginalButton3.IsEnabled = true;
-                            });
+                                docs.documentsToShow[1] = FindNextDocToShow();
+                                DisplayImageMiddle(docs.documentsToShow[1]);
+                                OpenDoc2OriginalButton2.IsEnabled = true;
+                            }
+                        }
+                    }
+
+                    if (docs.documents.Count > 2)
+                    {
+                        if (settings.numPanelsDragDrop == 3)
+                        {
+                            if (docs.documents[docs.documentsToShow[2]].processed == true)
+                            {
+                                if (docs.documents.Count >= 3)
+                                {
+                                    DisplayImageRight(docs.documentsToShow[2]);
+                                    OpenDoc3OriginalButton3.IsEnabled = true;
+                                }
+                            }
+                            else
+                            {
+                                if (docs.documents.Count > 3)
+                                {
+                                    docs.documentsToShow[2] = FindNextDocToShow();
+                                    DisplayImageRight(docs.documentsToShow[2]);
+                                    OpenDoc3OriginalButton3.IsEnabled = true;
+                                }
+                            }
                         }
                     }
 
@@ -2154,8 +2372,9 @@ namespace DocCompareWPF
                         SidePanelDocCompareButton.IsEnabled = true;
                 });
             }
-            catch
+            catch (Exception ex)
             {
+                ErrorHandling.ReportException(ex);
             }
         }
 
@@ -2187,9 +2406,12 @@ namespace DocCompareWPF
                     if (ret == -1)
                     {
                         if(docs.documents[i].fileType == Document.FileTypes.PDF)
-                            MessageBox.Show("Error converting PDF", "Error", MessageBoxButton.OK);
+                            MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". Please repair document and retry.", "PDF File Corruption", MessageBoxButton.OK);
                         else
-                            MessageBox.Show("Error converting PPT","Error", MessageBoxButton.OK);
+                            MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". Please repair document and retry.","Powerpoint File Corruption", MessageBoxButton.OK);
+                    }else
+                    {
+                        docs.documents[i].processed = true;
                     }
 
                     docProcessingCounter += 1;
@@ -2203,7 +2425,7 @@ namespace DocCompareWPF
         {
             try
             {
-                int ind = RefDocListBox.SelectedIndex;
+                int ind = docs.documents.FindIndex( x=> Path.GetFileName(x.filePath) == RefDocListBox.SelectedItem.ToString()) ;
                 DisplayRefDoc(ind);
             }
             catch
@@ -2380,6 +2602,82 @@ namespace DocCompareWPF
                             break;
                     }
                 });
+            }else
+            {
+                docs.documents[docs.docToReload].processed = false;
+
+                Dispatcher.Invoke(() =>
+                {
+                    switch (docs.displayToReload)
+                    {
+                        case 0:
+                            DisplayImageLeft(docs.documentsToShow[0]);
+                            break;
+
+                        case 1:
+                            DisplayImageMiddle(docs.documentsToShow[1]);
+                            break;
+
+                        case 2:
+                            DisplayImageRight(docs.documentsToShow[2]);
+                            break;
+
+                        case 3:
+                            for (int i = 0; i < docs.documentsToShow.Count; i++)
+                            {
+                                if (docs.documentsToShow[i] == docs.documentsToCompare[0])
+                                {
+                                    switch (i)
+                                    {
+                                        case 0:
+                                            DisplayImageLeft(docs.documentsToShow[0]);
+                                            break;
+
+                                        case 1:
+                                            DisplayImageMiddle(docs.documentsToShow[1]);
+                                            break;
+
+                                        case 2:
+                                            DisplayImageRight(docs.documentsToShow[2]);
+                                            break;
+                                    }
+                                }
+                            }
+
+                            ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                            break;
+
+                        case 4:
+                            for (int i = 0; i < docs.documentsToShow.Count; i++)
+                            {
+                                if (docs.documentsToShow[i] == docs.documentsToCompare[1])
+                                {
+                                    switch (i)
+                                    {
+                                        case 0:
+                                            DisplayImageLeft(docs.documentsToShow[0]);
+                                            break;
+
+                                        case 1:
+                                            DisplayImageMiddle(docs.documentsToShow[1]);
+                                            break;
+
+                                        case 2:
+                                            DisplayImageRight(docs.documentsToShow[2]);
+                                            break;
+                                    }
+                                }
+                            }
+
+                            ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                            break;
+                    }
+                });
+
+                if (docs.documents[docs.docToReload].fileType == Document.FileTypes.PDF)
+                    MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[docs.docToReload].filePath) + ". Please repair document and retry.", "PDF File Corruption", MessageBoxButton.OK);
+                else
+                    MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[docs.docToReload].filePath) + ". Please repair document and retry.", "Powerpoint File Corruption", MessageBoxButton.OK);
             }
         }
 
@@ -2972,7 +3270,10 @@ namespace DocCompareWPF
                     ObservableCollection<string> items = new ObservableCollection<string>();
                     foreach (Document doc in docs.documents)
                     {
-                        items.Add(Path.GetFileName(doc.filePath));
+                        if (doc.processed == true)
+                        {
+                            items.Add(Path.GetFileName(doc.filePath));
+                        }
                     }
 
                     RefDocListBox.ItemsSource = items;
@@ -2981,7 +3282,17 @@ namespace DocCompareWPF
                 else
                 {
                     docs.documentsToCompare[0] = docs.documentsToShow[0]; // default using the first document selected
+                    if (docs.documents[docs.documentsToCompare[0]].processed == false)
+                    {
+                        docs.documentsToCompare[0] = FindNextDocToShow();
+                    }
+
                     docs.documentsToCompare[1] = docs.documentsToShow[1]; // default using the first document selected
+                    if (docs.documents[docs.documentsToCompare[1]].processed == false)
+                    {
+                        docs.documentsToCompare[1] = FindNextDocToShow();
+                    }
+
                     UpdateDocCompareComboBox();
                     SetVisiblePanel(SidePanels.DOCCOMPARE);
                     docs.forceAlignmentIndices = new List<List<int>>();
@@ -3043,7 +3354,7 @@ namespace DocCompareWPF
             int selectedDocInd = 0;
             for (int i = 0; i < docs.documents.Count; i++)
             {
-                if (i != docs.documentsToCompare[0])
+                if (i != docs.documentsToCompare[0] && docs.documents[i].processed == true)
                 {
                     items.Add(Path.GetFileName(docs.documents[i].filePath));
 
@@ -3060,6 +3371,8 @@ namespace DocCompareWPF
         {
             // update combo box left
             ObservableCollection<string> items = new ObservableCollection<string>();
+            int ind = 0;
+
             for (int i = 0; i < docs.documents.Count; i++)
             {
                 bool ok = true;
@@ -3080,8 +3393,14 @@ namespace DocCompareWPF
 
                 if (ok == true)
                     items.Add(Path.GetFileName(docs.documents[i].filePath));
+
+                if(i == docs.documentsToShow[0])
+                {
+                    ind = items.Count - 1;
+                }
             }
             Doc1NameLabelComboBox.ItemsSource = items;
+            Doc1NameLabelComboBox.SelectedIndex = ind;
 
             // update combo box middle
             items = new ObservableCollection<string>();
@@ -3105,8 +3424,14 @@ namespace DocCompareWPF
 
                 if (ok == true)
                     items.Add(Path.GetFileName(docs.documents[i].filePath));
+
+                if (i == docs.documentsToShow[1])
+                {
+                    ind = items.Count - 1;
+                }
             }
             Doc2NameLabelComboBox.ItemsSource = items;
+            Doc2NameLabelComboBox.SelectedIndex = ind;
 
             if (settings.numPanelsDragDrop == 3)
             {
@@ -3132,9 +3457,17 @@ namespace DocCompareWPF
 
                     if (ok == true)
                         items.Add(Path.GetFileName(docs.documents[i].filePath));
+
+                    if (i == docs.documentsToShow[2])
+                    {
+                        ind = items.Count - 1;
+                    }
                 }
                 Doc3NameLabelComboBox.ItemsSource = items;
+                Doc3NameLabelComboBox.SelectedIndex = ind;
             }
+
+
         }
 
         private void Window_StateChanged(object sender, EventArgs e)

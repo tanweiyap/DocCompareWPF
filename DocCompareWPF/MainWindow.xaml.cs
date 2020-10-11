@@ -221,7 +221,7 @@ namespace DocCompareWPF
 
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "PDF and PPT files (*.pdf, *.ppt)|*.pdf;*.ppt;*.pptx|PDF files (*.pdf)|*.pdf| PPT files (*.ppt)|*.ppt;*pptx|All files|*.*",
+                Filter = "PDF, PPT and image files (*.pdf, *.ppt, *jpg, *jpeg, *png, *gif)|*.pdf;*.ppt;*.pptx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF |All files|*.*",
                 InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };
@@ -278,7 +278,7 @@ namespace DocCompareWPF
 
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "PDF and PPT files (*.pdf, *.ppt)|*.pdf;*.ppt;*.pptx|PDF files (*.pdf)|*.pdf| PPT files (*.ppt)|*.ppt;*pptx|All files|*.*",
+                Filter = "PDF, PPT and image files (*.pdf, *.ppt, *jpg, *jpeg, *png, *gif)|*.pdf;*.ppt;*.pptx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF |All files|*.*",
                 InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };
@@ -335,7 +335,7 @@ namespace DocCompareWPF
 
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "PDF and PPT files (*.pdf, *.ppt)|*.pdf;*.ppt;*.pptx|PDF files (*.pdf)|*.pdf| PPT files (*.ppt)|*.ppt;*pptx|All files|*.*",
+                Filter = "PDF, PPT and image files (*.pdf, *.ppt, *jpg, *jpeg, *png, *gif)|*.pdf;*.ppt;*.pptx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF |All files|*.*",
                 InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };

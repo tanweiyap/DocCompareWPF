@@ -121,6 +121,24 @@ namespace DocCompareWPF.Classes
 
             return ret;
         }
+
+        public int ReadPic()
+        {
+            PICConvertClass picConvertClass = new PICConvertClass();
+            int ret = -1;
+            try
+            {
+                ret = picConvertClass.CovertPICtoJPEG(filePath, imageFolder);
+                if (ret == 0)
+                    processed = true;
+            }
+            catch
+            {
+                return ret;
+            }
+            return ret;
+        }
+
         public int ReloadDocument()
         {
             int ret;

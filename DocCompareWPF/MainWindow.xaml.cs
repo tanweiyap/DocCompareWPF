@@ -235,7 +235,8 @@ namespace DocCompareWPF
                 foreach (string file in filenames)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF")
+                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG")
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -291,7 +292,8 @@ namespace DocCompareWPF
                 foreach (string file in filenames)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF")
+                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG")
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -347,7 +349,8 @@ namespace DocCompareWPF
                 foreach (string file in filenames)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF")
+                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG")
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -1474,7 +1477,8 @@ namespace DocCompareWPF
                 foreach (string file in data)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF")
+                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG")
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -1536,7 +1540,8 @@ namespace DocCompareWPF
                 foreach (string file in data)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF")
+                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG")
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -1595,7 +1600,8 @@ namespace DocCompareWPF
                 foreach (string file in data)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF")
+                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG")
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -2400,6 +2406,9 @@ namespace DocCompareWPF
 
                         case Document.FileTypes.PPT:
                             ret = docs.documents[i].ReadPPT();
+                            break;
+                        case Document.FileTypes.PIC:
+                            ret = docs.documents[i].ReadPic();
                             break;
                     }
 

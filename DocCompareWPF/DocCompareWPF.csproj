@@ -8,11 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="MahApps.Metro" Version="2.2.0" />
-    <PackageReference Include="MahApps.Metro.IconPacks" Version="4.4.0" />
-    <PackageReference Include="MaterialDesignThemes.MahApps" Version="0.1.4" />
-    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.4.0.20200725" />
-    <PackageReference Include="OpenCvSharp4.Windows" Version="4.4.0.20200725" />
-    <PackageReference Include="protobuf-net" Version="3.0.29" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="4.5.0" />
+    <PackageReference Include="MaterialDesignThemes.MahApps" Version="0.1.5" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.4.0.20200915" />
+    <PackageReference Include="OpenCvSharp4.Windows" Version="4.4.0.20200915" />
+    <PackageReference Include="protobuf-net" Version="3.0.52" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
 

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
+using OpenCvSharp;
 
 namespace DocConvert
 {
@@ -133,5 +134,32 @@ namespace DocConvert
             return ret;
         }
 
+    }
+
+    public class PICConvertClass
+    {
+        public PICConvertClass()
+        {
+
+        }
+
+        public int CovertPICtoJPEG(string filePath, string outputPath)
+        {
+            int ret = -1;
+
+            try
+            {
+                Mat thisImage = Cv2.ImRead(filePath);
+                thisImage.SaveImage(Path.Join(outputPath, "0.jpg"));
+            }
+            catch
+            {
+                return ret;
+            }
+
+            ret = 0;
+
+            return ret;
+        }
     }
 }

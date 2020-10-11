@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="OpenCvSharp4.Windows" Version="4.4.0.20200915" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Interop.Microsoft.Office.Core">
       <HintPath>Interop.Microsoft.Office.Core.dll</HintPath>
       <Private>true</Private>

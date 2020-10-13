@@ -9,7 +9,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="2Compare" Height="800" Width="1280" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged">
+        Title="DocCompare" Height="800" Width="1280" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="{Binding ActualHeight,ElementName=TitleBar}"/>
     </WindowChrome.WindowChrome>
@@ -34,7 +34,7 @@
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <Label x:Name="WindowTitle" FontSize="15" VerticalAlignment="Center" Foreground="White">2Compare</Label>
+                        <Label x:Name="WindowTitle" FontSize="15" VerticalAlignment="Center" Foreground="White">DocCompare</Label>
                         <Grid Grid.Column="1" MaxWidth="100"  MinWidth="100" HorizontalAlignment="Right">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
@@ -128,17 +128,17 @@
                                         <RowDefinition/>
                                         <RowDefinition Height="{StaticResource BottomBarHeight}"/>
                                     </Grid.RowDefinitions>
-                                    <materialDesign:ColorZone Grid.Row="0" Background="{StaticResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <materialDesign:ColorZone Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc1NameLabelComboBox" Style="{StaticResource MaterialDesignComboBox}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
+                                            <ComboBox x:Name="Doc1NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
                                                       IsEditable="False" Padding="30,0,30,0">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
-                                                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"/>
+                                                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
                                                     </DataTemplate>
                                                 </ComboBox.ItemTemplate>
                                             </ComboBox>
@@ -157,7 +157,7 @@
                                     </materialDesign:ColorZone>
                                     <ScrollViewer x:Name="DocCompareScrollViewer1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer1_ScrollChanged">
                                     </ScrollViewer>
-                                    <materialDesign:ColorZone Grid.Row="2" Background="{StaticResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Label x:Name="Doc1PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
                                     </materialDesign:ColorZone>
                                 </Grid>
@@ -204,13 +204,13 @@
                                         <RowDefinition/>
                                         <RowDefinition Height="{StaticResource BottomBarHeight}"/>
                                     </Grid.RowDefinitions>
-                                    <materialDesign:ColorZone Grid.Row="0" Background="{StaticResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <materialDesign:ColorZone Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc2NameLabelComboBox" Style="{StaticResource MaterialDesignComboBox}" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged"
+                                            <ComboBox x:Name="Doc2NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged"
                                                       IsEditable="False" Padding="30,0,30,0">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
@@ -234,7 +234,7 @@
                                     </materialDesign:ColorZone>
                                     <ScrollViewer x:Name="DocCompareScrollViewer2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer2_ScrollChanged">
                                     </ScrollViewer>
-                                    <materialDesign:ColorZone Grid.Row="2" Background="{StaticResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Label x:Name="Doc2PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
                                     </materialDesign:ColorZone>
                                 </Grid>
@@ -281,13 +281,13 @@
                                         <RowDefinition/>
                                         <RowDefinition Height="{StaticResource BottomBarHeight}"/>
                                     </Grid.RowDefinitions>
-                                    <materialDesign:ColorZone Grid.Row="0" Background="{StaticResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <materialDesign:ColorZone Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc3NameLabelComboBox" Style="{StaticResource MaterialDesignComboBox}" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="Doc3NameLabelComboBox_SelectionChanged"
+                                            <ComboBox x:Name="Doc3NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="Doc3NameLabelComboBox_SelectionChanged"
                                                       IsEditable="False" Padding="30,0,30,0">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
@@ -311,7 +311,7 @@
                                     </materialDesign:ColorZone>
                                     <ScrollViewer x:Name="DocCompareScrollViewer3" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer3_ScrollChanged">
                                     </ScrollViewer>
-                                    <materialDesign:ColorZone Grid.Row="2" Background="{StaticResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Label x:Name="Doc3PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
                                     </materialDesign:ColorZone>
                                 </Grid>
@@ -328,7 +328,7 @@
                             </Grid>
                         </materialDesign:ColorZone>
                     </Grid>
-                    <Grid x:Name="DocComparePanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DocComparePanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <materialDesign:Card x:Name="ProgressBarDocCompare" UniformCornerRadius="14" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
@@ -365,7 +365,7 @@
                                 <RowDefinition/>
                                 <RowDefinition Height="{StaticResource BottomBarHeight}"/>
                             </Grid.RowDefinitions>
-                            <materialDesign:ColorZone Grid.Row="0" Background="{StaticResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <materialDesign:ColorZone Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
@@ -381,7 +381,7 @@
                                             HorizontalAlignment="Left" Click="ReloadDocCompare1Button_Click" Margin="35,0,0,0" ToolTip="Reload document">
                                         <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
-                                    <ComboBox x:Name="DocCompareNameLabel2ComboBox" Style="{StaticResource MaterialDesignComboBox}" materialDesign:ColorZoneAssist.Mode="Dark" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="DocCompareNameLabel2ComboBox_SelectionChanged"
+                                    <ComboBox x:Name="DocCompareNameLabel2ComboBox" materialDesign:ColorZoneAssist.Mode="Dark" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="DocCompareNameLabel2ComboBox_SelectionChanged"
                                                       IsEditable="False" Padding="30,0,30,0">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
@@ -428,7 +428,7 @@
                                 <ScrollViewer x:Name="DocCompareSideScrollViewerRight" Background="Transparent" Style="{StaticResource MahApps.Styles.ScrollViewer}" Grid.Column="3" ScrollChanged="DocCompareSideScrollViewerRight_ScrollChanged" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Hidden" Padding="0" HorizontalContentAlignment="Stretch" BorderThickness="0" Width="160"/>
                                 <materialDesign:ColorZone Padding="10" CornerRadius="10" x:Name="HighlightingDisableTip" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.7" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" BorderBrush="Black" BorderThickness="1" Grid.Column="1">Highlighting disabled</materialDesign:ColorZone>
                             </Grid>
-                            <materialDesign:ColorZone Grid.Row="2" Background="{StaticResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
@@ -526,7 +526,7 @@
                                 <RowDefinition/>
                                 <RowDefinition Height="50"/>
                             </Grid.RowDefinitions>
-                            <materialDesign:ColorZone Grid.Row="0" Grid.Column="0" Background="{StaticResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <materialDesign:ColorZone Grid.Row="0" Grid.Column="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Label Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" >Select the reference document</Label>
                             </materialDesign:ColorZone>
                             <ListBox x:Name="RefDocListBox" Grid.Row="1" SelectedIndex="0" SelectionChanged="RefDocListBox_SelectionChanged" >
@@ -540,12 +540,12 @@
                                 <RowDefinition Height="{StaticResource BottomBarHeight}"/>
                             </Grid.RowDefinitions>
 
-                            <materialDesign:ColorZone Grid.Row="0" Grid.Column="1" Background="{StaticResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <materialDesign:ColorZone Grid.Row="0" Grid.Column="1" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Label Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" >Preview</Label>
                             </materialDesign:ColorZone>
                             <ScrollViewer x:Name="RefDocScrollViewer" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="RefDocScrollViewer_ScrollChanged">
                             </ScrollViewer>
-                            <materialDesign:ColorZone Grid.Row="2" Grid.Column="1" Background="{StaticResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <materialDesign:ColorZone Grid.Row="2" Grid.Column="1" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Label x:Name="RefDocPageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
                             </materialDesign:ColorZone>
                         </Grid>
@@ -562,7 +562,7 @@
                     </materialDesign:Card>
                 </Grid>
             </Grid>
-            <materialDesign:ColorZone Grid.Row="2" Background="{StaticResource StatusBarBackground}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource StatusBarBackground}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Label VerticalAlignment="Center" Margin="20,0,0,0" FontWeight="Bold" FontSize="14">Copyright © HopieTech 2020 v0.1</Label>
             </materialDesign:ColorZone>
         </Grid>

@@ -4,7 +4,6 @@
              xmlns:local="clr-namespace:DocCompareWPF"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -14,13 +13,9 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
                 <!-- Theme setting -->
                 <!--ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" /-->
-                <ResourceDictionary>
-                    <ResourceDictionary.MergedDictionaries>
-                        <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="Aqua" SecondaryColor="DarkGreen" />
-                        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-                    </ResourceDictionary.MergedDictionaries>
-                </ResourceDictionary>
-                
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+
                 <ResourceDictionary>
                     <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#2f353a" />
                     <SolidColorBrush x:Key="PrimaryHueLightForegroundBrush" Color="#FFFFFF" />
@@ -28,9 +23,9 @@
                     <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="#FFFFFF" />
                     <SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="#2f353a" />
                     <SolidColorBrush x:Key="PrimaryHueDarkForegroundBrush" Color="#FFFFFF" />
-                    <!-- accent  5C5B5E-->
-                    <SolidColorBrush x:Key="SecondaryAccentBrush" Color="#778BDB" />
-                    <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="#000000" />
+                    <!-- accent -->
+                    <SolidColorBrush x:Key="SecondaryAccentBrush" Color="#5C5B5E" />
+                    <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="#FFFFFF" />
                     <SolidColorBrush x:Key="SideGridActiveBackground" Color="#777777" />
                     <SolidColorBrush x:Key="SidePanelActiveButton" Color="#aaaaaa" />
                     <SolidColorBrush x:Key="DocumentBackGroundBrush" Color="#E3E3E3" />

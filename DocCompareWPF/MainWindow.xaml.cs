@@ -86,6 +86,7 @@ namespace DocCompareWPF
 
             Dispatcher.Invoke(() =>
             {
+                /*
                 if (settings.numPanelsDragDrop == 3)
                     SettingsShowThirdPanelCheckBox.IsChecked = true;
                 else
@@ -101,6 +102,7 @@ namespace DocCompareWPF
                 {
                     SettingsShowThirdPanelCheckBox.IsEnabled = false;
                 }
+                */
             });
         }
 
@@ -260,6 +262,17 @@ namespace DocCompareWPF
 
                 if (docs.documents.Count != 0)
                 {
+                    if((sender as Button).Name.Contains("Top"))
+                    {
+                        if(docs.documents.Count >= 3)
+                        {
+                            docs.documentsToShow[0] = docs.documents.Count - 1;
+                        }else if(docs.documents.Count == 2)
+                        {
+                            docs.documentsToShow[1] = 1;
+                        }
+                    }
+
                     LoadFilesCommonPart();
 
                     threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
@@ -317,6 +330,14 @@ namespace DocCompareWPF
 
                 if (docs.documents.Count != 0)
                 {
+                    if ((sender as Button).Name.Contains("Top"))
+                    {
+                        if (docs.documents.Count >= 2)
+                        {
+                            docs.documentsToShow[1] = docs.documents.Count - 1;
+                        }
+                    }
+
                     LoadFilesCommonPart();
 
                     threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));

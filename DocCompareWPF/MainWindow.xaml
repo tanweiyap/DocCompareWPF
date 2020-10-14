@@ -91,7 +91,7 @@
                     </Grid>
                 </materialDesign:ColorZone>
                 <Grid x:Name="MainPanel" Grid.Row="1">
-                    <Grid x:Name="DragDropPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DragDropPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
@@ -134,7 +134,7 @@
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc1NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
+                                            <ComboBox x:Name="Doc1NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
                                                       IsEditable="False" Padding="30,0,30,0">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
@@ -142,12 +142,16 @@
                                                     </DataTemplate>
                                                 </ComboBox.ItemTemplate>
                                             </ComboBox>
-                                            <Button x:Name="OpenDoc1OriginalButton1" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
-                                            HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
+                                            <Button x:Name="BrowseFileTopButton1" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
+                                            HorizontalAlignment="Left" Click="BrowseFileButton1_Click" Margin="10,0,0,0" ToolTip="Browse document">
                                                 <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
+                                            <Button x:Name="OpenDoc1OriginalButton1" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
+                                            HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="35,0,0,0" ToolTip="Open original">
+                                                <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                            </Button>
                                             <Button x:Name="ReloadDoc1Button" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
-                                            HorizontalAlignment="Left" Click="ReloadDoc1Button_Click" Margin="35,0,0,0" ToolTip="Reload document">
+                                            HorizontalAlignment="Left" Click="ReloadDoc1Button_Click" Margin="60,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
                                             <Button x:Name="CloseDoc1Button" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc1Button_Click">
@@ -210,7 +214,7 @@
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc2NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged"
+                                            <ComboBox x:Name="Doc2NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged"
                                                       IsEditable="False" Padding="30,0,30,0">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
@@ -218,13 +222,17 @@
                                                     </DataTemplate>
                                                 </ComboBox.ItemTemplate>
                                             </ComboBox>
-                                            <Button x:Name="OpenDoc2OriginalButton2" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
-                                            HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
+                                            <Button x:Name="BrowseFileTopButton2" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
+                                            HorizontalAlignment="Left" Click="BrowseFileButton2_Click" Margin="10,0,0,0" ToolTip="Browse document">
                                                 <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                            </Button>
+                                            <Button x:Name="OpenDoc2OriginalButton2" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                            HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click" Margin="35,0,0,0" ToolTip="Open original">
+                                                <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
 
                                             <Button x:Name="ReloadDoc2Button" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
-                                            HorizontalAlignment="Left" Click="ReloadDoc2Button_Click" Margin="35,0,0,0" ToolTip="Reload document">
+                                            HorizontalAlignment="Left" Click="ReloadDoc2Button_Click" Margin="60,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
                                             <Button x:Name="CloseDoc2Button" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc2Button_Click">
@@ -287,7 +295,7 @@
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc3NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="Doc3NameLabelComboBox_SelectionChanged"
+                                            <ComboBox x:Name="Doc3NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc3NameLabelComboBox_SelectionChanged"
                                                       IsEditable="False" Padding="30,0,30,0">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
@@ -295,13 +303,17 @@
                                                     </DataTemplate>
                                                 </ComboBox.ItemTemplate>
                                             </ComboBox>
-                                            <Button x:Name="OpenDoc3OriginalButton3" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
-                                            HorizontalAlignment="Left" Click="OpenDoc3OriginalButton3_Click" Margin="10,0,0,0" ToolTip="Open original">
+                                            <Button x:Name="BrowseFileTopButton3" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
+                                            HorizontalAlignment="Left" Click="BrowseFileButton3_Click" Margin="10,0,0,0" ToolTip="Browse document">
                                                 <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                            </Button>
+                                            <Button x:Name="OpenDoc3OriginalButton3" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                            HorizontalAlignment="Left" Click="OpenDoc3OriginalButton3_Click" Margin="35,0,0,0" ToolTip="Open original">
+                                                <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
 
                                             <Button x:Name="ReloadDoc3Button" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
-                                            HorizontalAlignment="Left" Click="ReloadDoc3Button_Click" Margin="35,0,0,0" ToolTip="Reload document">
+                                            HorizontalAlignment="Left" Click="ReloadDoc3Button_Click" Margin="60,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
                                             <Button x:Name="CloseDoc3Button" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc3Button_Click">
@@ -328,7 +340,7 @@
                             </Grid>
                         </materialDesign:ColorZone>
                     </Grid>
-                    <Grid x:Name="DocComparePanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DocComparePanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <materialDesign:Card x:Name="ProgressBarDocCompare" UniformCornerRadius="14" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
@@ -375,7 +387,7 @@
                                     <TextBlock x:Name="DocCompareNameLabel1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,0,0" Padding="30,0,30,0" TextTrimming="CharacterEllipsis"></TextBlock>
                                     <Button x:Name="OpenDoc1OriginalButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="0" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" Cursor="Hand">
-                                        <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                        <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
                                     <Button x:Name="ReloadDocCompare1Button" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
                                             HorizontalAlignment="Left" Click="ReloadDocCompare1Button_Click" Margin="35,0,0,0" ToolTip="Reload document">
@@ -399,7 +411,7 @@
                                     </Button>
                                     <Button x:Name="OpenDoc2OriginalButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
-                                        <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                                        <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
 
                                     <Button x:Name="ReloadDocCompare2Button" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
@@ -492,7 +504,7 @@
                                 <RowDefinition Height="35"/>
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
-                            <Label FontWeight="Bold" FontSize="18">Default folder</Label>
+                            <!--Label FontWeight="Bold" FontSize="18">Default folder</>
                             <Grid Grid.Row="1">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
@@ -512,7 +524,7 @@
                                 </Button>
                             </Grid>
                             <Label FontWeight="Bold" FontSize="18" Grid.Row="2">Appearance</Label>
-                            <CheckBox x:Name="SettingsShowThirdPanelCheckBox" Grid.Row="3" Margin="20,0,0,0" Checked="SettingsShowThirdPanelCheckBox_Checked" Unchecked="SettingsShowThirdPanelCheckBox_Unchecked">Show third preview panel</CheckBox>
+                            <CheckBox x:Name="SettingsShowThirdPanelCheckBox" Grid.Row="3" Margin="20,0,0,0" Checked="SettingsShowThirdPanelCheckBox_Checked" Unchecked="SettingsShowThirdPanelCheckBox_Unchecked">Show third preview panel</CheckBox-->
                         </Grid>
                     </Grid>
                     <Grid x:Name="SelectReferenceDocPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

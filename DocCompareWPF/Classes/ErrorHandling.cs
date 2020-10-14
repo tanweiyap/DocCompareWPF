@@ -4,24 +4,14 @@ namespace DocCompareWPF.Classes
 {
     internal class Error
     {
-        public string ErrType;
         public string Callstack;
         public string ErrMessage;
+        public string ErrType;
     }
 
     internal class ErrorHandling
     {
-        private string serverAddress = "tanweiyap@gmail.com";
-
-        static public void ReportException(Exception ex)
-        {
-            Error err = new Error
-            {
-                ErrType = ex.GetType().ToString(),
-                Callstack = ex.StackTrace,
-                ErrMessage = ex.Message,
-            };
-        }
+        private readonly string serverAddress = "tanweiyap@gmail.com";
 
         static public void ReportError(string ErrType, string CallStack, string Message)
         {
@@ -30,6 +20,16 @@ namespace DocCompareWPF.Classes
                 ErrType = ErrType,
                 Callstack = CallStack,
                 ErrMessage = Message,
+            };
+        }
+
+        static public void ReportException(Exception ex)
+        {
+            Error err = new Error
+            {
+                ErrType = ex.GetType().ToString(),
+                Callstack = ex.StackTrace,
+                ErrMessage = ex.Message,
             };
         }
     }

@@ -9,3 +9,5 @@ DocCompareDLL/bin/**
 .vs/DocCompareWPF/v16/.suo
 .vs/DocCompareWPF/DesignTimeBuild/.dtbcache.v2
 .vs/DocCompareWPF/v16/.suo
+*.v2
+.vs/DocCompareWPF/v16/.suo

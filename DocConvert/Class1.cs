@@ -18,12 +18,20 @@ namespace DocConvert
         {
             int ret = -1;
             string popplerPath = Directory.GetCurrentDirectory();
+            FileInfo[] fii = new DirectoryInfo(popplerPath).GetFiles();
+            foreach (FileInfo f in fii)
+            {
+                if (f.Name.Contains("pdftoppm"))
+                    popplerPath = f.FullName;
+            }
+
+
             // check file existence
             if (File.Exists(filePath))
             {
                 Process proc = new Process();
-                proc.StartInfo.FileName = "CMD.exe";
-                proc.StartInfo.Arguments = "/c " + popplerPath + "\\pdftoppm.exe -jpeg \"" + filePath + "\" \"" + outputPath + "\\page\"";
+                proc.StartInfo.FileName = popplerPath;
+                proc.StartInfo.Arguments = " -jpeg \"" + filePath + "\" \"" + outputPath + "\\page\"";
                 proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 proc.StartInfo.CreateNoWindow = true;
                 proc.Start();
@@ -43,37 +51,6 @@ namespace DocConvert
 
             return ret;
         }
-
-        public int ConvertPPTToImages(string filePath, string outputPath)
-        {
-            int ret = -1;
-
-            // check file existence
-            if (File.Exists(filePath))
-            {
-                Application pptApplication = new Application();
-                Presentation pptPresentation = pptApplication.Presentations
-                .Open(filePath, MsoTriState.msoFalse, MsoTriState.msoFalse
-                , MsoTriState.msoFalse);
-
-                pptPresentation.Export(outputPath, "jpg", Int32.Parse(pptPresentation.SlideMaster.Width.ToString()), Int32.Parse(pptPresentation.SlideMaster.Height.ToString()));
-                /*
-                DirectoryInfo di = new DirectoryInfo(outputPath);
-                FileInfo[] fi = di.GetFiles();
-                for (int i = 0; i < fi.Length; i++)
-                {
-                    string[] filename = fi[i].Name.Split("page-");
-                    string name = Path.GetFileNameWithoutExtension(filename[1]);
-                    int pageName = int.Parse(name);
-                    File.Move(fi[i].FullName, Path.Join(outputPath, (pageName - 1).ToString() + ".jpg"));
-                }
-                */
-                ret = 0;
-            }
-
-            return ret;
-        }
-
     }
 
     public class PPTConvertClass

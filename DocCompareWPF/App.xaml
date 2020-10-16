@@ -4,18 +4,17 @@
              xmlns:local="clr-namespace:DocCompareWPF"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             StartupUri="MainWindow.xaml">
+             StartupUri="MainWindow.xaml"
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Steel.xaml" />
                 <!-- Theme setting -->
-                <!--ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" /-->
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
-
+                <!--ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Light.Blue.xaml" /-->                
                 <ResourceDictionary>
                     <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#2f353a" />
                     <SolidColorBrush x:Key="PrimaryHueLightForegroundBrush" Color="#FFFFFF" />
@@ -42,10 +41,11 @@
                     </DataTemplate>
                     <DataTemplate x:Key="ForceAlignInvalidIcon">
                         <iconPacks:PackIconFontAwesome Kind="BanSolid" Width="15" Height="15" />
-                    </DataTemplate><DataTemplate x:Key="AnimateDiffIcon">
+                    </DataTemplate>
+                    <DataTemplate x:Key="AnimateDiffIcon">
                         <iconPacks:PackIconMaterial Kind="VectorDifference" Width="15" Height="15" />
                     </DataTemplate>
-
+                    
                     <Style x:Key="WindowMainPanelStyle" TargetType="{x:Type Border}">
                         <Setter Property="BorderBrush" Value="{DynamicResource WindowBorderBrush}" />
                         <Setter Property="BorderThickness" Value="1" />
@@ -55,6 +55,7 @@
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
+
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

@@ -25,10 +25,10 @@
                     <ColumnDefinition Width="30"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <materialDesign:ColorZone x:Name="LogoZone" Grid.Column="0" Grid.Row="0" Mode="PrimaryMid" VerticalAlignment="Stretch">
-                    <iconPacks:PackIconUnicons Kind="React" Height="15" Width="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                </materialDesign:ColorZone>
-                <materialDesign:ColorZone x:Name="TitleBar" Grid.Column="1" Grid.Row="0" Mode="PrimaryMid" VerticalAlignment="Stretch">
+                <Grid x:Name="LogoZone" Grid.Column="0" Grid.Row="0" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">
+                    <iconPacks:PackIconUnicons Kind="React" Height="15" Width="15" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                </Grid>
+                <Grid x:Name="TitleBar" Grid.Column="1" Grid.Row="0" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -41,28 +41,28 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <Button x:Name="WindowMinimizeButton" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Grid.Column="0" Padding="0" BorderThickness="0" Click="WindowMinimizeButton_Click" WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button x:Name="WindowMinimizeButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="White" Grid.Column="0" Padding="0" BorderThickness="0" Click="WindowMinimizeButton_Click" WindowChrome.IsHitTestVisibleInChrome="True">
                                 <iconPacks:PackIconMaterial Kind="WindowMinimize" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             </Button>
-                            <Button x:Name="WindowRestoreButton" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Grid.Column="1" Padding="0" BorderThickness="0" Click="WindowRestoreButton_Click" Visibility="Hidden" WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button x:Name="WindowRestoreButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="White" Grid.Column="1" Padding="0" BorderThickness="0" Click="WindowRestoreButton_Click" Visibility="Hidden" WindowChrome.IsHitTestVisibleInChrome="True">
                                 <iconPacks:PackIconMaterial Kind="WindowRestore" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             </Button>
-                            <Button x:Name="WindowMaximizeButton" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Grid.Column="1" Padding="0" BorderThickness="0" Click="WindowMaximizeButton_Click" WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button x:Name="WindowMaximizeButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="White" Grid.Column="1" Padding="0" BorderThickness="0" Click="WindowMaximizeButton_Click" WindowChrome.IsHitTestVisibleInChrome="True">
                                 <iconPacks:PackIconMaterial Kind="WindowMaximize" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             </Button>
-                            <Button x:Name="WindowCloseButton" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Grid.Column="2" Padding="0" BorderThickness="0" Click="WindowCloseButton_Click" WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand">
+                            <Button x:Name="WindowCloseButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="White" Grid.Column="2" Padding="0" BorderThickness="0" Click="WindowCloseButton_Click" WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand">
                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             </Button>
                         </Grid>
                     </Grid>
-                </materialDesign:ColorZone>
+                </Grid>
             </Grid>
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <materialDesign:ColorZone x:Name="SidePanel" Grid.Row="0" Mode="PrimaryMid" VerticalAlignment="Stretch">
+                <Grid x:Name="SidePanel" Grid.Row="0" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="40"/>
@@ -70,37 +70,37 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="40"/>
                         </Grid.ColumnDefinitions>
-                        <materialDesign:ColorZone x:Name="SidePanelOpenDocBackground" Grid.Column="0" CornerRadius="5" Margin="0,0,0,0" Height="50" Background="Transparent">
-                            <Button x:Name="SidePanelOpenDocButton" Style="{StaticResource MaterialDesignFlatDarkBgButton}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                        <Grid x:Name="SidePanelOpenDocBackground" Grid.Column="0" Margin="0,0,0,0" Height="50" Background="Transparent">
+                            <Button x:Name="SidePanelOpenDocButton" Style="{StaticResource MahApps.Styles.Button.Flat}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                     Padding="0" ToolTip="Browse documents" Background="Transparent" BorderBrush="Transparent" Click="SidePanelOpenDocButton_Click" Margin="0,-10,0,0">
-                                <iconPacks:PackIconMaterial Kind="FileDocumentMultiple" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <iconPacks:PackIconMaterial Kind="FileDocumentMultiple" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
                             </Button>
-                        </materialDesign:ColorZone>
-                        <materialDesign:ColorZone x:Name="SidePanelDocCompareBackground" Grid.Column="1" CornerRadius="5" Margin="0,0,0,0" Height="50" Background="Transparent">
-                            <Button x:Name="SidePanelDocCompareButton" Style="{StaticResource MaterialDesignFlatDarkBgButton}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                        </Grid>
+                        <Grid x:Name="SidePanelDocCompareBackground" Grid.Column="1" Margin="0,0,0,0" Height="50" Background="Transparent">
+                            <Button x:Name="SidePanelDocCompareButton" Style="{StaticResource MahApps.Styles.Button.Flat}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                     Padding="0" ToolTip="Compare documents" Background="Transparent" BorderBrush="Transparent" Click="SidePanelDocCompareButton_Click" Margin="0,-10,0,0">
-                                <iconPacks:PackIconMaterial Kind="Compare" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <iconPacks:PackIconMaterial Kind="Compare" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
                             </Button>
-                        </materialDesign:ColorZone>
-                        <materialDesign:ColorZone x:Name="SettingsButtonBackground" Grid.Column="3" CornerRadius="5" Margin="0,0,0,0" Height="50" Background="Transparent">
-                            <Button x:Name="SettingsButton" Style="{StaticResource MaterialDesignFlatDarkBgButton}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                        </Grid>
+                        <Grid x:Name="SettingsButtonBackground" Grid.Column="3" Margin="0,0,0,0" Height="50" Background="Transparent">
+                            <Button x:Name="SettingsButton" Style="{StaticResource MahApps.Styles.Button.Flat}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                                     Padding="0" ToolTip="Settings" Background="Transparent" BorderBrush="Transparent" Click="SettingsButton_Click" Margin="0,-10,0,0">
-                                <iconPacks:PackIconMaterial Kind="Cog" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <iconPacks:PackIconMaterial Kind="Cog" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
                             </Button>
-                        </materialDesign:ColorZone>
+                        </Grid>
                     </Grid>
-                </materialDesign:ColorZone>
+                </Grid>
                 <Grid x:Name="MainPanel" Grid.Row="1">
-                    <Grid x:Name="DragDropPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DragDropPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <materialDesign:ColorZone x:Name="DocCompareFirstDocZone" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White">
+                        <Grid x:Name="DocCompareFirstDocZone" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White">
                             <Grid x:Name="DocCompareDragDropZone1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True" DragOver="DocCompareDragDropZone1_DragOver" Drop="DocCompareDragDropZone1_Drop" >
-                                <materialDesign:ColorZone x:Name="DocCompareColorZone1" Margin="20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                                          CornerRadius="20" BorderBrush="Gray" BorderThickness="1">
+                                <Border Margin="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="10">
+                                <Grid x:Name="DocCompareColorZone1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <Grid.RowDefinitions>
                                             <RowDefinition/>
@@ -109,7 +109,7 @@
                                         </Grid.RowDefinitions>
                                         <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50" />
                                         <Label x:Name="DocCompareDropZone1Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop a file here or</Label>
-                                        <Button x:Name="BrowseFileButton1" Grid.Row="2" Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
+                                        <Button x:Name="BrowseFileButton1" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderThickness="0.5" BorderBrush="Gray" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
                                                 Click="BrowseFileButton1_Click">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
@@ -121,20 +121,21 @@
                                             </Grid>
                                         </Button>
                                     </Grid>
-                                </materialDesign:ColorZone>
+                                </Grid>
+                                </Border>
                                 <Grid x:Name="Doc1Grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Hidden">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="{StaticResource TopBarHeight}"/>
                                         <RowDefinition/>
                                         <RowDefinition Height="{StaticResource BottomBarHeight}"/>
                                     </Grid.RowDefinitions>
-                                    <materialDesign:ColorZone Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc1NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
+                                            <ComboBox x:Name="Doc1NameLabelComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
                                                       IsEditable="False" Padding="30,0,30,0">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
@@ -142,79 +143,80 @@
                                                     </DataTemplate>
                                                 </ComboBox.ItemTemplate>
                                             </ComboBox>
-                                            <Button x:Name="BrowseFileTopButton1" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
+                                            <Button x:Name="BrowseFileTopButton1" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
                                             HorizontalAlignment="Left" Click="BrowseFileButton1_Click" Margin="10,0,0,0" ToolTip="Browse document">
                                                 <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
-                                            <Button x:Name="OpenDoc1OriginalButton1" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
+                                            <Button x:Name="OpenDoc1OriginalButton1" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
                                             HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="35,0,0,0" ToolTip="Open original">
                                                 <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
-                                            <Button x:Name="ReloadDoc1Button" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
+                                            <Button x:Name="ReloadDoc1Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
                                             HorizontalAlignment="Left" Click="ReloadDoc1Button_Click" Margin="60,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
-                                            <Button x:Name="CloseDoc1Button" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc1Button_Click">
+                                            <Button x:Name="CloseDoc1Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc1Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center"  Foreground="White"/>
                                             </Button>
                                         </Grid>
-                                    </materialDesign:ColorZone>
+                                    </Grid>
                                     <ScrollViewer x:Name="DocCompareScrollViewer1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer1_ScrollChanged">
                                     </ScrollViewer>
-                                    <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Label x:Name="Doc1PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
-                                    </materialDesign:ColorZone>
+                                    </Grid>
                                 </Grid>
-                                <materialDesign:Card x:Name="ProgressBarDoc1" UniformCornerRadius="14" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden">
+                                <mah:Tile x:Name="ProgressBarDoc1" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="100" Background="White" BorderBrush="Black" BorderThickness="1">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
-                                        <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Value="50" IsIndeterminate="True" />
+                                        <mah:ProgressRing Foreground="Black" IsActive="True" Width="1" Height="1"/>
                                         <Label Grid.Column="1" Margin="10,0,0,0">Loading</Label>
                                     </Grid>
-                                </materialDesign:Card>
+                                </mah:Tile>
                             </Grid>
-                        </materialDesign:ColorZone>
-                        <materialDesign:ColorZone x:Name="DocCompareSecondDocZone" Visibility="Visible" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White">
+                        </Grid>
+                        <Grid x:Name="DocCompareSecondDocZone" Visibility="Visible" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White">
                             <Grid x:Name="DocCompareDragDropZone2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True" DragOver="DocCompareDragDropZone2_DragOver" Drop="DocCompareDragDropZone2_Drop">
-                                <materialDesign:ColorZone x:Name="DocCompareColorZone2" Margin="20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                                          CornerRadius="20" BorderBrush="Gray" BorderThickness="1">
-                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                        </Grid.RowDefinitions>
-                                        <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50"/>
-                                        <Label x:Name="DocCompareDropZone2Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop a file here</Label>
-                                        <Button x:Name="BrowseFileButton2" Grid.Row="2" Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
+                                <Border Margin="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="10">
+                                    <Grid x:Name="DocCompareColorZone2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50"/>
+                                            <Label x:Name="DocCompareDropZone2Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop a file here</Label>
+                                            <Button x:Name="BrowseFileButton2" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderThickness="0.5" BorderBrush="Gray" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
                                                 Click="BrowseFileButton2_Click">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition/>
-                                                </Grid.ColumnDefinitions>
-                                                <iconPacks:PackIconUnicons Kind="FolderOpen" VerticalAlignment="Center"/>
-                                                <Label  Margin="10,0,0,0" Grid.Column="1" VerticalAlignment="Center">Browse Files</Label>
-                                            </Grid>
-                                        </Button>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <iconPacks:PackIconUnicons Kind="FolderOpen" VerticalAlignment="Center"/>
+                                                    <Label  Margin="10,0,0,0" Grid.Column="1" VerticalAlignment="Center">Browse Files</Label>
+                                                </Grid>
+                                            </Button>
+                                        </Grid>
                                     </Grid>
-                                </materialDesign:ColorZone>
+                                </Border>
                                 <Grid x:Name="Doc2Grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Visibility="Hidden">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="{StaticResource TopBarHeight}"/>
                                         <RowDefinition/>
                                         <RowDefinition Height="{StaticResource BottomBarHeight}"/>
                                     </Grid.RowDefinitions>
-                                    <materialDesign:ColorZone Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc2NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged"
+                                            <ComboBox x:Name="Doc2NameLabelComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged"
                                                       IsEditable="False" Padding="30,0,30,0">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
@@ -222,80 +224,81 @@
                                                     </DataTemplate>
                                                 </ComboBox.ItemTemplate>
                                             </ComboBox>
-                                            <Button x:Name="BrowseFileTopButton2" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
+                                            <Button x:Name="BrowseFileTopButton2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
                                             HorizontalAlignment="Left" Click="BrowseFileButton2_Click" Margin="10,0,0,0" ToolTip="Browse document">
                                                 <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
-                                            <Button x:Name="OpenDoc2OriginalButton2" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                            <Button x:Name="OpenDoc2OriginalButton2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click" Margin="35,0,0,0" ToolTip="Open original">
                                                 <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
 
-                                            <Button x:Name="ReloadDoc2Button" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
+                                            <Button x:Name="ReloadDoc2Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
                                             HorizontalAlignment="Left" Click="ReloadDoc2Button_Click" Margin="60,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
-                                            <Button x:Name="CloseDoc2Button" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc2Button_Click">
+                                            <Button x:Name="CloseDoc2Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc2Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
                                         </Grid>
-                                    </materialDesign:ColorZone>
+                                    </Grid>
                                     <ScrollViewer x:Name="DocCompareScrollViewer2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer2_ScrollChanged">
                                     </ScrollViewer>
-                                    <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Label x:Name="Doc2PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
-                                    </materialDesign:ColorZone>
+                                    </Grid>
                                 </Grid>
-                                <materialDesign:Card x:Name="ProgressBarDoc2" UniformCornerRadius="14" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden">
+                                <mah:Tile x:Name="ProgressBarDoc2" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="100" Background="White" BorderBrush="Black" BorderThickness="1">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
-                                        <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Value="50" IsIndeterminate="True" />
+                                        <mah:ProgressRing Foreground="Black" IsActive="True" Width="1" Height="1"/>
                                         <Label Grid.Column="1" Margin="10,0,0,0">Loading</Label>
                                     </Grid>
-                                </materialDesign:Card>
+                                </mah:Tile>
                             </Grid>
-                        </materialDesign:ColorZone>
-                        <materialDesign:ColorZone x:Name="DocCompareThirdDocZone" Visibility="Visible" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White">
+                        </Grid>
+                        <Grid x:Name="DocCompareThirdDocZone" Visibility="Visible" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White">
                             <Grid x:Name="DocCompareDragDropZone3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True" DragOver="DocCompareDragDropZone3_DragOver" Drop="DocCompareDragDropZone3_Drop">
-                                <materialDesign:ColorZone x:Name="DocCompareColorZone3" Margin="20" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                                          CornerRadius="20" BorderBrush="Gray" BorderThickness="1">
-                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                        </Grid.RowDefinitions>
-                                        <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50"/>
-                                        <Label x:Name="DocCompareDropZone3Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop a file here</Label>
-                                        <Button x:Name="BrowseFileButton3" Grid.Row="2" Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
+                                <Border Margin="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="10">
+                                    <Grid x:Name="DocCompareColorZone3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50"/>
+                                            <Label x:Name="DocCompareDropZone3Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop a file here</Label>
+                                            <Button x:Name="BrowseFileButton3" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderThickness="0.5" BorderBrush="Gray" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
                                                 Click="BrowseFileButton3_Click">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition/>
-                                                </Grid.ColumnDefinitions>
-                                                <iconPacks:PackIconUnicons Kind="FolderOpen" VerticalAlignment="Center"/>
-                                                <Label  Margin="10,0,0,0" Grid.Column="1" VerticalAlignment="Center">Browse Files</Label>
-                                            </Grid>
-                                        </Button>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <iconPacks:PackIconUnicons Kind="FolderOpen" VerticalAlignment="Center"/>
+                                                    <Label  Margin="10,0,0,0" Grid.Column="1" VerticalAlignment="Center">Browse Files</Label>
+                                                </Grid>
+                                            </Button>
+                                        </Grid>
                                     </Grid>
-                                </materialDesign:ColorZone>
+                                </Border>
                                 <Grid x:Name="Doc3Grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Visibility="Hidden">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="{StaticResource TopBarHeight}"/>
                                         <RowDefinition/>
                                         <RowDefinition Height="{StaticResource BottomBarHeight}"/>
                                     </Grid.RowDefinitions>
-                                    <materialDesign:ColorZone Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc3NameLabelComboBox" materialDesign:ColorZoneAssist.Mode="Dark" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc3NameLabelComboBox_SelectionChanged"
+                                            <ComboBox x:Name="Doc3NameLabelComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc3NameLabelComboBox_SelectionChanged"
                                                       IsEditable="False" Padding="30,0,30,0">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
@@ -303,81 +306,81 @@
                                                     </DataTemplate>
                                                 </ComboBox.ItemTemplate>
                                             </ComboBox>
-                                            <Button x:Name="BrowseFileTopButton3" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
+                                            <Button x:Name="BrowseFileTopButton3" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"                                                     
                                             HorizontalAlignment="Left" Click="BrowseFileButton3_Click" Margin="10,0,0,0" ToolTip="Browse document">
                                                 <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
-                                            <Button x:Name="OpenDoc3OriginalButton3" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                            <Button x:Name="OpenDoc3OriginalButton3" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Left" Click="OpenDoc3OriginalButton3_Click" Margin="35,0,0,0" ToolTip="Open original">
                                                 <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
 
-                                            <Button x:Name="ReloadDoc3Button" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
+                                            <Button x:Name="ReloadDoc3Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
                                             HorizontalAlignment="Left" Click="ReloadDoc3Button_Click" Margin="60,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
-                                            <Button x:Name="CloseDoc3Button" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc3Button_Click">
+                                            <Button x:Name="CloseDoc3Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc3Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                             </Button>
                                         </Grid>
-                                    </materialDesign:ColorZone>
+                                    </Grid>
                                     <ScrollViewer x:Name="DocCompareScrollViewer3" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer3_ScrollChanged">
                                     </ScrollViewer>
-                                    <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Label x:Name="Doc3PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
-                                    </materialDesign:ColorZone>
+                                    </Grid>
                                 </Grid>
-                                <materialDesign:Card x:Name="ProgressBarDoc3" UniformCornerRadius="14" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden">
+                                <mah:Tile x:Name="ProgressBarDoc3" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="100" Background="White" BorderBrush="Black" BorderThickness="1">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
-                                        <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Value="50" IsIndeterminate="True" />
+                                        <mah:ProgressRing Foreground="Black" IsActive="True" Width="1" Height="1"/>
                                         <Label Grid.Column="1" Margin="10,0,0,0">Loading</Label>
                                     </Grid>
-                                </materialDesign:Card>
+                                </mah:Tile>
                             </Grid>
-                        </materialDesign:ColorZone>
+                        </Grid>
                     </Grid>
-                    <Grid x:Name="DocComparePanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <materialDesign:Card x:Name="ProgressBarDocCompare" UniformCornerRadius="14" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible">
+                    <Grid x:Name="DocComparePanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <mah:Tile x:Name="ProgressBarDocCompare" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="180" Background="White" BorderBrush="Black" BorderThickness="1">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Value="50" IsIndeterminate="True" />
+                                <mah:ProgressRing Foreground="Black" IsActive="True" Width="1" Height="1"/>
                                 <Label Grid.Column="1" Margin="10,0,0,0">Comparing documents</Label>
                             </Grid>
-                        </materialDesign:Card>
-                        <materialDesign:Card x:Name="ProgressBarDocCompareReload" UniformCornerRadius="14" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden">
+                        </mah:Tile>
+                        <mah:Tile x:Name="ProgressBarDocCompareReload" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="180" Background="White" BorderBrush="Black" BorderThickness="1">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Value="50" IsIndeterminate="True" />
+                                <mah:ProgressRing Foreground="Black" IsActive="True" Width="1" Height="1"/>
                                 <Label Grid.Column="1" Margin="10,0,0,0">Reloading documents</Label>
                             </Grid>
-                        </materialDesign:Card>
-                        <materialDesign:Card x:Name="ProgressBarDocCompareAlign" UniformCornerRadius="14" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden">
+                        </mah:Tile>
+                        <mah:Tile x:Name="ProgressBarDocCompareAlign" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="180" Background="White" BorderBrush="Black" BorderThickness="1">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" Value="50" IsIndeterminate="True" />
+                                <mah:ProgressRing Foreground="Black" IsActive="True" Width="1" Height="1"/>
                                 <Label Grid.Column="1" Margin="10,0,0,0">Aligning documents</Label>
                             </Grid>
-                        </materialDesign:Card>
+                        </mah:Tile>
                         <Grid x:Name="docCompareGrid">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="{StaticResource TopBarHeight}"/>
                                 <RowDefinition/>
                                 <RowDefinition Height="{StaticResource BottomBarHeight}"/>
                             </Grid.RowDefinitions>
-                            <materialDesign:ColorZone Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
@@ -385,15 +388,15 @@
                                         <ColumnDefinition MaxWidth="300" MinWidth="300"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock x:Name="DocCompareNameLabel1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,0,0" Padding="30,0,30,0" TextTrimming="CharacterEllipsis"></TextBlock>
-                                    <Button x:Name="OpenDoc1OriginalButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="0" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                    <Button x:Name="OpenDoc1OriginalButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="0" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" Cursor="Hand">
                                         <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
-                                    <Button x:Name="ReloadDocCompare1Button" Style="{StaticResource MaterialDesignFlatButton}" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
+                                    <Button x:Name="ReloadDocCompare1Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
                                             HorizontalAlignment="Left" Click="ReloadDocCompare1Button_Click" Margin="35,0,0,0" ToolTip="Reload document">
                                         <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
-                                    <ComboBox x:Name="DocCompareNameLabel2ComboBox" materialDesign:ColorZoneAssist.Mode="Dark" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="DocCompareNameLabel2ComboBox_SelectionChanged"
+                                    <ComboBox x:Name="DocCompareNameLabel2ComboBox" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="DocCompareNameLabel2ComboBox_SelectionChanged"
                                                       IsEditable="False" Padding="30,0,30,0">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
@@ -401,20 +404,20 @@
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
-                                    <Button x:Name="ShowMaskButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                    <Button x:Name="ShowMaskButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Right" Click="ShowMaskButton_Click" Margin="0,0,10,0" Visibility="Hidden" ToolTip="Show difference mask">
                                         <iconPacks:PackIconMicrons Kind="Show" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
-                                    <Button x:Name="HideMaskButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                    <Button x:Name="HideMaskButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Right" Click="HideMaskButton_Click" Margin="0,0,10,0" ToolTip="Hide difference mask">
                                         <iconPacks:PackIconMicrons Kind="Hide" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
-                                    <Button x:Name="OpenDoc2OriginalButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
+                                    <Button x:Name="OpenDoc2OriginalButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" 
                                             HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
                                         <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
 
-                                    <Button x:Name="ReloadDocCompare2Button" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
+                                    <Button x:Name="ReloadDocCompare2Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
                                             HorizontalAlignment="Left" Click="ReloadDocCompare2Button_Click" Margin="35,0,0,0" ToolTip="Reload document">
                                         <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
@@ -422,12 +425,12 @@
                                             HorizontalAlignment="Right" Click="CloseDocCompareButton_Click" Margin="0,0,10,0" ToolTip="Close comparison">
                                         <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </-->
-                                    <Button x:Name="RemoveAllForceAlignButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
+                                    <Button x:Name="RemoveAllForceAlignButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"                                                     
                                             HorizontalAlignment="Center" Click="RemoveAllForceAlignButton_Click" Margin="0,0,00,0" ToolTip="Remove all links">
                                         <iconPacks:PackIconFontAwesome Kind="UnlinkSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
                                     </Button>
                                 </Grid>
-                            </materialDesign:ColorZone>
+                            </Grid>
                             <Grid x:Name="DocCompareScrollViewerGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="368*"/>
@@ -464,7 +467,7 @@
                                     <RowDefinition Height="50"/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Button x:Name="SettingsSubscriptionButton" Grid.Row="2" Style="{StaticResource MaterialDesignFlatButton}" Background="Transparent" BorderBrush="Transparent" Height="50" HorizontalAlignment="Stretch" Margin="0" Padding="0">
+                                <Button x:Name="SettingsSubscriptionButton" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderBrush="Transparent" Height="50" HorizontalAlignment="Stretch" Margin="0" Padding="0">
                                     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="200">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="40"/>
@@ -474,7 +477,7 @@
                                         <Label Grid.Column="1">Subscription</Label>
                                     </Grid>
                                 </Button>
-                                <Button x:Name="SettingsBrowseDocButton" Grid.Row="0" Style="{StaticResource MaterialDesignFlatButton}" Background="{StaticResource SidePanelActiveButton}"  BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0">
+                                <Button x:Name="SettingsBrowseDocButton" Grid.Row="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource SidePanelActiveButton}"  BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0">
                                     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="200">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="40"/>
@@ -484,7 +487,7 @@
                                         <Label Grid.Column="1">Document browsing</Label>
                                     </Grid>
                                 </Button>
-                                <Button x:Name="SettingsDocCompareButton" Grid.Row="1" Style="{StaticResource MaterialDesignFlatButton}" Background="Transparent" BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0">
+                                <Button x:Name="SettingsDocCompareButton" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0">
                                     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="200">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="40"/>
@@ -562,16 +565,17 @@
                             </materialDesign:ColorZone>
                         </Grid>
                     </Grid>
-                    <materialDesign:Card x:Name="ProcessingDocProgressCard" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Width="500" MinHeight="50" Background="{StaticResource SecondaryAccentBrush}">
-                        <Grid>
+                    <mah:Tile x:Name="ProcessingDocProgressCard" Padding="4" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Hidden" Height="90" Width="500" Background="{StaticResource SecondaryAccentBrush}" BorderBrush="Black" BorderThickness="1"
+                              Margin="0,0,10,40">
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="496" Height="86">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="2*"/>
                                 <RowDefinition Height="1*"/>
                             </Grid.RowDefinitions>
-                            <TextBlock x:Name="ProcessingDocLabel" Foreground="White" Margin="10,0,10,0" TextOptions.TextHintingMode="Animated" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis">Processing: Example.pptx</TextBlock>
-                            <ProgressBar x:Name="ProcessingDocProgressbar" Style="{StaticResource MaterialDesignLinearProgressBar}" Margin="10,0,10,0" Grid.Row="1" Value="20" Foreground="White"></ProgressBar>
+                            <TextBlock x:Name="ProcessingDocLabel" FontSize="13" Foreground="White" Margin="10,0,10,0" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis">Processing: Example.pptx</TextBlock>
+                            <ProgressBar x:Name="ProcessingDocProgressbar" Style="{StaticResource MahApps.Styles.ProgressBar}" Margin="10,0,10,0" Grid.Row="1" Value="20" HorizontalAlignment="Stretch" Height="5" ></ProgressBar>
                         </Grid>
-                    </materialDesign:Card>
+                    </mah:Tile>
                 </Grid>
             </Grid>
             <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource StatusBarBackground}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">

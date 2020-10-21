@@ -112,6 +112,14 @@ namespace DocCompareWPF
             RIGHT,
         };
 
+        private enum SettingsPanels
+        {
+            DOCBROWSING,
+            DOCCOMPARE,
+            SUBSCRIPTION,
+            ABOUT,
+        };
+
         private enum SidePanels
         {
             DRAGDROP,
@@ -120,7 +128,6 @@ namespace DocCompareWPF
             FILE_EXPLORER,
             SETTINGS,
         };
-
         private void AnimateDiffThread()
         {
             bool imageToggler = true;
@@ -262,12 +269,13 @@ namespace DocCompareWPF
 
                 if (docs.documents.Count != 0)
                 {
-                    if((sender as Button).Name.Contains("Top"))
+                    if ((sender as Button).Name.Contains("Top"))
                     {
-                        if(docs.documents.Count >= 3)
+                        if (docs.documents.Count >= 3)
                         {
                             docs.documentsToShow[0] = docs.documents.Count - 1;
-                        }else if(docs.documents.Count == 2)
+                        }
+                        else if (docs.documents.Count == 2)
                         {
                             docs.documentsToShow[1] = 1;
                         }
@@ -730,7 +738,7 @@ namespace DocCompareWPF
                             mainImageGrid.Children.Add(thisImage);
                         }
 
-                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1 )
+                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
                         {
                             if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))) && showMask == true)
                             {
@@ -750,7 +758,7 @@ namespace DocCompareWPF
                                 thisImage.HorizontalAlignment = HorizontalAlignment.Stretch;
                                 thisImage.VerticalAlignment = VerticalAlignment.Stretch;
 
-                                mainImageGrid.Children.Add(thisImage);                                
+                                mainImageGrid.Children.Add(thisImage);
                             }
 
                             Button animateDiffButton = new Button()
@@ -1063,8 +1071,6 @@ namespace DocCompareWPF
 
                             imageGrid.Children.Add(thisImage);
                         }
-
-                        
                     }
                     else // we use doc 1 as dummy
                     {
@@ -1819,6 +1825,30 @@ namespace DocCompareWPF
             //DocCompareSideScrollViewerRight.IsEnabled = true;
         }
 
+        private int FindNextDocToShow()
+        {
+            for (int i = 0; i < docs.documents.Count; i++)
+            {
+                if (docs.documents[i].processed == true)
+                {
+                    if (i != docs.documentsToShow[0] && i != docs.documentsToShow[1])
+                    {
+                        if (docs.documentsToShow.Count == 3)
+                        {
+                            if (i != docs.documentsToShow[2])
+                            {
+                                return i;
+                            }
+                        }
+
+                        return i;
+                    }
+                }
+            }
+
+            return -1;
+        }
+
         private void HandleMainDocCompareAnimateMouseDown(object sender, MouseEventArgs args)
         {
             if (sender is Button)
@@ -2065,6 +2095,16 @@ namespace DocCompareWPF
             }
         }
 
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            // for .NET Core you need to add UseShellExecute = true
+            // see https://docs.microsoft.com/dotnet/api/system.diagnostics.processstartinfo.useshellexecute#property-value
+            ProcessStartInfo info = new ProcessStartInfo(e.Uri.AbsoluteUri);
+            info.UseShellExecute = true;
+            Process.Start(info);
+            e.Handled = true;
+        }
+
         private void LoadFilesCommonPart()
         {
             SidePanelDocCompareButton.IsEnabled = false;
@@ -2216,31 +2256,6 @@ namespace DocCompareWPF
             fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToShow[2]].filePath + "\"";
             fileopener.Start();
         }
-
-        private int FindNextDocToShow()
-        {
-            for(int i = 0; i < docs.documents.Count; i++)
-            {
-                if (docs.documents[i].processed == true)
-                {
-                    if (i != docs.documentsToShow[0] && i != docs.documentsToShow[1])
-                    {
-                        if (docs.documentsToShow.Count == 3)
-                        {
-                            if (i != docs.documentsToShow[2])
-                            {
-                                return i;
-                            }
-                        }
-
-                        return i;
-                    }
-                }
-            }
-
-            return -1;
-        }
-
         private void ProcessDocProgressThread()
         {
             try
@@ -2260,7 +2275,6 @@ namespace DocCompareWPF
                         }
                         catch
                         {
-
                         }
                     });
 
@@ -2363,7 +2377,7 @@ namespace DocCompareWPF
                         }
                         else
                         {
-                            if(docs.documents.Count > 2)
+                            if (docs.documents.Count > 2)
                             {
                                 docs.documentsToShow[1] = FindNextDocToShow();
                                 DisplayImageMiddle(docs.documentsToShow[1]);
@@ -2434,6 +2448,7 @@ namespace DocCompareWPF
                         case Document.FileTypes.PPT:
                             ret = docs.documents[i].ReadPPT();
                             break;
+
                         case Document.FileTypes.PIC:
                             ret = docs.documents[i].ReadPic();
                             break;
@@ -2441,11 +2456,12 @@ namespace DocCompareWPF
 
                     if (ret == -1)
                     {
-                        if(docs.documents[i].fileType == Document.FileTypes.PDF)
+                        if (docs.documents[i].fileType == Document.FileTypes.PDF)
                             MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". Please repair document and retry.", "PDF File Corruption", MessageBoxButton.OK);
                         else
-                            MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". Please repair document and retry.","Powerpoint File Corruption", MessageBoxButton.OK);
-                    }else
+                            MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". Please repair document and retry.", "Powerpoint File Corruption", MessageBoxButton.OK);
+                    }
+                    else
                     {
                         docs.documents[i].processed = true;
                     }
@@ -2461,7 +2477,7 @@ namespace DocCompareWPF
         {
             try
             {
-                int ind = docs.documents.FindIndex( x=> Path.GetFileName(x.filePath) == RefDocListBox.SelectedItem.ToString()) ;
+                int ind = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == RefDocListBox.SelectedItem.ToString());
                 DisplayRefDoc(ind);
             }
             catch
@@ -2638,7 +2654,8 @@ namespace DocCompareWPF
                             break;
                     }
                 });
-            }else
+            }
+            else
             {
                 docs.documents[docs.docToReload].processed = false;
 
@@ -2772,8 +2789,18 @@ namespace DocCompareWPF
             Serializer.Serialize(file, settings);
         }
 
+        private void SettingsAboutButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetVisibleSettingsPanel(SettingsPanels.ABOUT);
+        }
+
         private void SettingsBrowDefaultFolderButton_Click(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void SettingsBrowseDocButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetVisibleSettingsPanel(SettingsPanels.DOCBROWSING);
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -2872,6 +2899,32 @@ namespace DocCompareWPF
             }
         }
 
+        private void SetVisibleSettingsPanel(SettingsPanels p_settingsPanel)
+        {
+            Brush brush = FindResource("SecondaryAccentBrush") as Brush;
+
+            switch (p_settingsPanel)
+            {
+                case SettingsPanels.DOCBROWSING:
+                    SettingsDocBrowsingPanel.Visibility = Visibility.Visible;
+                    SettingsAboutPanel.Visibility = Visibility.Hidden;
+                    SettingsBrowseDocButton.Background = brush;
+                    SettingsDocCompareButton.Background = Brushes.Transparent;
+                    SettingsSubscriptionButton.Background = Brushes.Transparent;
+                    SettingsAboutButton.Background = Brushes.Transparent;
+                    break;
+
+                case SettingsPanels.ABOUT:
+                    SettingsDocBrowsingPanel.Visibility = Visibility.Hidden;
+                    SettingsAboutPanel.Visibility = Visibility.Visible;
+                    SettingsBrowseDocButton.Background = Brushes.Transparent;
+                    SettingsDocCompareButton.Background = Brushes.Transparent;
+                    SettingsSubscriptionButton.Background = Brushes.Transparent;
+                    SettingsAboutButton.Background = brush;
+                    break;
+            }
+        }
+
         private void ShowDragDropZone2()
         {
             DocCompareSecondDocZone.Visibility = Visibility.Visible;
@@ -2891,7 +2944,6 @@ namespace DocCompareWPF
         {
             MessageBox.Show("You have selected an existing document: " + docName, "Document exists", MessageBoxButton.OK);
         }
-
         private void ShowInvalidDocTypeWarningBox(string fileType, string filename)
         {
             MessageBox.Show("Unsupported file type of " + fileType + " selected with " + filename + ". This document will be ignored.", "Unsupported file type", MessageBoxButton.OK);
@@ -3430,7 +3482,7 @@ namespace DocCompareWPF
                 if (ok == true)
                     items.Add(Path.GetFileName(docs.documents[i].filePath));
 
-                if(i == docs.documentsToShow[0])
+                if (i == docs.documentsToShow[0])
                 {
                     ind = items.Count - 1;
                 }
@@ -3502,8 +3554,6 @@ namespace DocCompareWPF
                 Doc3NameLabelComboBox.ItemsSource = items;
                 Doc3NameLabelComboBox.SelectedIndex = ind;
             }
-
-
         }
 
         private void Window_StateChanged(object sender, EventArgs e)

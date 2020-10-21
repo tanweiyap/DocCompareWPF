@@ -1013,7 +1013,7 @@ namespace DocCompareWPF
                                 Opacity = 0.5,
                                 Visibility = Visibility.Hidden,
                                 Name = "SideButtonRight" + i.ToString(),
-                                HorizontalAlignment = HorizontalAlignment.Right,
+                                HorizontalAlignment = HorizontalAlignment.Left,
                                 VerticalAlignment = VerticalAlignment.Bottom,
                                 ToolTip = "Link pages"
                             };
@@ -1032,7 +1032,7 @@ namespace DocCompareWPF
                                 Opacity = 0.5,
                                 Visibility = Visibility.Hidden,
                                 Name = "SideButtonInvalidRight" + i.ToString(),
-                                HorizontalAlignment = HorizontalAlignment.Right,
+                                HorizontalAlignment = HorizontalAlignment.Left,
                                 VerticalAlignment = VerticalAlignment.Bottom,
                                 ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.",
                             };

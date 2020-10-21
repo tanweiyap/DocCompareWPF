@@ -454,14 +454,15 @@
                             </materialDesign:ColorZone>
                         </Grid>
                     </Grid>
-                    <Grid x:Name="SettingsPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="SettingsPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="220"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <materialDesign:ColorZone Background="{StaticResource PrimaryPanelBrush}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Grid Background="{StaticResource PrimaryPanelBrush}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                             <Grid>
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="50"/>
                                     <RowDefinition Height="50"/>
                                     <RowDefinition Height="50"/>
                                     <RowDefinition Height="50"/>
@@ -487,6 +488,16 @@
                                         <Label Grid.Column="1">Document browsing</Label>
                                     </Grid>
                                 </Button>
+                                <Button x:Name="SettingsAboutButton" Grid.Row="3" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0">
+                                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="200">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="40"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <iconPacks:PackIconMaterial Kind="Information" Grid.Column="0" Height="20" Width="20" Foreground="Black" VerticalAlignment="Stretch" Margin="10,0,0,0"/>
+                                        <Label Grid.Column="1">About</Label>
+                                    </Grid>
+                                </Button>
                                 <Button x:Name="SettingsDocCompareButton" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0">
                                     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="200">
                                         <Grid.ColumnDefinitions>
@@ -498,7 +509,7 @@
                                     </Grid>
                                 </Button>
                             </Grid>
-                        </materialDesign:ColorZone>
+                        </Grid>
                         <Grid x:Name="SettingsDocBrowsingPanel" Grid.Column="1" Margin="25">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="35"/>
@@ -528,6 +539,13 @@
                             </Grid>
                             <Label FontWeight="Bold" FontSize="18" Grid.Row="2">Appearance</Label>
                             <CheckBox x:Name="SettingsShowThirdPanelCheckBox" Grid.Row="3" Margin="20,0,0,0" Checked="SettingsShowThirdPanelCheckBox_Checked" Unchecked="SettingsShowThirdPanelCheckBox_Unchecked">Show third preview panel</CheckBox-->
+                        </Grid>
+                        <Grid x:Name="SettingsAboutPanel" Grid.Column="1" Margin="25">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>                                
+                            </Grid.RowDefinitions>
+                            <Image Source="/LogoLarge.png" Margin="50" Width="250"></Image>
                         </Grid>
                     </Grid>
                     <Grid x:Name="SelectReferenceDocPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -578,9 +596,9 @@
                     </mah:Tile>
                 </Grid>
             </Grid>
-            <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource StatusBarBackground}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Grid Grid.Row="2" Background="{DynamicResource StatusBarBackground}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="Visible">
                 <Label VerticalAlignment="Center" Margin="20,0,0,0" FontWeight="Bold" FontSize="14">Copyright © HopieTech 2020 v0.2</Label>
-            </materialDesign:ColorZone>
+            </Grid>
         </Grid>
     </Border>
 </Window>

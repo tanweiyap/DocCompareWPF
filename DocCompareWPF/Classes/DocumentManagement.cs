@@ -67,6 +67,13 @@ namespace DocCompareWPF.Classes
             document.imageFolder = Path.Join(workingDir, document.docID);
             Directory.CreateDirectory(document.imageFolder);
             documents.Add(document);
+            if (documents.Count != 0 && documents.Count <= documentsToShow.Count)
+            {
+                if (documentsToShow[documents.Count - 1] == -1)
+                {
+                    documentsToShow[documents.Count - 1] = documents.Count - 1;
+                }
+            }
         }
 
         public void AddForceAligmentPairs(int source, int target)

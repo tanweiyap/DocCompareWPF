@@ -2901,7 +2901,7 @@ namespace DocCompareWPF
 
         private void SetVisibleSettingsPanel(SettingsPanels p_settingsPanel)
         {
-            Brush brush = FindResource("SecondaryAccentBrush") as Brush;
+            Brush brush = FindResource("SidePanelActiveButton") as Brush;
 
             switch (p_settingsPanel)
             {
@@ -3583,7 +3583,7 @@ namespace DocCompareWPF
             WindowRestoreButton.Visibility = Visibility.Visible;
             WindowState = WindowState.Maximized;
             MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight - 7;
-            outerBorder.Margin = new Thickness(5);
+            outerBorder.Margin = new Thickness(5,5,5,0);
         }
 
         private void WindowMinimizeButton_Click(object sender, RoutedEventArgs e)

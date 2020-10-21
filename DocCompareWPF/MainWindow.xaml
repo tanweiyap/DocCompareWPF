@@ -18,7 +18,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="32"/>
                 <RowDefinition/>
-                <RowDefinition Height="32"/>
+                <!--RowDefinition Height="32"/-->
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
@@ -454,7 +454,7 @@
                             </materialDesign:ColorZone>
                         </Grid>
                     </Grid>
-                    <Grid x:Name="SettingsPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="SettingsPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="220"/>
                             <ColumnDefinition/>
@@ -1089,9 +1089,9 @@
                     </mah:Tile>
                 </Grid>
             </Grid>
-            <Grid Grid.Row="2" Background="{DynamicResource StatusBarBackground}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="Visible">
+            <!--Grid Grid.Row="2" Background="{DynamicResource StatusBarBackground}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Visibility="Visible">
                 <Label VerticalAlignment="Center" Margin="20,0,0,0" FontWeight="Bold" FontSize="14">Copyright © Hopie Tech 2020 v0.2</Label>
-            </Grid>
+            </-->
         </Grid>
     </Border>
 </Window>

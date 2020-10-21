@@ -97,10 +97,10 @@
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <Grid x:Name="DocCompareFirstDocZone" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White">
-                            <Grid x:Name="DocCompareDragDropZone1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True" DragOver="DocCompareDragDropZone1_DragOver" Drop="DocCompareDragDropZone1_Drop" >
-                                <Border Margin="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="10">
-                                <Grid x:Name="DocCompareColorZone1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid x:Name="DocCompareFirstDocZone" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White" AllowDrop="True" DragOver="DocCompareDragDropZone1_DragOver" Drop="DocCompareDragDropZone1_Drop">
+                            <Grid x:Name="DocCompareDragDropZone1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True"  >
+                                <Border Margin="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="10" AllowDrop="True">
+                                <Grid x:Name="DocCompareColorZone1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <Grid.RowDefinitions>
                                             <RowDefinition/>
@@ -178,8 +178,8 @@
                                 </mah:Tile>
                             </Grid>
                         </Grid>
-                        <Grid x:Name="DocCompareSecondDocZone" Visibility="Visible" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White">
-                            <Grid x:Name="DocCompareDragDropZone2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True" DragOver="DocCompareDragDropZone2_DragOver" Drop="DocCompareDragDropZone2_Drop">
+                        <Grid x:Name="DocCompareSecondDocZone" Visibility="Visible" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White" AllowDrop="True" DragOver="DocCompareDragDropZone2_DragOver" Drop="DocCompareDragDropZone2_Drop">
+                            <Grid x:Name="DocCompareDragDropZone2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True">
                                 <Border Margin="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="10">
                                     <Grid x:Name="DocCompareColorZone2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -260,8 +260,8 @@
                                 </mah:Tile>
                             </Grid>
                         </Grid>
-                        <Grid x:Name="DocCompareThirdDocZone" Visibility="Visible" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White">
-                            <Grid x:Name="DocCompareDragDropZone3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True" DragOver="DocCompareDragDropZone3_DragOver" Drop="DocCompareDragDropZone3_Drop">
+                        <Grid x:Name="DocCompareThirdDocZone" Visibility="Visible" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White" AllowDrop="True" DragOver="DocCompareDragDropZone3_DragOver" Drop="DocCompareDragDropZone3_Drop">
+                            <Grid x:Name="DocCompareDragDropZone3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                                 <Border Margin="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="10">
                                     <Grid x:Name="DocCompareColorZone3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">

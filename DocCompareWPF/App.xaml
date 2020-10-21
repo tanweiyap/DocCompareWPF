@@ -24,7 +24,7 @@
                     <SolidColorBrush x:Key="PrimaryHueDarkForegroundBrush" Color="#FFFFFF" />
                     <!-- accent -->
                     <SolidColorBrush x:Key="SecondaryAccentBrush" Color="#5C5B5E" />
-                    <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="SecondaryAccentForegroundBrush" Color="#5C5B5E" />
                     <SolidColorBrush x:Key="SideGridActiveBackground" Color="#777777" />
                     <SolidColorBrush x:Key="SidePanelActiveButton" Color="#aaaaaa" />
                     <SolidColorBrush x:Key="DocumentBackGroundBrush" Color="#E3E3E3" />
@@ -55,6 +55,7 @@
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
+                    
 
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>

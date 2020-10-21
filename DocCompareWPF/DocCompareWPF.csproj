@@ -4,7 +4,14 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Logo1.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="LogoLarge.png" />
+    <None Remove="LogoSmall.png" />
+    <None Remove="LogoSmallest.png" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MahApps.Metro" Version="2.2.0" />
@@ -19,6 +26,12 @@
   <ItemGroup>
     <ProjectReference Include="..\DocCompareDLL\DocCompareDLL.csproj" />
     <ProjectReference Include="..\DocConvert\DocConvert.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="LogoLarge.png" />
+    <Resource Include="LogoSmall.png" />
+    <Resource Include="LogoSmallest.png" />
   </ItemGroup>
 
   <ItemGroup>

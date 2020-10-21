@@ -662,6 +662,7 @@ namespace DocCompareWPF
                                 Margin = new Thickness(15, 15, 0, 0),
                                 ContentTemplate = (DataTemplate)FindResource("AnimateDiffIcon"),
                                 Foreground = Brushes.White,
+                                Background = Brushes.Gray,
                                 Opacity = 0.5,
                                 Name = "AnimateDiffLeft" + i.ToString(),
                                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -760,6 +761,7 @@ namespace DocCompareWPF
                                 Margin = new Thickness(15, 15, 0, 0),
                                 ContentTemplate = (DataTemplate)FindResource("AnimateDiffIcon"),
                                 Foreground = Brushes.White,
+                                Background = Brushes.Gray,
                                 Opacity = 0.5,
                                 Name = "AnimateDiffRight" + i.ToString(),
                                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -822,7 +824,7 @@ namespace DocCompareWPF
                                 Margin = new Thickness(0),
                                 ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
                                 Foreground = Brushes.Black,
-                                Background = Brushes.Transparent,
+                                Background = Brushes.Gray,
                                 Opacity = 1,
                                 Name = "RemoveForceAlign" + docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString(),
                                 IsHitTestVisible = true,
@@ -868,6 +870,7 @@ namespace DocCompareWPF
                                 Padding = new Thickness(0, 0, 0, 0),
                                 ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
                                 Foreground = Brushes.White,
+                                Background = Brushes.Gray,
                                 Opacity = 0.5,
                                 Visibility = Visibility.Hidden,
                                 Name = "SideButtonLeft" + i.ToString(),
@@ -888,6 +891,7 @@ namespace DocCompareWPF
                                 Padding = new Thickness(0, 0, 0, 0),
                                 ContentTemplate = (DataTemplate)FindResource("ForceAlignInvalidIcon"),
                                 Foreground = Brushes.White,
+                                Background = Brushes.Gray,
                                 Opacity = 0.5,
                                 Visibility = Visibility.Hidden,
                                 Name = "SideButtonInvalidLeft" + i.ToString(),
@@ -1005,6 +1009,7 @@ namespace DocCompareWPF
                                 Padding = new Thickness(0, 0, 0, 0),
                                 ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
                                 Foreground = Brushes.White,
+                                Background = Brushes.Gray,
                                 Opacity = 0.5,
                                 Visibility = Visibility.Hidden,
                                 Name = "SideButtonRight" + i.ToString(),
@@ -1023,6 +1028,7 @@ namespace DocCompareWPF
                                 Padding = new Thickness(0, 0, 0, 0),
                                 ContentTemplate = (DataTemplate)FindResource("ForceAlignInvalidIcon"),
                                 Foreground = Brushes.White,
+                                Background = Brushes.Gray,
                                 Opacity = 0.5,
                                 Visibility = Visibility.Hidden,
                                 Name = "SideButtonInvalidRight" + i.ToString(),
@@ -3527,11 +3533,13 @@ namespace DocCompareWPF
             WindowRestoreButton.Visibility = Visibility.Visible;
             WindowState = WindowState.Maximized;
             MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight - 7;
+            outerBorder.Margin = new Thickness(5);
         }
 
         private void WindowMinimizeButton_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
+            outerBorder.Margin = new Thickness(0);
         }
 
         private void WindowRestoreButton_Click(object sender, RoutedEventArgs e)
@@ -3539,6 +3547,7 @@ namespace DocCompareWPF
             WindowMaximizeButton.Visibility = Visibility.Visible;
             WindowRestoreButton.Visibility = Visibility.Hidden;
             WindowState = WindowState.Normal;
+            outerBorder.Margin = new Thickness(0);
         }
     }
 }

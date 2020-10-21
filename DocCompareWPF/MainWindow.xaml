@@ -9,11 +9,11 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="DocCompare" Height="800" Width="1280" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged">
+        Title="DocCompare" Height="800" Width="1280" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged" Icon="/LogoLarge.png">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="{Binding ActualHeight,ElementName=TitleBar}"/>
     </WindowChrome.WindowChrome>
-    <Border BorderBrush="Black" UseLayoutRounding="True" SnapsToDevicePixels="True" BorderThickness="1">
+    <Border x:Name="outerBorder" BorderBrush="Black" UseLayoutRounding="True" SnapsToDevicePixels="True" BorderThickness="1">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="32"/>
@@ -26,7 +26,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid x:Name="LogoZone" Grid.Column="0" Grid.Row="0" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">
-                    <iconPacks:PackIconUnicons Kind="React" Height="15" Width="15" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White"/>
+                    <Image Source="/LogoSmallest.png" Margin="5,3,3,3"></Image>
                 </Grid>
                 <Grid x:Name="TitleBar" Grid.Column="1" Grid.Row="0" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">
                     <Grid>
@@ -343,7 +343,7 @@
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid x:Name="DocComparePanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DocComparePanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <mah:Tile x:Name="ProgressBarDocCompare" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="180" Background="White" BorderBrush="Black" BorderThickness="1">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
@@ -572,14 +572,14 @@
                                 <RowDefinition Height="2*"/>
                                 <RowDefinition Height="1*"/>
                             </Grid.RowDefinitions>
-                            <TextBlock x:Name="ProcessingDocLabel" FontSize="13" Foreground="White" Margin="10,0,10,0" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis">Processing: Example.pptx</TextBlock>
-                            <ProgressBar x:Name="ProcessingDocProgressbar" Style="{StaticResource MahApps.Styles.ProgressBar}" Margin="10,0,10,0" Grid.Row="1" Value="20" HorizontalAlignment="Stretch" Height="5" ></ProgressBar>
+                            <TextBlock x:Name="ProcessingDocLabel" FontSize="14" Foreground="White" Margin="10,0,10,0" HorizontalAlignment="Left" VerticalAlignment="Center" TextTrimming="WordEllipsis">Processing: Example.pptx</TextBlock>
+                            <ProgressBar x:Name="ProcessingDocProgressbar" Style="{x:Null}" Margin="10,0,10,0" Grid.Row="1" Value="20" HorizontalAlignment="Stretch" Height="7" Foreground="White" Background="{StaticResource SecondaryAccentBrush}"></ProgressBar>
                         </Grid>
                     </mah:Tile>
                 </Grid>
             </Grid>
             <materialDesign:ColorZone Grid.Row="2" Background="{DynamicResource StatusBarBackground}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <Label VerticalAlignment="Center" Margin="20,0,0,0" FontWeight="Bold" FontSize="14">Copyright © HopieTech 2020 v0.1</Label>
+                <Label VerticalAlignment="Center" Margin="20,0,0,0" FontWeight="Bold" FontSize="14">Copyright © HopieTech 2020 v0.2</Label>
             </materialDesign:ColorZone>
         </Grid>
     </Border>

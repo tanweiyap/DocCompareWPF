@@ -669,8 +669,8 @@ namespace DocCompareWPF
                                 Padding = new Thickness(0, 0, 0, 0),
                                 Margin = new Thickness(15, 15, 0, 0),
                                 ContentTemplate = (DataTemplate)FindResource("AnimateDiffIcon"),
-                                Foreground = Brushes.White,
-                                Background = Brushes.Gray,
+                                Foreground = Brushes.Black,
+                                Background = Brushes.White,
                                 Opacity = 0.5,
                                 Name = "AnimateDiffLeft" + i.ToString(),
                                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -768,8 +768,8 @@ namespace DocCompareWPF
                                 Padding = new Thickness(0, 0, 0, 0),
                                 Margin = new Thickness(15, 15, 0, 0),
                                 ContentTemplate = (DataTemplate)FindResource("AnimateDiffIcon"),
-                                Foreground = Brushes.White,
-                                Background = Brushes.Gray,
+                                Foreground = Brushes.Black,
+                                Background = Brushes.White,
                                 Opacity = 0.5,
                                 Name = "AnimateDiffRight" + i.ToString(),
                                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -832,7 +832,7 @@ namespace DocCompareWPF
                                 Margin = new Thickness(0),
                                 ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
                                 Foreground = Brushes.Black,
-                                Background = Brushes.Gray,
+                                Background = Brushes.White,
                                 Opacity = 1,
                                 Name = "RemoveForceAlign" + docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString(),
                                 IsHitTestVisible = true,
@@ -877,8 +877,8 @@ namespace DocCompareWPF
                                 Width = 25,
                                 Padding = new Thickness(0, 0, 0, 0),
                                 ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
-                                Foreground = Brushes.White,
-                                Background = Brushes.Gray,
+                                Foreground = Brushes.Black,
+                                Background = Brushes.White,
                                 Opacity = 0.5,
                                 Visibility = Visibility.Hidden,
                                 Name = "SideButtonLeft" + i.ToString(),
@@ -898,8 +898,8 @@ namespace DocCompareWPF
                                 Width = 25,
                                 Padding = new Thickness(0, 0, 0, 0),
                                 ContentTemplate = (DataTemplate)FindResource("ForceAlignInvalidIcon"),
-                                Foreground = Brushes.White,
-                                Background = Brushes.Gray,
+                                Foreground = Brushes.Black,
+                                Background = Brushes.White,
                                 Opacity = 0.5,
                                 Visibility = Visibility.Hidden,
                                 Name = "SideButtonInvalidLeft" + i.ToString(),
@@ -1016,8 +1016,8 @@ namespace DocCompareWPF
                                 Width = 25,
                                 Padding = new Thickness(0, 0, 0, 0),
                                 ContentTemplate = (DataTemplate)FindResource("ForceAlignIcon"),
-                                Foreground = Brushes.White,
-                                Background = Brushes.Gray,
+                                Foreground = Brushes.Black,
+                                Background = Brushes.White,
                                 Opacity = 0.5,
                                 Visibility = Visibility.Hidden,
                                 Name = "SideButtonRight" + i.ToString(),
@@ -1035,8 +1035,8 @@ namespace DocCompareWPF
                                 Width = 25,
                                 Padding = new Thickness(0, 0, 0, 0),
                                 ContentTemplate = (DataTemplate)FindResource("ForceAlignInvalidIcon"),
-                                Foreground = Brushes.White,
-                                Background = Brushes.Gray,
+                                Foreground = Brushes.Black,
+                                Background = Brushes.White,
                                 Opacity = 0.5,
                                 Visibility = Visibility.Hidden,
                                 Name = "SideButtonInvalidRight" + i.ToString(),
@@ -2942,7 +2942,7 @@ namespace DocCompareWPF
 
         private void ShowExistingDocCountWarningBox(string docName)
         {
-            MessageBox.Show("You have selected an existing document: " + docName, "Document exists", MessageBoxButton.OK);
+            MessageBox.Show("This document has been loaded: " + docName, "Document exists", MessageBoxButton.OK);
         }
         private void ShowInvalidDocTypeWarningBox(string fileType, string filename)
         {

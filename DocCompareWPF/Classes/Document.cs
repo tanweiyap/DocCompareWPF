@@ -153,6 +153,10 @@ namespace DocCompareWPF.Classes
                     ret = ReadPPT();
                     break;
 
+                case FileTypes.PIC:
+                    ret = ReadPic();
+                    break;
+
                 default:
                     return -1;
             }

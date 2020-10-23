@@ -50,6 +50,9 @@ namespace DocCompareWPF
 
         private Thread threadLoadDocs, threadLoadDocsProgress, threadCompare, threadAnimateDiff;
 
+        // License management
+        private LicenseManagement lic;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -83,10 +86,10 @@ namespace DocCompareWPF
             }
 
             docs = new DocumentManagement(settings.maxDocCount, workingDir, settings);
-
+            /*
             Dispatcher.Invoke(() =>
             {
-                /*
+                
                 if (settings.numPanelsDragDrop == 3)
                     SettingsShowThirdPanelCheckBox.IsChecked = true;
                 else
@@ -102,8 +105,13 @@ namespace DocCompareWPF
                 {
                     SettingsShowThirdPanelCheckBox.IsEnabled = false;
                 }
-                */
+                
             });
+            */
+
+            // License Management
+            lic = new LicenseManagement();
+
         }
 
         private enum GridSelection
@@ -802,15 +810,15 @@ namespace DocCompareWPF
                     {
                         Margin = new Thickness(0),
                     };
-                    thisLeftGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(20, GridUnitType.Pixel) }); // page number
-                    thisLeftGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(120, GridUnitType.Pixel) }); // doc1
+                    thisLeftGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(25, GridUnitType.Pixel) }); // page number
+                    thisLeftGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(115, GridUnitType.Pixel) }); // doc1
                     Grid thisRightGrid = new Grid()
                     {
                         Margin = new Thickness(0),
                     };
 
-                    thisRightGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(20, GridUnitType.Pixel) }); // forcealign icon
-                    thisRightGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(120, GridUnitType.Pixel) }); // doc2
+                    thisRightGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(25, GridUnitType.Pixel) }); // forcealign icon
+                    thisRightGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(115, GridUnitType.Pixel) }); // doc2
 
                     thisLeftGrid.MouseLeftButtonDown += (sen, ev) => { HandleMouseClickOnSideScrollView(sen, ev); };
                     thisRightGrid.MouseLeftButtonDown += (sen, ev) => { HandleMouseClickOnSideScrollView(sen, ev); };
@@ -1105,7 +1113,8 @@ namespace DocCompareWPF
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center,
                         Content = (i + 1).ToString(),
-                        MinWidth = 20
+                        MinWidth = 25,
+                        FontSize = 12,
                     };
                     Grid.SetColumn(thisLabel, 0);
 
@@ -2003,7 +2012,11 @@ namespace DocCompareWPF
         {
             showMask = false;
             DisplayComparisonResult();
-            HighlightSideGrid();
+
+            double currOffset = DocCompareMainScrollViewer.VerticalOffset;
+            DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
+            DocCompareMainScrollViewer.ScrollToVerticalOffset(currOffset);
+            //HighlightSideGrid();
             ShowMaskButton.Visibility = Visibility.Visible;
             HideMaskButton.Visibility = Visibility.Hidden;
             HighlightingDisableTip.Visibility = Visibility.Visible;
@@ -2953,7 +2966,10 @@ namespace DocCompareWPF
         {
             showMask = true;
             DisplayComparisonResult();
-            HighlightSideGrid();
+            double currOffset = DocCompareMainScrollViewer.VerticalOffset;
+            DocCompareMainScrollViewer.ScrollToVerticalOffset(0);
+            DocCompareMainScrollViewer.ScrollToVerticalOffset(currOffset);
+            //HighlightSideGrid();
             ShowMaskButton.Visibility = Visibility.Hidden;
             HideMaskButton.Visibility = Visibility.Visible;
             HighlightingDisableTip.Visibility = Visibility.Hidden;

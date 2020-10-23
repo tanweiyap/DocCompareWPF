@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace DocCompareWPF.Classes
 {
@@ -12,6 +13,7 @@ namespace DocCompareWPF.Classes
     internal class ErrorHandling
     {
         private readonly string serverAddress = "tanweiyap@gmail.com";
+        private readonly string LocalDirectory = Directory.GetCurrentDirectory();
 
         static public void ReportError(string ErrType, string CallStack, string Message)
         {
@@ -31,6 +33,12 @@ namespace DocCompareWPF.Classes
                 Callstack = ex.StackTrace,
                 ErrMessage = ex.Message,
             };
+        }
+
+        static private void 
+            WriteLog(Error err)
+        {
+
         }
     }
 }

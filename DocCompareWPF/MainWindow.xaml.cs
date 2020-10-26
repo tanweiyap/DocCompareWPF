@@ -58,6 +58,8 @@ namespace DocCompareWPF
             InitializeComponent();
             showMask = true;
 
+            ErrorHandling.ReportError("test", "stack", "msg");
+
             //WindowTitle.Content = workingDir;
 
             // GUI stuff
@@ -2977,7 +2979,7 @@ namespace DocCompareWPF
 
         private void ShowMaxDocCountWarningBox()
         {
-            MessageBox.Show("You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded. Subscribe to the Pro-version to view unlimited documents.", "Get Pro-Version", MessageBoxButton.OK);
+            MessageBox.Show("You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded.", "Maximum documents loaded", MessageBoxButton.OK);
         }
 
         private void SideGridButtonMouseClick(object sender, RoutedEventArgs args)

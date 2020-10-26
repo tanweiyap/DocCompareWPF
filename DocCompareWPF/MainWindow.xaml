@@ -34,7 +34,7 @@
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <Label x:Name="WindowTitle" FontSize="15" VerticalAlignment="Center" Foreground="White">2Compare</Label>
+                        <Label x:Name="WindowTitle" FontSize="15" VerticalAlignment="Center" Foreground="White">2|Compare</Label>
                         <Grid Grid.Column="1" MaxWidth="100"  MinWidth="100" HorizontalAlignment="Right">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>

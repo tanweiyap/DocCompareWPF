@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Management;
-using System.Text;
 
 namespace DocCompareWPF.Classes
 {
-    class LicenseManagement
+    internal class LicenseManagement
     {
         public string UUID;
 
@@ -22,13 +20,26 @@ namespace DocCompareWPF.Classes
 
                 foreach (ManagementObject WmiObject in Searcher.Get())
                 {
-                    UUID = WmiObject["UUID"].ToString();// String                     
+                    UUID = WmiObject["UUID"].ToString();// String
                 }
             }
             catch (Exception ex)
             {
                 ErrorHandling.ReportException(ex);
             }
+        }
+
+        public int ActivateLincense(string userEmail, string licKey)
+        {
+            if (Helper.IsValidEmail(userEmail))
+            {
+            }
+            else
+            {
+                return -1;
+            }
+
+            return 0;
         }
     }
 }

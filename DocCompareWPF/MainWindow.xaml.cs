@@ -2959,6 +2959,7 @@ namespace DocCompareWPF
                 case SettingsPanels.DOCBROWSING:
                     SettingsDocBrowsingPanel.Visibility = Visibility.Visible;
                     SettingsAboutPanel.Visibility = Visibility.Hidden;
+                    SettingsSubscriptionPanel.Visibility = Visibility.Hidden;
                     SettingsBrowseDocButton.Background = brush;
                     SettingsDocCompareButton.Background = Brushes.Transparent;
                     SettingsSubscriptionButton.Background = Brushes.Transparent;
@@ -2968,6 +2969,7 @@ namespace DocCompareWPF
                 case SettingsPanels.ABOUT:
                     SettingsDocBrowsingPanel.Visibility = Visibility.Hidden;
                     SettingsAboutPanel.Visibility = Visibility.Visible;
+                    SettingsSubscriptionPanel.Visibility = Visibility.Hidden;
                     SettingsBrowseDocButton.Background = Brushes.Transparent;
                     SettingsDocCompareButton.Background = Brushes.Transparent;
                     SettingsSubscriptionButton.Background = Brushes.Transparent;
@@ -2976,7 +2978,8 @@ namespace DocCompareWPF
 
                 case SettingsPanels.SUBSCRIPTION:
                     SettingsDocBrowsingPanel.Visibility = Visibility.Hidden;
-                    SettingsAboutPanel.Visibility = Visibility.Visible;
+                    SettingsAboutPanel.Visibility = Visibility.Hidden;
+                    SettingsSubscriptionPanel.Visibility = Visibility.Visible;
                     SettingsBrowseDocButton.Background = Brushes.Transparent;
                     SettingsDocCompareButton.Background = Brushes.Transparent;
                     SettingsSubscriptionButton.Background = brush;
@@ -3008,6 +3011,33 @@ namespace DocCompareWPF
         private void SettingsSubscriptionButton_Click(object sender, RoutedEventArgs e)
         {
             SetVisibleSettingsPanel(SettingsPanels.SUBSCRIPTION);
+        }
+
+        private void ActivateLicenseButton_Click(object sender, RoutedEventArgs e)
+        {
+            int ret = lic.ActivateLincense(UserEmailTextBox.Text, LicenseKeyTextBox.Text);
+        }
+
+        private void UserEmailTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if((sender as TextBox).Text.Length == 0)
+            {
+                ValidEmailTick.Visibility = Visibility.Hidden;
+                InvalidEmailTick.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                if (Helper.IsValidEmail((sender as TextBox).Text))
+                {
+                    ValidEmailTick.Visibility = Visibility.Visible;
+                    InvalidEmailTick.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    ValidEmailTick.Visibility = Visibility.Hidden;
+                    InvalidEmailTick.Visibility = Visibility.Visible;
+                }
+            }
         }
 
         private void ShowInvalidDocTypeWarningBox(string fileType, string filename)

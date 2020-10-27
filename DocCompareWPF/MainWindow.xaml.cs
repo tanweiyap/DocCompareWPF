@@ -2167,6 +2167,23 @@ namespace DocCompareWPF
                 ProcessingDocProgressCard.Visibility = Visibility.Visible;
                 ProcessingDocProgressbar.Value = 0;
                 ProcessingDocLabel.Text = "Processing: " + Path.GetFileName(docs.documents[0].filePath);
+
+                BrowseFileTopButton1.IsEnabled = false;
+                BrowseFileTopButton2.IsEnabled = false;
+                BrowseFileTopButton3.IsEnabled = false;
+
+                ReloadDoc1Button.IsEnabled = false;
+                ReloadDoc2Button.IsEnabled = false;
+                ReloadDoc3Button.IsEnabled = false;
+
+                CloseDoc1Button.IsEnabled = false;
+                CloseDoc2Button.IsEnabled = false;
+                CloseDoc3Button.IsEnabled = false;
+
+                OpenDoc1OriginalButton1.IsEnabled = false;
+                OpenDoc2OriginalButton2.IsEnabled = false;
+                OpenDoc3OriginalButton3.IsEnabled = false;
+
             });
         }
 
@@ -2427,6 +2444,23 @@ namespace DocCompareWPF
                     ProgressBarDoc1.Visibility = Visibility.Hidden;
                     ProgressBarDoc2.Visibility = Visibility.Hidden;
                     ProgressBarDoc3.Visibility = Visibility.Hidden;
+
+                    BrowseFileTopButton1.IsEnabled = true;
+                    BrowseFileTopButton2.IsEnabled = true;
+                    BrowseFileTopButton3.IsEnabled = true;
+
+                    ReloadDoc1Button.IsEnabled = true;
+                    ReloadDoc2Button.IsEnabled = true;
+                    ReloadDoc3Button.IsEnabled = true;
+
+                    CloseDoc1Button.IsEnabled = true;
+                    CloseDoc2Button.IsEnabled = true;
+                    CloseDoc3Button.IsEnabled = true;
+
+                    OpenDoc1OriginalButton1.IsEnabled = true;
+                    OpenDoc2OriginalButton2.IsEnabled = true;
+                    OpenDoc3OriginalButton3.IsEnabled = true;
+
                     UpdateDocSelectionComboBox();
 
                     if (docs.documents.Count >= 2)
@@ -2446,41 +2480,48 @@ namespace DocCompareWPF
 
             for (int i = 0; i < docs.documents.Count; i++)
             {
-                if (docs.documents[i].loaded == false && docs.documents[i].filePath != null)
+                try
                 {
-                    docs.documents[i].loaded = true;
-                    docs.documents[i].ClearFolder();
-                    docs.documents[i].DetectFileType();
-
-                    int ret = -1;
-                    switch (docs.documents[i].fileType)
+                    if (docs.documents[i].loaded == false && docs.documents[i].filePath != null)
                     {
-                        case Document.FileTypes.PDF:
-                            ret = docs.documents[i].ReadPDF();
-                            break;
+                        docs.documents[i].loaded = true;
+                        docs.documents[i].ClearFolder();
+                        docs.documents[i].DetectFileType();
 
-                        case Document.FileTypes.PPT:
-                            ret = docs.documents[i].ReadPPT();
-                            break;
+                        int ret = -1;
+                        switch (docs.documents[i].fileType)
+                        {
+                            case Document.FileTypes.PDF:
+                                ret = docs.documents[i].ReadPDF();
+                                break;
 
-                        case Document.FileTypes.PIC:
-                            ret = docs.documents[i].ReadPic();
-                            break;
-                    }
+                            case Document.FileTypes.PPT:
+                                ret = docs.documents[i].ReadPPT();
+                                break;
 
-                    if (ret == -1)
-                    {
-                        if (docs.documents[i].fileType == Document.FileTypes.PDF)
-                            MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". Please repair document and retry.", "PDF File Corruption", MessageBoxButton.OK);
+                            case Document.FileTypes.PIC:
+                                ret = docs.documents[i].ReadPic();
+                                break;
+                        }
+
+                        if (ret == -1)
+                        {
+                            if (docs.documents[i].fileType == Document.FileTypes.PDF)
+                                MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". Please repair document and retry.", "PDF File Corruption", MessageBoxButton.OK);
+                            else
+                                MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". Please repair document and retry.", "Powerpoint File Corruption", MessageBoxButton.OK);
+                        }
                         else
-                            MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". Please repair document and retry.", "Powerpoint File Corruption", MessageBoxButton.OK);
-                    }
-                    else
-                    {
-                        docs.documents[i].processed = true;
-                    }
+                        {
+                            docs.documents[i].processed = true;
+                        }
 
-                    docProcessingCounter += 1;
+                        docProcessingCounter += 1;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    ErrorHandling.ReportException(ex);
                 }
             }
 

@@ -24,7 +24,7 @@ namespace DocCompareWPF
     {
         private readonly DocumentManagement docs;
 
-        private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".temp");
+        private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".2compare");
 
         // Stack panel for viewing documents in scrollviewer control in comparison view
         private StackPanel childPanel1, childPanel2, childPanel3, refDocPanel, docCompareChildPanel1, docCompareChildPanelLeft, docCompareChildPanelRight;
@@ -58,7 +58,6 @@ namespace DocCompareWPF
             InitializeComponent();
             showMask = true;
 
-
             // GUI stuff
             SetVisiblePanel(SidePanels.DRAGDROP);
             SidePanelDocCompareButton.IsEnabled = false;
@@ -88,7 +87,6 @@ namespace DocCompareWPF
             /*
             Dispatcher.Invoke(() =>
             {
-                
                 if (settings.numPanelsDragDrop == 3)
                     SettingsShowThirdPanelCheckBox.IsChecked = true;
                 else
@@ -104,15 +102,12 @@ namespace DocCompareWPF
                 {
                     SettingsShowThirdPanelCheckBox.IsEnabled = false;
                 }
-                
             });
             */
 
             // License Management
             lic = new LicenseManagement();
-
             ErrorHandling.ReportError("App Launch", "Launch on " + lic.UUID, "App successfully launched.");
-
         }
 
         private enum GridSelection
@@ -137,6 +132,7 @@ namespace DocCompareWPF
             FILE_EXPLORER,
             SETTINGS,
         };
+
         private void AnimateDiffThread()
         {
             bool imageToggler = true;
@@ -2111,10 +2107,10 @@ namespace DocCompareWPF
 
         private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
         {
-            // for .NET Core you need to add UseShellExecute = true
-            // see https://docs.microsoft.com/dotnet/api/system.diagnostics.processstartinfo.useshellexecute#property-value
-            ProcessStartInfo info = new ProcessStartInfo(e.Uri.AbsoluteUri);
-            info.UseShellExecute = true;
+            ProcessStartInfo info = new ProcessStartInfo(e.Uri.AbsoluteUri)
+            {
+                UseShellExecute = true
+            };
             Process.Start(info);
             e.Handled = true;
         }
@@ -2183,7 +2179,6 @@ namespace DocCompareWPF
                 OpenDoc1OriginalButton1.IsEnabled = false;
                 OpenDoc2OriginalButton2.IsEnabled = false;
                 OpenDoc3OriginalButton3.IsEnabled = false;
-
             });
         }
 
@@ -2287,6 +2282,7 @@ namespace DocCompareWPF
             fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToShow[2]].filePath + "\"";
             fileopener.Start();
         }
+
         private void ProcessDocProgressThread()
         {
             try
@@ -2519,7 +2515,7 @@ namespace DocCompareWPF
                         docProcessingCounter += 1;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     ErrorHandling.ReportException(ex);
                 }
@@ -2977,6 +2973,15 @@ namespace DocCompareWPF
                     SettingsSubscriptionButton.Background = Brushes.Transparent;
                     SettingsAboutButton.Background = brush;
                     break;
+
+                case SettingsPanels.SUBSCRIPTION:
+                    SettingsDocBrowsingPanel.Visibility = Visibility.Hidden;
+                    SettingsAboutPanel.Visibility = Visibility.Visible;
+                    SettingsBrowseDocButton.Background = Brushes.Transparent;
+                    SettingsDocCompareButton.Background = Brushes.Transparent;
+                    SettingsSubscriptionButton.Background = brush;
+                    SettingsAboutButton.Background = Brushes.Transparent;
+                    break;
             }
         }
 
@@ -2999,6 +3004,12 @@ namespace DocCompareWPF
         {
             MessageBox.Show("This document has been loaded: " + docName, "Document exists", MessageBoxButton.OK);
         }
+
+        private void SettingsSubscriptionButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetVisibleSettingsPanel(SettingsPanels.SUBSCRIPTION);
+        }
+
         private void ShowInvalidDocTypeWarningBox(string fileType, string filename)
         {
             MessageBox.Show("Unsupported file type of " + fileType + " selected with " + filename + ". This document will be ignored.", "Unsupported file type", MessageBoxButton.OK);
@@ -3632,6 +3643,17 @@ namespace DocCompareWPF
         private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: implement handling for query before closing
+            DirectoryInfo di;
+            foreach(Document doc in docs.documents)
+            {
+                doc.ClearFolder();
+                di = new DirectoryInfo(doc.imageFolder);
+                di.Delete();
+            }
+            
+            di = new DirectoryInfo(Path.Join(workingDir));
+            di.Delete(true);
+
             Close();
         }
 
@@ -3641,7 +3663,7 @@ namespace DocCompareWPF
             WindowRestoreButton.Visibility = Visibility.Visible;
             WindowState = WindowState.Maximized;
             MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight - 7;
-            outerBorder.Margin = new Thickness(5,5,5,0);
+            outerBorder.Margin = new Thickness(5, 5, 5, 0);
         }
 
         private void WindowMinimizeButton_Click(object sender, RoutedEventArgs e)

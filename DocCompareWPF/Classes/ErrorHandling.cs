@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -17,10 +16,9 @@ namespace DocCompareWPF.Classes
 
     internal class ErrorHandling
     {
-        private static readonly string serverAddress = "http://errorlogging.portmap.host:44200/posterror";
-        private static readonly string LocalDirectory = Directory.GetCurrentDirectory();
         private static readonly HttpClient client = new HttpClient();
-
+        private static readonly string LocalDirectory = Directory.GetCurrentDirectory();
+        private static readonly string serverAddress = "http://errorlogging.portmap.host:44200/posterror";
         static public void ReportError(string ErrType, string CallStack, string Message)
         {
             Error err = new Error
@@ -34,11 +32,10 @@ namespace DocCompareWPF.Classes
             try
             {
                 SendLog(err);
-                WriteLog(err);
+                //WriteLog(err);
             }
             catch
             {
-
             }
         }
 
@@ -55,16 +52,11 @@ namespace DocCompareWPF.Classes
             try
             {
                 SendLog(err);
-                WriteLog(err);
+                //WriteLog(err);
             }
             catch
             {
-
             }
-        }
-
-        static private void WriteLog(Error err)
-        {
         }
 
         static private async Task SendLog(Error err)
@@ -79,7 +71,13 @@ namespace DocCompareWPF.Classes
 
             var content = new FormUrlEncodedContent(errDict);
 
-            var res = await client.PostAsync(serverAddress, content);
+            _ = await client.PostAsync(serverAddress, content);
         }
+
+        /*
+        static private void WriteLog(Error err)
+        {
+        }
+        */
     }
 }

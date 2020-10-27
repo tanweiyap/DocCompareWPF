@@ -31,6 +31,7 @@ namespace DocCompareWPF.Classes
             DirectoryInfo di = new DirectoryInfo(workingDir);
             if (di.Exists == true)
                 di.Delete(true);
+
             Directory.CreateDirectory(workingDir);
 
             Directory.CreateDirectory(Path.Join(workingDir, "compare"));
@@ -51,9 +52,11 @@ namespace DocCompareWPF.Classes
             DirectoryInfo di = new DirectoryInfo(workingDir);
             if (di.Exists == true)
                 di.Delete(true);
-            Directory.CreateDirectory(workingDir);
+            _ = Directory.CreateDirectory(workingDir);
+            di = new DirectoryInfo(workingDir);
+            di.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
 
-            Directory.CreateDirectory(Path.Join(workingDir, "compare"));
+            _ = Directory.CreateDirectory(Path.Join(workingDir, "compare"));
             forceAlignmentIndices = new List<List<int>>();
         }
 

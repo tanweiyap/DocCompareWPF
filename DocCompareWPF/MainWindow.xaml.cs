@@ -58,9 +58,6 @@ namespace DocCompareWPF
             InitializeComponent();
             showMask = true;
 
-            ErrorHandling.ReportError("test", "stack", "msg");
-
-            //WindowTitle.Content = workingDir;
 
             // GUI stuff
             SetVisiblePanel(SidePanels.DRAGDROP);
@@ -113,6 +110,8 @@ namespace DocCompareWPF
 
             // License Management
             lic = new LicenseManagement();
+
+            ErrorHandling.ReportError("App Launch", "Launch on " + lic.UUID, "App successfully launched.");
 
         }
 

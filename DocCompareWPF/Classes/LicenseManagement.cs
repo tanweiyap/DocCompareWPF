@@ -7,7 +7,7 @@ namespace DocCompareWPF.Classes
 {
     class LicenseManagement
     {
-        private string UUID;
+        public string UUID;
 
         public LicenseManagement()
         {

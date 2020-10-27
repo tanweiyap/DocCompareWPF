@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace DocCompareWPF.Classes
 {
@@ -11,6 +12,7 @@ namespace DocCompareWPF.Classes
         public string Callstack;
         public string ErrMessage;
         public string ErrType;
+        public string Time;
     }
 
     internal class ErrorHandling
@@ -26,13 +28,13 @@ namespace DocCompareWPF.Classes
                 ErrType = ErrType,
                 Callstack = CallStack,
                 ErrMessage = Message,
+                Time = DateTime.Now.ToString(),
             };
 
             try
             {
-                bool ret = SendLog(err);
-                if (ret == false)
-                    WriteLog(err);
+                SendLog(err);
+                WriteLog(err);
             }
             catch
             {
@@ -47,31 +49,37 @@ namespace DocCompareWPF.Classes
                 ErrType = ex.GetType().ToString(),
                 Callstack = ex.StackTrace,
                 ErrMessage = ex.Message,
+                Time = DateTime.Now.ToString(),
             };
+
+            try
+            {
+                SendLog(err);
+                WriteLog(err);
+            }
+            catch
+            {
+
+            }
         }
 
         static private void WriteLog(Error err)
         {
         }
 
-        static private bool SendLog(Error err)
+        static private async Task SendLog(Error err)
         {
-            bool ret = false;
-
             IDictionary<string, string> errDict = new Dictionary<string, string>
             {
                 { "ErrType", err.ErrType },
                 { "CallStack", err.Callstack },
-                { "ErrMessage", err.ErrMessage }
+                { "ErrMessage", err.ErrMessage },
+                { "Time", err.Time }
             };
 
             var content = new FormUrlEncodedContent(errDict);
 
-            var response = client.PostAsync(serverAddress, content);
-
-            ret = true;
-
-            return ret;
+            var res = await client.PostAsync(serverAddress, content);
         }
     }
 }

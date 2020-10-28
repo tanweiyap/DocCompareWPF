@@ -642,6 +642,7 @@ namespace DocCompareWPF
                         thisImage.Effect = new DropShadowEffect() { BlurRadius = 5, Color = Colors.Black, ShadowDepth = 0 };
                         thisImage.VerticalAlignment = VerticalAlignment.Center;
                         Grid.SetColumn(mainImageGrid, 0);
+
                         mainImageGrid.Children.Add(thisImage);
                         thisGrid.Children.Add(mainImageGrid);
 
@@ -679,7 +680,7 @@ namespace DocCompareWPF
                                 Opacity = 1.0,
                                 Name = "AnimateDiffLeft" + i.ToString(),
                                 HorizontalAlignment = HorizontalAlignment.Left,
-                                VerticalAlignment = VerticalAlignment.Top,
+                                VerticalAlignment = VerticalAlignment.Center,
                                 ToolTip = "Click and hold to animate the difference",
                                 Visibility = Visibility.Hidden,
                             };
@@ -778,7 +779,7 @@ namespace DocCompareWPF
                                 Opacity = 1.0,
                                 Name = "AnimateDiffRight" + i.ToString(),
                                 HorizontalAlignment = HorizontalAlignment.Left,
-                                VerticalAlignment = VerticalAlignment.Top,
+                                VerticalAlignment = VerticalAlignment.Center,
                                 ToolTip = "Click and hold to animate the difference",
                                 Visibility = Visibility.Hidden,
                             };

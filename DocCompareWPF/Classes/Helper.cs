@@ -29,12 +29,8 @@ namespace DocCompareWPF.Classes
                     return match.Groups[1].Value + domainName;
                 }
             }
-            catch (RegexMatchTimeoutException e)
-            {
-                return false;
-            }
-            catch (ArgumentException e)
-            {
+            catch
+            {                
                 return false;
             }
 
@@ -44,7 +40,7 @@ namespace DocCompareWPF.Classes
                     @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
                     RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
             }
-            catch (RegexMatchTimeoutException)
+            catch
             {
                 return false;
             }

@@ -5,7 +5,15 @@ namespace DocCompareWPF.Classes
 {
     internal class LicenseManagement
     {
-        public string UUID;
+        public enum LicenseTypes
+        {
+            TRIAL,
+            ANNUAL_SUBSCRIPTION,
+            DEVELOPMENT,
+        };
+
+        private string UUID;
+        private LicenseTypes licenseType;        
 
         public LicenseManagement()
         {
@@ -22,11 +30,24 @@ namespace DocCompareWPF.Classes
                 {
                     UUID = WmiObject["UUID"].ToString();// String
                 }
+
+                // development mode
+                licenseType = LicenseTypes.DEVELOPMENT;
             }
             catch (Exception ex)
             {
                 ErrorHandling.ReportException(ex);
             }
+        }
+
+        public string GetUUID()
+        {
+            return UUID;
+        }
+
+        public LicenseTypes GetLicenseTypes()
+        {
+            return licenseType;
         }
 
         public int ActivateLincense(string userEmail, string licKey)

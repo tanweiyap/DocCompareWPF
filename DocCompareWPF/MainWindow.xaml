@@ -1067,7 +1067,7 @@
                                     <ColumnDefinition Width="1*"/>
                                     <ColumnDefinition Width="2*"/>
                                 </Grid.ColumnDefinitions>
-                                <Label VerticalAlignment="Center">License status</Label>
+                                <Label x:Name="LicenseStatusTypeLabel" VerticalAlignment="Center">License status</Label>
                                 <Label VerticalAlignment="Center" x:Name="LicenseStatusLabel" Grid.Column="1">Active</Label>
                             </Grid>
                             <Grid HorizontalAlignment="Stretch" Grid.Row="2" Margin="0,5,0,5">
@@ -1086,8 +1086,10 @@
                                     <ColumnDefinition Width="2*"/>
                                 </Grid.ColumnDefinitions>
                                 <Label VerticalAlignment="Center">License key</Label>
-                                <TextBox x:Name="LicenseKeyTextBox" Grid.Column="1" FontSize="15" mah:TextBoxHelper.Watermark="XXXX-XXXX-XXXX-XXXX" VerticalAlignment="Center"></TextBox>
+                                <TextBox x:Name="LicenseKeyTextBox" Grid.Column="1" FontSize="15" mah:TextBoxHelper.Watermark="XXXX-XXXX-XXXX-XXXX" VerticalAlignment="Center" TextChanged="LicenseKeyTextBox_TextChanged"></TextBox>
                             </Grid>
+                            <iconPacks:PackIconFontAwesome x:Name="ValidKeyTick" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="Green" Kind="CheckSolid" Visibility="Hidden" />
+                            <iconPacks:PackIconFontAwesome x:Name="InvalidKeyTick" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="DarkRed" Kind="TimesSolid" Visibility="Hidden"/>
                             <Label x:Name="LicenseKeyHintText" Grid.Column="1" Grid.Row="3"></Label>
                             <Grid HorizontalAlignment="Stretch" Grid.Row="4" Margin="0,5,0,5">
                                 <Grid.ColumnDefinitions>

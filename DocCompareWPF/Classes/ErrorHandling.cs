@@ -17,7 +17,7 @@ namespace DocCompareWPF.Classes
     internal class ErrorHandling
     {
         private static readonly HttpClient client = new HttpClient();
-        private static readonly string LocalDirectory = Directory.GetCurrentDirectory();
+        //private static readonly string LocalDirectory = Directory.GetCurrentDirectory();
         private static readonly string serverAddress = "http://errorlogging.portmap.host:44200/posterror";
         static public void ReportError(string ErrType, string CallStack, string Message)
         {
@@ -31,7 +31,9 @@ namespace DocCompareWPF.Classes
 
             try
             {
+#pragma warning disable CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
                 SendLog(err);
+#pragma warning restore CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
                 //WriteLog(err);
             }
             catch
@@ -51,7 +53,9 @@ namespace DocCompareWPF.Classes
 
             try
             {
+#pragma warning disable CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
                 SendLog(err);
+#pragma warning restore CS4014 // Da auf diesen Aufruf nicht gewartet wird, wird die Ausführung der aktuellen Methode vor Abschluss des Aufrufs fortgesetzt.
                 //WriteLog(err);
             }
             catch

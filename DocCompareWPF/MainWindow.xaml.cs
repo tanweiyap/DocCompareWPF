@@ -37,11 +37,16 @@ namespace DocCompareWPF
 
         private string lastUsedDirectory;
 
+        // License management
+        private LicenseManagement lic;
+
         private double scrollPosLeft, scrollPosRight;
 
         private string selectedSideGridButtonName1 = "";
 
         private string selectedSideGridButtonName2 = "";
+
+        private string licKeyLastInputString;
 
         // App settings
         private AppSettings settings;
@@ -49,9 +54,6 @@ namespace DocCompareWPF
         private GridSelection sideGridSelectedLeftOrRight, mainGridSelectedLeftOrRight;
 
         private Thread threadLoadDocs, threadLoadDocsProgress, threadCompare, threadAnimateDiff;
-
-        // License management
-        private LicenseManagement lic;
 
         public MainWindow()
         {
@@ -61,6 +63,8 @@ namespace DocCompareWPF
             // GUI stuff
             SetVisiblePanel(SidePanels.DRAGDROP);
             SidePanelDocCompareButton.IsEnabled = false;
+            ActivateLicenseButton.IsEnabled = false;
+
             HideDragDropZone2();
             HideDragDropZone3();
 
@@ -106,8 +110,36 @@ namespace DocCompareWPF
             */
 
             // License Management
-            lic = new LicenseManagement();
-            ErrorHandling.ReportError("App Launch", "Launch on " + lic.UUID, "App successfully launched.");
+            try
+            {
+                lic = new LicenseManagement();
+                switch (lic.GetLicenseTypes())
+                {
+                    case LicenseManagement.LicenseTypes.ANNUAL_SUBSCRIPTION:
+                        LicenseTypeLabel.Content = "Annual subscription";
+                        LicenseStatusTypeLabel.Content = "Renewal on";
+                        LicenseStatusLabel.Content = "01.01.2021";
+                        break;
+
+                    case LicenseManagement.LicenseTypes.TRIAL:
+                        LicenseTypeLabel.Content = "Trial license";
+                        LicenseStatusTypeLabel.Content = "Expires in";
+                        LicenseStatusLabel.Content = "14 days";
+                        break;
+
+                    case LicenseManagement.LicenseTypes.DEVELOPMENT:
+                        LicenseTypeLabel.Content = "Developer license";
+                        LicenseStatusTypeLabel.Content = "Expires in";
+                        LicenseStatusLabel.Content = "- days";
+                        break;
+                }
+
+                ErrorHandling.ReportError("App Launch", "Launch on " + lic.GetUUID(), "App successfully launched.");
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.ReportException(ex);
+            }
         }
 
         private enum GridSelection
@@ -132,6 +164,11 @@ namespace DocCompareWPF
             FILE_EXPLORER,
             SETTINGS,
         };
+
+        private void ActivateLicenseButton_Click(object sender, RoutedEventArgs e)
+        {
+            int ret = lic.ActivateLincense(UserEmailTextBox.Text, LicenseKeyTextBox.Text);
+        }
 
         private void AnimateDiffThread()
         {
@@ -2116,6 +2153,66 @@ namespace DocCompareWPF
             e.Handled = true;
         }
 
+        private void LicenseKeyTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                string currText = (sender as TextBox).Text;
+                currText = currText.ToUpper();
+
+                if (licKeyLastInputString == null)
+                    licKeyLastInputString = currText;
+
+                if (licKeyLastInputString.Length >= currText.Length)
+                {
+                    if (currText.Length == 4 || currText.Length == 9 || currText.Length == 14)
+                        currText = currText.Remove(currText.Length - 1);
+                }
+                else
+                {
+                    if (currText.Length == 4 || currText.Length == 9 || currText.Length == 14)
+                        currText += '-';
+                }
+
+                if (currText.Length > 19)
+                {
+                    currText = currText.Remove(currText.Length - 1);
+                }
+
+                (sender as TextBox).Text = currText;
+                (sender as TextBox).Select(currText.Length, 0);
+
+                if (currText.Length == 19)
+                {
+                    ValidKeyTick.Visibility = Visibility.Visible;
+                    InvalidKeyTick.Visibility = Visibility.Hidden;
+                    if (Helper.IsValidEmail(UserEmailTextBox.Text) == true)
+                        ActivateLicenseButton.IsEnabled = true;
+                    else
+                        ActivateLicenseButton.IsEnabled = false;
+                }
+                else
+                {
+                    ValidKeyTick.Visibility = Visibility.Hidden;
+                    InvalidKeyTick.Visibility = Visibility.Visible;
+                    ActivateLicenseButton.IsEnabled = false;
+                }
+
+                if (currText.Length == 0)
+                {
+                    ValidKeyTick.Visibility = Visibility.Hidden;
+                    InvalidKeyTick.Visibility = Visibility.Hidden;
+                    ActivateLicenseButton.IsEnabled = false;
+                }
+
+                licKeyLastInputString = currText;
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.ReportException(ex);
+            }
+        }
+
         private void LoadFilesCommonPart()
         {
             SidePanelDocCompareButton.IsEnabled = false;
@@ -2893,6 +2990,11 @@ namespace DocCompareWPF
             UpdateDocSelectionComboBox();
         }
 
+        private void SettingsSubscriptionButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetVisibleSettingsPanel(SettingsPanels.SUBSCRIPTION);
+        }
+
         private void SetVisiblePanel(SidePanels p_sidePanel)
         {
             Brush brush = FindResource("SecondaryAccentBrush") as Brush;
@@ -3007,38 +3109,6 @@ namespace DocCompareWPF
         private void ShowExistingDocCountWarningBox(string docName)
         {
             MessageBox.Show("This document has been loaded: " + docName, "Document exists", MessageBoxButton.OK);
-        }
-
-        private void SettingsSubscriptionButton_Click(object sender, RoutedEventArgs e)
-        {
-            SetVisibleSettingsPanel(SettingsPanels.SUBSCRIPTION);
-        }
-
-        private void ActivateLicenseButton_Click(object sender, RoutedEventArgs e)
-        {
-            int ret = lic.ActivateLincense(UserEmailTextBox.Text, LicenseKeyTextBox.Text);
-        }
-
-        private void UserEmailTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if((sender as TextBox).Text.Length == 0)
-            {
-                ValidEmailTick.Visibility = Visibility.Hidden;
-                InvalidEmailTick.Visibility = Visibility.Hidden;
-            }
-            else
-            {
-                if (Helper.IsValidEmail((sender as TextBox).Text))
-                {
-                    ValidEmailTick.Visibility = Visibility.Visible;
-                    InvalidEmailTick.Visibility = Visibility.Hidden;
-                }
-                else
-                {
-                    ValidEmailTick.Visibility = Visibility.Hidden;
-                    InvalidEmailTick.Visibility = Visibility.Visible;
-                }
-            }
         }
 
         private void ShowInvalidDocTypeWarningBox(string fileType, string filename)
@@ -3656,6 +3726,37 @@ namespace DocCompareWPF
             }
         }
 
+        private void UserEmailTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if ((sender as TextBox).Text.Length == 0)
+            {
+                ValidEmailTick.Visibility = Visibility.Hidden;
+                InvalidEmailTick.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                if (Helper.IsValidEmail((sender as TextBox).Text))
+                {
+                    ValidEmailTick.Visibility = Visibility.Visible;
+                    InvalidEmailTick.Visibility = Visibility.Hidden;
+                    if (LicenseKeyTextBox.Text.Length == 19)
+                    {
+                        ActivateLicenseButton.IsEnabled = true;
+                    }
+                    else
+                    {
+                        ActivateLicenseButton.IsEnabled = false;
+                    }
+                }
+                else
+                {
+                    ValidEmailTick.Visibility = Visibility.Hidden;
+                    InvalidEmailTick.Visibility = Visibility.Visible;
+                    ActivateLicenseButton.IsEnabled = false;
+                }
+            }
+        }
+
         private void Window_StateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Normal)
@@ -3675,13 +3776,13 @@ namespace DocCompareWPF
         {
             //TODO: implement handling for query before closing
             DirectoryInfo di;
-            foreach(Document doc in docs.documents)
+            foreach (Document doc in docs.documents)
             {
                 doc.ClearFolder();
                 di = new DirectoryInfo(doc.imageFolder);
                 di.Delete();
             }
-            
+
             di = new DirectoryInfo(Path.Join(workingDir));
             di.Delete(true);
 

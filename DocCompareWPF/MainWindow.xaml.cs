@@ -1972,7 +1972,7 @@ namespace DocCompareWPF
                         if (mainGridSelectedLeftOrRight == GridSelection.LEFT)
                         {
                             if (thisButton.Name.Contains("Left"))
-                                thisButton.Visibility = Visibility.Visible;
+                                thisButton.Visibility = Visibility.Hidden;
                         }
                         else
                         {

@@ -1,19 +1,21 @@
 ﻿using System;
+using System.Drawing.Text;
 using System.Management;
+using System.Net.Http
+    ;
+using System.Threading.Tasks;
 
 namespace DocCompareWPF.Classes
 {
     internal class LicenseManagement
     {
-        public enum LicenseTypes
-        {
-            TRIAL,
-            ANNUAL_SUBSCRIPTION,
-            DEVELOPMENT,
-        };
+        private static readonly HttpClient client = new HttpClient();
+        //private static readonly string LocalDirectory = Directory.GetCurrentDirectory();
+        private static readonly string serverAddress = "http://licserver.portmap.host:46928/";
+
+        private LicenseTypes licenseType;
 
         private string UUID;
-        private LicenseTypes licenseType;        
 
         public LicenseManagement()
         {
@@ -40,20 +42,18 @@ namespace DocCompareWPF.Classes
             }
         }
 
-        public string GetUUID()
+        public enum LicenseTypes
         {
-            return UUID;
-        }
-
-        public LicenseTypes GetLicenseTypes()
-        {
-            return licenseType;
-        }
+            TRIAL,
+            ANNUAL_SUBSCRIPTION,
+            DEVELOPMENT,
+        };
 
         public int ActivateLincense(string userEmail, string licKey)
         {
             if (Helper.IsValidEmail(userEmail))
             {
+                ContactServer(serverAddress + "status");
             }
             else
             {
@@ -61,6 +61,21 @@ namespace DocCompareWPF.Classes
             }
 
             return 0;
+        }
+
+        public async Task ContactServer(string url)
+        {
+            var res = await client.GetAsync(serverAddress + "status");
+        }
+
+        public LicenseTypes GetLicenseTypes()
+        {
+            return licenseType;
+        }
+
+        public string GetUUID()
+        {
+            return UUID;
         }
     }
 }

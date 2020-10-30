@@ -18,6 +18,7 @@ namespace DocConvert
         {
             int ret = -1;
             string popplerPath = Directory.GetCurrentDirectory();
+            popplerPath = Path.Join(popplerPath, "Libs");
             FileInfo[] fii = new DirectoryInfo(popplerPath).GetFiles();
             foreach (FileInfo f in fii)
             {

@@ -30,9 +30,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="LogoLarge.png" />
-    <Resource Include="LogoSmall.png" />
     <Resource Include="LogoSmallest.png" />
+    <Resource Include="Resources\Icons\LogoLarge.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icons\LogoSmall.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Icons\LogoSmallest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -51,52 +58,52 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="freetype6.dll">
+    <None Update="Libs\freetype6.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Interop.Microsoft.Office.Core.dll">
+    <None Update="Libs\Interop.Microsoft.Office.Core.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Interop.Microsoft.Office.Interop.PowerPoint.dll">
+    <None Update="Libs\Interop.Microsoft.Office.Interop.PowerPoint.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="jpeg62.dll">
+    <None Update="Libs\jpeg62.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="libcairo-2.dll">
+    <None Update="Libs\libcairo-2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="libexpat-1.dll">
+    <None Update="Libs\libexpat-1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="libfontconfig-1.dll">
+    <None Update="Libs\libfontconfig-1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="libgcc_s_dw2-1.dll">
+    <None Update="Libs\libgcc_s_dw2-1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="libpixman-1-0.dll">
+    <None Update="Libs\libpixman-1-0.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="libpng16-16.dll">
+    <None Update="Libs\libpng16-16.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="libpoppler-79.dll">
+    <None Update="Libs\libpoppler-79.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="libpoppler-cpp-0.dll">
+    <None Update="Libs\libpoppler-cpp-0.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="libstdc++-6.dll">
+    <None Update="Libs\libstdc++-6.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="libtiff3.dll">
+    <None Update="Libs\libtiff3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="pdftoppm.exe">
+    <None Update="Libs\pdftoppm.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="zlib1.dll">
+    <None Update="Libs\zlib1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

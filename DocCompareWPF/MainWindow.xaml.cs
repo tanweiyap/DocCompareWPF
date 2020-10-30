@@ -114,6 +114,7 @@ namespace DocCompareWPF
             try
             {
                 lic = new LicenseManagement();
+                lic.Init();
                 DisplayLicense();
                 ErrorHandling.ReportError("App Launch", "Launch on " + lic.GetUUID(), "App successfully launched.");
             }
@@ -1277,6 +1278,7 @@ namespace DocCompareWPF
                                     HorizontalAlignment = HorizontalAlignment.Center,
                                     VerticalAlignment = VerticalAlignment.Center,
                                     Padding = new Thickness(10),
+                                    Width = 250,
                                     Background = FindResource("SecondaryAccentBrush") as Brush,
                                 };
 
@@ -1365,6 +1367,7 @@ namespace DocCompareWPF
                                     HorizontalAlignment = HorizontalAlignment.Center,
                                     VerticalAlignment = VerticalAlignment.Center,
                                     Padding = new Thickness(10),
+                                    Width = 250,
                                     Background = FindResource("SecondaryAccentBrush") as Brush,
                                 };
 
@@ -1453,6 +1456,7 @@ namespace DocCompareWPF
                                     HorizontalAlignment = HorizontalAlignment.Center,
                                     VerticalAlignment = VerticalAlignment.Center,
                                     Padding = new Thickness(10),
+                                    Width = 250,
                                     Background = FindResource("SecondaryAccentBrush") as Brush,
                                 };
 

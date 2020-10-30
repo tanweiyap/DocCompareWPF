@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:DocCompareWPF"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="DocCompare" Height="800" Width="1280" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged" Icon="/LogoLarge.png"
+        Title="DocCompare" Height="800" Width="1280" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged"
         FontSize="15">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="{Binding ActualHeight,ElementName=TitleBar}" />
@@ -26,7 +26,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid x:Name="LogoZone" Grid.Column="0" Grid.Row="0" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">
-                    <Image Source="/LogoSmallest.png" Margin="5,3,3,3"></Image>
+                    <Image Source="/Resources/Icons/LogoSmallest.png" Margin="5,3,3,3"></Image>
                 </Grid>
                 <Grid x:Name="TitleBar" Grid.Column="1" Grid.Row="0" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">
                     <Grid>
@@ -557,7 +557,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <Image Source="/LogoLarge.png" Width="150" HorizontalAlignment="Center" Margin="0,50,0,0">
+                                <Image Source="/Resources/Icons/LogoLarge.png" Width="150" HorizontalAlignment="Center" Margin="0,50,0,0">
                                     <Image.Effect>
                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                     </Image.Effect>

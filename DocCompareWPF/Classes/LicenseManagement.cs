@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.Management;
@@ -8,20 +9,32 @@ using System.Threading.Tasks;
 
 namespace DocCompareWPF.Classes
 {
+    [ProtoContract]
     internal class LicenseManagement
     {
-        private static readonly HttpClient client = new HttpClient() { Timeout = new TimeSpan(0,0,20)};
+        private static readonly HttpClient client = new HttpClient() { Timeout = new TimeSpan(0, 0, 20) };
 
         //private static readonly string LocalDirectory = Directory.GetCurrentDirectory();
         private static readonly string serverAddress = "http://licserver.portmap.host:46928/";
 
+        [ProtoMember(1)]
         private LicenseTypes licenseType;
 
+        [ProtoMember(2)]
         private LicenseStatus licenseStatus;
 
+        [ProtoMember(3)]
+        private DateTime expiryDate;
+
+        [ProtoMember(4)]
         private string UUID;
 
         public LicenseManagement()
+        {
+            
+        }
+
+        public void Init()
         {
             try
             {
@@ -38,8 +51,9 @@ namespace DocCompareWPF.Classes
                 }
 
                 // development mode
-                licenseType = LicenseTypes.DEVELOPMENT;
+                licenseType = LicenseTypes.TRIAL;
                 licenseStatus = LicenseStatus.ACTIVE;
+                expiryDate = DateTime.Today.AddDays(14);
             }
             catch (Exception ex)
             {
@@ -102,7 +116,7 @@ namespace DocCompareWPF.Classes
                         return LicServerResponse.ACCOUNT_NOT_FOUND; //
                     }
 
-                    return LicServerResponse.KEY_MISMATCH; // wrong key 
+                    return LicServerResponse.KEY_MISMATCH; // wrong key
                 }
             }
             else

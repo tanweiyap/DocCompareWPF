@@ -4,8 +4,7 @@
              xmlns:local="clr-namespace:DocCompareWPF"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
-             StartupUri="MainWindow.xaml"
-             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf">
+             StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

@@ -1,5 +1,5 @@
 ﻿using DocCompareWPF.Classes;
-using MaterialDesignThemes.Wpf;
+using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using ProtoBuf;
 using System;
@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -113,27 +114,7 @@ namespace DocCompareWPF
             try
             {
                 lic = new LicenseManagement();
-                switch (lic.GetLicenseTypes())
-                {
-                    case LicenseManagement.LicenseTypes.ANNUAL_SUBSCRIPTION:
-                        LicenseTypeLabel.Content = "Annual subscription";
-                        LicenseStatusTypeLabel.Content = "Renewal on";
-                        LicenseStatusLabel.Content = "01.01.2021";
-                        break;
-
-                    case LicenseManagement.LicenseTypes.TRIAL:
-                        LicenseTypeLabel.Content = "Trial license";
-                        LicenseStatusTypeLabel.Content = "Expires in";
-                        LicenseStatusLabel.Content = "14 days";
-                        break;
-
-                    case LicenseManagement.LicenseTypes.DEVELOPMENT:
-                        LicenseTypeLabel.Content = "Developer license";
-                        LicenseStatusTypeLabel.Content = "Expires in";
-                        LicenseStatusLabel.Content = "- days";
-                        break;
-                }
-
+                DisplayLicense();
                 ErrorHandling.ReportError("App Launch", "Launch on " + lic.GetUUID(), "App successfully launched.");
             }
             catch (Exception ex)
@@ -165,9 +146,71 @@ namespace DocCompareWPF
             SETTINGS,
         };
 
-        private void ActivateLicenseButton_Click(object sender, RoutedEventArgs e)
+        private void DisplayLicense()
         {
-            int ret = lic.ActivateLincense(UserEmailTextBox.Text, LicenseKeyTextBox.Text);
+            switch (lic.GetLicenseTypes())
+            {
+                case LicenseManagement.LicenseTypes.ANNUAL_SUBSCRIPTION:
+                    LicenseTypeLabel.Content = "Annual subscription";
+                    LicenseExpiryTypeLabel.Content = "Renewal on";
+                    LicenseExpiryLabel.Content = "01.01.2021";
+                    break;
+
+                case LicenseManagement.LicenseTypes.TRIAL:
+                    LicenseTypeLabel.Content = "Trial license";
+                    LicenseExpiryTypeLabel.Content = "Expires in";
+                    LicenseExpiryLabel.Content = "14 days";
+                    break;
+
+                case LicenseManagement.LicenseTypes.DEVELOPMENT:
+                    LicenseTypeLabel.Content = "Developer license";
+                    LicenseExpiryTypeLabel.Content = "Expires in";
+                    LicenseExpiryLabel.Content = "- days";
+                    break;
+                default:
+                    LicenseTypeLabel.Content = "No license found";
+                    LicenseExpiryTypeLabel.Content = "Expires in";
+                    LicenseExpiryLabel.Content = "- days";
+                    break;
+            }
+
+            switch(lic.GetLicenseStatus())
+            {
+                case LicenseManagement.LicenseStatus.ACTIVE:
+                    LicenseStatusTypeLabel.Content = "License status";
+                    LicenseStatusLabel.Content = "Active";
+                    break;
+                case LicenseManagement.LicenseStatus.INACTIVE:
+                    LicenseStatusTypeLabel.Content = "License status";
+                    LicenseStatusLabel.Content = "Inactive";
+                    break;
+            }
+        }
+
+        private async void ActivateLicenseButton_Click(object sender, RoutedEventArgs e)
+        {
+            LicenseManagement.LicServerResponse res = await lic.ActivateLincense(UserEmailTextBox.Text, LicenseKeyTextBox.Text);
+            
+            switch(res)
+            {
+                case LicenseManagement.LicServerResponse.UNREACHABLE:
+                    MessageBox.Show("License server not reachable. Please check your internet connection or try again later.", "License server not reachable", MessageBoxButton.OK);
+                    break;
+                case LicenseManagement.LicServerResponse.KEY_MISMATCH:
+                    MessageBox.Show("The provided license key does not match the email address. Please check your inputs.", "Invalid license key", MessageBoxButton.OK);
+                    break;
+                case LicenseManagement.LicServerResponse.ACCOUNT_NOT_FOUND:
+                    MessageBox.Show("No license was found under the given email address. Please check your inputs.", "License not found", MessageBoxButton.OK);
+                    break;
+                case LicenseManagement.LicServerResponse.OKAY:
+                    MessageBox.Show("License activated successfully.", "License activation", MessageBoxButton.OK);
+                    UserEmailTextBox.IsEnabled = false;
+                    LicenseKeyTextBox.IsEnabled = false; // after successful activation, we will prevent further editing
+                    ActivateLicenseButton.IsEnabled = false;
+                    break;
+            }
+
+            DisplayLicense();
         }
 
         private void AnimateDiffThread()
@@ -1229,11 +1272,10 @@ namespace DocCompareWPF
                                     Height = DocCompareScrollViewer1.ActualHeight,
                                 };
 
-                                Card errCard = new Card()
+                                Tile errCard = new Tile()
                                 {
                                     HorizontalAlignment = HorizontalAlignment.Center,
                                     VerticalAlignment = VerticalAlignment.Center,
-                                    UniformCornerRadius = 5,
                                     Padding = new Thickness(10),
                                     Background = FindResource("SecondaryAccentBrush") as Brush,
                                 };
@@ -1318,11 +1360,10 @@ namespace DocCompareWPF
                                     Height = DocCompareScrollViewer1.ActualHeight,
                                 };
 
-                                Card errCard = new Card()
+                                Tile errCard = new Tile()
                                 {
                                     HorizontalAlignment = HorizontalAlignment.Center,
                                     VerticalAlignment = VerticalAlignment.Center,
-                                    UniformCornerRadius = 5,
                                     Padding = new Thickness(10),
                                     Background = FindResource("SecondaryAccentBrush") as Brush,
                                 };
@@ -1407,11 +1448,10 @@ namespace DocCompareWPF
                                     Height = DocCompareScrollViewer1.ActualHeight,
                                 };
 
-                                Card errCard = new Card()
+                                Tile errCard = new Tile()
                                 {
                                     HorizontalAlignment = HorizontalAlignment.Center,
                                     VerticalAlignment = VerticalAlignment.Center,
-                                    UniformCornerRadius = 5,
                                     Padding = new Thickness(10),
                                     Background = FindResource("SecondaryAccentBrush") as Brush,
                                 };

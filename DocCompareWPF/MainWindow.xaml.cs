@@ -1,5 +1,6 @@
 ﻿using DocCompareWPF.Classes;
 using MahApps.Metro.Controls;
+using Microsoft.VisualBasic;
 using Microsoft.Win32;
 using ProtoBuf;
 using System;
@@ -41,14 +42,12 @@ namespace DocCompareWPF
         // License management
         private LicenseManagement lic;
 
+        private string licKeyLastInputString;
         private double scrollPosLeft, scrollPosRight;
 
         private string selectedSideGridButtonName1 = "";
 
         private string selectedSideGridButtonName2 = "";
-
-        private string licKeyLastInputString;
-
         // App settings
         private AppSettings settings;
 
@@ -113,14 +112,36 @@ namespace DocCompareWPF
             // License Management
             try
             {
-                lic = new LicenseManagement();
-                lic.Init();
+                LoadLicense();
                 DisplayLicense();
-                ErrorHandling.ReportError("App Launch", "Launch on " + lic.GetUUID(), "App successfully launched.");
+                ErrorHandling.ReportError("App Launch", "Launch on " + lic.GetUUID(), "App successfully launched with license: " + lic.GetLicenseTypesString() + ", expires/renewal on " + lic.GetExpiryDateString());
             }
-            catch (Exception ex)
+            catch
             {
-                ErrorHandling.ReportException(ex);
+                lic = new LicenseManagement();
+                lic.Init(); // init 14 days trial
+                DisplayLicense();
+                SaveLicense();
+                ErrorHandling.ReportError("New trial license", "on " + lic.GetUUID(), "Expires on " + lic.GetExpiryDateString());
+            }
+
+            TimeSpan timeBuffer = lic.GetExpiryDate().Subtract(DateTime.Today);
+
+            // Reminder to subscribe
+            if (timeBuffer.TotalDays <= 5 && timeBuffer.TotalDays > 0 && lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL)
+            {
+                MessageBox.Show("Your trial license will expire in " + timeBuffer.TotalDays + " day(s). Please consider making a subscription on www.hopietech.com", "Expired lincense", MessageBoxButton.OK);
+            }
+
+            // lock all feature
+            if (timeBuffer.TotalDays <= 0)
+            {
+                MessageBox.Show("Your license has expired. Please consider making a subscription on www.hopietech.com", "Expired lincense", MessageBoxButton.OK);
+
+                BrowseFileButton1.IsEnabled = false;
+                DocCompareFirstDocZone.AllowDrop = false;
+                DocCompareDragDropZone1.AllowDrop = false;
+                DocCompareColorZone1.AllowDrop = false;
             }
         }
 
@@ -147,52 +168,11 @@ namespace DocCompareWPF
             SETTINGS,
         };
 
-        private void DisplayLicense()
-        {
-            switch (lic.GetLicenseTypes())
-            {
-                case LicenseManagement.LicenseTypes.ANNUAL_SUBSCRIPTION:
-                    LicenseTypeLabel.Content = "Annual subscription";
-                    LicenseExpiryTypeLabel.Content = "Renewal on";
-                    LicenseExpiryLabel.Content = "01.01.2021";
-                    break;
-
-                case LicenseManagement.LicenseTypes.TRIAL:
-                    LicenseTypeLabel.Content = "Trial license";
-                    LicenseExpiryTypeLabel.Content = "Expires in";
-                    LicenseExpiryLabel.Content = "14 days";
-                    break;
-
-                case LicenseManagement.LicenseTypes.DEVELOPMENT:
-                    LicenseTypeLabel.Content = "Developer license";
-                    LicenseExpiryTypeLabel.Content = "Expires in";
-                    LicenseExpiryLabel.Content = "- days";
-                    break;
-                default:
-                    LicenseTypeLabel.Content = "No license found";
-                    LicenseExpiryTypeLabel.Content = "Expires in";
-                    LicenseExpiryLabel.Content = "- days";
-                    break;
-            }
-
-            switch(lic.GetLicenseStatus())
-            {
-                case LicenseManagement.LicenseStatus.ACTIVE:
-                    LicenseStatusTypeLabel.Content = "License status";
-                    LicenseStatusLabel.Content = "Active";
-                    break;
-                case LicenseManagement.LicenseStatus.INACTIVE:
-                    LicenseStatusTypeLabel.Content = "License status";
-                    LicenseStatusLabel.Content = "Inactive";
-                    break;
-            }
-        }
-
         private async void ActivateLicenseButton_Click(object sender, RoutedEventArgs e)
         {
             LicenseManagement.LicServerResponse res = await lic.ActivateLincense(UserEmailTextBox.Text, LicenseKeyTextBox.Text);
-            
-            switch(res)
+
+            switch (res)
             {
                 case LicenseManagement.LicServerResponse.UNREACHABLE:
                     MessageBox.Show("License server not reachable. Please check your internet connection or try again later.", "License server not reachable", MessageBoxButton.OK);
@@ -208,9 +188,15 @@ namespace DocCompareWPF
                     UserEmailTextBox.IsEnabled = false;
                     LicenseKeyTextBox.IsEnabled = false; // after successful activation, we will prevent further editing
                     ActivateLicenseButton.IsEnabled = false;
+                    SaveLicense(); // only save license info if successful
+                    // allow usage if it was previously disabled
+                    BrowseFileButton1.IsEnabled = true;
+                    DocCompareFirstDocZone.AllowDrop = true;
+                    DocCompareDragDropZone1.AllowDrop = true;
+                    DocCompareColorZone1.AllowDrop = true;
                     break;
             }
-
+            
             DisplayLicense();
         }
 
@@ -1483,6 +1469,48 @@ namespace DocCompareWPF
             }
         }
 
+        private void DisplayLicense()
+        {
+            switch (lic.GetLicenseTypes())
+            {
+                case LicenseManagement.LicenseTypes.ANNUAL_SUBSCRIPTION:
+                    LicenseTypeLabel.Content = "Annual subscription";
+                    LicenseExpiryTypeLabel.Content = "Renewal on";
+                    LicenseExpiryLabel.Content = lic.GetExpiryDateString();
+                    break;
+
+                case LicenseManagement.LicenseTypes.TRIAL:
+                    LicenseTypeLabel.Content = "Trial license";
+                    LicenseExpiryTypeLabel.Content = "Expires in";
+                    TimeSpan timeBuffer = lic.GetExpiryDate().Subtract(DateTime.Today);
+
+                    LicenseExpiryLabel.Content = timeBuffer.TotalDays.ToString() + " days";
+                    break;
+
+                case LicenseManagement.LicenseTypes.DEVELOPMENT:
+                    LicenseTypeLabel.Content = "Developer license";
+                    LicenseExpiryTypeLabel.Content = "Expires in";
+                    LicenseExpiryLabel.Content = "- days";
+                    break;
+                default:
+                    LicenseTypeLabel.Content = "No license found";
+                    LicenseExpiryTypeLabel.Content = "Expires in";
+                    LicenseExpiryLabel.Content = "- days";
+                    break;
+            }
+
+            switch(lic.GetLicenseStatus())
+            {
+                case LicenseManagement.LicenseStatus.ACTIVE:
+                    LicenseStatusTypeLabel.Content = "License status";
+                    LicenseStatusLabel.Content = "Active";
+                    break;
+                case LicenseManagement.LicenseStatus.INACTIVE:
+                    LicenseStatusTypeLabel.Content = "License status";
+                    LicenseStatusLabel.Content = "Inactive";
+                    break;
+            }
+        }
         private void DisplayRefDoc(int docIndex)
         {
             Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
@@ -2330,13 +2358,18 @@ namespace DocCompareWPF
             });
         }
 
+        private void LoadLicense()
+        {
+            using var file = File.OpenRead(Path.Join("lic", "2compare.lic"));
+            lic = Serializer.Deserialize<LicenseManagement>(file);
+        }
+
         private void LoadSettings()
         {
             settings = new AppSettings();
             using var file = File.OpenRead("AppSettings.bin");
             settings = Serializer.Deserialize<AppSettings>(file);
         }
-
         private void MaskSideGridInForceAlignMode()
         {
             if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
@@ -2982,12 +3015,18 @@ namespace DocCompareWPF
             }
         }
 
+        private void SaveLicense()
+        {
+            Directory.CreateDirectory("lic");
+            using var file = File.Create(Path.Join("lic", "2compare.lic"));
+            Serializer.Serialize(file, lic);
+        }
+
         private void SaveSettings()
         {
             using var file = File.Create("AppSettings.bin");
             Serializer.Serialize(file, settings);
         }
-
         private void SettingsAboutButton_Click(object sender, RoutedEventArgs e)
         {
             SetVisibleSettingsPanel(SettingsPanels.ABOUT);

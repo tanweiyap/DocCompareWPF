@@ -54,6 +54,7 @@ namespace DocCompareWPF.Classes
                 licenseType = LicenseTypes.TRIAL;
                 licenseStatus = LicenseStatus.ACTIVE;
                 expiryDate = DateTime.Today.AddDays(14);
+                //expiryDate = DateTime.Today.Subtract(TimeSpan.FromDays(2));
             }
             catch (Exception ex)
             {
@@ -99,24 +100,32 @@ namespace DocCompareWPF.Classes
 
                 HttpResponseMessage msg = await client.PostAsync(serverAddress + "activate", content);
                 string readMsg = msg.Content.ReadAsStringAsync().Result;
-                JObject resp = JsonConvert.DeserializeObject<JObject>(readMsg);
-
-                if ((string)resp["CorrectKey"] == "true")
+                try
                 {
-                    licenseType = ParseLicTypes((string)resp["LicType"]);
-                    licenseStatus = ParseLicStatus((string)resp["LicStatus"]);
-                }
-                else
-                {
-                    licenseType = LicenseTypes.UNKNOWN;
-                    licenseStatus = LicenseStatus.INACTIVE;
+                    JObject resp = JsonConvert.DeserializeObject<JObject>(readMsg);
 
-                    if (ParseLicTypes((string)resp["LicType"]) == LicenseTypes.UNKNOWN)
+                    if ((string)resp["CorrectKey"] == "true")
                     {
-                        return LicServerResponse.ACCOUNT_NOT_FOUND; //
+                        licenseType = ParseLicTypes((string)resp["LicType"]);
+                        licenseStatus = ParseLicStatus((string)resp["LicStatus"]);
+                        expiryDate = DateTime.Parse((string)resp["Expires"]);
                     }
+                    else
+                    {
+                        licenseType = LicenseTypes.UNKNOWN;
+                        licenseStatus = LicenseStatus.INACTIVE;
+                        expiryDate = DateTime.Now;
 
-                    return LicServerResponse.KEY_MISMATCH; // wrong key
+                        if (ParseLicTypes((string)resp["LicType"]) == LicenseTypes.UNKNOWN)
+                        {
+                            return LicServerResponse.ACCOUNT_NOT_FOUND; //
+                        }
+
+                        return LicServerResponse.KEY_MISMATCH; // wrong key
+                    }
+                }catch(Exception ex)
+                {
+                    ErrorHandling.ReportException(ex);
                 }
             }
             else
@@ -150,9 +159,31 @@ namespace DocCompareWPF.Classes
             return licenseType;
         }
 
+        public string GetLicenseTypesString()
+        {
+            return licenseType switch
+            {
+                LicenseTypes.ANNUAL_SUBSCRIPTION => "Annual subscription",
+                LicenseTypes.DEVELOPMENT => "Developer license",
+                LicenseTypes.TRIAL => "Trial license",
+                LicenseTypes.UNKNOWN => "Unknown license type",
+                _ => "",
+            };
+        }
+
         public LicenseStatus GetLicenseStatus()
         {
             return licenseStatus;
+        }
+
+        public DateTime GetExpiryDate()
+        {
+            return expiryDate;
+        }
+
+        public string GetExpiryDateString()
+        {
+            return expiryDate.ToShortDateString();
         }
 
         public string GetUUID()

@@ -1483,8 +1483,10 @@ namespace DocCompareWPF
                     LicenseTypeLabel.Content = "Trial license";
                     LicenseExpiryTypeLabel.Content = "Expires in";
                     TimeSpan timeBuffer = lic.GetExpiryDate().Subtract(DateTime.Today);
-
-                    LicenseExpiryLabel.Content = timeBuffer.TotalDays.ToString() + " days";
+                    if (timeBuffer.TotalDays >= 0)
+                        LicenseExpiryLabel.Content = timeBuffer.TotalDays.ToString() + " days";
+                    else
+                        LicenseExpiryTypeLabel.Content = "Expired";
                     break;
 
                 case LicenseManagement.LicenseTypes.DEVELOPMENT:

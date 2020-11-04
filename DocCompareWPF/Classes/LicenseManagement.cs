@@ -29,6 +29,14 @@ namespace DocCompareWPF.Classes
         [ProtoMember(4)]
         private string UUID;
 
+
+        [ProtoMember(5)]
+        private string email = "";
+
+
+        [ProtoMember(6)]
+        private string key = "";
+
         public LicenseManagement()
         {
             
@@ -109,6 +117,8 @@ namespace DocCompareWPF.Classes
                         licenseType = ParseLicTypes((string)resp["LicType"]);
                         licenseStatus = ParseLicStatus((string)resp["LicStatus"]);
                         expiryDate = DateTime.Parse((string)resp["Expires"]);
+                        email = userEmail;
+                        key = licKey;
                     }
                     else
                     {
@@ -189,6 +199,16 @@ namespace DocCompareWPF.Classes
         public string GetUUID()
         {
             return UUID;
+        }
+
+        public string GetEmail()
+        {
+            return email;
+        }
+
+        public string GetKey()
+        {
+            return key;
         }
 
         private LicenseTypes ParseLicTypes(string p_string)

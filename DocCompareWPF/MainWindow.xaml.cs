@@ -1477,6 +1477,10 @@ namespace DocCompareWPF
                     LicenseTypeLabel.Content = "Annual subscription";
                     LicenseExpiryTypeLabel.Content = "Renewal on";
                     LicenseExpiryLabel.Content = lic.GetExpiryDateString();
+                    UserEmailTextBox.Text = lic.GetEmail();
+                    LicenseKeyTextBox.Text = lic.GetKey();
+                    UserEmailTextBox.IsEnabled = false;
+                    LicenseKeyTextBox.IsEnabled = false;
                     break;
 
                 case LicenseManagement.LicenseTypes.TRIAL:

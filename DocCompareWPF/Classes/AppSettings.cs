@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using ProtoBuf;
 
@@ -25,5 +26,8 @@ namespace DocCompareWPF.Classes
 
         [ProtoMember(6)]
         public int maxDocCount = 5;
+
+        [ProtoMember(7)]
+        public string cultureInfo = "en-us";
     }
 }

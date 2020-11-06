@@ -1,24 +1,26 @@
 ﻿using DocCompareDLL;
 using DocConvert;
+using System;
+using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace DocCompareWPF.Classes
 {
     internal class Document
     {
+        public string CreatedDate;
+        public string Creator;
         public List<int> docCompareIndices;
-
         public string docID;
-
         public string filePath;
-
         public FileTypes fileType;
-
         public string imageFolder;
-
+        public string LastEditor;
         public bool loaded, processed;
+        public string ModifiedDate;
 
         public Document()
         {
@@ -28,6 +30,31 @@ namespace DocCompareWPF.Classes
         {
             PDF, PPT, WORD, EXCEL, PIC, TXT, UNKNOWN
         };
+
+        public void ReadStats(string cultureInfo) // must be called after DetectFileType()
+        {
+            CultureInfo culture = CultureInfo.GetCultureInfo(cultureInfo);
+            switch(fileType)
+            {
+                case FileTypes.PPT:
+                    List<string> fileAttributes = new PPTConvertClass().GetFileAttribute(filePath);
+                    if (fileAttributes.Count == 4) // read successfully
+                    {
+                        Creator = fileAttributes[0];
+                        LastEditor = fileAttributes[1];
+                        CreatedDate = DateTime.Parse(fileAttributes[2]).ToString("F", culture);
+                        ModifiedDate = DateTime.Parse(fileAttributes[3]).ToString("F", culture);
+                    }
+                    break;
+                default:
+                    FileInfo fileInfo = new FileInfo(filePath);
+                    Creator = fileInfo.GetAccessControl().GetOwner(typeof(System.Security.Principal.NTAccount)).ToString().Split("\\")[^1];
+                    LastEditor = Creator;
+                    CreatedDate = fileInfo.CreationTime.ToString("F", culture);
+                    ModifiedDate = fileInfo.LastWriteTime.ToString("F", culture);
+                    break;
+            }
+        }
 
         public static int CompareDocs(string doc1ImageFolder, string doc2ImageFolder, string outputFolder, out ArrayList pageIndices, out int totalLen, int[,] forceIndices)
         {
@@ -104,24 +131,6 @@ namespace DocCompareWPF.Classes
             return ret;
         }
 
-        public int ReadPPT()
-        {
-            PPTConvertClass pptConvertClass = new PPTConvertClass();
-            int ret = -1;
-            try
-            {
-                ret = pptConvertClass.ConvertPPTToImages(filePath, imageFolder);
-                if (ret == 0)
-                    processed = true;
-            }
-            catch
-            {
-                return ret;
-            }
-
-            return ret;
-        }
-
         public int ReadPic()
         {
             PICConvertClass picConvertClass = new PICConvertClass();
@@ -139,6 +148,23 @@ namespace DocCompareWPF.Classes
             return ret;
         }
 
+        public int ReadPPT()
+        {
+            PPTConvertClass pptConvertClass = new PPTConvertClass();
+            int ret = -1;
+            try
+            {
+                ret = pptConvertClass.ConvertPPTToImages(filePath, imageFolder);
+                if (ret == 0)
+                    processed = true;
+            }
+            catch
+            {
+                return ret;
+            }
+
+            return ret;
+        }
         public int ReloadDocument()
         {
             int ret;

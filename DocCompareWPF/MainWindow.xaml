@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:DocCompareWPF"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="DocCompare" Height="800" Width="1280" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged"
+        Title="DocCompare" Height="800" Width="1280" MinWidth="1024" MinHeight="600" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged"
         FontSize="15">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="{Binding ActualHeight,ElementName=TitleBar}" />
@@ -127,7 +127,7 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="{StaticResource TopBarHeight}" />
                                         <RowDefinition />
-                                        <RowDefinition Height="{StaticResource BottomBarHeight}" />
+                                        <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
                                     <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -163,7 +163,39 @@
                                     <ScrollViewer x:Name="DocCompareScrollViewer1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer1_ScrollChanged">
                                     </ScrollViewer>
                                     <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="25"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="{StaticResource BottomBarHeight}"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
                                         <Label x:Name="Doc1PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                                        <Button x:Name="ShowDoc1FileInfoButton" Grid.Column="1" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc1FileInfoButton_Click" IsEnabled="False">
+                                            <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
+                                        </Button>
+                                        <Grid Grid.Row="1" x:Name="Doc1StatsGrid" Visibility="Collapsed" Background="{StaticResource PrimaryHueDarkBrush}">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="3*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Content="Author" Foreground="White"/>
+                                            <Label Content="Last modified by" Foreground="White" Grid.Row="1"/>
+                                            <Label Content="Created on" Foreground="White" Grid.Row="2"/>
+                                            <Label Content="Last modified on" Foreground="White" Grid.Row="3"/>
+                                            <Label x:Name="Doc1StatAuthorLabel" Content="" Foreground="White" Grid.Row="0" Grid.Column="1"/>
+                                            <Label x:Name="Doc1StatLastEditorLabel" Content="" Foreground="White" Grid.Row="1" Grid.Column="1"/>
+                                            <Label x:Name="Doc1StatCreatedLabel" Content="" Foreground="White" Grid.Row="2" Grid.Column="1"/>
+                                            <Label x:Name="Doc1StatModifiedLabel" Content="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
+                                        </Grid>
+                                        <Grid Grid.Row="1" Grid.Column="1" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>
                                     </Grid>
                                 </Grid>
                                 <mah:Tile x:Name="ProgressBarDoc1" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
@@ -208,7 +240,7 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="{StaticResource TopBarHeight}" />
                                         <RowDefinition />
-                                        <RowDefinition Height="{StaticResource BottomBarHeight}" />
+                                        <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
                                     <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -245,7 +277,39 @@
                                     <ScrollViewer x:Name="DocCompareScrollViewer2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer2_ScrollChanged">
                                     </ScrollViewer>
                                     <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="25"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="{StaticResource BottomBarHeight}"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
                                         <Label x:Name="Doc2PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                                        <Button x:Name="ShowDoc2FileInfoButton" Grid.Column="1" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc2FileInfoButton_Click" IsEnabled="False">
+                                            <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
+                                        </Button>
+                                        <Grid Grid.Row="1" x:Name="Doc2StatsGrid" Visibility="Collapsed" Background="{StaticResource PrimaryHueDarkBrush}">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="3*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Content="Author" Foreground="White"/>
+                                            <Label Content="Last modified by" Foreground="White" Grid.Row="1"/>
+                                            <Label Content="Created on" Foreground="White" Grid.Row="2"/>
+                                            <Label Content="Last modified on" Foreground="White" Grid.Row="3"/>
+                                            <Label x:Name="Doc2StatAuthorLabel" Content="" Foreground="White" Grid.Row="0" Grid.Column="1"/>
+                                            <Label x:Name="Doc2StatLastEditorLabel" Content="" Foreground="White" Grid.Row="1" Grid.Column="1"/>
+                                            <Label x:Name="Doc2StatCreatedLabel" Content="" Foreground="White" Grid.Row="2" Grid.Column="1"/>
+                                            <Label x:Name="Doc2StatModifiedLabel" Content="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
+                                        </Grid>
+                                        <Grid Grid.Row="1" Grid.Column="1" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>
                                     </Grid>
                                 </Grid>
                                 <mah:Tile x:Name="ProgressBarDoc2" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
@@ -290,7 +354,7 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="{StaticResource TopBarHeight}" />
                                         <RowDefinition />
-                                        <RowDefinition Height="{StaticResource BottomBarHeight}" />
+                                        <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
                                     <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -327,7 +391,39 @@
                                     <ScrollViewer x:Name="DocCompareScrollViewer3" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer3_ScrollChanged">
                                     </ScrollViewer>
                                     <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="25"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="{StaticResource BottomBarHeight}"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
                                         <Label x:Name="Doc3PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                                        <Button x:Name="ShowDoc3FileInfoButton" Grid.Column="1" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc3FileInfoButton_Click" IsEnabled="False">
+                                            <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
+                                        </Button>
+                                        <Grid Grid.Row="1" x:Name="Doc3StatsGrid" Visibility="Collapsed" Background="{StaticResource PrimaryHueDarkBrush}">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2*"/>
+                                                <ColumnDefinition Width="3*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Content="Author" Foreground="White"/>
+                                            <Label Content="Last modified by" Foreground="White" Grid.Row="1"/>
+                                            <Label Content="Created on" Foreground="White" Grid.Row="2"/>
+                                            <Label Content="Last modified on" Foreground="White" Grid.Row="3"/>
+                                            <Label x:Name="Doc3StatAuthorLabel" Content="" Foreground="White" Grid.Row="0" Grid.Column="1"/>
+                                            <Label x:Name="Doc3StatLastEditorLabel" Content="" Foreground="White" Grid.Row="1" Grid.Column="1"/>
+                                            <Label x:Name="Doc3StatCreatedLabel" Content="" Foreground="White" Grid.Row="2" Grid.Column="1"/>
+                                            <Label x:Name="Doc3StatModifiedLabel" Content="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
+                                        </Grid>
+                                        <Grid Grid.Row="1" Grid.Column="1" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>
                                     </Grid>
                                 </Grid>
                                 <mah:Tile x:Name="ProgressBarDoc3" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
@@ -388,7 +484,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="{StaticResource TopBarHeight}" />
                                 <RowDefinition />
-                                <RowDefinition Height="{StaticResource BottomBarHeight}" />
+                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
                             <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -443,10 +539,10 @@
                             </Grid>
                             <Grid x:Name="DocCompareScrollViewerGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="368*" />
-                                    <ColumnDefinition Width="121*" />
-                                    <ColumnDefinition MaxWidth="140" MinWidth="140" Width="70*" />
-                                    <ColumnDefinition MaxWidth="160" MinWidth="160" Width="80*" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition MaxWidth="140" MinWidth="140"/>
+                                    <ColumnDefinition MaxWidth="160" MinWidth="160"/>
                                 </Grid.ColumnDefinitions>
                                 <ScrollViewer x:Name="DocCompareMainScrollViewer" Grid.Column="0" ScrollChanged="DocCompareMainScrollViewer_ScrollChanged" Grid.ColumnSpan="2" />
                                 <ScrollViewer x:Name="DocCompareSideScrollViewerLeft" Background="Transparent" Style="{StaticResource MahApps.Styles.ScrollViewer}" Grid.Column="2" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" ScrollChanged="DocCompareSideScrollViewerLeft_ScrollChanged" Margin="0,0,150,0" HorizontalContentAlignment="Left" BorderThickness="0" Width="150" Grid.ColumnSpan="2" />
@@ -459,9 +555,60 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="25"/>
                                         <ColumnDefinition MinWidth="300" MaxWidth="300" />
                                     </Grid.ColumnDefinitions>
-                                    <Label x:Name="DocComparePageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="{StaticResource BottomBarHeight}"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Label x:Name="DocComparePageNumberLabel" HorizontalAlignment="Center" Grid.ColumnSpan="2" VerticalAlignment="Center" Foreground="White"></Label>
+                                    <Button x:Name="ShowDocCompareFileInfoButton" Grid.Column="2" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDocCompareFileInfoButton_Click" IsEnabled="False">
+                                        <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
+                                    </Button>
+                                    <Grid Grid.Row="1" x:Name="DocCompareLeftStatsGrid" Visibility="Collapsed" Background="{StaticResource PrimaryHueDarkBrush}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="3*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Content="Author" Foreground="White"/>
+                                        <Label Content="Last modified by" Foreground="White" Grid.Row="1"/>
+                                        <Label Content="Created on" Foreground="White" Grid.Row="2"/>
+                                        <Label Content="Last modified on" Foreground="White" Grid.Row="3"/>
+                                        <Label x:Name="DocCompareLeftStatAuthorLabel" Content="" Foreground="White" Grid.Row="0" Grid.Column="1"/>
+                                        <Label x:Name="DocCompareLeftStatLastEditorLabel" Content="" Foreground="White" Grid.Row="1" Grid.Column="1"/>
+                                        <Label x:Name="DocCompareLeftStatCreatedLabel" Content="" Foreground="White" Grid.Row="2" Grid.Column="1"/>
+                                        <Label x:Name="DocCompareLeftStatModifiedLabel" Content="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
+                                    </Grid>
+                                    <Grid Grid.Row="1" Grid.Column="1" x:Name="DocCompareRightStatsGrid" Visibility="Collapsed" Background="{StaticResource PrimaryHueDarkBrush}">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="3*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Content="Author" Foreground="White"/>
+                                        <Label Content="Last modified by" Foreground="White" Grid.Row="1"/>
+                                        <Label Content="Created on" Foreground="White" Grid.Row="2"/>
+                                        <Label Content="Last modified on" Foreground="White" Grid.Row="3"/>
+                                        <Label x:Name="DocCompareRightStatAuthorLabel" Content="" Foreground="White" Grid.Row="0" Grid.Column="1"/>
+                                        <Label x:Name="DocCompareRightStatLastEditorLabel" Content="" Foreground="White" Grid.Row="1" Grid.Column="1"/>
+                                        <Label x:Name="DocCompareRightStatCreatedLabel" Content="" Foreground="White" Grid.Row="2" Grid.Column="1"/>
+                                        <Label x:Name="DocCompareRightStatModifiedLabel" Content="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
+                                    </Grid>
+                                    <Grid Grid.Row="1" Grid.Column="2" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>
+                                    <Grid Grid.Row="1" Grid.Column="3" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>
                                 </Grid>
                             </Grid>
                         </Grid>

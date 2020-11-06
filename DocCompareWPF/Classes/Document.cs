@@ -34,7 +34,8 @@ namespace DocCompareWPF.Classes
         public void ReadStats(string cultureInfo) // must be called after DetectFileType()
         {
             CultureInfo culture = CultureInfo.GetCultureInfo(cultureInfo);
-            switch(fileType)
+            FileInfo fileInfo;
+            switch (fileType)
             {
                 case FileTypes.PPT:
                     List<string> fileAttributes = new PPTConvertClass().GetFileAttribute(filePath);
@@ -45,9 +46,18 @@ namespace DocCompareWPF.Classes
                         CreatedDate = DateTime.Parse(fileAttributes[2]).ToString("F", culture);
                         ModifiedDate = DateTime.Parse(fileAttributes[3]).ToString("F", culture);
                     }
+
+                    if(Creator == null || LastEditor == null || CreatedDate == null || ModifiedDate == null)
+                    {
+                        fileInfo = new FileInfo(filePath);
+                        Creator = fileInfo.GetAccessControl().GetOwner(typeof(System.Security.Principal.NTAccount)).ToString().Split("\\")[^1];
+                        LastEditor = Creator;
+                        CreatedDate = fileInfo.CreationTime.ToString("F", culture);
+                        ModifiedDate = fileInfo.LastWriteTime.ToString("F", culture);
+                    }
                     break;
                 default:
-                    FileInfo fileInfo = new FileInfo(filePath);
+                    fileInfo = new FileInfo(filePath);
                     Creator = fileInfo.GetAccessControl().GetOwner(typeof(System.Security.Principal.NTAccount)).ToString().Split("\\")[^1];
                     LastEditor = Creator;
                     CreatedDate = fileInfo.CreationTime.ToString("F", culture);

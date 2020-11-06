@@ -1,6 +1,5 @@
 ﻿using DocCompareWPF.Classes;
 using MahApps.Metro.Controls;
-using Microsoft.VisualBasic;
 using Microsoft.Win32;
 using ProtoBuf;
 using System;
@@ -9,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -48,12 +46,13 @@ namespace DocCompareWPF
         private string selectedSideGridButtonName1 = "";
 
         private string selectedSideGridButtonName2 = "";
+
         // App settings
         private AppSettings settings;
 
         private GridSelection sideGridSelectedLeftOrRight, mainGridSelectedLeftOrRight;
 
-        private Thread threadLoadDocs, threadLoadDocsProgress, threadCompare, threadAnimateDiff;
+        private Thread threadLoadDocs, threadLoadDocsProgress, threadCompare, threadAnimateDiff, threadDisplayResult;
 
         public MainWindow()
         {
@@ -177,12 +176,15 @@ namespace DocCompareWPF
                 case LicenseManagement.LicServerResponse.UNREACHABLE:
                     MessageBox.Show("License server not reachable. Please check your internet connection or try again later.", "License server not reachable", MessageBoxButton.OK);
                     break;
+
                 case LicenseManagement.LicServerResponse.KEY_MISMATCH:
                     MessageBox.Show("The provided license key does not match the email address. Please check your inputs.", "Invalid license key", MessageBoxButton.OK);
                     break;
+
                 case LicenseManagement.LicServerResponse.ACCOUNT_NOT_FOUND:
                     MessageBox.Show("No license was found under the given email address. Please check your inputs.", "License not found", MessageBoxButton.OK);
                     break;
+
                 case LicenseManagement.LicServerResponse.OKAY:
                     MessageBox.Show("License activated successfully.", "License activation", MessageBoxButton.OK);
                     UserEmailTextBox.IsEnabled = false;
@@ -196,7 +198,7 @@ namespace DocCompareWPF
                     DocCompareColorZone1.AllowDrop = true;
                     break;
             }
-            
+
             DisplayLicense();
         }
 
@@ -612,8 +614,9 @@ namespace DocCompareWPF
 
                 Dispatcher.Invoke(() =>
                 {
-                    DisplayComparisonResult();
-                    HighlightSideGrid();
+                    threadDisplayResult = new Thread(new ThreadStart(DisplayComparisonResult));
+                    threadDisplayResult.Start();
+                    ProgressBarLoadingResults.Visibility = Visibility.Visible;
                     ProgressBarDocCompare.Visibility = Visibility.Hidden;
                 });
             }
@@ -673,12 +676,15 @@ namespace DocCompareWPF
                 {
                     Background = brush,
                 };
+            });
 
-                Image thisImage;
-                FileStream stream;
-                BitmapImage bitmap;
+            Image thisImage;
+            FileStream stream;
+            BitmapImage bitmap;
 
-                for (int i = 0; i < docs.totalLen; i++) // going through all the pages of the longest document
+            for (int i = 0; i < docs.totalLen; i++) // going through all the pages of the longest document
+            {
+                Dispatcher.Invoke(() =>
                 {
                     Grid thisGrid = new Grid
                     {
@@ -865,28 +871,34 @@ namespace DocCompareWPF
 
                     pageCounter++;
                     docCompareChildPanel1.Children.Add(thisGrid);
-                }
+                });
+            }
 
+            Dispatcher.Invoke(() =>
+            {
                 DocCompareMainScrollViewer.Content = docCompareChildPanel1;
                 pageCounter = 0;
+            });
 
-                // side panel
+            // side panel
 
-                for (int i = 0; i < docs.totalLen; i++) // going through all the pages of the longest document
+            for (int i = 0; i < docs.totalLen; i++) // going through all the pages of the longest document
+            {
+                Dispatcher.Invoke(() =>
                 {
                     Grid thisLeftGrid = new Grid()
                     {
                         Margin = new Thickness(0),
                     };
-                    thisLeftGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(25, GridUnitType.Pixel) }); // page number
-                    thisLeftGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(115, GridUnitType.Pixel) }); // doc1
+                    thisLeftGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(30, GridUnitType.Pixel) }); // page number
+                    thisLeftGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(110, GridUnitType.Pixel) }); // doc1
                     Grid thisRightGrid = new Grid()
                     {
                         Margin = new Thickness(0),
                     };
 
-                    thisRightGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(25, GridUnitType.Pixel) }); // forcealign icon
-                    thisRightGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(115, GridUnitType.Pixel) }); // doc2
+                    thisRightGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(30, GridUnitType.Pixel) }); // forcealign icon
+                    thisRightGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(110, GridUnitType.Pixel) }); // doc2
 
                     thisLeftGrid.MouseLeftButtonDown += (sen, ev) => { HandleMouseClickOnSideScrollView(sen, ev); };
                     thisRightGrid.MouseLeftButtonDown += (sen, ev) => { HandleMouseClickOnSideScrollView(sen, ev); };
@@ -1011,7 +1023,7 @@ namespace DocCompareWPF
                             imageGrid.Children.Add(thisImage);
                         }
                     }
-                    else // doc2 has a valid page, we use it as dummy
+                    else if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)// doc2 has a valid page, we use it as dummy
                     {
                         Grid imageGrid = new Grid()
                         {
@@ -1148,7 +1160,7 @@ namespace DocCompareWPF
                             imageGrid.Children.Add(thisImage);
                         }
                     }
-                    else // we use doc 1 as dummy
+                    else if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1) // we use doc 1 as dummy
                     {
                         Grid imageGrid = new Grid()
                         {
@@ -1189,14 +1201,20 @@ namespace DocCompareWPF
                     thisLeftGrid.Children.Add(thisLabel);
                     docCompareChildPanelLeft.Children.Add(thisLeftGrid);
                     docCompareChildPanelRight.Children.Add(thisRightGrid);
-                }
+                });
+            }
 
+            Dispatcher.Invoke(() =>
+            {
                 DocCompareSideScrollViewerLeft.Content = docCompareChildPanelLeft;
                 DocCompareSideScrollViewerRight.Content = docCompareChildPanelRight;
 
                 docCompareGrid.Visibility = Visibility.Visible;
                 ProgressBarDocCompare.Visibility = Visibility.Hidden;
                 ProgressBarDocCompareAlign.Visibility = Visibility.Hidden;
+                ProgressBarLoadingResults.Visibility = Visibility.Hidden;
+
+                HighlightSideGrid();
             });
         }
 
@@ -1498,6 +1516,7 @@ namespace DocCompareWPF
                     LicenseExpiryTypeLabel.Content = "Expires in";
                     LicenseExpiryLabel.Content = "- days";
                     break;
+
                 default:
                     LicenseTypeLabel.Content = "No license found";
                     LicenseExpiryTypeLabel.Content = "Expires in";
@@ -1505,18 +1524,20 @@ namespace DocCompareWPF
                     break;
             }
 
-            switch(lic.GetLicenseStatus())
+            switch (lic.GetLicenseStatus())
             {
                 case LicenseManagement.LicenseStatus.ACTIVE:
                     LicenseStatusTypeLabel.Content = "License status";
                     LicenseStatusLabel.Content = "Active";
                     break;
+
                 case LicenseManagement.LicenseStatus.INACTIVE:
                     LicenseStatusTypeLabel.Content = "License status";
                     LicenseStatusLabel.Content = "Inactive";
                     break;
             }
         }
+
         private void DisplayRefDoc(int docIndex)
         {
             Brush brush = FindResource("DocumentBackGroundBrush") as Brush;
@@ -2376,6 +2397,7 @@ namespace DocCompareWPF
             using var file = File.OpenRead("AppSettings.bin");
             settings = Serializer.Deserialize<AppSettings>(file);
         }
+
         private void MaskSideGridInForceAlignMode()
         {
             if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
@@ -3033,6 +3055,7 @@ namespace DocCompareWPF
             using var file = File.Create("AppSettings.bin");
             Serializer.Serialize(file, settings);
         }
+
         private void SettingsAboutButton_Click(object sender, RoutedEventArgs e)
         {
             SetVisibleSettingsPanel(SettingsPanels.ABOUT);

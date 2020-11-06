@@ -38,6 +38,9 @@ namespace DocCompareWPF.Classes
         [ProtoMember(6)]
         private string key = "";
 
+        [ProtoMember(7)]
+        private DateTime expiryWaiveDate;
+
         public LicenseManagement()
         {
             
@@ -163,6 +166,7 @@ namespace DocCompareWPF.Classes
                         expiryDate = DateTime.Parse((string)resp["Expires"],CultureInfo.GetCultureInfo("de-de"));
                         email = userEmail;
                         key = licKey;
+                        return LicServerResponse.OKAY;
                     }
                     else
                     {
@@ -187,7 +191,63 @@ namespace DocCompareWPF.Classes
                 return LicServerResponse.UNREACHABLE; // server offline
             }
 
-            return LicServerResponse.OKAY;
+            return LicServerResponse.INVALID;
+        }
+
+        public async Task<LicServerResponse> RenewLincense()
+        {
+            int status = await CheckServerStatus(serverAddress + "status");
+            if (status == 0)
+            {
+                IDictionary<string, string> licDict = new Dictionary<string, string>
+                    {
+                        { "Email", email},
+                        { "LicKey", key},
+                        { "UUID", UUID }
+                    };
+
+                var content = new FormUrlEncodedContent(licDict);
+
+                HttpResponseMessage msg = await client.PostAsync(serverAddress + "renew", content);
+                string readMsg = msg.Content.ReadAsStringAsync().Result;
+                try
+                {
+                    JObject resp = JsonConvert.DeserializeObject<JObject>(readMsg);
+
+                    if ((string)resp["CorrectKey"] == "true")
+                    {
+                        licenseType = ParseLicTypes((string)resp["LicType"]);
+                        licenseStatus = ParseLicStatus((string)resp["LicStatus"]);
+                        expiryDate = DateTime.Parse((string)resp["Expires"], CultureInfo.GetCultureInfo("de-de"));
+                        key = (string)resp["LicKey"]; // new License key
+                        return LicServerResponse.OKAY;
+                    }
+                    else
+                    {
+                        licenseType = LicenseTypes.UNKNOWN;
+                        licenseStatus = LicenseStatus.INACTIVE;
+                        expiryDate = DateTime.Now;
+
+                        if (ParseLicTypes((string)resp["LicType"]) == LicenseTypes.UNKNOWN)
+                        {
+                            return LicServerResponse.ACCOUNT_NOT_FOUND; //
+                        }
+
+                        return LicServerResponse.KEY_MISMATCH; // wrong key
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorHandling.ReportException(ex);
+                }
+            }
+            else
+            {
+                expiryWaiveDate = expiryDate.AddDays(7);
+                return LicServerResponse.UNREACHABLE; // server offline
+            }
+
+            return LicServerResponse.INVALID;
         }
 
         public async Task<int> CheckServerStatus(string url)
@@ -233,6 +293,10 @@ namespace DocCompareWPF.Classes
         public DateTime GetExpiryDate()
         {
             return expiryDate;
+        }
+        public DateTime GetExpiryWaiveDate()
+        {
+            return expiryWaiveDate;
         }
 
         public string GetExpiryDateString()

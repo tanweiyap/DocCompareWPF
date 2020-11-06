@@ -52,7 +52,7 @@ namespace DocCompareWPF
 
         private GridSelection sideGridSelectedLeftOrRight, mainGridSelectedLeftOrRight;
 
-        private Thread threadLoadDocs, threadLoadDocsProgress, threadCompare, threadAnimateDiff, threadDisplayResult, threadCheckTrial;
+        private Thread threadLoadDocs, threadLoadDocsProgress, threadCompare, threadAnimateDiff, threadDisplayResult, threadCheckTrial, threadRenewLic;
 
         public MainWindow()
         {
@@ -113,6 +113,13 @@ namespace DocCompareWPF
             {
                 LoadLicense();
                 DisplayLicense();
+
+                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL)
+                {
+                    threadCheckTrial = new Thread(new ThreadStart(CheckTrial));
+                    threadCheckTrial.Start();
+                }
+
                 ErrorHandling.ReportError("App Launch", "Launch on " + lic.GetUUID(), "App successfully launched with license: " + lic.GetLicenseTypesString() + ", expires/renewal on " + lic.GetExpiryDateString());
             }
             catch
@@ -136,15 +143,24 @@ namespace DocCompareWPF
                 MessageBox.Show("Your trial license will expire in " + timeBuffer.TotalDays + " day(s). Please consider making a subscription on www.hopietech.com", "Expired lincense", MessageBoxButton.OK);
             }
 
-            // lock all feature
+            // if license expires or needs renewal
             if (timeBuffer.TotalDays <= 0)
             {
-                MessageBox.Show("Your license has expired. Please consider making a subscription on www.hopietech.com", "Expired lincense", MessageBoxButton.OK);
+                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL)
+                {
+                    MessageBox.Show("Your license has expired. Please consider making a subscription on www.hopietech.com", "Expired lincense", MessageBoxButton.OK);
 
-                BrowseFileButton1.IsEnabled = false;
-                DocCompareFirstDocZone.AllowDrop = false;
-                DocCompareDragDropZone1.AllowDrop = false;
-                DocCompareColorZone1.AllowDrop = false;
+                    BrowseFileButton1.IsEnabled = false;
+                    DocCompareFirstDocZone.AllowDrop = false;
+                    DocCompareDragDropZone1.AllowDrop = false;
+                    DocCompareColorZone1.AllowDrop = false;
+                }
+
+                if(lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.ANNUAL_SUBSCRIPTION)
+                {
+                    threadRenewLic = new Thread(new ThreadStart(RenewLicense));
+                    threadRenewLic.Start();
+                }
             }
         }
 
@@ -190,6 +206,60 @@ namespace DocCompareWPF
             }
         }
 
+        private async void RenewLicense()
+        {
+            LicenseManagement.LicServerResponse res = await lic.RenewLincense();
+
+            Dispatcher.Invoke(() =>
+            {
+                switch (res)
+                {
+                    case LicenseManagement.LicServerResponse.UNREACHABLE:
+                        TimeSpan bufferTime = lic.GetExpiryWaiveDate().Subtract(DateTime.Today);
+                        if (bufferTime.TotalDays >= 0)
+                        {
+                            MessageBox.Show("License server not reachable. Please check your internet connection or launch the application within " + bufferTime.TotalDays.ToString() + " day(s) with working internet connection.", "License server not reachable", MessageBoxButton.OK);
+                        }
+                        else
+                        {
+                            MessageBox.Show("License server not reachable. Your license is no longer valid. Please contact us at support@hopietech.com for support if you have previously renewed the subscription.", "License server not reachable", MessageBoxButton.OK);
+                            BrowseFileButton1.IsEnabled = false;
+                            DocCompareFirstDocZone.AllowDrop = false;
+                            DocCompareDragDropZone1.AllowDrop = false;
+                            DocCompareColorZone1.AllowDrop = false;
+                        }
+                        UserEmailTextBox.IsEnabled = true;
+                        LicenseKeyTextBox.IsEnabled = true; // after successful activation, we will prevent further editing
+                        ActivateLicenseButton.IsEnabled = true;
+                        break;
+
+                    case LicenseManagement.LicServerResponse.KEY_MISMATCH:
+                        MessageBox.Show("The provided license key does not match the email address. Please check your inputs.", "Invalid license key", MessageBoxButton.OK);
+                        UserEmailTextBox.IsEnabled = true;
+                        LicenseKeyTextBox.IsEnabled = true; // after successful activation, we will prevent further editing
+                        ActivateLicenseButton.IsEnabled = true;
+                        break;
+
+                    case LicenseManagement.LicServerResponse.ACCOUNT_NOT_FOUND:
+                        MessageBox.Show("No license was found under the given email address. Please check your inputs.", "License not found", MessageBoxButton.OK);
+                        UserEmailTextBox.IsEnabled = true;
+                        LicenseKeyTextBox.IsEnabled = true; // after successful activation, we will prevent further editing
+                        ActivateLicenseButton.IsEnabled = true;
+                        break;
+
+                    case LicenseManagement.LicServerResponse.OKAY:
+                        MessageBox.Show("License renewed successfully.", "License renewal", MessageBoxButton.OK);
+                        UserEmailTextBox.IsEnabled = false;
+                        LicenseKeyTextBox.IsEnabled = false; // after successful activation, we will prevent further editing
+                        ActivateLicenseButton.IsEnabled = false;
+                        SaveLicense(); // only save license info if successful
+                                       // allow usage if it was previously disabled
+                        DisplayLicense();
+                        break;
+                }
+            });
+        }
+
         private async void ActivateLicenseButton_Click(object sender, RoutedEventArgs e)
         {
             LicenseManagement.LicServerResponse res = await lic.ActivateLincense(UserEmailTextBox.Text, LicenseKeyTextBox.Text);
@@ -219,6 +289,10 @@ namespace DocCompareWPF
                     DocCompareFirstDocZone.AllowDrop = true;
                     DocCompareDragDropZone1.AllowDrop = true;
                     DocCompareColorZone1.AllowDrop = true;
+                    break;
+                case LicenseManagement.LicServerResponse.INVALID:
+                    MessageBox.Show("License activated failed. Please try again later", "License activation", MessageBoxButton.OK);
+                    // we do nothing and retain current license info
                     break;
             }
 
@@ -1543,7 +1617,7 @@ namespace DocCompareWPF
                     UserEmailTextBox.Text = lic.GetEmail();
                     LicenseKeyTextBox.Text = lic.GetKey();
                     UserEmailTextBox.IsEnabled = false;
-                    LicenseKeyTextBox.IsEnabled = false;
+                    LicenseKeyTextBox.IsEnabled = false;                    
                     break;
 
                 case LicenseManagement.LicenseTypes.TRIAL:
@@ -1574,11 +1648,19 @@ namespace DocCompareWPF
                 case LicenseManagement.LicenseStatus.ACTIVE:
                     LicenseStatusTypeLabel.Content = "License status";
                     LicenseStatusLabel.Content = "Active";
+                    BrowseFileButton1.IsEnabled = true;
+                    DocCompareFirstDocZone.AllowDrop = true;
+                    DocCompareDragDropZone1.AllowDrop = true;
+                    DocCompareColorZone1.AllowDrop = true;
                     break;
 
                 case LicenseManagement.LicenseStatus.INACTIVE:
                     LicenseStatusTypeLabel.Content = "License status";
                     LicenseStatusLabel.Content = "Inactive";
+                    BrowseFileButton1.IsEnabled = false;
+                    DocCompareFirstDocZone.AllowDrop = false;
+                    DocCompareDragDropZone1.AllowDrop = false;
+                    DocCompareColorZone1.AllowDrop = false;
                     break;
             }
         }

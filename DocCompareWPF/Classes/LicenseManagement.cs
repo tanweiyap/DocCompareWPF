@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using ProtoBuf;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Management;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -61,7 +62,7 @@ namespace DocCompareWPF.Classes
                 // development mode
                 licenseType = LicenseTypes.TRIAL;
                 licenseStatus = LicenseStatus.ACTIVE;
-                expiryDate = DateTime.Today.AddDays(2);
+                expiryDate = DateTime.Today.AddDays(14);
                 //expiryDate = DateTime.Today.Subtract(TimeSpan.FromDays(2));
             }
             catch (Exception ex)
@@ -90,7 +91,50 @@ namespace DocCompareWPF.Classes
             KEY_MISMATCH,
             ACCOUNT_NOT_FOUND,
             OKAY,
+            INVALID,
         };
+
+        public async Task<LicServerResponse> ActivateTrial()
+        {
+            int status = await CheckServerStatus(serverAddress + "status");
+            if (status == 0)
+            {
+                IDictionary<string, string> licDict = new Dictionary<string, string>
+                    {
+                        { "UUID", UUID},
+                        { "DATE", expiryDate.ToString("d",CultureInfo.GetCultureInfo("de-de"))}
+                    };
+
+                var content = new FormUrlEncodedContent(licDict);
+
+                HttpResponseMessage msg = await client.PostAsync(serverAddress + "trial", content);
+                string readMsg = msg.Content.ReadAsStringAsync().Result;
+                try
+                {
+                    JObject resp = JsonConvert.DeserializeObject<JObject>(readMsg);
+                    DateTime returnDate = DateTime.Parse((string)resp["DATE"],CultureInfo.GetCultureInfo("de-de"));
+
+                    TimeSpan diff = returnDate.Subtract(expiryDate); // if local date is in the future, we know that the trial was installed
+                    if(diff.TotalDays < 0)
+                    {
+                        expiryDate = returnDate;
+                        return LicServerResponse.INVALID;
+                    }
+
+                    return LicServerResponse.OKAY;
+                }
+                catch (Exception ex)
+                {
+                    ErrorHandling.ReportException(ex);
+                }
+            }
+            else
+            {
+                return LicServerResponse.UNREACHABLE; // server offline
+            }
+
+            return LicServerResponse.INVALID;
+        }
 
         public async Task<LicServerResponse> ActivateLincense(string userEmail, string licKey)
         {
@@ -116,7 +160,7 @@ namespace DocCompareWPF.Classes
                     {
                         licenseType = ParseLicTypes((string)resp["LicType"]);
                         licenseStatus = ParseLicStatus((string)resp["LicStatus"]);
-                        expiryDate = DateTime.Parse((string)resp["Expires"]);
+                        expiryDate = DateTime.Parse((string)resp["Expires"],CultureInfo.GetCultureInfo("de-de"));
                         email = userEmail;
                         key = licKey;
                     }

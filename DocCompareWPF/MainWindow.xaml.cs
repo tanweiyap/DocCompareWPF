@@ -52,7 +52,7 @@ namespace DocCompareWPF
 
         private GridSelection sideGridSelectedLeftOrRight, mainGridSelectedLeftOrRight;
 
-        private Thread threadLoadDocs, threadLoadDocsProgress, threadCompare, threadAnimateDiff, threadDisplayResult;
+        private Thread threadLoadDocs, threadLoadDocsProgress, threadCompare, threadAnimateDiff, threadDisplayResult, threadCheckTrial;
 
         public MainWindow()
         {
@@ -121,6 +121,10 @@ namespace DocCompareWPF
                 lic.Init(); // init 14 days trial
                 DisplayLicense();
                 SaveLicense();
+
+                threadCheckTrial = new Thread(new ThreadStart(CheckTrial));
+                threadCheckTrial.Start();
+
                 ErrorHandling.ReportError("New trial license", "on " + lic.GetUUID(), "Expires on " + lic.GetExpiryDateString());
             }
 
@@ -166,6 +170,25 @@ namespace DocCompareWPF
             FILE_EXPLORER,
             SETTINGS,
         };
+
+        private async void CheckTrial()
+        {
+            LicenseManagement.LicServerResponse res = await lic.ActivateTrial();
+            if (res == LicenseManagement.LicServerResponse.INVALID)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show("A previous trial license has been activate don this machine. Please consider making a subscription on www.hopietech.com", "Expired lincense", MessageBoxButton.OK);
+
+                    BrowseFileButton1.IsEnabled = false;
+                    DocCompareFirstDocZone.AllowDrop = false;
+                    DocCompareDragDropZone1.AllowDrop = false;
+                    DocCompareColorZone1.AllowDrop = false;
+
+                    DisplayLicense();
+                });
+            }
+        }
 
         private async void ActivateLicenseButton_Click(object sender, RoutedEventArgs e)
         {

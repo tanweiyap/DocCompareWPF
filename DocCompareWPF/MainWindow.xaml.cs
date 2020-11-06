@@ -615,9 +615,9 @@ namespace DocCompareWPF
                 Dispatcher.Invoke(() =>
                 {
                     threadDisplayResult = new Thread(new ThreadStart(DisplayComparisonResult));
-                    threadDisplayResult.Start();
                     ProgressBarLoadingResults.Visibility = Visibility.Visible;
                     ProgressBarDocCompare.Visibility = Visibility.Hidden;
+                    threadDisplayResult.Start();
                 });
             }
             catch
@@ -681,10 +681,9 @@ namespace DocCompareWPF
             Image thisImage;
             FileStream stream;
             BitmapImage bitmap;
-
-            for (int i = 0; i < docs.totalLen; i++) // going through all the pages of the longest document
+            Dispatcher.Invoke(() =>
             {
-                Dispatcher.Invoke(() =>
+                for (int i = 0; i < docs.totalLen; i++) // going through all the pages of the longest document
                 {
                     Grid thisGrid = new Grid
                     {
@@ -710,6 +709,7 @@ namespace DocCompareWPF
                         bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.CreateOptions = BitmapCreateOptions.None;
                         bitmap.StreamSource = stream;
                         bitmap.EndInit();
                         stream.Close();
@@ -735,6 +735,7 @@ namespace DocCompareWPF
                             bitmap = new BitmapImage();
                             bitmap.BeginInit();
                             bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.CreateOptions = BitmapCreateOptions.None;
                             bitmap.StreamSource = stream;
                             bitmap.EndInit();
                             stream.Close();
@@ -785,6 +786,7 @@ namespace DocCompareWPF
                         bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.CreateOptions = BitmapCreateOptions.None;
                         bitmap.StreamSource = stream;
                         bitmap.EndInit();
                         stream.Close();
@@ -810,6 +812,7 @@ namespace DocCompareWPF
                             bitmap = new BitmapImage();
                             bitmap.BeginInit();
                             bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.CreateOptions = BitmapCreateOptions.None;
                             bitmap.StreamSource = stream;
                             bitmap.EndInit();
                             stream.Close();
@@ -832,6 +835,7 @@ namespace DocCompareWPF
                                 bitmap = new BitmapImage();
                                 bitmap.BeginInit();
                                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                bitmap.CreateOptions = BitmapCreateOptions.None;
                                 bitmap.StreamSource = stream;
                                 bitmap.EndInit();
                                 stream.Close();
@@ -871,8 +875,8 @@ namespace DocCompareWPF
 
                     pageCounter++;
                     docCompareChildPanel1.Children.Add(thisGrid);
-                });
-            }
+                }
+            });
 
             Dispatcher.Invoke(() =>
             {
@@ -881,10 +885,9 @@ namespace DocCompareWPF
             });
 
             // side panel
-
-            for (int i = 0; i < docs.totalLen; i++) // going through all the pages of the longest document
+            Dispatcher.Invoke(() =>
             {
-                Dispatcher.Invoke(() =>
+                for (int i = 0; i < docs.totalLen; i++) // going through all the pages of the longest document
                 {
                     Grid thisLeftGrid = new Grid()
                     {
@@ -945,6 +948,7 @@ namespace DocCompareWPF
                         bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.CreateOptions = BitmapCreateOptions.None;
                         bitmap.StreamSource = stream;
                         bitmap.EndInit();
                         stream.Close();
@@ -1009,6 +1013,7 @@ namespace DocCompareWPF
                             bitmap = new BitmapImage();
                             bitmap.BeginInit();
                             bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.CreateOptions = BitmapCreateOptions.None;
                             bitmap.StreamSource = stream;
                             bitmap.EndInit();
                             stream.Close();
@@ -1034,6 +1039,7 @@ namespace DocCompareWPF
                         bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.CreateOptions = BitmapCreateOptions.None;
                         bitmap.StreamSource = stream;
                         bitmap.EndInit();
                         stream.Close();
@@ -1060,6 +1066,7 @@ namespace DocCompareWPF
                         bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.CreateOptions = BitmapCreateOptions.None;
                         bitmap.StreamSource = stream;
                         bitmap.EndInit();
                         stream.Close();
@@ -1083,6 +1090,7 @@ namespace DocCompareWPF
                                     bitmap = new BitmapImage();
                                     bitmap.BeginInit();
                                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                    bitmap.CreateOptions = BitmapCreateOptions.None;
                                     bitmap.StreamSource = stream;
                                     bitmap.EndInit();
 
@@ -1146,6 +1154,7 @@ namespace DocCompareWPF
                             bitmap = new BitmapImage();
                             bitmap.BeginInit();
                             bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.CreateOptions = BitmapCreateOptions.None;
                             bitmap.StreamSource = stream;
                             bitmap.EndInit();
                             stream.Close();
@@ -1171,6 +1180,7 @@ namespace DocCompareWPF
                         bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.CreateOptions = BitmapCreateOptions.None;
                         bitmap.StreamSource = stream;
                         bitmap.EndInit();
                         stream.Close();
@@ -1201,8 +1211,8 @@ namespace DocCompareWPF
                     thisLeftGrid.Children.Add(thisLabel);
                     docCompareChildPanelLeft.Children.Add(thisLeftGrid);
                     docCompareChildPanelRight.Children.Add(thisRightGrid);
-                });
-            }
+                }
+            });
 
             Dispatcher.Invoke(() =>
             {
@@ -1250,6 +1260,7 @@ namespace DocCompareWPF
                                     var bitmap = new BitmapImage();
                                     bitmap.BeginInit();
                                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                    bitmap.CreateOptions = BitmapCreateOptions.None;
                                     bitmap.StreamSource = stream;
                                     bitmap.EndInit();
                                     stream.Close();
@@ -1339,6 +1350,7 @@ namespace DocCompareWPF
                                     var bitmap = new BitmapImage();
                                     bitmap.BeginInit();
                                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                    bitmap.CreateOptions = BitmapCreateOptions.None;
                                     bitmap.StreamSource = stream;
                                     bitmap.EndInit();
                                     stream.Close();
@@ -1428,6 +1440,7 @@ namespace DocCompareWPF
                                     var bitmap = new BitmapImage();
                                     bitmap.BeginInit();
                                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                    bitmap.CreateOptions = BitmapCreateOptions.None;
                                     bitmap.StreamSource = stream;
                                     bitmap.EndInit();
                                     stream.Close();

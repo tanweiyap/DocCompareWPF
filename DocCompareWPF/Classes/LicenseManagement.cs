@@ -30,10 +30,8 @@ namespace DocCompareWPF.Classes
         [ProtoMember(4)]
         private string UUID;
 
-
         [ProtoMember(5)]
         private string email = "";
-
 
         [ProtoMember(6)]
         private string key = "";
@@ -43,7 +41,6 @@ namespace DocCompareWPF.Classes
 
         public LicenseManagement()
         {
-            
         }
 
         public void Init()
@@ -95,6 +92,7 @@ namespace DocCompareWPF.Classes
             ACCOUNT_NOT_FOUND,
             OKAY,
             INVALID,
+            INUSE,
         };
 
         public async Task<LicServerResponse> ActivateTrial()
@@ -115,10 +113,10 @@ namespace DocCompareWPF.Classes
                 try
                 {
                     JObject resp = JsonConvert.DeserializeObject<JObject>(readMsg);
-                    DateTime returnDate = DateTime.Parse((string)resp["DATE"],CultureInfo.GetCultureInfo("de-de"));
+                    DateTime returnDate = DateTime.Parse((string)resp["DATE"], CultureInfo.GetCultureInfo("de-de"));
 
                     TimeSpan diff = returnDate.Subtract(expiryDate); // if local date is in the future, we know that the trial was installed
-                    if(diff.TotalDays < 0)
+                    if (diff.TotalDays < 0)
                     {
                         expiryDate = returnDate;
                         return LicServerResponse.INVALID;
@@ -144,26 +142,32 @@ namespace DocCompareWPF.Classes
             int status = await CheckServerStatus(serverAddress + "status");
             if (status == 0)
             {
-                IDictionary<string, string> licDict = new Dictionary<string, string>
+                try
+                {
+                    IDictionary<string, string> licDict = new Dictionary<string, string>
                     {
                         { "Email", userEmail},
                         { "LicKey", licKey},
                         { "UUID", UUID }
                     };
 
-                var content = new FormUrlEncodedContent(licDict);
+                    var content = new FormUrlEncodedContent(licDict);
 
-                HttpResponseMessage msg = await client.PostAsync(serverAddress + "activate", content);
-                string readMsg = msg.Content.ReadAsStringAsync().Result;
-                try
-                {
+                    HttpResponseMessage msg = await client.PostAsync(serverAddress + "activate", content);
+                    string readMsg = msg.Content.ReadAsStringAsync().Result;
+
                     JObject resp = JsonConvert.DeserializeObject<JObject>(readMsg);
+
+                    if ((string)resp["InUse"] == "true")
+                    {
+                        return LicServerResponse.INUSE;
+                    }
 
                     if ((string)resp["CorrectKey"] == "true")
                     {
                         licenseType = ParseLicTypes((string)resp["LicType"]);
                         licenseStatus = ParseLicStatus((string)resp["LicStatus"]);
-                        expiryDate = DateTime.Parse((string)resp["Expires"],CultureInfo.GetCultureInfo("de-de"));
+                        expiryDate = DateTime.Parse((string)resp["Expires"], CultureInfo.GetCultureInfo("de-de"));
                         email = userEmail;
                         key = licKey;
                         return LicServerResponse.OKAY;
@@ -181,7 +185,8 @@ namespace DocCompareWPF.Classes
 
                         return LicServerResponse.KEY_MISMATCH; // wrong key
                     }
-                }catch(Exception ex)
+                }
+                catch (Exception ex)
                 {
                     ErrorHandling.ReportException(ex);
                 }
@@ -294,6 +299,7 @@ namespace DocCompareWPF.Classes
         {
             return expiryDate;
         }
+
         public DateTime GetExpiryWaiveDate()
         {
             return expiryWaiveDate;

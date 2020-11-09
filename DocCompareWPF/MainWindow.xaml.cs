@@ -291,7 +291,11 @@ namespace DocCompareWPF
                     DocCompareColorZone1.AllowDrop = true;
                     break;
                 case LicenseManagement.LicServerResponse.INVALID:
-                    MessageBox.Show("License activated failed. Please try again later", "License activation", MessageBoxButton.OK);
+                    MessageBox.Show("License activated failed. Please try again later", "License activation failed", MessageBoxButton.OK);
+                    // we do nothing and retain current license info
+                    break;
+                case LicenseManagement.LicServerResponse.INUSE:
+                    MessageBox.Show("License has been activated on another machine. Please contact support@hopietech.com for further assitance", "License in used", MessageBoxButton.OK);
                     // we do nothing and retain current license info
                     break;
             }
@@ -1617,7 +1621,8 @@ namespace DocCompareWPF
                     UserEmailTextBox.Text = lic.GetEmail();
                     LicenseKeyTextBox.Text = lic.GetKey();
                     UserEmailTextBox.IsEnabled = false;
-                    LicenseKeyTextBox.IsEnabled = false;                    
+                    LicenseKeyTextBox.IsEnabled = false;
+                    ActivateLicenseButton.IsEnabled = false;
                     break;
 
                 case LicenseManagement.LicenseTypes.TRIAL:

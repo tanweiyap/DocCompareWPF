@@ -136,7 +136,7 @@
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
                                             <ComboBox x:Name="Doc1NameLabelComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="30,0,30,0">
+                                                      IsEditable="False" Padding="30,0,30,0" FontSize="14">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
                                                         <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
@@ -270,7 +270,7 @@
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
                                             <ComboBox x:Name="Doc2NameLabelComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="30,0,30,0">
+                                                      IsEditable="False" Padding="30,0,30,0" FontSize="14">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
                                                         <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
@@ -405,7 +405,7 @@
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
                                             <ComboBox x:Name="Doc3NameLabelComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc3NameLabelComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="30,0,30,0">
+                                                      IsEditable="False" Padding="30,0,30,0" FontSize="14">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
                                                         <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
@@ -556,7 +556,7 @@
                                         <ColumnDefinition />
                                         <ColumnDefinition MaxWidth="300" MinWidth="300" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock x:Name="DocCompareNameLabel1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,0,0" Padding="30,0,30,0" TextTrimming="CharacterEllipsis"></TextBlock>
+                                    <TextBlock x:Name="DocCompareNameLabel1" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,0,0" Padding="30,0,30,0" TextTrimming="CharacterEllipsis"></TextBlock>
                                     <Button x:Name="OpenDoc1OriginalButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="0" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
                                             HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" Cursor="Hand">
                                         <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
@@ -566,7 +566,7 @@
                                         <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                     </Button>
                                     <ComboBox x:Name="DocCompareNameLabel2ComboBox" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="DocCompareNameLabel2ComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="30,0,30,0">
+                                                      IsEditable="False" Padding="30,0,30,0" FontSize="14">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
                                                 <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />

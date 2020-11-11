@@ -331,10 +331,7 @@ namespace DocCompareWPF
                             }
                             else if (thisImg.Tag.ToString().Contains("Mask"))
                             {
-                                //if (imageToggler == false)
-                                //    thisImg.Visibility = Visibility.Visible;
-                                //else
-                                thisImg.Visibility = Visibility.Hidden;
+                                
                             }
                             else
                             {
@@ -1675,6 +1672,11 @@ namespace DocCompareWPF
                 gridToAnimate = (sender as Button).Parent as Grid;
                 animateDiffRunning = true;
 
+                foreach (CompareMainItem item in DocCompareMainListView.Items)
+                {
+                    item.ShowMask = Visibility.Hidden;
+                }
+
                 threadAnimateDiff = new Thread(new ThreadStart(AnimateDiffThread));
                 threadAnimateDiff.Start();
             }
@@ -1695,20 +1697,25 @@ namespace DocCompareWPF
                             thisImg.Visibility = Visibility.Hidden;
                         else if (thisImg.Tag.ToString().Contains("Mask"))
                         {
-                            if (showMask == false)
-                            {
-                                thisImg.Visibility = Visibility.Hidden;
-                            }
-                            else
-                            {
-                                thisImg.Visibility = Visibility.Visible;
-                            }
+
                         }
                         else
                             thisImg.Visibility = Visibility.Visible;
                     }
                 }
             }
+
+            foreach (CompareMainItem item in DocCompareMainListView.Items)
+            {
+                if (showMask == true)
+                {
+                    item.ShowMask = Visibility.Visible;
+                }else
+                {
+                    item.ShowMask = Visibility.Hidden;
+                }
+            }
+
         }
 
         private void HandleMainDocCompareGridMouseEnter(object sender, MouseEventArgs args)
@@ -1881,9 +1888,9 @@ namespace DocCompareWPF
                     accuHeight += container.ActualHeight;
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                //HighlightSideGrid();
+
             }
         }
 
@@ -2047,19 +2054,20 @@ namespace DocCompareWPF
             string[] splittedNameTarget;
 
             if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
-            {                
+            {
                 splittedNameRef = selectedSideGridButtonName1.Split("Left");
 
-                foreach(SideGridItemLeft item in DocCompareSideListViewLeft.Items)
+                foreach (SideGridItemLeft item in DocCompareSideListViewLeft.Items)
                 {
                     splittedNameTarget = item.GridName.Split("Grid");
-                    if(splittedNameTarget[1] != splittedNameRef[1])
+                    if (splittedNameTarget[1] != splittedNameRef[1])
                     {
                         item.GridEffect = new BlurEffect()
                         {
                             Radius = 5,
                         };
-                    }else
+                    }
+                    else
                     {
                         item.GridEffect = null;
                     }
@@ -2069,16 +2077,17 @@ namespace DocCompareWPF
             {
                 splittedNameRef = selectedSideGridButtonName1.Split("Right");
 
-                foreach(SideGridItemRight item in DocCompareSideListViewRight.Items)
+                foreach (SideGridItemRight item in DocCompareSideListViewRight.Items)
                 {
                     splittedNameTarget = item.GridName.Split("Grid");
-                    if(splittedNameTarget[1] != splittedNameRef[1])
+                    if (splittedNameTarget[1] != splittedNameRef[1])
                     {
                         item.GridEffect = new BlurEffect()
                         {
                             Radius = 5,
                         };
-                    }else
+                    }
+                    else
                     {
                         item.GridEffect = null;
                     }
@@ -2461,8 +2470,6 @@ namespace DocCompareWPF
             {
                 Dispatcher.Invoke(() =>
                 {
-                    Border border;
-                    ScrollViewer scrollViewer;
                     switch (docs.displayToReload)
                     {
                         case 0:
@@ -3441,12 +3448,12 @@ namespace DocCompareWPF
         private void UnMaskSideGridFromForceAlignMode()
         {
 
-            foreach(SideGridItemLeft item in DocCompareSideListViewLeft.Items)
+            foreach (SideGridItemLeft item in DocCompareSideListViewLeft.Items)
             {
                 item.GridEffect = null;
             }
 
-            foreach(SideGridItemRight item in DocCompareSideListViewRight.Items)
+            foreach (SideGridItemRight item in DocCompareSideListViewRight.Items)
             {
                 item.GridEffect = null;
             }

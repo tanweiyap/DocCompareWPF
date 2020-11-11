@@ -634,10 +634,6 @@
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Image.Effect>
                                                                 </Image>
-                                                                <Button Tag="{Binding AnimateDiffLeftButtonName}" Height="25" Width="25" Padding="0" Margin="15,15,0,0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Click and hold to animate the difference" Visibility="Hidden"
-                                                                    PreviewMouseDown="HandleMainDocCompareAnimateMouseDown" PreviewMouseUp="HandleMainDocCompareAnimateMouseRelease">
-                                                                    <iconPacks:PackIconMaterial Kind="VectorDifference" Width="15" Height="15" />
-                                                                </Button>
                                                             </Grid>
                                                             <Grid Grid.Column="1" Tag="{Binding ImgGridRightName}" MouseEnter="HandleMainDocCompareGridMouseEnter" MouseLeave="HandleMainDocCompareGridMouseLeave">
                                                                 <Image Tag="{Binding ImgRightName}" Source="{Binding PathToImgRight, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
@@ -656,7 +652,7 @@
                                                                     VerticalAlignment="Center" Visibility="{Binding ShowMask}" Stretch="Uniform">                                                                        
                                                                 </Image>
                                                                 <Button Tag="{Binding AnimateDiffRightButtonName}" Height="25" Width="25" Padding="0" Margin="15,15,0,0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Click and hold to animate the difference" Visibility="Hidden"
-                                                                    PreviewMouseDown="HandleMainDocCompareAnimateMouseDown" PreviewMouseUp="HandleMainDocCompareAnimateMouseRelease">
+                                                                    PreviewMouseDown="HandleMainDocCompareAnimateMouseDown" PreviewMouseUp="HandleMainDocCompareAnimateMouseRelease" IsEnabled="{Binding AniDiffButtonEnable}">
                                                                     <iconPacks:PackIconMaterial Kind="VectorDifference" Width="15" Height="15" />
                                                                 </Button>
                                                             </Grid>

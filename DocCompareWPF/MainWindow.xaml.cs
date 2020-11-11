@@ -741,6 +741,7 @@ namespace DocCompareWPF
                     ImgMaskRightName = "MainMaskImgRight" + i.ToString(),
                     AnimateDiffLeftButtonName = "AnimateDiffLeft" + i.ToString(),
                     AnimateDiffRightButtonName = "AnimateDiffRight" + i.ToString(),
+                    AniDiffButtonEnable = false,
                     Margin = new Thickness(10),
                 };
 
@@ -751,6 +752,7 @@ namespace DocCompareWPF
                     if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
                     {
                         thisItem.PathToAniImgLeft = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg");
+                        thisItem.AniDiffButtonEnable = true;
                     }
                 }
 
@@ -765,6 +767,7 @@ namespace DocCompareWPF
                         if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
                         {
                             thisItem.PathToMaskImgRight = Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"));
+                            thisItem.AniDiffButtonEnable = true;
 
                             if (showMask == true)
                                 thisItem.ShowMask = Visibility.Visible;
@@ -3677,6 +3680,7 @@ namespace DocCompareWPF
         public string ImgAniRightName { get; set; }
         public string ImgMaskRightName { get; set; }
         public string AnimateDiffRightButtonName { get; set; }
+        public bool AniDiffButtonEnable { get; set; }
 
         public string PathToImgLeft { get; set; }
         public string PathToAniImgLeft { get; set; }

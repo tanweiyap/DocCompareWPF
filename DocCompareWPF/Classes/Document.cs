@@ -1,7 +1,6 @@
 ﻿using DocCompareDLL;
 using DocConvert;
 using System;
-using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -47,7 +46,7 @@ namespace DocCompareWPF.Classes
                         ModifiedDate = DateTime.Parse(fileAttributes[3]).ToString("F", culture);
                     }
 
-                    if(Creator == null || LastEditor == null || CreatedDate == null || ModifiedDate == null)
+                    if (Creator == null || LastEditor == null || CreatedDate == null || ModifiedDate == null)
                     {
                         fileInfo = new FileInfo(filePath);
                         Creator = fileInfo.GetAccessControl().GetOwner(typeof(System.Security.Principal.NTAccount)).ToString().Split("\\")[^1];

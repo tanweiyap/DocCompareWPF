@@ -55,7 +55,7 @@
                         </Style.Triggers>
                     </Style>
                     
-
+                    <local:UriToCachedImageConverter x:Key="uriToImageConv"/>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

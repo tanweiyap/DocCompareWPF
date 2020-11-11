@@ -160,8 +160,29 @@
                                             </Button>
                                         </Grid>
                                     </Grid>
-                                    <ScrollViewer x:Name="DocCompareScrollViewer1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer1_ScrollChanged">
-                                    </ScrollViewer>
+                                    <ListView x:Name="DocCompareListView1" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareScrollViewer1_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
+                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>                                          
+                                                <Setter Property="Background" Value="Transparent"/>  
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">   
+                                                            <Grid HorizontalAlignment="Stretch" Background="Transparent">                                         
+                                                                <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
+                                                                    <Image.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
+                                                                    </Image.Effect>
+                                                                </Image>
+                                                            </Grid>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter> 
+                                            </Style>                                        
+                                        </ListView.ItemContainerStyle>
+                                    </ListView>
                                     <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
@@ -274,8 +295,29 @@
                                             </Button>
                                         </Grid>
                                     </Grid>
-                                    <ScrollViewer x:Name="DocCompareScrollViewer2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer2_ScrollChanged">
-                                    </ScrollViewer>
+                                    <ListView x:Name="DocCompareListView2" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareScrollViewer2_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
+                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>                                          
+                                                <Setter Property="Background" Value="Transparent"/>  
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">   
+                                                            <Grid HorizontalAlignment="Stretch" Background="Transparent">                                         
+                                                                <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
+                                                                    <Image.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
+                                                                    </Image.Effect>
+                                                                </Image>
+                                                            </Grid>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter> 
+                                            </Style>                                        
+                                        </ListView.ItemContainerStyle>
+                                    </ListView>
                                     <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
@@ -388,8 +430,29 @@
                                             </Button>
                                         </Grid>
                                     </Grid>
-                                    <ScrollViewer x:Name="DocCompareScrollViewer3" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollChanged="DocCompareScrollViewer3_ScrollChanged">
-                                    </ScrollViewer>
+                                    <ListView x:Name="DocCompareListView3" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareScrollViewer3_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
+                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>                                          
+                                                <Setter Property="Background" Value="Transparent"/>  
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">   
+                                                            <Grid HorizontalAlignment="Stretch" Background="Transparent">                                         
+                                                                <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
+                                                                    <Image.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
+                                                                    </Image.Effect>
+                                                                </Image>
+                                                            </Grid>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter> 
+                                            </Style>                                        
+                                        </ListView.ItemContainerStyle>
+                                    </ListView>
                                     <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
@@ -540,14 +603,176 @@
                             <Grid x:Name="DocCompareScrollViewerGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
-                                    <ColumnDefinition />
                                     <ColumnDefinition MaxWidth="140" MinWidth="140"/>
                                     <ColumnDefinition MaxWidth="160" MinWidth="160"/>
                                 </Grid.ColumnDefinitions>
-                                <ScrollViewer x:Name="DocCompareMainScrollViewer" Grid.Column="0" ScrollChanged="DocCompareMainScrollViewer_ScrollChanged" Grid.ColumnSpan="2" />
-                                <ScrollViewer x:Name="DocCompareSideScrollViewerLeft" Background="Transparent" Style="{StaticResource MahApps.Styles.ScrollViewer}" Grid.Column="2" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" ScrollChanged="DocCompareSideScrollViewerLeft_ScrollChanged" Margin="0,0,150,0" HorizontalContentAlignment="Left" BorderThickness="0" Width="150" Grid.ColumnSpan="2" />
-                                <ScrollViewer x:Name="DocCompareSideScrollViewerRight" Background="Transparent" Style="{StaticResource MahApps.Styles.ScrollViewer}" Grid.Column="3" ScrollChanged="DocCompareSideScrollViewerRight_ScrollChanged" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Hidden" Padding="0" HorizontalContentAlignment="Stretch" BorderThickness="0" Width="160" />
-                                <Grid x:Name="HighlightingDisableTip" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.7" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" Grid.Column="1">
+                                <ListView x:Name="DocCompareMainListView" Grid.Column="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareMainScrollViewer_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
+                                    VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>                                          
+                                            <Setter Property="Background" Value="Transparent"/>  
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">   
+                                                        <Grid Tag="{Binding ImgGridName}" IsHitTestVisible="true" HorizontalAlignment="Stretch" Background="Transparent">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition/>
+                                                                <ColumnDefinition/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Grid Tag="{Binding ImgGridLeftName}" MouseEnter="HandleMainDocCompareGridMouseEnter" MouseLeave="HandleMainDocCompareGridMouseLeave">
+                                                                <Image Tag="{Binding ImgLeftName}" Source="{Binding PathToImgLeft, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Stretch="Uniform">
+                                                                    <Image.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
+                                                                    </Image.Effect>
+                                                                </Image>
+                                                                <Image Tag="{Binding ImgAniLeftName}" Source="{Binding PathToAniImgLeft, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Visibility="Hidden" Stretch="Uniform">
+                                                                    <Image.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
+                                                                    </Image.Effect>
+                                                                </Image>
+                                                                <Button Tag="{Binding AnimateDiffLeftButtonName}" Height="25" Width="25" Padding="0" Margin="15,15,0,0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Click and hold to animate the difference" Visibility="Hidden"
+                                                                    PreviewMouseDown="HandleMainDocCompareAnimateMouseDown" PreviewMouseUp="HandleMainDocCompareAnimateMouseRelease">
+                                                                    <iconPacks:PackIconMaterial Kind="VectorDifference" Width="15" Height="15" />
+                                                                </Button>
+                                                            </Grid>
+                                                            <Grid Grid.Column="1" Tag="{Binding ImgGridRightName}" MouseEnter="HandleMainDocCompareGridMouseEnter" MouseLeave="HandleMainDocCompareGridMouseLeave">
+                                                                <Image Tag="{Binding ImgRightName}" Source="{Binding PathToImgRight, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Stretch="Uniform">
+                                                                    <Image.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
+                                                                    </Image.Effect>
+                                                                </Image>
+                                                                <Image Tag="{Binding ImgAniRightName}" Source="{Binding PathToAniImgRight, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Visibility="Hidden" Stretch="Uniform">
+                                                                    <Image.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
+                                                                    </Image.Effect>
+                                                                </Image>
+                                                                <Image Tag="{Binding ImgMaskRightName}" Source="{Binding PathToMaskImgRight, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Visibility="{Binding ShowMask}" Stretch="Uniform">                                                                        
+                                                                </Image>
+                                                                <Button Tag="{Binding AnimateDiffRightButtonName}" Height="25" Width="25" Padding="0" Margin="15,15,0,0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Click and hold to animate the difference" Visibility="Hidden"
+                                                                    PreviewMouseDown="HandleMainDocCompareAnimateMouseDown" PreviewMouseUp="HandleMainDocCompareAnimateMouseRelease">
+                                                                    <iconPacks:PackIconMaterial Kind="VectorDifference" Width="15" Height="15" />
+                                                                </Button>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter> 
+                                        </Style>                                        
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+                                <ListView x:Name="DocCompareSideListViewLeft" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareSideScrollViewerLeft_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
+                                    VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>                                          
+                                            <Setter Property="Background" Value="Transparent"/>  
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">   
+                                                        <Grid Tag="{Binding GridName}" IsHitTestVisible="true" HorizontalAlignment="Stretch" MouseLeftButtonDown="HandleMouseClickOnSideScrollView"
+                                                            Effect="{Binding GridEffect}">
+                                                            <Grid.Background>
+                                                                <SolidColorBrush Color="{Binding BackgroundBrush}"/>
+                                                            </Grid.Background>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="30"/>
+                                                                <ColumnDefinition Width="100"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Label Content="{Binding PageNumberLabel}" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="25" FontSize="12"></Label>
+                                                            <Grid Tag="{Binding ImgGridName}" Grid.Column="1" MouseEnter="SideGridMouseEnter" MouseLeave="SideGridMouseLeave">
+                                                                <Image Tag="{Binding ImgName}" Source="{Binding PathToImg, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Stretch="Uniform">
+                                                                    <Image.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                    </Image.Effect>
+                                                                </Image>
+                                                                <Image Tag="{Binding ImgDummyName}" Source="{Binding PathToImgDummy, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Stretch="Uniform" Visibility="Hidden">
+                                                                </Image>
+                                                                <Image Tag="{Binding ImgMaskName}" Source="{Binding PathToImgMask, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Stretch="Uniform">
+                                                                    <Image.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                    </Image.Effect>
+                                                                </Image>
+                                                                <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="Link Pages" Visibility="Hidden"
+                                                                    Click="SideGridButtonMouseClick" IsHitTestVisible="true">
+                                                                    <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
+                                                                </Button>
+                                                                <Button Tag="{Binding ForceAlignInvalidButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="This link would cross a previously set link. Please remove that link before aligning these pages." Visibility="Hidden" IsHitTestVisible="true">
+                                                                    <iconPacks:PackIconFontAwesome Kind="BanSolid" Width="15" Height="15" />
+                                                                </Button>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter> 
+                                        </Style>                                        
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+                                <ListView x:Name="DocCompareSideListViewRight" Grid.Column="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareSideScrollViewerRight_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
+                                    VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>                                          
+                                            <Setter Property="Background" Value="Transparent"/>  
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">   
+                                                        <Grid Tag="{Binding GridName}" IsHitTestVisible="true" HorizontalAlignment="Stretch" MouseLeftButtonDown="HandleMouseClickOnSideScrollView"
+                                                            Effect="{Binding GridEffect}">
+                                                            <Grid.Background>
+                                                                <SolidColorBrush Color="{Binding BackgroundBrush}"/>
+                                                            </Grid.Background>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="30"/>
+                                                                <ColumnDefinition Width="100"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Button Tag="{Binding RemoveForceAlignButtonName}" Height="20" Width="20" Padding="0" Margin="0" Foreground="Black" Background="White" IsHitTestVisible="true" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Unlink pages"
+                                                                Click="RemoveForceAlignClicked" Visibility="{Binding RemoveForceAlignButtonVisibility}" IsEnabled="{Binding RemoveForceAlignButtonEnable}">
+                                                                <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
+                                                            </Button>
+                                                            <Grid Tag="{Binding ImgGridName}" Grid.Column="1" MouseEnter="SideGridMouseEnter" MouseLeave="SideGridMouseLeave">
+                                                                <Image Tag="{Binding ImgName}" Source="{Binding PathToImg, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Stretch="Uniform">
+                                                                    <Image.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                    </Image.Effect>
+                                                                </Image>
+                                                                <Image Tag="{Binding ImgDummyName}" Source="{Binding PathToImgDummy, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Stretch="Uniform" Visibility="Hidden">
+                                                                    <Image.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                    </Image.Effect>
+                                                                </Image>
+                                                                <Image Tag="{Binding ImgMaskName}" Source="{Binding PathToMask, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Stretch="Uniform" Visibility="{Binding ShowMask}">
+                                                                </Image>
+                                                                <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="Link Pages" Visibility="Hidden"
+                                                                    Click="SideGridButtonMouseClick" IsHitTestVisible="true">
+                                                                    <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
+                                                                </Button>
+                                                                <Button Tag="{Binding ForceAlignInvalidButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="This link would cross a previously set link. Please remove that link before aligning these pages." Visibility="Hidden" IsHitTestVisible="true">
+                                                                    <iconPacks:PackIconFontAwesome Kind="BanSolid" Width="15" Height="15" />
+                                                                </Button>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter> 
+                                        </Style>                                        
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+                                <Grid x:Name="HighlightingDisableTip" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.7" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" Grid.Column="0">
                                     <Label>Highlighting disabled</Label>
                                 </Grid>
                             </Grid>
@@ -613,7 +838,7 @@
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid x:Name="SettingsPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="SettingsPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="220" />
                             <ColumnDefinition />
@@ -701,7 +926,7 @@
                             <Label FontWeight="Bold" FontSize="18" Grid.Row="2">Appearance</Label>
                             <CheckBox x:Name="SettingsShowThirdPanelCheckBox" Grid.Row="3" Margin="20,0,0,0" Checked="SettingsShowThirdPanelCheckBox_Checked" Unchecked="SettingsShowThirdPanelCheckBox_Unchecked">Show third preview panel</CheckBox-->
                         </Grid>
-                        <Grid x:Name="SettingsAboutPanel" Grid.Column="1" Margin="25" Visibility="Visible">
+                        <Grid x:Name="SettingsAboutPanel" Grid.Column="1" Margin="25" Visibility="Hidden">
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition/>

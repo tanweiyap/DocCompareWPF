@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using ProtoBuf;
+﻿using ProtoBuf;
 
 namespace DocCompareWPF.Classes
 {
     [ProtoContract]
     class AppSettings
     {
-        [ProtoMember (1)]
+        [ProtoMember(1)]
         public int numPanelsDragDrop = 2;
 
         [ProtoMember(2)]

@@ -99,9 +99,11 @@ namespace DocCompareWPF.Classes
             }
 
             // clean up folder
+            
             documents[index].ClearFolder();
             DirectoryInfo di = new DirectoryInfo(documents[index].imageFolder);
             di.Delete();
+            
             documents.RemoveAt(index);
 
             // we now check for docs to show

@@ -57,7 +57,7 @@ namespace DocConvert
     {
         public PPTConvertClass()
         {
-        }        
+        }
 
         public List<string> GetFileAttribute(string filePath)
         {

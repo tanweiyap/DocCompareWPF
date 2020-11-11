@@ -30,7 +30,7 @@ namespace DocCompareWPF.Classes
                 }
             }
             catch
-            {                
+            {
                 return false;
             }
 

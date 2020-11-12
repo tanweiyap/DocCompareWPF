@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define ComponentRules="OneToOne"?>
+  <!-- SourceDir instructs IsWiX the location of the directory that contains files for this merge module -->
+  <?define SourceDir="..\Installer\Deploy"?>
+  <Module Id="InstallerAppMM" Language="1033" Version="1.0.0.0">
+    <Package Id="5c3e4d5b-252a-4b0f-bdc5-e4cef5e2a614" Manufacturer="Hopie Tech UG" InstallerVersion="200" Platform="x64" InstallScope="perMachine" />
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="DesktopFolder" />
+      <Directory Id="MergeRedirectFolder">
+        <Component Id="owc9530E9EE7B7524821D40E910CDB9FA7C" Guid="b6294f2a-de2b-932a-2bab-d3a018998dd1" Win64="yes">
+          <File Id="owf9530E9EE7B7524821D40E910CDB9FA7C" Source="$(var.SourceDir)\2Compare.deps.json" KeyPath="yes" />
+        </Component>
+        <Component Id="owcCD64866319513CFC936C0E2E0DCC8092" Guid="24f2cfbf-a904-61b8-3ed6-41c94ba39e85" Win64="yes">
+          <File Id="owfCD64866319513CFC936C0E2E0DCC8092" Source="$(var.SourceDir)\2Compare.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc64A7DF6D50CB0C793A1FFE8A572D3F7A" Guid="693a6669-728c-f750-1528-6a0b333ae853" Win64="yes">
+          <File Id="owf64A7DF6D50CB0C793A1FFE8A572D3F7A" Source="$(var.SourceDir)\2Compare.exe" KeyPath="yes">
+            <Shortcut Id="sc4F20086A0C7FF8501C85D693929C44C8" Name="2Compare" Directory="DesktopFolder" Show="normal" />
+            <Shortcut Id="sc8A39796CE1FBC05560B6427835C88C98" Name="2Compare" Directory="ProgramMenuFolder" Show="normal" />
+          </File>
+        </Component>
+        <Component Id="owcEAB1E9CA64C6DB5F84B86B9E1844E2D8" Guid="8df002a4-0ada-5636-5d78-65bfab603808" Win64="yes">
+          <File Id="owfEAB1E9CA64C6DB5F84B86B9E1844E2D8" Source="$(var.SourceDir)\2Compare.pdb" KeyPath="yes" />
+        </Component>
+        <Component Id="owc5D2BC361949BD451C3AF999B56E98527" Guid="50f545a0-aead-3105-191b-9b5e82f778a1" Win64="yes">
+          <File Id="owf5D2BC361949BD451C3AF999B56E98527" Source="$(var.SourceDir)\2Compare.runtimeconfig.dev.json" KeyPath="yes" />
+        </Component>
+        <Component Id="owc4E094480797B97A2C4F67DF6C10B6792" Guid="cfcb2dc2-c6b1-ad97-ebb6-8bcb884bb2d1" Win64="yes">
+          <File Id="owf4E094480797B97A2C4F67DF6C10B6792" Source="$(var.SourceDir)\2Compare.runtimeconfig.json" KeyPath="yes" />
+        </Component>
+        <Component Id="owcBB9B8DD94E5B2EC66C2960D430066F8F" Guid="fc74dbf1-2a89-1bbb-6935-4fab6b28eadf" Win64="yes">
+          <File Id="owfBB9B8DD94E5B2EC66C2960D430066F8F" Source="$(var.SourceDir)\AppSettings.bin" KeyPath="yes" />
+        </Component>
+        <Component Id="owcD4F573CEC8A1F4A003075703B462EECB" Guid="46ce3c32-a8ae-12dc-38c7-8a3f2bb6fa91" Win64="yes">
+          <File Id="owfD4F573CEC8A1F4A003075703B462EECB" Source="$(var.SourceDir)\ControlzEx.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc03DE6CD22899F2D00A6216A2E335C9C2" Guid="42828726-5d8b-451d-2c89-29b1d9c76132" Win64="yes">
+          <File Id="owf03DE6CD22899F2D00A6216A2E335C9C2" Source="$(var.SourceDir)\DocCompareDLL.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcB5290E0535ECBC0E616CD35C20F1485A" Guid="69eb3703-a62a-084b-7744-8a3f5d38b93e" Win64="yes">
+          <File Id="owfB5290E0535ECBC0E616CD35C20F1485A" Source="$(var.SourceDir)\DocCompareDLL.pdb" KeyPath="yes" />
+        </Component>
+        <Component Id="owcAC3DF58A0D186F10B9099EBAD744D2BD" Guid="015e57f1-5777-76db-1e25-4116020c4e46" Win64="yes">
+          <File Id="owfAC3DF58A0D186F10B9099EBAD744D2BD" Source="$(var.SourceDir)\DocConvert.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcF9FDE695D5C2AE1726D9D1D7061F945D" Guid="e4d5ae9f-56d9-8075-6fda-717ab832746e" Win64="yes">
+          <File Id="owfF9FDE695D5C2AE1726D9D1D7061F945D" Source="$(var.SourceDir)\DocConvert.pdb" KeyPath="yes" />
+        </Component>
+        <Component Id="owc88D8F73F5E5D0B1FF4F657B3CE39C040" Guid="8faa67e2-7b44-ec90-7c6b-85625bab7119" Win64="yes">
+          <File Id="owf88D8F73F5E5D0B1FF4F657B3CE39C040" Source="$(var.SourceDir)\Interop.Microsoft.Office.Core.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc4479CACDF7646BF09AE2CB6905429AEB" Guid="0527070b-cb36-d40a-3c72-694dea7aabe6" Win64="yes">
+          <File Id="owf4479CACDF7646BF09AE2CB6905429AEB" Source="$(var.SourceDir)\Interop.Microsoft.Office.Interop.PowerPoint.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcB6AF1360CB05B5C718A5A64D29EF8D0E" Guid="0fd2bc0a-100c-a2be-c4ad-50d1eefd6fc0" Win64="yes">
+          <File Id="owfB6AF1360CB05B5C718A5A64D29EF8D0E" Source="$(var.SourceDir)\MahApps.Metro.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc357DBC0C96FDCABEB24C239DE90A0B16" Guid="a820d07f-9023-957c-3188-bc479e4fdafc" Win64="yes">
+          <File Id="owf357DBC0C96FDCABEB24C239DE90A0B16" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.BootstrapIcons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc1311D216E278AE01FD1D2AC4409E7323" Guid="99bf6ebd-f11a-43e0-60b1-ff6485610118" Win64="yes">
+          <File Id="owf1311D216E278AE01FD1D2AC4409E7323" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.BoxIcons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc3ECFFEA8677AF0B89EEE4986FAA57D55" Guid="8df832c3-50f9-43bd-7634-5789546a8d36" Win64="yes">
+          <File Id="owf3ECFFEA8677AF0B89EEE4986FAA57D55" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.Codicons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc4C834941CCE9A5AB21D735B18BE87C47" Guid="67a22929-263a-c52c-fa3e-698dc0c33ba5" Win64="yes">
+          <File Id="owf4C834941CCE9A5AB21D735B18BE87C47" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.Core.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc4290DD74EB7DBB1C93572C6689F075CE" Guid="ddbb1feb-6473-fab2-d67f-274350bbd86b" Win64="yes">
+          <File Id="owf4290DD74EB7DBB1C93572C6689F075CE" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc90E8A36B230093C18548F0EC0C6FE6C7" Guid="c4475a25-11e5-9d06-daa9-26e63aa1b110" Win64="yes">
+          <File Id="owf90E8A36B230093C18548F0EC0C6FE6C7" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.Entypo.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc99576E13E73D8AF0B885CE7021B78935" Guid="893aa370-e554-99ea-86de-74bead5bc887" Win64="yes">
+          <File Id="owf99576E13E73D8AF0B885CE7021B78935" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.EvaIcons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc96C8BE218E50089E57C52DF56D5EA03F" Guid="75bd2dac-2bb4-5397-85f5-b1ac3b561d46" Win64="yes">
+          <File Id="owf96C8BE218E50089E57C52DF56D5EA03F" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.FeatherIcons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc9AF8A6D9551420B8D835F3643541AD3B" Guid="95827c4a-1ea6-1943-a7bd-f95d3309c2e4" Win64="yes">
+          <File Id="owf9AF8A6D9551420B8D835F3643541AD3B" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.FileIcons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc45C708C6134EECEC1633335480412A3E" Guid="8f577bd1-d490-425a-de68-2a4ace48d506" Win64="yes">
+          <File Id="owf45C708C6134EECEC1633335480412A3E" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.Fontaudio.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcC2DBBD8A1CD4202DA8B2A9F2626615C3" Guid="070021ed-cd8a-5234-5207-33c1a4751e2d" Win64="yes">
+          <File Id="owfC2DBBD8A1CD4202DA8B2A9F2626615C3" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.FontAwesome.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcA6ACEE448E276C4F7604EC0B09804FB8" Guid="8371bf79-b3cd-4176-5fc8-d409665bdaa7" Win64="yes">
+          <File Id="owfA6ACEE448E276C4F7604EC0B09804FB8" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.ForkAwesome.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc6C98C7C7A9F88F6112DA7257A54DA123" Guid="40017f3c-1a01-7e14-da21-0d6161f298ef" Win64="yes">
+          <File Id="owf6C98C7C7A9F88F6112DA7257A54DA123" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.Ionicons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcBE9392DA321796AD2F5309F803D4CBBE" Guid="8cc111bb-91e7-0458-4633-f2759338d9f5" Win64="yes">
+          <File Id="owfBE9392DA321796AD2F5309F803D4CBBE" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.JamIcons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc44970C66005B6525C3D6B41269622E54" Guid="31b22c3a-a31e-762e-17a2-86ec979f8b23" Win64="yes">
+          <File Id="owf44970C66005B6525C3D6B41269622E54" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.Material.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc0A58449414A23276547C919BBB29AAAE" Guid="2d204cda-2a29-9bf6-9690-ce072a4cd311" Win64="yes">
+          <File Id="owf0A58449414A23276547C919BBB29AAAE" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.MaterialDesign.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcA0A610FC391D75E9A4E0B9ABD106162A" Guid="38c1a692-c5d6-8d46-4ac7-34d1100b1fc9" Win64="yes">
+          <File Id="owfA0A610FC391D75E9A4E0B9ABD106162A" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.MaterialLight.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc2DD7E6D19AAE9BC11FAE754B6AEEB79F" Guid="dfb042f3-5a27-1ff1-1dd7-7adbc6a39e20" Win64="yes">
+          <File Id="owf2DD7E6D19AAE9BC11FAE754B6AEEB79F" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.Microns.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcD376E167A12A3A5239E54CC4CEA15338" Guid="94f72e68-4f81-971f-9c9e-23a2e0957d4c" Win64="yes">
+          <File Id="owfD376E167A12A3A5239E54CC4CEA15338" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.Modern.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc881E81E6F96BC36E720CCF958819CD05" Guid="4ff6338e-12eb-76bf-7768-b321af88c0d6" Win64="yes">
+          <File Id="owf881E81E6F96BC36E720CCF958819CD05" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.Octicons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc253244B5D9A94067D69211ADDF06B658" Guid="369455da-efdd-58db-32b7-41d4574768bd" Win64="yes">
+          <File Id="owf253244B5D9A94067D69211ADDF06B658" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.PicolIcons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc53530DC03F7C1CB4C6BDD2E8267DAD64" Guid="da4f7f73-c907-1c0d-7ee1-4842f8d4b49d" Win64="yes">
+          <File Id="owf53530DC03F7C1CB4C6BDD2E8267DAD64" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.PixelartIcons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc2A2A564FED6D14E997EEB0B45D7A4EE2" Guid="f655671c-e819-4482-2a27-a60eab68e1dd" Win64="yes">
+          <File Id="owf2A2A564FED6D14E997EEB0B45D7A4EE2" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.RadixIcons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcB324D006A001820F2419DDB25B3957B4" Guid="8a645494-71c3-a64f-ad9b-60d85dffffd4" Win64="yes">
+          <File Id="owfB324D006A001820F2419DDB25B3957B4" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.RemixIcon.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc9249865480910D6B07117C910DD03DE4" Guid="616ebadc-c5d6-7f2d-6a89-4216d8246715" Win64="yes">
+          <File Id="owf9249865480910D6B07117C910DD03DE4" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.RPGAwesome.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc84ACF6C5D1E439D043C0326D5B5A5414" Guid="85b78cd0-2ed8-0951-97dd-3619d5bc33a8" Win64="yes">
+          <File Id="owf84ACF6C5D1E439D043C0326D5B5A5414" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.SimpleIcons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcAA77F3F04CE0B1D08293D8783D0787F3" Guid="41d25e14-bb9a-f281-4f00-bccb199e6888" Win64="yes">
+          <File Id="owfAA77F3F04CE0B1D08293D8783D0787F3" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.Typicons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcDC18547E98F6486DC967441482339621" Guid="14e39b8f-0917-1850-3b7a-6ff0d76a3fbf" Win64="yes">
+          <File Id="owfDC18547E98F6486DC967441482339621" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.Unicons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc901F44E184F3153342FE8E8DBAFC8B11" Guid="d2488970-aef1-696a-cbab-8d3d73ce539d" Win64="yes">
+          <File Id="owf901F44E184F3153342FE8E8DBAFC8B11" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.VaadinIcons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcFBA69E76AF5AE30599CA9FC76F97CEBB" Guid="410647ec-1417-23be-f6f9-64d221d9b285" Win64="yes">
+          <File Id="owfFBA69E76AF5AE30599CA9FC76F97CEBB" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.WeatherIcons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcDD42C765A6FC81C80F0D40F1788B11AF" Guid="d81ebc5b-cd90-f1c7-d6c8-5ffd47e7d652" Win64="yes">
+          <File Id="owfDD42C765A6FC81C80F0D40F1788B11AF" Source="$(var.SourceDir)\MahApps.Metro.IconPacks.Zondicons.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc4EA4336D4BF399940E05AED7EA5141A1" Guid="4990098f-ac85-f13e-940f-e3f1b3b73022" Win64="yes">
+          <File Id="owf4EA4336D4BF399940E05AED7EA5141A1" Source="$(var.SourceDir)\Microsoft.Xaml.Behaviors.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc3FC8434C1A84605AEEBC6A100CA2F3E1" Guid="47d7e276-db6d-424e-d797-1a69e1e24b3b" Win64="yes">
+          <File Id="owf3FC8434C1A84605AEEBC6A100CA2F3E1" Source="$(var.SourceDir)\Newtonsoft.Json.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc36A3143598E7D3C8711FAF5797FB7E4B" Guid="55727b22-fe6d-a346-450f-71c488b5650f" Win64="yes">
+          <File Id="owf36A3143598E7D3C8711FAF5797FB7E4B" Source="$(var.SourceDir)\OpenCvSharp.Blob.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc8967F5E172C71078892FD39AECF9FFD0" Guid="9cf4834f-e36e-fe70-845c-8594eeafc218" Win64="yes">
+          <File Id="owf8967F5E172C71078892FD39AECF9FFD0" Source="$(var.SourceDir)\OpenCvSharp.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc555B00283CE4AEC7236AA1246D86FF3E" Guid="688c50ab-b4d9-edea-3f10-ab3fe521099e" Win64="yes">
+          <File Id="owf555B00283CE4AEC7236AA1246D86FF3E" Source="$(var.SourceDir)\OpenCvSharp.Extensions.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcEB8F63D03EF7BFD21F2F8AAE24400053" Guid="75371689-15ae-b70f-bbd3-77baadc35d94" Win64="yes">
+          <File Id="owfEB8F63D03EF7BFD21F2F8AAE24400053" Source="$(var.SourceDir)\protobuf-net.Core.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcED4CA0C587B1FFB62753FB5DED9C7587" Guid="c81d2020-653a-ed0b-7d1a-b67616f88462" Win64="yes">
+          <File Id="owfED4CA0C587B1FFB62753FB5DED9C7587" Source="$(var.SourceDir)\protobuf-net.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcB8113C68D3D05739828AB593ECF59CD5" Guid="e7568075-9721-76c7-9e45-e9e0597bff2d" Win64="yes">
+          <File Id="owfB8113C68D3D05739828AB593ECF59CD5" Source="$(var.SourceDir)\System.Management.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc77E6E852E63227E0B79B9225F9C38E69" Guid="dbe30d5d-0411-6357-d0e5-6d91cfd6cc07" Win64="yes">
+          <File Id="owf77E6E852E63227E0B79B9225F9C38E69" Source="$(var.SourceDir)\System.Private.ServiceModel.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc496161876FAED4A7A0471BC80B909F19" Guid="7fe0a99f-4733-5247-2280-d9c79313b3a1" Win64="yes">
+          <File Id="owf496161876FAED4A7A0471BC80B909F19" Source="$(var.SourceDir)\System.Runtime.CompilerServices.Unsafe.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc5F4CF7D11A0F968E354DF7C5C6C8A10C" Guid="193c05ed-81ea-3fb6-10f2-009c7c56bf74" Win64="yes">
+          <File Id="owf5F4CF7D11A0F968E354DF7C5C6C8A10C" Source="$(var.SourceDir)\System.ServiceModel.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc55DAAE04266A3EE852B200299F8B767C" Guid="a74321a5-8d3f-8cd5-cb9d-a374ef59a95c" Win64="yes">
+          <File Id="owf55DAAE04266A3EE852B200299F8B767C" Source="$(var.SourceDir)\System.ServiceModel.Primitives.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc19E6D5424ACBD32622F1E5B314864D09" Guid="e03f2e4d-0424-cc35-53eb-48558a3090d1" Win64="yes">
+          <File Id="owf19E6D5424ACBD32622F1E5B314864D09" Source="$(var.SourceDir)\System.Text.Json.dll" KeyPath="yes" />
+        </Component>
+        <Directory Id="owd16643BE9CBAEF26E96EDBB6FB712EE5D" Name="lib">
+          <Component Id="owcAB6F0B6735AE04D4A60742261BEE84D1" Guid="03cd22bf-d580-3c7a-b4f0-5a6cf5002090" Win64="yes">
+            <File Id="owfAB6F0B6735AE04D4A60742261BEE84D1" Source="$(var.SourceDir)\lib\freetype6.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc2FB34F8F76E3FC72EC445E50212CBD0B" Guid="7d928ef7-387f-aa34-3882-65924e1f0d83" Win64="yes">
+            <File Id="owf2FB34F8F76E3FC72EC445E50212CBD0B" Source="$(var.SourceDir)\lib\Interop.Microsoft.Office.Core.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc123DA5C8B9C88D4F43436C101F8FFE30" Guid="433a2d09-1dcc-1cbc-0a35-e0c944302cfc" Win64="yes">
+            <File Id="owf123DA5C8B9C88D4F43436C101F8FFE30" Source="$(var.SourceDir)\lib\Interop.Microsoft.Office.Interop.PowerPoint.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owcC2DD18A729975D9807B92E5754DD66B6" Guid="639e90cb-cdd5-5782-cdc8-9a535a138499" Win64="yes">
+            <File Id="owfC2DD18A729975D9807B92E5754DD66B6" Source="$(var.SourceDir)\lib\jpeg62.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc7CEF33ED72682E7EE11B355E1F9A49F9" Guid="36442882-030a-d68f-500a-acad08f89536" Win64="yes">
+            <File Id="owf7CEF33ED72682E7EE11B355E1F9A49F9" Source="$(var.SourceDir)\lib\libcairo-2.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owcD6CBD0FCBD365A57B8F1F38DF03076FE" Guid="0a3b358f-3d78-063c-dbda-77462ae03a02" Win64="yes">
+            <File Id="owfD6CBD0FCBD365A57B8F1F38DF03076FE" Source="$(var.SourceDir)\lib\libexpat-1.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc3B537EFCC4B8EAB778134C47852B0B52" Guid="bdf4fe24-a71b-2076-d439-5fc24bd3bd81" Win64="yes">
+            <File Id="owf3B537EFCC4B8EAB778134C47852B0B52" Source="$(var.SourceDir)\lib\libfontconfig-1.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc1F459C7C50321953B788B1C92ED3825E" Guid="16479a44-eb9a-3c90-cff6-4e8f9afc9fbb" Win64="yes">
+            <File Id="owf1F459C7C50321953B788B1C92ED3825E" Source="$(var.SourceDir)\lib\libgcc_s_dw2-1.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc3CF7E4ACBF40841968179F123DA17F35" Guid="fab67cc4-441b-ad11-f9f9-d59ee26ff6d9" Win64="yes">
+            <File Id="owf3CF7E4ACBF40841968179F123DA17F35" Source="$(var.SourceDir)\lib\libpixman-1-0.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc264E2EABBE512561DE118C81729A3103" Guid="82665a34-b5af-46bc-eef7-345c3d6172df" Win64="yes">
+            <File Id="owf264E2EABBE512561DE118C81729A3103" Source="$(var.SourceDir)\lib\libpng16-16.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc6777DD90FD1AE643E25CF7E836C1686E" Guid="204e71f8-888f-b171-762f-9e6d079607cf" Win64="yes">
+            <File Id="owf6777DD90FD1AE643E25CF7E836C1686E" Source="$(var.SourceDir)\lib\libpoppler-79.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc81F8A33B560E3E0C85C039C9D9ABD71D" Guid="eabfc8de-55d7-391b-f669-cadac624ebe4" Win64="yes">
+            <File Id="owf81F8A33B560E3E0C85C039C9D9ABD71D" Source="$(var.SourceDir)\lib\libpoppler-cpp-0.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc4806EE343532A2CBC20B1BD284336CE0" Guid="9167672b-60d3-962a-2962-b450085b8e63" Win64="yes">
+            <File Id="owf4806EE343532A2CBC20B1BD284336CE0" Source="$(var.SourceDir)\lib\libstdc++-6.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc6BD42C76E06E46C38A5FEF4A8A924849" Guid="8622decc-383a-154d-a86d-1f9e6d29308d" Win64="yes">
+            <File Id="owf6BD42C76E06E46C38A5FEF4A8A924849" Source="$(var.SourceDir)\lib\libtiff3.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owcE14CF002C5AFF5EB61BA55E19A1702F3" Guid="b1ecb082-0d35-af92-fdc5-062c143a7d63" Win64="yes">
+            <File Id="owfE14CF002C5AFF5EB61BA55E19A1702F3" Source="$(var.SourceDir)\lib\pdftoppm.exe" KeyPath="yes" />
+          </Component>
+          <Component Id="owc183FF541A0DF2DB18D093E2D3B29F79C" Guid="adab6bd3-1c8e-1ef8-cba7-167454079637" Win64="yes">
+            <File Id="owf183FF541A0DF2DB18D093E2D3B29F79C" Source="$(var.SourceDir)\lib\zlib1.dll" KeyPath="yes" />
+          </Component>
+        </Directory>
+        <Directory Id="owdBC878F42F80692F54CEAD1A19DB1F8B9" Name="lic">
+          <Component Id="owcBC878F42F80692F54CEAD1A19DB1F8B9" Guid="db68890e-a6b7-4c81-b726-5b6f461d960c" Win64="yes">
+            <CreateFolder />
+          </Component>
+        </Directory>
+        <Directory Id="owdBF28E7F1782E32C92B2CAA92105E7DA0" Name="runtimes">
+          <Directory Id="owdE8459012E85EF895F4D7FE30FF6E8267" Name="win">
+            <Directory Id="owdC163318E67EFDCE0B896108800A15455" Name="lib">
+              <Directory Id="owdC9C087285946FE3B7A71615E0B825E74" Name="netcoreapp2.0">
+                <Component Id="owc84D730578723A23CD019D79E2E777BCA" Guid="d62cedac-19de-de96-ac99-deff7a0d3971" Win64="yes">
+                  <File Id="owf84D730578723A23CD019D79E2E777BCA" Source="$(var.SourceDir)\runtimes\win\lib\netcoreapp2.0\System.Management.dll" KeyPath="yes" />
+                </Component>
+              </Directory>
+            </Directory>
+          </Directory>
+          <Directory Id="owd771C5C3DC29DF4A4B043FB9590CAB7C3" Name="win-x64">
+            <Directory Id="owdEB440828DC2B3C970045074AEB045D37" Name="native">
+              <Component Id="owc248696F2258529D86AB690B57F7C6F8F" Guid="1e9ad1b7-63a3-dcd9-7143-73ab462b8936" Win64="yes">
+                <File Id="owf248696F2258529D86AB690B57F7C6F8F" Source="$(var.SourceDir)\runtimes\win-x64\native\opencv_videoio_ffmpeg450_64.dll" KeyPath="yes" />
+              </Component>
+              <Component Id="owc41F25CC883EA2CC4DFB16CBCFE548A71" Guid="519577dd-3c41-1915-d0bd-f6a0cf60750b" Win64="yes">
+                <File Id="owf41F25CC883EA2CC4DFB16CBCFE548A71" Source="$(var.SourceDir)\runtimes\win-x64\native\OpenCvSharpExtern.dll" KeyPath="yes" />
+              </Component>
+              <Component Id="owcB727892D8E1C21E6C1C8B581FE322015" Guid="28eb5947-c9f9-d230-8783-5840dc380eda" Win64="yes">
+                <File Id="owfB727892D8E1C21E6C1C8B581FE322015" Source="$(var.SourceDir)\runtimes\win-x64\native\OpenCvSharpExtern.pdb" KeyPath="yes" />
+              </Component>
+            </Directory>
+          </Directory>
+          <Directory Id="owdB4F695B772F52E42751F0202C23B302A" Name="win-x86">
+            <Directory Id="owd645F06F492760FA8A3ADF782CF530DAB" Name="native">
+              <Component Id="owc84D4475805500C564CE35CA82D201F38" Guid="5c7e2fc4-b844-ea31-7141-79dd7dd302d3" Win64="yes">
+                <File Id="owf84D4475805500C564CE35CA82D201F38" Source="$(var.SourceDir)\runtimes\win-x86\native\opencv_videoio_ffmpeg450.dll" KeyPath="yes" />
+              </Component>
+              <Component Id="owc48F83EE42043B35EDF04E14425A12943" Guid="6202c986-9728-92f0-abbc-61cdc9d24411" Win64="yes">
+                <File Id="owf48F83EE42043B35EDF04E14425A12943" Source="$(var.SourceDir)\runtimes\win-x86\native\OpenCvSharpExtern.dll" KeyPath="yes" />
+              </Component>
+              <Component Id="owc02184B8334552B513EAD43184AFAF3B6" Guid="5f278ee8-57b9-0000-33f9-ea17c4dbeab0" Win64="yes">
+                <File Id="owf02184B8334552B513EAD43184AFAF3B6" Source="$(var.SourceDir)\runtimes\win-x86\native\OpenCvSharpExtern.pdb" KeyPath="yes" />
+              </Component>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder" />
+    </Directory>
+    <ComponentGroupRef Id="Custom" />
+  </Module>
+</Wix>

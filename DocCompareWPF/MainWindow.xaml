@@ -753,11 +753,11 @@
                                                                 <Image Tag="{Binding ImgMaskName}" Source="{Binding PathToMask, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Stretch="Uniform" Visibility="{Binding ShowMask}">
                                                                 </Image>
-                                                                <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="Link Pages" Visibility="Hidden"
+                                                                <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Bottom" ToolTip="Link Pages" Visibility="Hidden"
                                                                     Click="SideGridButtonMouseClick" IsHitTestVisible="true">
                                                                     <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
                                                                 </Button>
-                                                                <Button Tag="{Binding ForceAlignInvalidButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="This link would cross a previously set link. Please remove that link before aligning these pages." Visibility="Hidden" IsHitTestVisible="true">
+                                                                <Button Tag="{Binding ForceAlignInvalidButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Bottom" ToolTip="This link would cross a previously set link. Please remove that link before aligning these pages." Visibility="Hidden" IsHitTestVisible="true">
                                                                     <iconPacks:PackIconFontAwesome Kind="BanSolid" Width="15" Height="15" />
                                                                 </Button>
                                                             </Grid>
@@ -842,13 +842,13 @@
                         <Grid Background="{StaticResource PrimaryPanelBrush}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="50" />
-                                    <RowDefinition Height="50" />
-                                    <RowDefinition Height="50" />
-                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <Button x:Name="SettingsSubscriptionButton" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderBrush="Transparent" Height="50" HorizontalAlignment="Stretch" Margin="0" Padding="0" Click="SettingsSubscriptionButton_Click">
+                                <Button x:Name="SettingsSubscriptionButton" Grid.Row="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderBrush="Transparent" Height="50" HorizontalAlignment="Stretch" Margin="0" Padding="0" Click="SettingsSubscriptionButton_Click">
                                     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="200">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="40" />
@@ -858,8 +858,8 @@
                                         <Label Grid.Column="1">Subscription</Label>
                                     </Grid>
                                 </Button>
-                                <Button x:Name="SettingsBrowseDocButton" Grid.Row="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource SidePanelActiveButton}"  BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0"
-                                        Click="SettingsBrowseDocButton_Click">
+                                <!--Button x:Name="SettingsBrowseDocButton" Grid.Row="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource SidePanelActiveButton}"  BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0"
+                                        Click="SettingsBrowseDocButton_Click" Visibility="Collapsed">
                                     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="200">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="40" />
@@ -868,8 +868,8 @@
                                         <iconPacks:PackIconMaterial Kind="FileDocumentMultiple" Grid.Column="0" Height="20" Width="20" Foreground="Black" VerticalAlignment="Stretch" Margin="10,0,0,0" />
                                         <Label Grid.Column="1">Document browsing</Label>
                                     </Grid>
-                                </Button>
-                                <Button x:Name="SettingsAboutButton" Grid.Row="3" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0"
+                                </Button-->
+                                <Button x:Name="SettingsAboutButton" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0"
                                         Click="SettingsAboutButton_Click">
                                     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="200">
                                         <Grid.ColumnDefinitions>
@@ -880,8 +880,8 @@
                                         <Label Grid.Column="1">About</Label>
                                     </Grid>
                                 </Button>
-                                <Button x:Name="SettingsDocCompareButton" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0">
-                                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="200">
+                                <!--Button x:Name="SettingsDocCompareButton" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0">
+                                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="200" Visibility="Collapsed">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="40" />
                                             <ColumnDefinition />
@@ -889,7 +889,7 @@
                                         <iconPacks:PackIconMaterial Kind="Compare" Grid.Column="0" Height="20" Width="20" Foreground="Black" VerticalAlignment="Stretch" Margin="10,0,0,0" />
                                         <Label Grid.Column="1">Document comparison</Label>
                                     </Grid>
-                                </Button>
+                                </Button-->
                             </Grid>
                         </Grid>
                         <Grid x:Name="SettingsDocBrowsingPanel" Grid.Column="1" Margin="25">
@@ -941,7 +941,7 @@
                                     </Image.Effect>
                                 </Image>
                                 <Label Grid.Row="1" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold">2Compare</Label>
-                                <Label Grid.Row="2" x:Name="AppVersionLabel" HorizontalAlignment="Center" FontSize="13">Version 0.2</Label>
+                                <Label Grid.Row="2" x:Name="AppVersionLabel" HorizontalAlignment="Center" FontSize="13">Version 0.3</Label>
                                 <Label Grid.Row="3" HorizontalAlignment="Center" FontSize="13">
                                     <Hyperlink NavigateUri="https://www.hopietech.com/" RequestNavigate="Hyperlink_RequestNavigate">
                                         © Hopie Tech 2020
@@ -954,6 +954,26 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <Label FontSize="15" FontWeight="Bold">Third Party Licenses</Label>
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0">Poppler is licensed under </Label>
+                                    <Label Grid.Column="1">
+                                    <Hyperlink  NavigateUri="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html" RequestNavigate="Hyperlink_RequestNavigate">
+                                        GPLv2 
+                                    </Hyperlink> 
+                                    </Label>
+                                    <Label Grid.Column="2"> and </Label>
+                                    <Label Grid.Column="3">
+                                    <Hyperlink NavigateUri="https://www.gnu.org/licenses/gpl-3.0.html" RequestNavigate="Hyperlink_RequestNavigate">
+                                        GPLv3. 
+                                    </Hyperlink>
+                                    </Label>
+                                </Grid>
                             </Grid>
                         </Grid>
                         <Grid x:Name="SettingsSubscriptionPanel" Grid.Column="1" Margin="25" Visibility="Hidden">

@@ -5,9 +5,34 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Logo1.ico</ApplicationIcon>
+    <PackageId>2Compare</PackageId>
+    <Authors />
+    <Company>Hopie Tech UG</Company>
+    <Product>2Compare</Product>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>false</DelaySign>
+    <AssemblyOriginatorKeyFile>2CompareKey.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyName>2Compare</AssemblyName>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="lic\2compare.lic" />
     <None Remove="LogoLarge.png" />
     <None Remove="LogoSmall.png" />
     <None Remove="LogoSmallest.png" />
@@ -58,54 +83,62 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Libs\freetype6.dll">
+    <None Update="lib\freetype6.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\Interop.Microsoft.Office.Core.dll">
+    <None Update="lib\Interop.Microsoft.Office.Core.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\Interop.Microsoft.Office.Interop.PowerPoint.dll">
+    <None Update="lib\Interop.Microsoft.Office.Interop.PowerPoint.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\jpeg62.dll">
+    <None Update="lib\jpeg62.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\libcairo-2.dll">
+    <None Update="lib\libcairo-2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\libexpat-1.dll">
+    <None Update="lib\libexpat-1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\libfontconfig-1.dll">
+    <None Update="lib\libfontconfig-1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\libgcc_s_dw2-1.dll">
+    <None Update="lib\libgcc_s_dw2-1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\libpixman-1-0.dll">
+    <None Update="lib\libpixman-1-0.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\libpng16-16.dll">
+    <None Update="lib\libpng16-16.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\libpoppler-79.dll">
+    <None Update="lib\libpoppler-79.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\libpoppler-cpp-0.dll">
+    <None Update="lib\libpoppler-cpp-0.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\libstdc++-6.dll">
+    <None Update="lib\libstdc++-6.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\libtiff3.dll">
+    <None Update="lib\libtiff3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\pdftoppm.exe">
+    <None Update="lib\pdftoppm.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Libs\zlib1.dll">
+    <None Update="lib\zlib1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="lic\" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /iery &quot;$(TargetDir)*.*&quot; &quot;$(ProjectDir)..\Installer\Deploy&quot;" />
+  </Target>
 
 </Project>

@@ -27,6 +27,7 @@ namespace DocCompareWPF
         private readonly DocumentManagement docs;
 
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".2compare");
+        private readonly string installationDir = AppDomain.CurrentDomain.BaseDirectory;
 
         // Stack panel for viewing documents in scrollviewer control in comparison view
         //private VirtualizingStackPanel childPanel1;
@@ -331,7 +332,7 @@ namespace DocCompareWPF
                             }
                             else if (thisImg.Tag.ToString().Contains("Mask"))
                             {
-                                
+
                             }
                             else
                             {
@@ -1710,7 +1711,8 @@ namespace DocCompareWPF
                 if (showMask == true)
                 {
                     item.ShowMask = Visibility.Visible;
-                }else
+                }
+                else
                 {
                     item.ShowMask = Visibility.Hidden;
                 }
@@ -2037,14 +2039,14 @@ namespace DocCompareWPF
 
         private void LoadLicense()
         {
-            using var file = File.OpenRead(Path.Join("lic", "2compare.lic"));
+            using var file = File.OpenRead(Path.Join(Path.Join(installationDir, "lic"), "2compare.lic"));
             lic = Serializer.Deserialize<LicenseManagement>(file);
         }
 
         private void LoadSettings()
         {
             settings = new AppSettings();
-            using var file = File.OpenRead("AppSettings.bin");
+            using var file = File.OpenRead(Path.Join(installationDir, "AppSettings.bin"));
             settings = Serializer.Deserialize<AppSettings>(file);
         }
 
@@ -2687,13 +2689,13 @@ namespace DocCompareWPF
         private void SaveLicense()
         {
             Directory.CreateDirectory("lic");
-            using var file = File.Create(Path.Join("lic", "2compare.lic"));
+            using var file = File.Create(Path.Join(Path.Join(installationDir, "lic"), "2compare.lic"));
             Serializer.Serialize(file, lic);
         }
 
         private void SaveSettings()
         {
-            using var file = File.Create("AppSettings.bin");
+            using var file = File.Create(Path.Join(installationDir, "AppSettings.bin"));
             Serializer.Serialize(file, settings);
         }
 
@@ -2822,8 +2824,8 @@ namespace DocCompareWPF
                     SettingsDocBrowsingPanel.Visibility = Visibility.Visible;
                     SettingsAboutPanel.Visibility = Visibility.Hidden;
                     SettingsSubscriptionPanel.Visibility = Visibility.Hidden;
-                    SettingsBrowseDocButton.Background = brush;
-                    SettingsDocCompareButton.Background = Brushes.Transparent;
+                    //SettingsBrowseDocButton.Background = brush;
+                    //SettingsDocCompareButton.Background = Brushes.Transparent;
                     SettingsSubscriptionButton.Background = Brushes.Transparent;
                     SettingsAboutButton.Background = Brushes.Transparent;
                     break;
@@ -2832,8 +2834,8 @@ namespace DocCompareWPF
                     SettingsDocBrowsingPanel.Visibility = Visibility.Hidden;
                     SettingsAboutPanel.Visibility = Visibility.Visible;
                     SettingsSubscriptionPanel.Visibility = Visibility.Hidden;
-                    SettingsBrowseDocButton.Background = Brushes.Transparent;
-                    SettingsDocCompareButton.Background = Brushes.Transparent;
+                    //SettingsBrowseDocButton.Background = Brushes.Transparent;
+                    //SettingsDocCompareButton.Background = Brushes.Transparent;
                     SettingsSubscriptionButton.Background = Brushes.Transparent;
                     SettingsAboutButton.Background = brush;
                     break;
@@ -2842,8 +2844,8 @@ namespace DocCompareWPF
                     SettingsDocBrowsingPanel.Visibility = Visibility.Hidden;
                     SettingsAboutPanel.Visibility = Visibility.Hidden;
                     SettingsSubscriptionPanel.Visibility = Visibility.Visible;
-                    SettingsBrowseDocButton.Background = Brushes.Transparent;
-                    SettingsDocCompareButton.Background = Brushes.Transparent;
+                    //SettingsBrowseDocButton.Background = Brushes.Transparent;
+                    //SettingsDocCompareButton.Background = Brushes.Transparent;
                     SettingsSubscriptionButton.Background = brush;
                     SettingsAboutButton.Background = Brushes.Transparent;
                     break;
@@ -3669,10 +3671,17 @@ namespace DocCompareWPF
         }
     }
 
-    public class SimpleImageItem
+    public class SimpleImageItem : INotifyPropertyChanged
     {
         public string PathToFile { get; set; }
         public Thickness Margin { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
     public class CompareMainItem : INotifyPropertyChanged

@@ -139,6 +139,7 @@
 
   <ItemGroup>
     <Folder Include="lic\" />
+    <Folder Include="Walkthrough\" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

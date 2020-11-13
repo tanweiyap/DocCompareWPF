@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,21 +19,60 @@ using System.Windows.Media.Imaging;
 
 namespace DocCompareWPF
 {
+    public class CompareMainItem : INotifyPropertyChanged
+    {
+        private Visibility _showMask;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool AniDiffButtonEnable { get; set; }
+        public string AnimateDiffLeftButtonName { get; set; }
+        public string AnimateDiffRightButtonName { get; set; }
+        public string ImgAniLeftName { get; set; }
+        public string ImgAniRightName { get; set; }
+        public string ImgGridLeftName { get; set; }
+        public string ImgGridName { get; set; }
+        public string ImgGridRightName { get; set; }
+        public string ImgLeftName { get; set; }
+        public string ImgMaskRightName { get; set; }
+        public string ImgRightName { get; set; }
+        public Thickness Margin { get; set; }
+        public string PathToAniImgLeft { get; set; }
+        public string PathToAniImgRight { get; set; }
+        public string PathToImgLeft { get; set; }
+        public string PathToImgRight { get; set; }
+        public string PathToMaskImgRight { get; set; }
+
+        public Visibility ShowMask
+        {
+            get
+            {
+                return _showMask;
+            }
+
+            set
+            {
+                _showMask = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
 
-        private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
-        private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly string version = "0.4.1";
-
-        // Stack panel for viewing documents in scrollviewer control in comparison view
-        //private VirtualizingStackPanel childPanel1;
-        private StackPanel refDocPanel;
-
+        private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
 
         private int docCompareSideGridShown, docProcessingCounter;
@@ -48,6 +87,11 @@ namespace DocCompareWPF
         private LicenseManagement lic;
 
         private string licKeyLastInputString;
+
+        // Stack panel for viewing documents in scrollviewer control in comparison view
+        //private VirtualizingStackPanel childPanel1;
+        private StackPanel refDocPanel;
+
         private double scrollPosLeft, scrollPosRight;
 
         private string selectedSideGridButtonName1 = "";
@@ -137,10 +181,14 @@ namespace DocCompareWPF
                 DisplayLicense();
                 SaveLicense();
 
+                CustomMessageBox msgBox = new CustomMessageBox();
+                msgBox.Setup("Product activation", "A trial license for 7 days has been started. If you have subscribed to a license, proceed to activating your subcription under the settings menu.", "Okay");
+                msgBox.ShowDialog();
+
                 threadCheckTrial = new Thread(new ThreadStart(CheckTrial));
                 threadCheckTrial.Start();
 
-                ErrorHandling.ReportError("New trial license", "on " + lic.GetUUID(), "Expires on " + lic.GetExpiryDateString());
+                ErrorHandling.ReportStatus("New trial license", "on " + lic.GetUUID() + ", Expires on " + lic.GetExpiryDateString());
             }
 
             TimeSpan timeBuffer = lic.GetExpiryDate().Subtract(DateTime.Today);
@@ -148,7 +196,9 @@ namespace DocCompareWPF
             // Reminder to subscribe
             if (timeBuffer.TotalDays <= 5 && timeBuffer.TotalDays > 0 && lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL)
             {
-                MessageBox.Show("Your trial license will expire in " + timeBuffer.TotalDays + " day(s). Please consider making a subscription on www.hopietech.com", "Expired lincense", MessageBoxButton.OK);
+                CustomMessageBox msgBox = new CustomMessageBox();
+                msgBox.Setup("Expired lincense", "Your trial license will expire in " + timeBuffer.TotalDays + " day(s). Please consider making a subscription on www.hopietech.com", "Okay");
+                msgBox.ShowDialog();
             }
 
             // if license expires or needs renewal
@@ -156,7 +206,9 @@ namespace DocCompareWPF
             {
                 if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL)
                 {
-                    MessageBox.Show("Your license has expired. Please consider making a subscription on www.hopietech.com", "Expired lincense", MessageBoxButton.OK);
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("Expired lincense", "Your license has expired. Please consider making a subscription on www.hopietech.com", "Okay");
+                    msgBox.ShowDialog();
 
                     BrowseFileButton1.IsEnabled = false;
                     DocCompareFirstDocZone.AllowDrop = false;
@@ -195,99 +247,34 @@ namespace DocCompareWPF
             SETTINGS,
         };
 
-        private async void CheckTrial()
-        {
-            LicenseManagement.LicServerResponse res = await lic.ActivateTrial();
-            if (res == LicenseManagement.LicServerResponse.INVALID)
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    MessageBox.Show("A previous trial license has been activate don this machine. Please consider making a subscription on www.hopietech.com", "Expired lincense", MessageBoxButton.OK);
-
-                    BrowseFileButton1.IsEnabled = false;
-                    DocCompareFirstDocZone.AllowDrop = false;
-                    DocCompareDragDropZone1.AllowDrop = false;
-                    DocCompareColorZone1.AllowDrop = false;
-
-                    DisplayLicense();
-                });
-            }
-        }
-
-        private async void RenewLicense()
-        {
-            LicenseManagement.LicServerResponse res = await lic.RenewLincense();
-
-            Dispatcher.Invoke(() =>
-            {
-                switch (res)
-                {
-                    case LicenseManagement.LicServerResponse.UNREACHABLE:
-                        TimeSpan bufferTime = lic.GetExpiryWaiveDate().Subtract(DateTime.Today);
-                        if (bufferTime.TotalDays >= 0)
-                        {
-                            MessageBox.Show("License server not reachable. Please check your internet connection or launch the application within " + bufferTime.TotalDays.ToString() + " day(s) with working internet connection.", "License server not reachable", MessageBoxButton.OK);
-                        }
-                        else
-                        {
-                            MessageBox.Show("License server not reachable. Your license is no longer valid. Please contact us at support@hopietech.com for support if you have previously renewed the subscription.", "License server not reachable", MessageBoxButton.OK);
-                            BrowseFileButton1.IsEnabled = false;
-                            DocCompareFirstDocZone.AllowDrop = false;
-                            DocCompareDragDropZone1.AllowDrop = false;
-                            DocCompareColorZone1.AllowDrop = false;
-                        }
-                        UserEmailTextBox.IsEnabled = true;
-                        LicenseKeyTextBox.IsEnabled = true; // after successful activation, we will prevent further editing
-                        ActivateLicenseButton.IsEnabled = true;
-                        break;
-
-                    case LicenseManagement.LicServerResponse.KEY_MISMATCH:
-                        MessageBox.Show("The provided license key does not match the email address. Please check your inputs.", "Invalid license key", MessageBoxButton.OK);
-                        UserEmailTextBox.IsEnabled = true;
-                        LicenseKeyTextBox.IsEnabled = true; // after successful activation, we will prevent further editing
-                        ActivateLicenseButton.IsEnabled = true;
-                        break;
-
-                    case LicenseManagement.LicServerResponse.ACCOUNT_NOT_FOUND:
-                        MessageBox.Show("No license was found under the given email address. Please check your inputs.", "License not found", MessageBoxButton.OK);
-                        UserEmailTextBox.IsEnabled = true;
-                        LicenseKeyTextBox.IsEnabled = true; // after successful activation, we will prevent further editing
-                        ActivateLicenseButton.IsEnabled = true;
-                        break;
-
-                    case LicenseManagement.LicServerResponse.OKAY:
-                        MessageBox.Show("License renewed successfully.", "License renewal", MessageBoxButton.OK);
-                        UserEmailTextBox.IsEnabled = false;
-                        LicenseKeyTextBox.IsEnabled = false; // after successful activation, we will prevent further editing
-                        ActivateLicenseButton.IsEnabled = false;
-                        SaveLicense(); // only save license info if successful
-                                       // allow usage if it was previously disabled
-                        DisplayLicense();
-                        break;
-                }
-            });
-        }
-
         private async void ActivateLicenseButton_Click(object sender, RoutedEventArgs e)
         {
             LicenseManagement.LicServerResponse res = await lic.ActivateLincense(UserEmailTextBox.Text, LicenseKeyTextBox.Text);
-
+            CustomMessageBox msgBox;
             switch (res)
             {
                 case LicenseManagement.LicServerResponse.UNREACHABLE:
-                    MessageBox.Show("License server not reachable. Please check your internet connection or try again later.", "License server not reachable", MessageBoxButton.OK);
+                    msgBox = new CustomMessageBox();
+                    msgBox.Setup("License server not reachable", "License server not reachable. Please check your internet connection or try again later.", "Okay");
+                    msgBox.ShowDialog();
                     break;
 
                 case LicenseManagement.LicServerResponse.KEY_MISMATCH:
-                    MessageBox.Show("The provided license key does not match the email address. Please check your inputs.", "Invalid license key", MessageBoxButton.OK);
+                    msgBox = new CustomMessageBox();
+                    msgBox.Setup("Invalid license key", "The provided license key does not match the email address. Please check your inputs.", "Okay");
+                    msgBox.ShowDialog();
                     break;
 
                 case LicenseManagement.LicServerResponse.ACCOUNT_NOT_FOUND:
-                    MessageBox.Show("No license was found under the given email address. Please check your inputs.", "License not found", MessageBoxButton.OK);
+                    msgBox = new CustomMessageBox();
+                    msgBox.Setup("License not found", "No license was found under the given email address. Please check your inputs.", "Okay");
+                    msgBox.ShowDialog();
                     break;
 
                 case LicenseManagement.LicServerResponse.OKAY:
-                    MessageBox.Show("License activated successfully.", "License activation", MessageBoxButton.OK);
+                    msgBox = new CustomMessageBox();
+                    msgBox.Setup("License activation", "License activated successfully.", "Okay");
+                    msgBox.ShowDialog();
                     UserEmailTextBox.IsEnabled = false;
                     LicenseKeyTextBox.IsEnabled = false; // after successful activation, we will prevent further editing
                     ActivateLicenseButton.IsEnabled = false;
@@ -298,12 +285,18 @@ namespace DocCompareWPF
                     DocCompareDragDropZone1.AllowDrop = true;
                     DocCompareColorZone1.AllowDrop = true;
                     break;
+
                 case LicenseManagement.LicServerResponse.INVALID:
-                    MessageBox.Show("License activated failed. Please try again later", "License activation failed", MessageBoxButton.OK);
+                    msgBox = new CustomMessageBox();
+                    msgBox.Setup("License activation failed", "License activated failed. Please try again later", "Okay");
+                    msgBox.ShowDialog();
                     // we do nothing and retain current license info
                     break;
+
                 case LicenseManagement.LicServerResponse.INUSE:
-                    MessageBox.Show("License has been activated on another machine. Please contact support@hopietech.com for further assitance", "License in used", MessageBoxButton.OK);
+                    msgBox = new CustomMessageBox();
+                    msgBox.Setup("License in use", "License has been activated on another machine. Please contact support@hopietech.com for further assitance.", "Okay");
+                    msgBox.ShowDialog();
                     // we do nothing and retain current license info
                     break;
             }
@@ -334,7 +327,6 @@ namespace DocCompareWPF
                             }
                             else if (thisImg.Tag.ToString().Contains("Mask"))
                             {
-
                             }
                             else
                             {
@@ -551,6 +543,27 @@ namespace DocCompareWPF
                     threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
                     threadLoadDocsProgress.Start();
                 }
+            }
+        }
+
+        private async void CheckTrial()
+        {
+            LicenseManagement.LicServerResponse res = await lic.ActivateTrial();
+            if (res == LicenseManagement.LicServerResponse.INVALID)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("Expired lincense", "A previous trial license has been activate don this machine. Please consider making a subscription on www.hopietech.com", "Okay");
+                    msgBox.ShowDialog();
+
+                    BrowseFileButton1.IsEnabled = false;
+                    DocCompareFirstDocZone.AllowDrop = false;
+                    DocCompareDragDropZone1.AllowDrop = false;
+                    DocCompareColorZone1.AllowDrop = false;
+
+                    DisplayLicense();
+                });
             }
         }
 
@@ -1670,7 +1683,7 @@ namespace DocCompareWPF
                 {
                     splittedName = (sender as Button).Tag.ToString().Split("Right");
                 }
-                
+
                 gridToAnimate = (sender as Button).Parent as Grid;
                 animateDiffRunning = true;
 
@@ -1699,7 +1712,6 @@ namespace DocCompareWPF
                             thisImg.Visibility = Visibility.Hidden;
                         else if (thisImg.Tag.ToString().Contains("Mask"))
                         {
-
                         }
                         else
                             thisImg.Visibility = Visibility.Visible;
@@ -1718,7 +1730,6 @@ namespace DocCompareWPF
                     item.ShowMask = Visibility.Hidden;
                 }
             }
-
         }
 
         private void HandleMainDocCompareGridMouseEnter(object sender, MouseEventArgs args)
@@ -1893,7 +1904,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -2144,73 +2154,93 @@ namespace DocCompareWPF
                         }
                     });
 
-
                     Thread.Sleep(10);
                 }
 
                 Dispatcher.Invoke(() =>
                 {
-                    ProcessingDocProgressCard.Visibility = Visibility.Hidden;
-
-                    if (docs.documents[docs.documentsToShow[0]].processed == true)
+                    List<string> idToRemove = new List<string>();
+                    for (int i = 0; i < docs.documents.Count; i++)
                     {
-                        DisplayImageLeft(docs.documentsToShow[0]);
-                        ShowDoc1FileInfoButton.IsEnabled = true;
-                        OpenDoc1OriginalButton1.IsEnabled = true;
-                    }
-                    else
-                    {
-                        if (docs.documents.Count > 1)
+                        if (docs.documents[i].processed == false)
                         {
-                            docs.documentsToShow[0] = FindNextDocToShow();
-                            DisplayImageLeft(docs.documentsToShow[0]);
-                            OpenDoc1OriginalButton1.IsEnabled = true;
-                            ShowDoc1FileInfoButton.IsEnabled = true;
+                            idToRemove.Add(docs.documents[i].docID);
                         }
                     }
 
-                    if (docs.documents.Count > 1)
+                    foreach (string id in idToRemove)
                     {
-                        if (docs.documents[docs.documentsToShow[1]].processed == true)
+                        docs.RemoveDocumentWithID(id);
+                    }
+
+                    ProcessingDocProgressCard.Visibility = Visibility.Hidden;
+
+                    if (docs.documents.Count != 0)
+                    {
+                        if (docs.documents[docs.documentsToShow[0]].processed == true)
                         {
-                            DisplayImageMiddle(docs.documentsToShow[1]);
-                            OpenDoc2OriginalButton2.IsEnabled = true;
-                            ShowDoc2FileInfoButton.IsEnabled = true;
+                            DisplayImageLeft(docs.documentsToShow[0]);
+                            ShowDoc1FileInfoButton.IsEnabled = true;
+                            OpenDoc1OriginalButton1.IsEnabled = true;
                         }
                         else
                         {
-                            if (docs.documents.Count > 2)
+                            if (docs.documents.Count > 1)
                             {
-                                docs.documentsToShow[1] = FindNextDocToShow();
+                                docs.documentsToShow[0] = FindNextDocToShow();
+                                DisplayImageLeft(docs.documentsToShow[0]);
+                                OpenDoc1OriginalButton1.IsEnabled = true;
+                                ShowDoc1FileInfoButton.IsEnabled = true;
+                            }
+                        }
+
+                        if (docs.documents.Count > 1)
+                        {
+                            if (docs.documents[docs.documentsToShow[1]].processed == true)
+                            {
                                 DisplayImageMiddle(docs.documentsToShow[1]);
                                 OpenDoc2OriginalButton2.IsEnabled = true;
                                 ShowDoc2FileInfoButton.IsEnabled = true;
                             }
-                        }
-                    }
-
-                    if (docs.documents.Count > 2)
-                    {
-                        if (settings.numPanelsDragDrop == 3)
-                        {
-                            if (docs.documents[docs.documentsToShow[2]].processed == true)
-                            {
-                                if (docs.documents.Count >= 3)
-                                {
-                                    DisplayImageRight(docs.documentsToShow[2]);
-                                    OpenDoc3OriginalButton3.IsEnabled = true;
-                                }
-                            }
                             else
                             {
-                                if (docs.documents.Count > 3)
+                                if (docs.documents.Count > 2)
                                 {
-                                    docs.documentsToShow[2] = FindNextDocToShow();
-                                    DisplayImageRight(docs.documentsToShow[2]);
-                                    OpenDoc3OriginalButton3.IsEnabled = true;
+                                    docs.documentsToShow[1] = FindNextDocToShow();
+                                    DisplayImageMiddle(docs.documentsToShow[1]);
+                                    OpenDoc2OriginalButton2.IsEnabled = true;
+                                    ShowDoc2FileInfoButton.IsEnabled = true;
                                 }
                             }
                         }
+
+                        if (docs.documents.Count > 2)
+                        {
+                            if (settings.numPanelsDragDrop == 3)
+                            {
+                                if (docs.documents[docs.documentsToShow[2]].processed == true)
+                                {
+                                    if (docs.documents.Count >= 3)
+                                    {
+                                        DisplayImageRight(docs.documentsToShow[2]);
+                                        OpenDoc3OriginalButton3.IsEnabled = true;
+                                    }
+                                }
+                                else
+                                {
+                                    if (docs.documents.Count > 3)
+                                    {
+                                        docs.documentsToShow[2] = FindNextDocToShow();
+                                        DisplayImageRight(docs.documentsToShow[2]);
+                                        OpenDoc3OriginalButton3.IsEnabled = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        HideDragDropZone2();
                     }
 
                     ProgressBarDoc1.Visibility = Visibility.Hidden;
@@ -2280,13 +2310,32 @@ namespace DocCompareWPF
                         if (ret == -1)
                         {
                             if (docs.documents[i].fileType == Document.FileTypes.PDF)
-                                MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". Please repair document and retry.", "PDF File Corruption", MessageBoxButton.OK);
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    CustomMessageBox msgBox = new CustomMessageBox();
+                                    msgBox.Setup("PDF File Corruption", "There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". Please repair document and retry.", "Okay");
+                                    msgBox.ShowDialog();
+                                });
+                            }
                             else
-                                MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". Please repair document and retry.", "Powerpoint File Corruption", MessageBoxButton.OK);
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    CustomMessageBox msgBox = new CustomMessageBox();
+                                    msgBox.Setup("PowerPoint File Corruption", "There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". Please repair document and retry.", "Okay");
+                                    msgBox.ShowDialog();
+                                });
+                            }
                         }
                         else if (ret == -2)
                         {
-                            MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". No Microsoft PowerPoint installation found.", "Microsoft PowerPoint not found", MessageBoxButton.OK);
+                            Dispatcher.Invoke(() =>
+                            {
+                                CustomMessageBox msgBox = new CustomMessageBox();
+                                msgBox.Setup("Microsoft PowerPoint not found", "There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". No Microsoft PowerPoint installation found.", "Okay");
+                                msgBox.ShowDialog();
+                            });
                         }
                         else
                         {
@@ -2560,9 +2609,17 @@ namespace DocCompareWPF
                 });
 
                 if (docs.documents[docs.docToReload].fileType == Document.FileTypes.PDF)
-                    MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[docs.docToReload].filePath) + ". Please repair document and retry.", "PDF File Corruption", MessageBoxButton.OK);
+                {
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("PDF File Corruption", "There was an error converting " + Path.GetFileName(docs.documents[docs.docToReload].filePath) + ". Please repair document and retry.", "Okay");
+                    msgBox.ShowDialog();
+                }
                 else
-                    MessageBox.Show("There was an error converting " + Path.GetFileName(docs.documents[docs.docToReload].filePath) + ". Please repair document and retry.", "Powerpoint File Corruption", MessageBoxButton.OK);
+                {
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("PowerPoint File Corruption", "There was an error converting " + Path.GetFileName(docs.documents[docs.docToReload].filePath) + ". Please repair document and retry.", "Okay");
+                    msgBox.ShowDialog();
+                }
             }
         }
 
@@ -2576,7 +2633,6 @@ namespace DocCompareWPF
                 ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
-
 
                 DocCompareMainListView.ScrollIntoView(DocCompareMainListView.Items[0]);
                 DocCompareSideListViewLeft.ScrollIntoView(DocCompareSideListViewLeft.Items[0]);
@@ -2615,6 +2671,70 @@ namespace DocCompareWPF
                 threadCompare = new Thread(new ThreadStart(CompareDocsThread));
                 threadCompare.Start();
             }
+        }
+
+        private async void RenewLicense()
+        {
+            LicenseManagement.LicServerResponse res = await lic.RenewLincense();
+            CustomMessageBox msgBox;
+            Dispatcher.Invoke(() =>
+            {
+                switch (res)
+                {
+                    case LicenseManagement.LicServerResponse.UNREACHABLE:
+                        TimeSpan bufferTime = lic.GetExpiryWaiveDate().Subtract(DateTime.Today);
+                        if (bufferTime.TotalDays >= 0)
+                        {
+                            msgBox = new CustomMessageBox();
+                            msgBox.Setup("License server not reachable", "License server not reachable. Please check your internet connection or launch the application within " + bufferTime.TotalDays.ToString() + " day(s) with working internet connection.", "Okay");
+                            msgBox.ShowDialog();
+                        }
+                        else
+                        {
+                            msgBox = new CustomMessageBox();
+                            msgBox.Setup("License server not reachable", "License server not reachable. Your license is no longer valid. Please contact us at support@hopietech.com for support if you have previously renewed the subscription.", "Okay");
+                            msgBox.ShowDialog();
+                            BrowseFileButton1.IsEnabled = false;
+                            DocCompareFirstDocZone.AllowDrop = false;
+                            DocCompareDragDropZone1.AllowDrop = false;
+                            DocCompareColorZone1.AllowDrop = false;
+                        }
+                        UserEmailTextBox.IsEnabled = true;
+                        LicenseKeyTextBox.IsEnabled = true; // after successful activation, we will prevent further editing
+                        ActivateLicenseButton.IsEnabled = true;
+                        break;
+
+                    case LicenseManagement.LicServerResponse.KEY_MISMATCH:
+                        msgBox = new CustomMessageBox();
+                        msgBox.Setup("Invalid license key", "The provided license key does not match the email address. Please check your inputs.", "Okay");
+                        msgBox.ShowDialog();
+                        UserEmailTextBox.IsEnabled = true;
+                        LicenseKeyTextBox.IsEnabled = true; // after successful activation, we will prevent further editing
+                        ActivateLicenseButton.IsEnabled = true;
+                        break;
+
+                    case LicenseManagement.LicServerResponse.ACCOUNT_NOT_FOUND:
+                        msgBox = new CustomMessageBox();
+                        msgBox.Setup("License not found", "No license was found under the given email address. Please check your inputs.", "Okay");
+                        msgBox.ShowDialog();
+                        UserEmailTextBox.IsEnabled = true;
+                        LicenseKeyTextBox.IsEnabled = true; // after successful activation, we will prevent further editing
+                        ActivateLicenseButton.IsEnabled = true;
+                        break;
+
+                    case LicenseManagement.LicServerResponse.OKAY:
+                        msgBox = new CustomMessageBox();
+                        msgBox.Setup("License renewal", "License renewed successfully.", "Okay");
+                        msgBox.ShowDialog();
+                        UserEmailTextBox.IsEnabled = false;
+                        LicenseKeyTextBox.IsEnabled = false; // after successful activation, we will prevent further editing
+                        ActivateLicenseButton.IsEnabled = false;
+                        SaveLicense(); // only save license info if successful
+                                       // allow usage if it was previously disabled
+                        DisplayLicense();
+                        break;
+                }
+            });
         }
 
         private void SaveLicense()
@@ -2783,65 +2903,6 @@ namespace DocCompareWPF
             }
         }
 
-        private void ShowDragDropZone2()
-        {
-            DocCompareSecondDocZone.Visibility = Visibility.Visible;
-            DragDropPanel.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
-        }
-
-        private void ShowDragDropZone3()
-        {
-            if (settings.numPanelsDragDrop == 3)
-            {
-                DocCompareThirdDocZone.Visibility = Visibility.Visible;
-                DragDropPanel.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
-            }
-        }
-
-        private void ShowExistingDocCountWarningBox(string docName)
-        {
-            MessageBox.Show("This document has been loaded: " + docName, "Document exists", MessageBoxButton.OK);
-        }
-
-        private void UpdateFileStat(int i)
-        {
-            if (i == 0 && docs.documents.Count >= 1) // DOC1
-            {
-                Doc1StatAuthorLabel.Content = docs.documents[docs.documentsToShow[0]].Creator;
-                Doc1StatCreatedLabel.Content = docs.documents[docs.documentsToShow[0]].CreatedDate;
-                Doc1StatLastEditorLabel.Content = docs.documents[docs.documentsToShow[0]].LastEditor;
-                Doc1StatModifiedLabel.Content = docs.documents[docs.documentsToShow[0]].ModifiedDate;
-            }
-
-            if (i == 1 && docs.documents.Count >= 2) // DOC2
-            {
-                Doc2StatAuthorLabel.Content = docs.documents[docs.documentsToShow[1]].Creator;
-                Doc2StatCreatedLabel.Content = docs.documents[docs.documentsToShow[1]].CreatedDate;
-                Doc2StatLastEditorLabel.Content = docs.documents[docs.documentsToShow[1]].LastEditor;
-                Doc2StatModifiedLabel.Content = docs.documents[docs.documentsToShow[1]].ModifiedDate;
-            }
-
-            if (i == 2 && docs.documents.Count >= 3) // DOC3
-            {
-                Doc2StatAuthorLabel.Content = docs.documents[docs.documentsToShow[2]].Creator;
-                Doc2StatCreatedLabel.Content = docs.documents[docs.documentsToShow[2]].CreatedDate;
-                Doc2StatLastEditorLabel.Content = docs.documents[docs.documentsToShow[2]].LastEditor;
-                Doc2StatModifiedLabel.Content = docs.documents[docs.documentsToShow[2]].ModifiedDate;
-            }
-
-            if (i == 3) // DOC compare
-            {
-                DocCompareLeftStatAuthorLabel.Content = docs.documents[docs.documentsToCompare[0]].Creator;
-                DocCompareLeftStatCreatedLabel.Content = docs.documents[docs.documentsToCompare[0]].CreatedDate;
-                DocCompareLeftStatLastEditorLabel.Content = docs.documents[docs.documentsToCompare[0]].LastEditor;
-                DocCompareLeftStatModifiedLabel.Content = docs.documents[docs.documentsToCompare[0]].ModifiedDate;
-                DocCompareRightStatAuthorLabel.Content = docs.documents[docs.documentsToCompare[1]].Creator;
-                DocCompareRightStatCreatedLabel.Content = docs.documents[docs.documentsToCompare[1]].CreatedDate;
-                DocCompareRightStatLastEditorLabel.Content = docs.documents[docs.documentsToCompare[1]].LastEditor;
-                DocCompareRightStatModifiedLabel.Content = docs.documents[docs.documentsToCompare[1]].ModifiedDate;
-            }
-        }
-
         private void ShowDoc1FileInfoButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateFileStat(0);
@@ -2887,9 +2948,33 @@ namespace DocCompareWPF
                 DocCompareRightStatsGrid.Visibility = Visibility.Collapsed;
         }
 
+        private void ShowDragDropZone2()
+        {
+            DocCompareSecondDocZone.Visibility = Visibility.Visible;
+            DragDropPanel.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
+        }
+
+        private void ShowDragDropZone3()
+        {
+            if (settings.numPanelsDragDrop == 3)
+            {
+                DocCompareThirdDocZone.Visibility = Visibility.Visible;
+                DragDropPanel.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
+            }
+        }
+
+        private void ShowExistingDocCountWarningBox(string docName)
+        {
+            CustomMessageBox msgBox = new CustomMessageBox();
+            msgBox.Setup("Document already loaded", "This document has been loaded: " + docName, "Okay");
+            msgBox.ShowDialog();
+        }
+
         private void ShowInvalidDocTypeWarningBox(string fileType, string filename)
         {
-            MessageBox.Show("Unsupported file type of " + fileType + " selected with " + filename + ". This document will be ignored.", "Unsupported file type", MessageBoxButton.OK);
+            CustomMessageBox msgBox = new CustomMessageBox();
+            msgBox.Setup("Unsupported file type", "Unsupported file type of " + fileType + " selected with " + filename + ". This document will be ignored.", "Okay");
+            msgBox.ShowDialog();
         }
 
         private void ShowMaskButton_Click(object sender, RoutedEventArgs e)
@@ -2922,7 +3007,9 @@ namespace DocCompareWPF
 
         private void ShowMaxDocCountWarningBox()
         {
-            MessageBox.Show("You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded.", "Maximum documents loaded", MessageBoxButton.OK);
+            CustomMessageBox msgBox = new CustomMessageBox();
+            msgBox.Setup("Maximum documents loaded", "You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded.", "Okay");
+            msgBox.ShowDialog();
         }
 
         private void SideGridButtonMouseClick(object sender, RoutedEventArgs args)
@@ -3366,14 +3453,6 @@ namespace DocCompareWPF
             }
         }
 
-        /*
-        private void ReleaseDocPreview()
-        {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-        }
-        */
         private void SidePanelOpenDocButton_Click(object sender, RoutedEventArgs e)
         {
             SetVisiblePanel(SidePanels.DRAGDROP);
@@ -3381,7 +3460,6 @@ namespace DocCompareWPF
 
         private void UnMaskSideGridFromForceAlignMode()
         {
-
             foreach (SideGridItemLeft item in DocCompareSideListViewLeft.Items)
             {
                 item.GridEffect = null;
@@ -3514,6 +3592,54 @@ namespace DocCompareWPF
             }
         }
 
+        private void UpdateFileStat(int i)
+        {
+            if (i == 0 && docs.documents.Count >= 1) // DOC1
+            {
+                Doc1StatAuthorLabel.Content = docs.documents[docs.documentsToShow[0]].Creator;
+                Doc1StatCreatedLabel.Content = docs.documents[docs.documentsToShow[0]].CreatedDate;
+                Doc1StatLastEditorLabel.Content = docs.documents[docs.documentsToShow[0]].LastEditor;
+                Doc1StatModifiedLabel.Content = docs.documents[docs.documentsToShow[0]].ModifiedDate;
+            }
+
+            if (i == 1 && docs.documents.Count >= 2) // DOC2
+            {
+                Doc2StatAuthorLabel.Content = docs.documents[docs.documentsToShow[1]].Creator;
+                Doc2StatCreatedLabel.Content = docs.documents[docs.documentsToShow[1]].CreatedDate;
+                Doc2StatLastEditorLabel.Content = docs.documents[docs.documentsToShow[1]].LastEditor;
+                Doc2StatModifiedLabel.Content = docs.documents[docs.documentsToShow[1]].ModifiedDate;
+            }
+
+            if (i == 2 && docs.documents.Count >= 3) // DOC3
+            {
+                Doc2StatAuthorLabel.Content = docs.documents[docs.documentsToShow[2]].Creator;
+                Doc2StatCreatedLabel.Content = docs.documents[docs.documentsToShow[2]].CreatedDate;
+                Doc2StatLastEditorLabel.Content = docs.documents[docs.documentsToShow[2]].LastEditor;
+                Doc2StatModifiedLabel.Content = docs.documents[docs.documentsToShow[2]].ModifiedDate;
+            }
+
+            if (i == 3) // DOC compare
+            {
+                DocCompareLeftStatAuthorLabel.Content = docs.documents[docs.documentsToCompare[0]].Creator;
+                DocCompareLeftStatCreatedLabel.Content = docs.documents[docs.documentsToCompare[0]].CreatedDate;
+                DocCompareLeftStatLastEditorLabel.Content = docs.documents[docs.documentsToCompare[0]].LastEditor;
+                DocCompareLeftStatModifiedLabel.Content = docs.documents[docs.documentsToCompare[0]].ModifiedDate;
+                DocCompareRightStatAuthorLabel.Content = docs.documents[docs.documentsToCompare[1]].Creator;
+                DocCompareRightStatCreatedLabel.Content = docs.documents[docs.documentsToCompare[1]].CreatedDate;
+                DocCompareRightStatLastEditorLabel.Content = docs.documents[docs.documentsToCompare[1]].LastEditor;
+                DocCompareRightStatModifiedLabel.Content = docs.documents[docs.documentsToCompare[1]].ModifiedDate;
+            }
+        }
+
+        /*
+        private void ReleaseDocPreview()
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+        }
+        */
+
         private void UserEmailTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             if ((sender as TextBox).Text.Length == 0)
@@ -3572,9 +3698,8 @@ namespace DocCompareWPF
                 di = new DirectoryInfo(doc.imageFolder);
                 di.Delete();
             }
-            
-            Close();
 
+            Close();
         }
 
         private void WindowMaximizeButton_Click(object sender, RoutedEventArgs e)
@@ -3601,79 +3726,13 @@ namespace DocCompareWPF
         }
     }
 
-    public class SimpleImageItem : INotifyPropertyChanged
-    {
-        public string PathToFile { get; set; }
-        public Thickness Margin { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class CompareMainItem : INotifyPropertyChanged
-    {
-        public string ImgGridName { get; set; }
-        public string ImgGridLeftName { get; set; }
-        public string ImgLeftName { get; set; }
-        public string ImgAniLeftName { get; set; }
-        public string AnimateDiffLeftButtonName { get; set; }
-        public string ImgGridRightName { get; set; }
-        public string ImgRightName { get; set; }
-        public string ImgAniRightName { get; set; }
-        public string ImgMaskRightName { get; set; }
-        public string AnimateDiffRightButtonName { get; set; }
-        public bool AniDiffButtonEnable { get; set; }
-
-        public string PathToImgLeft { get; set; }
-        public string PathToAniImgLeft { get; set; }
-        public string PathToImgRight { get; set; }
-        public string PathToAniImgRight { get; set; }
-        public string PathToMaskImgRight { get; set; }
-
-        public Thickness Margin { get; set; }
-
-        private Visibility _showMask;
-        public Visibility ShowMask
-        {
-            get
-            {
-                return _showMask;
-            }
-
-            set
-            {
-                _showMask = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
     public class SideGridItemLeft : INotifyPropertyChanged
     {
-        public string GridName { get; set; }
-        public string PageNumberLabel { get; set; }
-        public string ImgGridName { get; set; }
-        public string ImgName { get; set; }
-        public string PathToImg { get; set; }
-
-        public string ImgDummyName { get; set; }
-        public string PathToImgDummy { get; set; }
-        public string ForceAlignButtonName { get; set; }
-        public string ForceAlignInvalidButtonName { get; set; }
-        public Thickness Margin { get; set; }
-
         private Color _color;
+        private Effect _effect;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public Color BackgroundBrush
         {
             get
@@ -3688,7 +3747,9 @@ namespace DocCompareWPF
             }
         }
 
-        private Effect _effect;
+        public string ForceAlignButtonName { get; set; }
+        public string ForceAlignInvalidButtonName { get; set; }
+
         public Effect GridEffect
         {
             get
@@ -3703,63 +3764,29 @@ namespace DocCompareWPF
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public string GridName { get; set; }
+        public string ImgDummyName { get; set; }
+        public string ImgGridName { get; set; }
+        public string ImgName { get; set; }
+        public Thickness Margin { get; set; }
+        public string PageNumberLabel { get; set; }
+        public string PathToImg { get; set; }
+        public string PathToImgDummy { get; set; }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
     }
 
     public class SideGridItemRight : INotifyPropertyChanged
     {
-        public string GridName { get; set; }
-        public string RemoveForceAlignButtonName { get; set; }
-
-        public Visibility RemoveForceAlignButtonVisibility { get; set; }
-
-        public bool RemoveForceAlignButtonEnable { get; set; }
-        public string ImgGridName { get; set; }
-        public string ImgName { get; set; }
-        public string ImgMaskName { get; set; }
-        public string PathToMask { get; set; }
-        public string PathToImg { get; set; }
-
-        public string ImgDummyName { get; set; }
-        public string PathToImgDummy { get; set; }
-        public string ForceAlignButtonName { get; set; }
-        public string ForceAlignInvalidButtonName { get; set; }
-        private Visibility _showMask;
-        public Visibility ShowMask
-        {
-            get
-            {
-                return _showMask;
-            }
-
-            set
-            {
-                _showMask = value;
-                OnPropertyChanged();
-            }
-        }
-        private Effect _effect;
-        public Effect GridEffect
-        {
-            get
-            {
-                return _effect;
-            }
-
-            set
-            {
-                _effect = value;
-                OnPropertyChanged();
-            }
-        }
-        public Thickness Margin { get; set; }
         private Color _color;
+        private Effect _effect;
+        private Visibility _showMask;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public Color BackgroundBrush
         {
             get
@@ -3774,7 +3801,63 @@ namespace DocCompareWPF
             }
         }
 
+        public string ForceAlignButtonName { get; set; }
+        public string ForceAlignInvalidButtonName { get; set; }
+
+        public Effect GridEffect
+        {
+            get
+            {
+                return _effect;
+            }
+
+            set
+            {
+                _effect = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string GridName { get; set; }
+        public string ImgDummyName { get; set; }
+        public string ImgGridName { get; set; }
+        public string ImgMaskName { get; set; }
+        public string ImgName { get; set; }
+        public Thickness Margin { get; set; }
+        public string PathToImg { get; set; }
+        public string PathToImgDummy { get; set; }
+        public string PathToMask { get; set; }
+        public bool RemoveForceAlignButtonEnable { get; set; }
+        public string RemoveForceAlignButtonName { get; set; }
+
+        public Visibility RemoveForceAlignButtonVisibility { get; set; }
+
+        public Visibility ShowMask
+        {
+            get
+            {
+                return _showMask;
+            }
+
+            set
+            {
+                _showMask = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class SimpleImageItem : INotifyPropertyChanged
+    {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public Thickness Margin { get; set; }
+        public string PathToFile { get; set; }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {

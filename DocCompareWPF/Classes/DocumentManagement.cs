@@ -28,7 +28,6 @@ namespace DocCompareWPF.Classes
             documentsToCompare = new List<int>() { 0, 1 };
             workingDir = p_workingDir;
 
-
             Directory.CreateDirectory(workingDir);
 
             Directory.CreateDirectory(Path.Join(workingDir, "compare"));
@@ -93,11 +92,11 @@ namespace DocCompareWPF.Classes
             }
 
             // clean up folder
-            
+
             documents[index].ClearFolder();
             DirectoryInfo di = new DirectoryInfo(documents[index].imageFolder);
             di.Delete();
-            
+
             documents.RemoveAt(index);
 
             // we now check for docs to show
@@ -154,6 +153,94 @@ namespace DocCompareWPF.Classes
                 {
                     documentsToShow.RemoveAt(i);
                     documentsToShow.Add(-1);
+                }
+            }
+        }
+
+        public void RemoveDocumentWithID(string ID)
+        {
+            int ind = -1;
+            for (int i = 0; i < documents.Count; i++)
+            {
+                if (documents[i].docID == ID)
+                {
+                    ind = i;
+                    break;
+                }
+            }
+
+            if (ind != -1)
+            {
+                List<string> docShown = new List<string>();
+                for (int i = 0; i < documentsToShow.Count; i++)
+                {
+                    if (documentsToShow[i] != -1 && i < documents.Count)
+                    {
+                        docShown.Add(documents[documentsToShow[i]].docID);
+                    }
+                }
+
+                documents[ind].ClearFolder();
+                DirectoryInfo di = new DirectoryInfo(documents[ind].imageFolder);
+                di.Delete();
+
+                documents.RemoveAt(ind);
+
+                for (int i = 0; i < docShown.Count; i++)
+                {
+                    if (i == 0) // view, where the doc was removed
+                    {
+                        string docIDToConsider;
+                        for (int j = 0; j < documents.Count; j++)
+                        {
+                            docIDToConsider = documents[j].docID;
+                            bool ok = false;
+                            for (int k = 0; k < docShown.Count; k++)
+                            {
+                                if (k != 0)
+                                {
+                                    if (docIDToConsider == docShown[k])
+                                    {
+                                        ok = false;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        ok = true;
+                                    }
+                                }
+                            }
+
+                            if (ok == true)
+                            {
+                                documentsToShow[i] = j;
+                                break;
+                            }
+                            else
+                            {
+                                documentsToShow[i] = -1;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        documentsToShow[i] = documents.FindIndex(x => x.docID == docShown[i]);
+                    }
+                }
+
+                if (documents.Count == 0)
+                {
+                    documentsToShow[0] = -1;
+                    documentsToShow[1] = -1;
+                }
+
+                for (int i = 0; i < documentsToShow.Count; i++)
+                {
+                    if (documentsToShow[i] == -1)
+                    {
+                        documentsToShow.RemoveAt(i);
+                        documentsToShow.Add(-1);
+                    }
                 }
             }
         }

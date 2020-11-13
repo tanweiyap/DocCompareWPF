@@ -55,10 +55,106 @@ namespace DocConvert
         }
     }
 
+    public class PICConvertClass
+    {
+        public PICConvertClass()
+        {
+        }
+
+        public int CovertPICtoJPEG(string filePath, string outputPath)
+        {
+            int ret = -1;
+
+            try
+            {
+                Mat thisImage = Cv2.ImRead(filePath);
+                thisImage.SaveImage(Path.Join(outputPath, "0.jpg"));
+            }
+            catch
+            {
+                return ret;
+            }
+
+            ret = 0;
+
+            return ret;
+        }
+    }
+
     public class PPTConvertClass
     {
         public PPTConvertClass()
         {
+        }
+
+        public int ConvertPPTToImages(string filePath, string outputPath)
+        {
+            int ret = -1;
+
+            try
+            {
+                // check file existence
+                if (File.Exists(filePath))
+                {
+                    Application pptApplication;
+                    try
+                    {
+                        pptApplication = new Application
+                        {
+                            DisplayAlerts = PpAlertLevel.ppAlertsNone, //get rid of pop ups
+                            AutomationSecurity = MsoAutomationSecurity.msoAutomationSecurityForceDisable //get rid of even more pop ups
+                        };
+                    }
+                    catch
+                    {
+                        return -2;
+                    }
+
+                    Presentation pptPresentation = pptApplication.Presentations
+                    .Open(filePath, MsoTriState.msoFalse, MsoTriState.msoFalse
+                    , MsoTriState.msoFalse);
+
+                    if (pptPresentation.Final) //catching another detail problem: if presentation has flag 'final' it does not allow to save it, even with SaveCopyAs... by setting it here but not saving over the original file, the original state is not changed but we can save the jpgs.
+                    {
+                        pptPresentation.Final = false;
+                    }
+
+                    for (int i = 1; i < (pptPresentation.Slides.Count + 1); i++)
+                    {
+                        pptPresentation.Slides[i].Export(outputPath + "\\" + (i - 1).ToString() + ".jpg", "jpg");
+                    }
+
+                    object fileAttribute = pptPresentation.BuiltInDocumentProperties;
+
+                    pptPresentation.Close();
+
+                    //old code by WYT...
+                    //pptPresentation.Export(outputPath, "jpg", Int32.Parse(pptPresentation.SlideMaster.Width.ToString()), Int32.Parse(pptPresentation.SlideMaster.Height.ToString()));
+
+                    //DirectoryInfo di = new DirectoryInfo(outputPath);
+                    //FileInfo[] fi = di.GetFiles();
+                    //for (int i = 0; i < fi.Length; i++)
+                    //{
+                    //    string[] filename;
+                    //    if (fi[i].Name.Contains("Folie"))
+                    //        filename = fi[i].Name.Split("Folie");
+                    //    else
+                    //        filename = fi[i].Name.Split("Slide");
+
+                    //    string name = Path.GetFileNameWithoutExtension(filename[1]);
+                    //    int pageName = int.Parse(name);
+                    //    File.Move(fi[i].FullName, Path.Join(outputPath, (pageName - 1).ToString() + ".jpg"));
+                    //}
+
+                    ret = 0;
+                }
+
+                return ret;
+            }
+            catch
+            {
+                return -1; // propably no office installation
+            }
         }
 
         public List<string> GetFileAttribute(string filePath)
@@ -104,93 +200,6 @@ namespace DocConvert
                 "Value", BindingFlags.Default | BindingFlags.GetProperty,
                 null, prop, new object[] { });
             return propValue;
-        }
-
-        public int ConvertPPTToImages(string filePath, string outputPath)
-        {
-            int ret = -1;
-
-            try
-            {
-                // check file existence
-                if (File.Exists(filePath))
-                {
-                    Application pptApplication = new Application
-                    {
-                        DisplayAlerts = PpAlertLevel.ppAlertsNone, //get rid of pop ups
-                        AutomationSecurity = MsoAutomationSecurity.msoAutomationSecurityForceDisable //get rid of even more pop ups
-                    };
-                    Presentation pptPresentation = pptApplication.Presentations
-                    .Open(filePath, MsoTriState.msoFalse, MsoTriState.msoFalse
-                    , MsoTriState.msoFalse);
-
-                    if (pptPresentation.Final) //catching another detail problem: if presentation has flag 'final' it does not allow to save it, even with SaveCopyAs... by setting it here but not saving over the original file, the original state is not changed but we can save the jpgs.
-                    {
-                        pptPresentation.Final = false;
-                    }
-
-                    for (int i = 1; i < (pptPresentation.Slides.Count + 1); i++)
-                    {
-                        pptPresentation.Slides[i].Export(outputPath + "\\" + (i - 1).ToString() + ".jpg", "jpg");
-                    }
-
-                    object fileAttribute = pptPresentation.BuiltInDocumentProperties;
-
-                    pptPresentation.Close();
-
-                    //old code by WYT...
-                    //pptPresentation.Export(outputPath, "jpg", Int32.Parse(pptPresentation.SlideMaster.Width.ToString()), Int32.Parse(pptPresentation.SlideMaster.Height.ToString()));
-
-                    //DirectoryInfo di = new DirectoryInfo(outputPath);
-                    //FileInfo[] fi = di.GetFiles();
-                    //for (int i = 0; i < fi.Length; i++)
-                    //{
-                    //    string[] filename;
-                    //    if (fi[i].Name.Contains("Folie"))
-                    //        filename = fi[i].Name.Split("Folie");
-                    //    else
-                    //        filename = fi[i].Name.Split("Slide");
-
-                    //    string name = Path.GetFileNameWithoutExtension(filename[1]);
-                    //    int pageName = int.Parse(name);
-                    //    File.Move(fi[i].FullName, Path.Join(outputPath, (pageName - 1).ToString() + ".jpg"));
-                    //}
-
-                    ret = 0;
-                }
-
-                return ret;
-            }
-            catch
-            {
-                return -2; // propably no office installation
-            }
-        }
-    }
-
-    public class PICConvertClass
-    {
-        public PICConvertClass()
-        {
-        }
-
-        public int CovertPICtoJPEG(string filePath, string outputPath)
-        {
-            int ret = -1;
-
-            try
-            {
-                Mat thisImage = Cv2.ImRead(filePath);
-                thisImage.SaveImage(Path.Join(outputPath, "0.jpg"));
-            }
-            catch
-            {
-                return ret;
-            }
-
-            ret = 0;
-
-            return ret;
         }
     }
 }

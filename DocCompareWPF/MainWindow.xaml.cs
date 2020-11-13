@@ -26,8 +26,8 @@ namespace DocCompareWPF
     {
         private readonly DocumentManagement docs;
 
-        private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".2compare");
-        private readonly string installationDir = AppDomain.CurrentDomain.BaseDirectory;
+        private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
+        private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
 
         // Stack panel for viewing documents in scrollviewer control in comparison view
         //private VirtualizingStackPanel childPanel1;
@@ -64,6 +64,7 @@ namespace DocCompareWPF
         {
             InitializeComponent();
             showMask = true;
+            Directory.CreateDirectory(appDataDir);
 
             // GUI stuff
             SetVisiblePanel(SidePanels.DRAGDROP);
@@ -2039,14 +2040,14 @@ namespace DocCompareWPF
 
         private void LoadLicense()
         {
-            using var file = File.OpenRead(Path.Join(Path.Join(installationDir, "lic"), "2compare.lic"));
+            using var file = File.OpenRead(Path.Join(Path.Join(appDataDir, "lic"), "2compare.lic"));
             lic = Serializer.Deserialize<LicenseManagement>(file);
         }
 
         private void LoadSettings()
         {
             settings = new AppSettings();
-            using var file = File.OpenRead(Path.Join(installationDir, "AppSettings.bin"));
+            using var file = File.OpenRead(Path.Join(appDataDir, "AppSettings.bin"));
             settings = Serializer.Deserialize<AppSettings>(file);
         }
 
@@ -2688,14 +2689,14 @@ namespace DocCompareWPF
 
         private void SaveLicense()
         {
-            Directory.CreateDirectory("lic");
-            using var file = File.Create(Path.Join(Path.Join(installationDir, "lic"), "2compare.lic"));
+            Directory.CreateDirectory(Path.Join(appDataDir, "lic"));
+            using var file = File.Create(Path.Join(Path.Join(appDataDir, "lic"), "2compare.lic"));
             Serializer.Serialize(file, lic);
         }
 
         private void SaveSettings()
         {
-            using var file = File.Create(Path.Join(installationDir, "AppSettings.bin"));
+            using var file = File.Create(Path.Join(appDataDir, "AppSettings.bin"));
             Serializer.Serialize(file, settings);
         }
 
@@ -3640,9 +3641,7 @@ namespace DocCompareWPF
                 di = new DirectoryInfo(doc.imageFolder);
                 di.Delete();
             }
-
-            di = new DirectoryInfo(Path.Join(workingDir));
-            di.Delete(true);
+            
             Close();
 
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
 using OpenCvSharp;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -17,8 +18,9 @@ namespace DocConvert
         public int ConvertPDFtoImages(string filePath, string outputPath)
         {
             int ret = -1;
-            string popplerPath = Directory.GetCurrentDirectory();
+            string popplerPath = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
             popplerPath = Path.Join(popplerPath, "lib");
+            //popplerPath = popplerPath.Substring(6, popplerPath.Length - 6);
             FileInfo[] fii = new DirectoryInfo(popplerPath).GetFiles();
             foreach (FileInfo f in fii)
             {

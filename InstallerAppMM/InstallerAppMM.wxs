@@ -16,8 +16,8 @@
         </Component>
         <Component Id="owc64A7DF6D50CB0C793A1FFE8A572D3F7A" Guid="693a6669-728c-f750-1528-6a0b333ae853" Win64="yes">
           <File Id="owf64A7DF6D50CB0C793A1FFE8A572D3F7A" Source="$(var.SourceDir)\2Compare.exe" KeyPath="yes">
-            <Shortcut Id="sc4F20086A0C7FF8501C85D693929C44C8" Name="2Compare" Directory="DesktopFolder" Show="normal" />
-            <Shortcut Id="sc8A39796CE1FBC05560B6427835C88C98" Name="2Compare" Directory="ProgramMenuFolder" Show="normal" />
+            <Shortcut Id="sc4F20086A0C7FF8501C85D693929C44C8" Name="2Compare" Directory="DesktopFolder" Show="normal" WorkingDirectory="INSTALLLOCATION" />
+            <Shortcut Id="sc8A39796CE1FBC05560B6427835C88C98" Name="2Compare" Directory="ProgramMenuFolder" Show="normal" WorkingDirectory="INSTALLLOCATION" />
           </File>
         </Component>
         <Component Id="owcEAB1E9CA64C6DB5F84B86B9E1844E2D8" Guid="8df002a4-0ada-5636-5d78-65bfab603808" Win64="yes">
@@ -28,9 +28,6 @@
         </Component>
         <Component Id="owc4E094480797B97A2C4F67DF6C10B6792" Guid="cfcb2dc2-c6b1-ad97-ebb6-8bcb884bb2d1" Win64="yes">
           <File Id="owf4E094480797B97A2C4F67DF6C10B6792" Source="$(var.SourceDir)\2Compare.runtimeconfig.json" KeyPath="yes" />
-        </Component>
-        <Component Id="owcBB9B8DD94E5B2EC66C2960D430066F8F" Guid="fc74dbf1-2a89-1bbb-6935-4fab6b28eadf" Win64="yes">
-          <File Id="owfBB9B8DD94E5B2EC66C2960D430066F8F" Source="$(var.SourceDir)\AppSettings.bin" KeyPath="yes" />
         </Component>
         <Component Id="owcD4F573CEC8A1F4A003075703B462EECB" Guid="46ce3c32-a8ae-12dc-38c7-8a3f2bb6fa91" Win64="yes">
           <File Id="owfD4F573CEC8A1F4A003075703B462EECB" Source="$(var.SourceDir)\ControlzEx.dll" KeyPath="yes" />

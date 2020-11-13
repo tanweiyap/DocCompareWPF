@@ -28,6 +28,7 @@ namespace DocCompareWPF
 
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
+        private readonly string version = "0.4.1";
 
         // Stack panel for viewing documents in scrollviewer control in comparison view
         //private VirtualizingStackPanel childPanel1;
@@ -35,7 +36,7 @@ namespace DocCompareWPF
 
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
 
-        private int docCompareSideGridShown, docProcessingCounter, pageToAnimate;
+        private int docCompareSideGridShown, docProcessingCounter;
 
         private Grid gridToAnimate;
 
@@ -127,7 +128,7 @@ namespace DocCompareWPF
                     threadCheckTrial.Start();
                 }
 
-                ErrorHandling.ReportError("App Launch", "Launch on " + lic.GetUUID(), "App successfully launched with license: " + lic.GetLicenseTypesString() + ", expires/renewal on " + lic.GetExpiryDateString());
+                ErrorHandling.ReportStatus("App Launch", "App version: " + version + " successfully launched with license: " + lic.GetLicenseTypesString() + ", expires/renewal on " + lic.GetExpiryDateString() + " on " + lic.GetUUID());
             }
             catch
             {
@@ -1669,8 +1670,7 @@ namespace DocCompareWPF
                 {
                     splittedName = (sender as Button).Tag.ToString().Split("Right");
                 }
-
-                pageToAnimate = int.Parse(splittedName[1]);
+                
                 gridToAnimate = (sender as Button).Parent as Grid;
                 animateDiffRunning = true;
 
@@ -2144,76 +2144,6 @@ namespace DocCompareWPF
                         }
                     });
 
-                    if (docProcessingCounter >= 2 || docProcessRunning == false)
-                    {
-                        Dispatcher.Invoke(() =>
-                        {
-                            if (docs.documents[docs.documentsToShow[0]].processed == true)
-                            {
-                                DisplayImageLeft(docs.documentsToShow[0]);
-                                OpenDoc1OriginalButton1.IsEnabled = true;
-                            }
-                            else
-                            {
-                                if (docs.documents.Count > 1)
-                                {
-                                    docs.documentsToShow[0] = FindNextDocToShow();
-                                    DisplayImageLeft(docs.documentsToShow[0]);
-                                    ShowDoc1FileInfoButton.IsEnabled = true;
-                                    OpenDoc1OriginalButton1.IsEnabled = true;
-                                }
-                            }
-
-                            if (docs.documents.Count > 1)
-                            {
-                                if (docs.documents[docs.documentsToShow[1]].processed == true)
-                                {
-                                    DisplayImageMiddle(docs.documentsToShow[1]);
-                                    OpenDoc2OriginalButton2.IsEnabled = true;
-                                }
-                                else
-                                {
-                                    if (docs.documents.Count > 2)
-                                    {
-                                        docs.documentsToShow[1] = FindNextDocToShow();
-                                        DisplayImageMiddle(docs.documentsToShow[1]);
-                                        OpenDoc2OriginalButton2.IsEnabled = true;
-                                    }
-                                }
-                            }
-
-                            if (docs.documents.Count > 2)
-                            {
-                                if (settings.numPanelsDragDrop == 3)
-                                {
-                                    if (docs.documents[docs.documentsToShow[2]].processed == true)
-                                    {
-                                        if (docs.documents.Count >= 3)
-                                        {
-                                            DisplayImageRight(docs.documentsToShow[2]);
-                                            OpenDoc3OriginalButton3.IsEnabled = true;
-                                            ShowDoc3FileInfoButton.IsEnabled = true;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (docs.documents.Count > 3)
-                                        {
-                                            docs.documentsToShow[2] = FindNextDocToShow();
-                                            DisplayImageRight(docs.documentsToShow[2]);
-                                            OpenDoc3OriginalButton3.IsEnabled = true;
-                                            ShowDoc3FileInfoButton.IsEnabled = true;
-                                        }
-                                    }
-                                }
-                            }
-
-                            ProgressBarDoc1.Visibility = Visibility.Hidden;
-                            ProgressBarDoc2.Visibility = Visibility.Hidden;
-                            ProgressBarDoc3.Visibility = Visibility.Hidden;
-                            UpdateDocSelectionComboBox();
-                        });
-                    }
 
                     Thread.Sleep(10);
                 }
@@ -3436,13 +3366,14 @@ namespace DocCompareWPF
             }
         }
 
+        /*
         private void ReleaseDocPreview()
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();
             GC.Collect();
         }
-
+        */
         private void SidePanelOpenDocButton_Click(object sender, RoutedEventArgs e)
         {
             SetVisiblePanel(SidePanels.DRAGDROP);

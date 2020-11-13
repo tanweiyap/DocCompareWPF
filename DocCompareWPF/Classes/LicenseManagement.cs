@@ -62,7 +62,7 @@ namespace DocCompareWPF.Classes
                 // development mode
                 licenseType = LicenseTypes.TRIAL;
                 licenseStatus = LicenseStatus.ACTIVE;
-                expiryDate = DateTime.Today.AddDays(14);
+                expiryDate = DateTime.Today.AddDays(7);
                 //expiryDate = DateTime.Today.Subtract(TimeSpan.FromDays(2));
             }
             catch (Exception ex)

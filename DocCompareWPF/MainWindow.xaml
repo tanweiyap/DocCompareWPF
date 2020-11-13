@@ -941,7 +941,7 @@
                                     </Image.Effect>
                                 </Image>
                                 <Label Grid.Row="1" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold">2Compare</Label>
-                                <Label Grid.Row="2" x:Name="AppVersionLabel" HorizontalAlignment="Center" FontSize="13">Version 0.3</Label>
+                                <Label Grid.Row="2" x:Name="AppVersionLabel" HorizontalAlignment="Center" FontSize="13">Version 0.4</Label>
                                 <Label Grid.Row="3" HorizontalAlignment="Center" FontSize="13">
                                     <Hyperlink NavigateUri="https://www.hopietech.com/" RequestNavigate="Hyperlink_RequestNavigate">
                                         © Hopie Tech 2020

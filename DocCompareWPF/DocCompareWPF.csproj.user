@@ -12,9 +12,15 @@
     <Compile Update="CustomMessageBox.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="DialogBubble.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="CustomMessageBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="DialogBubble.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">

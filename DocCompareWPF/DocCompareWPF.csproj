@@ -9,7 +9,7 @@
     <Authors />
     <Company>Hopie Tech UG</Company>
     <Product>2Compare</Product>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <DelaySign>false</DelaySign>
     <AssemblyOriginatorKeyFile>2CompareKey.pfx</AssemblyOriginatorKeyFile>
     <AssemblyName>2Compare</AssemblyName>
@@ -18,12 +18,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -139,11 +139,6 @@
 
   <ItemGroup>
     <Folder Include="lic\" />
-    <Folder Include="Walkthrough\" />
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /iery &quot;$(TargetDir)*.*&quot; &quot;$(ProjectDir)..\Installer\Deploy&quot;" />
-  </Target>
 
 </Project>

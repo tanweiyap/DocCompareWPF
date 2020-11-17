@@ -53,15 +53,6 @@ namespace DocCompareWPF.Classes
             return ret;
         }
 
-        public void ClearFolder()
-        {
-            DirectoryInfo di = new DirectoryInfo(imageFolder);
-            foreach (FileInfo file in di.EnumerateFiles())
-            {
-                file.Delete();
-            }
-        }
-
         public void DetectFileType()
         {
             string extension = Path.GetExtension(filePath);
@@ -175,10 +166,14 @@ namespace DocCompareWPF.Classes
                     break;
             }
         }
-        public int ReloadDocument()
+        public int ReloadDocument(string workingDir)
         {
             int ret;
-            ClearFolder();
+
+            docID = Guid.NewGuid().ToString();
+            imageFolder = Path.Join(workingDir, docID);
+            Directory.CreateDirectory(imageFolder);
+
             switch (fileType)
             {
                 case FileTypes.PDF:

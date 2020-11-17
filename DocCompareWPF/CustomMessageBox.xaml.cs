@@ -26,14 +26,12 @@ namespace DocCompareWPF
 
         private void Button1_Click(object sender, RoutedEventArgs e)
         {
-            Close();
-            return;
+            DialogResult = true;
         }
 
         private void Button2_Click(object sender, RoutedEventArgs e)
         {
-            Close();
-            return;
+            DialogResult = false;
         }
     }
 }

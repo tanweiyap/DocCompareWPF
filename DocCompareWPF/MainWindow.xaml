@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="DocCompare" Height="800" Width="1280" MinWidth="1024" MinHeight="600" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged"
-        FontSize="15" SizeChanged="Window_SizeChanged">
+        FontSize="15" SizeChanged="Window_SizeChanged" LocationChanged="Window_LocationChanged">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="{Binding ActualHeight,ElementName=TitleBar}" />
     </WindowChrome.WindowChrome>
@@ -20,6 +20,77 @@
                 <RowDefinition />
                 <!--RowDefinition Height="32"/-->
             </Grid.RowDefinitions>
+            <Popup x:Name="PopupBrowseFileBubble" PlacementTarget="{Binding ElementName=SidePanelOpenDocButton}" StaysOpen="True"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-20" HorizontalOffset="-130" Height="150">
+            <local:DialogBubble Message="Click on this tab to browse and inspect files before comparison"
+                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
+                                Height="130"></local:DialogBubble>
+            </Popup>
+            <Popup x:Name="PopupBrowseFileButtonBubble" PlacementTarget="{Binding ElementName=BrowseFileButton1}" StaysOpen="True"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="120" HorizontalOffset="0" Height="250" Placement="Center">
+                <local:DialogBubble Message="Click on this button to browse files for inspection. Alternatively, you can drag and drop files into this zone to load them.            
+                                          A total of 5 files can be loaded at once.            Try click on this button and select all the example files." 
+                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,215" RectPoint4="5,215"
+                                Height="230"></local:DialogBubble>
+            </Popup>
+            <Popup x:Name="PopupBrowseFileButton2Bubble" PlacementTarget="{Binding ElementName=BrowseFileButton2}" StaysOpen="True"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="70" HorizontalOffset="00" Height="150" Placement="Center">
+                <local:DialogBubble Message="Please load one more file for comparison." 
+                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,215" RectPoint4="5,215"
+                                Height="130"></local:DialogBubble>
+            </Popup>
+            <Popup x:Name="PopupDocPreviewNameComboboxBubble" PlacementTarget="{Binding ElementName=Doc1NameLabelComboBox}" StaysOpen="True"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="60" HorizontalOffset="0" Height="150" Placement="Center">
+                <local:DialogBubble Message="Use the dropdown menu to view other loaded documents" 
+                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,215" RectPoint4="5,215"
+                                Height="130"></local:DialogBubble>
+            </Popup>
+            <Popup x:Name="PopupDocPreviewInfoButtonBubble" PlacementTarget="{Binding ElementName=ShowDoc2FileInfoButton}" StaysOpen="True"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-80" HorizontalOffset="25" Height="150" Placement="Center">
+                <local:DialogBubble Message="Click on this button to view more document attributes" 
+                                StartPoint="120,75" TopPoint="150,135" EndPoint="180,75"
+                                RectInnerMargin="20,20,60,20" RectPoint1="5,5" RectPoint2="295,5" RectPoint3="295,75" RectPoint4="5,75"
+                                Height="145"></local:DialogBubble>
+            </Popup>
+            <Popup x:Name="PopupDocPreviewInfoButton2Bubble" PlacementTarget="{Binding ElementName=ShowDoc2FileInfoButton}" StaysOpen="True"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-80" HorizontalOffset="25" Height="150" Placement="Center">
+                <local:DialogBubble Message="Click again on this button to hide document attributes" 
+                                StartPoint="120,75" TopPoint="150,135" EndPoint="180,75"
+                                RectInnerMargin="20,20,60,20" RectPoint1="5,5" RectPoint2="295,5" RectPoint3="295,75" RectPoint4="5,75"
+                                Height="145"></local:DialogBubble>
+            </Popup>
+            <Popup x:Name="PopupCompareDocBubble" PlacementTarget="{Binding ElementName=SidePanelDocCompareButton}" StaysOpen="True"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-20" HorizontalOffset="-130" Height="150">
+                <local:DialogBubble Message="Click on this tab to switch to compare mode after document selection."
+                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
+                                Height="130"></local:DialogBubble>
+            </Popup>
+            <Popup x:Name="PopupHighlightOffBubble" PlacementTarget="{Binding ElementName=HideMaskButton}" StaysOpen="True"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-10" HorizontalOffset="-140" Height="160">
+                <local:DialogBubble Message="Document differences are highlighted. Click on this button to toggle highlighting"
+                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
+                                Height="140"></local:DialogBubble>
+            </Popup>
+            <Popup x:Name="PopupOpenOriBubble" PlacementTarget="{Binding ElementName=OpenDoc2OriginalButton}" StaysOpen="True"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-10" HorizontalOffset="-140" Height="160">
+                <local:DialogBubble Message="Click this button to open the file in external editor."
+                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
+                                Height="140"></local:DialogBubble>
+            </Popup>
+            <Popup x:Name="PopupReloadBubble" PlacementTarget="{Binding ElementName=ReloadDocCompare2Button}" StaysOpen="True"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-10" HorizontalOffset="-140" Height="160">
+                <local:DialogBubble Message="Click this button to reload the file in after editing."
+                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
+                                Height="140"></local:DialogBubble>
+            </Popup>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30" />
@@ -97,6 +168,10 @@
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
                         <Grid x:Name="DocCompareFirstDocZone" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White" AllowDrop="True" DragOver="DocCompareDragDropZone1_DragOver" Drop="DocCompareDragDropZone1_Drop">
                             <Grid x:Name="DocCompareDragDropZone1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True">
                                 <Border Margin="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="10" AllowDrop="True">
@@ -136,7 +211,7 @@
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
                                             <ComboBox x:Name="Doc1NameLabelComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="30,0,30,0" FontSize="14">
+                                                      IsEditable="False" Padding="30,0,30,0" FontSize="14" DropDownOpened="Doc1NameLabelComboBox_DropDownOpened" DropDownClosed="Doc1NameLabelComboBox_DropDownClosed">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
                                                         <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
@@ -183,41 +258,7 @@
                                             </Style>                                        
                                         </ListView.ItemContainerStyle>
                                     </ListView>
-                                    <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="25"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="{StaticResource BottomBarHeight}"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <Label x:Name="Doc1PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
-                                        <Button x:Name="ShowDoc1FileInfoButton" Grid.Column="1" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc1FileInfoButton_Click" IsEnabled="False">
-                                            <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
-                                        </Button>
-                                        <Grid Grid.Row="1" x:Name="Doc1StatsGrid" Visibility="Visible" Background="{StaticResource PrimaryHueDarkBrush}">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*"/>
-                                                <ColumnDefinition Width="3*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Label x:Name="Doc1StatAuthorLabel0" Content="Author" Foreground="White" Visibility="Collapsed"/>
-                                            <Label Content="Last modified by" Foreground="White" Grid.Row="1"/>
-                                            <Label x:Name="Doc1StatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
-                                            <Label Content="Last modified on" Foreground="White" Grid.Row="3"/>
-                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="Doc1StatAuthorLabel" Text="" Foreground="White" Grid.Row="0" Grid.Column="1" Visibility="Collapsed"/>
-                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="Doc1StatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="1"/>
-                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="Doc1StatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="1" Visibility="Collapsed"/>
-                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="Doc1StatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
-                                        </Grid>
-                                        <Grid Grid.Row="1" Grid.Column="1" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>
-                                    </Grid>
+                                    
                                 </Grid>
                                 <mah:Tile x:Name="ProgressBarDoc1" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -261,7 +302,6 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="{StaticResource TopBarHeight}" />
                                         <RowDefinition />
-                                        <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
                                     <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -318,41 +358,7 @@
                                             </Style>                                        
                                         </ListView.ItemContainerStyle>
                                     </ListView>
-                                    <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="25"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="{StaticResource BottomBarHeight}"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <Label x:Name="Doc2PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
-                                        <Button x:Name="ShowDoc2FileInfoButton" Grid.Column="1" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc2FileInfoButton_Click" IsEnabled="False">
-                                            <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
-                                        </Button>
-                                        <Grid Grid.Row="1" x:Name="Doc2StatsGrid" Visibility="Visible" Background="{StaticResource PrimaryHueDarkBrush}">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*"/>
-                                                <ColumnDefinition Width="3*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Label x:Name="Doc2StatAuthorLabel0" Content="Author" Foreground="White" Visibility="Collapsed"/>
-                                            <Label Content="Last modified by" Foreground="White" Grid.Row="1"/>
-                                            <Label x:Name="Doc2StatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
-                                            <Label Content="Last modified on" Foreground="White" Grid.Row="3"/>
-                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="Doc2StatAuthorLabel" Text="" Foreground="White" Grid.Row="0" Grid.Column="1" Visibility="Collapsed"/>
-                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="Doc2StatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="1"/>
-                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="Doc2StatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="1" Visibility="Collapsed"/>
-                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="Doc2StatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
-                                        </Grid>
-                                        <Grid Grid.Row="1" Grid.Column="1" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>
-                                    </Grid>
+                                    
                                 </Grid>
                                 <mah:Tile x:Name="ProgressBarDoc2" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -477,7 +483,7 @@
                                                 <ColumnDefinition Width="2*"/>
                                                 <ColumnDefinition Width="3*"/>
                                             </Grid.ColumnDefinitions>
-                                            <Label x:Name="Doc3StatAuthorLabel0" Content="Author" Foreground="White" Visibility="Collapsed"/>
+                                            <Label x:Name="Doc3StatAuthorLabel0" Content="Original author" Foreground="White" Visibility="Collapsed"/>
                                             <Label Content="Last modified by" Foreground="White" Grid.Row="1"/>
                                             <Label x:Name="Doc3StatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
                                             <Label Content="Last modified on" Foreground="White" Grid.Row="3"/>
@@ -501,8 +507,67 @@
                                 </mah:Tile>
                             </Grid>
                         </Grid>
+                        <Grid Grid.Row="1" x:Name="DocPreviewStatGrid" Visibility="Collapsed" Grid.ColumnSpan="3" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="{StaticResource BottomBarHeight}"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label x:Name="Doc1PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                            <Button x:Name="ShowDoc1FileInfoButton" Grid.Column="0"  Visibility="Hidden" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc1FileInfoButton_Click" IsEnabled="False">
+                                <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
+                            </Button>
+                            <Grid Grid.Row="1" x:Name="Doc1StatsGrid" Visibility="Visible" Background="{StaticResource PrimaryHueDarkBrush}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label VerticalAlignment="Center" x:Name="Doc1StatAuthorLabel0" Content="Original author" Foreground="White" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" x:Name="Doc1StatLastEditorLabel0" Content="Last modified by" Foreground="White" Grid.Row="1" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" x:Name="Doc1StatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" Content="Last modified on" Foreground="White" Grid.Row="3"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc1StatAuthorLabel" Text="" Foreground="White" Grid.Row="0" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc1StatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc1StatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc1StatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
+                            </Grid>
+                            <Label Grid.Column="1" x:Name="Doc2PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                            <Button Grid.Column="1" x:Name="ShowDoc2FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc2FileInfoButton_Click" IsEnabled="True">
+                                <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
+                            </Button>
+                            <Grid Grid.Row="1" Grid.Column="1" x:Name="Doc2StatsGrid" Visibility="Collapsed" Background="{StaticResource PrimaryHueDarkBrush}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label VerticalAlignment="Center" x:Name="Doc2StatAuthorLabel0" Content="Original author" Foreground="White" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" x:Name="Doc2StatLastEditorLabel0" Content="Last modified by" Foreground="White" Grid.Row="1" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" x:Name="Doc2StatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" Content="Last modified on" Foreground="White" Grid.Row="3"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc2StatAuthorLabel" Text="" Foreground="White" Grid.Row="0" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc2StatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc2StatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc2StatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
+                            </Grid>
+                        </Grid>
+                        
                     </Grid>
-                    <Grid x:Name="DocComparePanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DocComparePanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <mah:Tile x:Name="ProgressBarDocCompare" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="220" Background="White" BorderBrush="Black" BorderThickness="1">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
@@ -554,11 +619,11 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
                                         <ColumnDefinition />
-                                        <ColumnDefinition MaxWidth="300" MinWidth="300" />
+                                        <ColumnDefinition MaxWidth="250" MinWidth="250" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock x:Name="DocCompareNameLabel1" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,0,0" Padding="30,0,30,0" TextTrimming="CharacterEllipsis"></TextBlock>
                                     <Button x:Name="OpenDoc1OriginalButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="0" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" Cursor="Hand">
+                                            HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click_1" Margin="10,0,0,0" ToolTip="Open original" Cursor="Hand">
                                         <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                     </Button>
                                     <Button x:Name="ReloadDocCompare1Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
@@ -582,7 +647,7 @@
                                         <iconPacks:PackIconMicrons Kind="Hide" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                     </Button>
                                     <Button x:Name="OpenDoc2OriginalButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
+                                            HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click_1" Margin="10,0,0,0" ToolTip="Open original">
                                         <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                     </Button>
 
@@ -603,8 +668,8 @@
                             <Grid x:Name="DocCompareScrollViewerGrid" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
-                                    <ColumnDefinition MaxWidth="140" MinWidth="140"/>
-                                    <ColumnDefinition MaxWidth="160" MinWidth="160"/>
+                                    <ColumnDefinition MaxWidth="100" MinWidth="100"/>
+                                    <ColumnDefinition MaxWidth="150" MinWidth="150"/>
                                 </Grid.ColumnDefinitions>
                                 <ListView x:Name="DocCompareMainListView" Grid.Column="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareMainScrollViewer_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
                                     VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
@@ -679,7 +744,7 @@
                                                                 <SolidColorBrush Color="{Binding BackgroundBrush}"/>
                                                             </Grid.Background>
                                                             <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="30"/>
+                                                                <ColumnDefinition Width="0"/>
                                                                 <ColumnDefinition Width="100"/>
                                                             </Grid.ColumnDefinitions>
                                                             <Label Content="{Binding PageNumberLabel}" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="25" FontSize="12"></Label>
@@ -777,8 +842,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
                                         <ColumnDefinition />
-                                        <ColumnDefinition Width="25"/>
-                                        <ColumnDefinition MinWidth="300" MaxWidth="300" />
+                                        <ColumnDefinition MinWidth="250" MaxWidth="250" />
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="{StaticResource BottomBarHeight}"/>
@@ -786,7 +850,7 @@
                                     </Grid.RowDefinitions>
                                     <Label x:Name="DocComparePageNumberLabel1" HorizontalAlignment="Center" Grid.Column="0" VerticalAlignment="Center" Foreground="White"></Label>
                                     <Label x:Name="DocComparePageNumberLabel2" HorizontalAlignment="Center" Grid.Column="1" VerticalAlignment="Center" Foreground="White"></Label>
-                                    <Button x:Name="ShowDocCompareFileInfoButton" Grid.Column="2" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDocCompareFileInfoButton_Click" IsEnabled="False">
+                                    <Button x:Name="ShowDocCompareFileInfoButton" Grid.Column="2" Padding="0" HorizontalAlignment="Right" Margin="0,0,10,0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDocCompareFileInfoButton_Click" IsEnabled="False">
                                         <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
                                     </Button>
                                     <Grid Grid.Row="1" Grid.ColumnSpan="2" x:Name="DocCompareLeftStatsGrid" Visibility="Visible" Background="{StaticResource PrimaryHueDarkBrush}">
@@ -802,20 +866,20 @@
                                             <ColumnDefinition Width="2*"/>
                                             <ColumnDefinition Width="3*"/>
                                         </Grid.ColumnDefinitions>
-                                        <Label VerticalAlignment="Center" x:Name="DocCompareLeftStatAuthorLabel0" Content="Author" Foreground="White" Visibility="Collapsed"/>
-                                        <Label VerticalAlignment="Center" Content="Last modified by" Foreground="White" Grid.Row="1"/>
+                                        <Label VerticalAlignment="Center" x:Name="DocCompareLeftStatAuthorLabel0" Content="Original author" Foreground="White" Visibility="Collapsed"/>
+                                        <Label VerticalAlignment="Center" x:Name="DocCompareLeftStatLastEditorLabel0" Content="Last modified by" Foreground="White" Grid.Row="1" Visibility="Collapsed"/>
                                         <Label VerticalAlignment="Center" x:Name="DocCompareLeftStatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
                                         <Label VerticalAlignment="Center" Content="Last modified on" Foreground="White" Grid.Row="3"/>
                                         <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareLeftStatAuthorLabel" Text="" Foreground="White" Grid.Row="0" Grid.Column="1" Visibility="Collapsed"/>
-                                        <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareLeftStatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="1"/>
+                                        <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareLeftStatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="1" Visibility="Collapsed"/>
                                         <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareLeftStatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="1" Visibility="Collapsed"/>
                                         <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareLeftStatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
-                                        <Label VerticalAlignment="Center" x:Name="DocCompareRightStatAuthorLabel0" Content="Author" Foreground="White" Visibility="Collapsed" Grid.Column="2"/>
-                                        <Label VerticalAlignment="Center" Content="Last modified by" Foreground="White" Grid.Row="1" Grid.Column="2"/>
+                                        <Label VerticalAlignment="Center" x:Name="DocCompareRightStatAuthorLabel0" Content="Original author" Foreground="White" Visibility="Collapsed" Grid.Column="2"/>
+                                        <Label VerticalAlignment="Center" x:Name="DocCompareRightStatLastEditorLabel0" Content="Last modified by" Foreground="White" Grid.Row="1" Grid.Column="2" Visibility="Collapsed"/>
                                         <Label VerticalAlignment="Center" x:Name="DocCompareRightStatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="2" Visibility="Collapsed" Grid.Column="2"/>
                                         <Label VerticalAlignment="Center" Content="Last modified on" Foreground="White" Grid.Row="3"  Grid.Column="2"/>
                                         <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatAuthorLabel" Text="" Foreground="White" Grid.Row="0" Grid.Column="3" Visibility="Collapsed"/>
-                                        <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="3"/>
+                                        <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="3" Visibility="Collapsed"/>
                                         <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="3" Visibility="Collapsed"/>
                                         <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="3"/>
                                     </Grid>                                    
@@ -932,7 +996,7 @@
                                     </Image.Effect>
                                 </Image>
                                 <Label Grid.Row="1" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold">2Compare</Label>
-                                <Label Grid.Row="2" x:Name="AppVersionLabel" HorizontalAlignment="Center" FontSize="13">Version 0.4</Label>
+                                <Label Grid.Row="2" x:Name="AppVersionLabel" HorizontalAlignment="Center" FontSize="13"> </Label>
                                 <Label Grid.Row="3" HorizontalAlignment="Center" FontSize="13">
                                     <Hyperlink NavigateUri="https://www.hopietech.com/" RequestNavigate="Hyperlink_RequestNavigate">
                                         © Hopie Tech 2020
@@ -1082,7 +1146,7 @@
                         </Grid>
                     </mah:Tile>
                 </Grid>
-            </Grid>
+            </Grid>            
         </Grid>
     </Border>
 </Window>

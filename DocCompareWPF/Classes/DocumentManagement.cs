@@ -93,9 +93,8 @@ namespace DocCompareWPF.Classes
 
             // clean up folder
 
-            documents[index].ClearFolder();
             DirectoryInfo di = new DirectoryInfo(documents[index].imageFolder);
-            di.Delete();
+            di.Delete(true);
 
             documents.RemoveAt(index);
 
@@ -145,6 +144,7 @@ namespace DocCompareWPF.Classes
             if (documents.Count == 0)
             {
                 documentsToShow[0] = -1;
+                documentsToShow[1] = -1;
             }
 
             for (int i = 0; i < documentsToShow.Count; i++)
@@ -180,7 +180,6 @@ namespace DocCompareWPF.Classes
                     }
                 }
 
-                documents[ind].ClearFolder();
                 DirectoryInfo di = new DirectoryInfo(documents[ind].imageFolder);
                 di.Delete();
 

@@ -25,5 +25,8 @@ namespace DocCompareWPF.Classes
 
         [ProtoMember(7)]
         public string cultureInfo = "en-us";
+
+        [ProtoMember(8)]
+        public bool shownWalkthrough = false;
     }
 }

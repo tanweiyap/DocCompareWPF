@@ -79,6 +79,7 @@ namespace DocCompareWPF
         private readonly DocumentManagement docs;
         private readonly string versionString = "Version 0.4.4";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
+        private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
         private int docCompareSideGridShown, docProcessingCounter;
         private Grid gridToAnimate;
@@ -117,6 +118,7 @@ namespace DocCompareWPF
         {
             InitializeComponent();
             Directory.CreateDirectory(appDataDir);
+            compareResultFolder = Path.Join(workingDir, Guid.NewGuid().ToString());
 
             // GUI stuff
             showMask = true;
@@ -784,7 +786,17 @@ namespace DocCompareWPF
                     forceIndices[i, 1] = docs.forceAlignmentIndices[i][1];
                 }
 
-                Document.CompareDocs(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[1]].imageFolder, Path.Join(workingDir, "compare"), out docs.pageCompareIndices, out docs.totalLen, forceIndices);
+                if (Directory.Exists(compareResultFolder))
+                {
+                    DirectoryInfo di = new DirectoryInfo(compareResultFolder);
+                    di.Delete(true);
+                }
+
+                compareResultFolder = Path.Join(workingDir, Guid.NewGuid().ToString());
+                Directory.CreateDirectory(compareResultFolder);
+
+
+                Document.CompareDocs(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[1]].imageFolder, compareResultFolder, out docs.pageCompareIndices, out docs.totalLen, forceIndices);
                 docs.documents[docs.documentsToCompare[0]].docCompareIndices = new List<int>();
                 docs.documents[docs.documentsToCompare[1]].docCompareIndices = new List<int>();
 
@@ -888,9 +900,9 @@ namespace DocCompareWPF
                     {
                         thisItem.PathToAniImgRight = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg");
 
-                        if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
+                        if (File.Exists(Path.Join(compareResultFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png")))
                         {
-                            thisItem.PathToMaskImgRight = Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"));
+                            thisItem.PathToMaskImgRight = Path.Join(compareResultFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
                             thisItem.AniDiffButtonEnable = true;
 
                             if (showMask == true)
@@ -962,9 +974,9 @@ namespace DocCompareWPF
                     rightItem.PathToImg = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg");
                     leftItem.PathToImgDummy = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg");
 
-                    if (File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
+                    if (File.Exists(Path.Join(compareResultFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png")))
                     {
-                        rightItem.PathToMask = Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"));
+                        rightItem.PathToMask = Path.Join(compareResultFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
                         if (i != 0)
                         {
                             leftItem.BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
@@ -2033,7 +2045,7 @@ namespace DocCompareWPF
                     {
                         if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1 &&
                             docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1 &&
-                            File.Exists(Path.Join(workingDir, Path.Join("compare", docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png"))))
+                            File.Exists(Path.Join(compareResultFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png")))
                         {
                             (DocCompareSideListViewLeft.Items[i] as SideGridItemLeft).BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
                             (DocCompareSideListViewRight.Items[i] as SideGridItemRight).BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
@@ -4175,7 +4187,7 @@ namespace DocCompareWPF
             foreach (Document doc in docs.documents)
             {
                 di = new DirectoryInfo(doc.imageFolder);
-                di.Delete();
+                di.Delete(true);
             }
 
             Close();

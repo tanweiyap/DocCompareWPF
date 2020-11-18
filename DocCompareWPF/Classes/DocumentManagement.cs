@@ -51,7 +51,6 @@ namespace DocCompareWPF.Classes
                 Attributes = FileAttributes.Directory | FileAttributes.Hidden
             };
 
-            _ = Directory.CreateDirectory(Path.Join(workingDir, "compare"));
             forceAlignmentIndices = new List<List<int>>();
         }
 

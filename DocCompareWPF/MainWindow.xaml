@@ -91,6 +91,27 @@
                                 RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
                                 Height="140"></local:DialogBubble>
             </Popup>
+            <Popup x:Name="PopupLinkPageBubble" PlacementTarget="{Binding ElementName=DocCompareSideListViewLeft}" StaysOpen="True"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="260" HorizontalOffset="-65" Height="260" Placement="Top">
+                <local:DialogBubble Message="Pages are aligned automatically. If you would like to change the alignment manually, mouse over and click the 'link' icon on a page in the miniature preview, then choose any page in the second document to align these two pages."
+                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,255" RectPoint4="5,255"
+                                Height="200"></local:DialogBubble>
+            </Popup>
+            <Popup x:Name="PopupUnlinkBubble" PlacementTarget="{Binding ElementName=RemoveAllForceAlignButton}" StaysOpen="True"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-10" HorizontalOffset="-140" Height="170">
+                <local:DialogBubble Message="Click here to remove all previously set link. Click on the icon between pages to remove individual links."
+                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
+                                Height="150"></local:DialogBubble>
+            </Popup>
+            <Popup x:Name="PopupAnimateBubble" StaysOpen="True"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="100" HorizontalOffset="30" Height="180" Placement="Center">
+                <local:DialogBubble Message="When differences are difficult to spot, mouse over the page, press and hold down this icon – it will overlay the two slides for visual comparison."
+                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
+                                Height="160"></local:DialogBubble>
+            </Popup>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30" />
@@ -567,7 +588,7 @@
                         </Grid>
                         
                     </Grid>
-                    <Grid x:Name="DocComparePanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DocComparePanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <mah:Tile x:Name="ProgressBarDocCompare" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="220" Background="White" BorderBrush="Black" BorderThickness="1">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
@@ -889,7 +910,7 @@
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid x:Name="SettingsPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="SettingsPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="220" />
                             <ColumnDefinition />
@@ -979,8 +1000,9 @@
                         </Grid>
                         <Grid x:Name="SettingsAboutPanel" Grid.Column="1" Margin="25" Visibility="Hidden">
                             <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
+                                <RowDefinition Height="2*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
                             </Grid.RowDefinitions>
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -1030,6 +1052,15 @@
                                     </Label>
                                 </Grid>
                             </Grid>
+                            <Grid Grid.Row="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <Label FontSize="15" FontWeight="Bold">Help</Label>
+                                <Button x:Name="RestartWalkthroughButton" Grid.Row="1" HorizontalAlignment="Left" Margin="0,10,0,0" Click="RestartWalkthroughButton_Click">Restart Walkthrough</Button>    
+                            </Grid>
+                            
                         </Grid>
                         <Grid x:Name="SettingsSubscriptionPanel" Grid.Column="1" Margin="25" Visibility="Hidden">
                             <Grid.RowDefinitions>

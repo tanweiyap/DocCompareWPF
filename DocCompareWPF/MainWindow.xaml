@@ -30,14 +30,14 @@
             <Popup x:Name="PopupBrowseFileButtonBubble" PlacementTarget="{Binding ElementName=BrowseFileButton1}" StaysOpen="True"
                    PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="120" HorizontalOffset="0" Height="250" Placement="Center">
                 <local:DialogBubble Message="Click on this button to browse files for inspection. Alternatively, you can drag and drop files into this zone to load them.            
-                                          A total of 5 files can be loaded at once.            Try click on this button and select all the example files." 
+                                          A total of 5 files can be loaded at once.            Try click on this button and select all 3 example files." 
                                 StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
                                 RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,215" RectPoint4="5,215"
                                 Height="230"></local:DialogBubble>
             </Popup>
             <Popup x:Name="PopupBrowseFileButton2Bubble" PlacementTarget="{Binding ElementName=BrowseFileButton2}" StaysOpen="True"
                    PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="70" HorizontalOffset="00" Height="150" Placement="Center">
-                <local:DialogBubble Message="Please load one more file for comparison." 
+                <local:DialogBubble Message="Please load all example files for comparison." 
                                 StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
                                 RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,215" RectPoint4="5,215"
                                 Height="130"></local:DialogBubble>

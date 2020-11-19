@@ -405,6 +405,8 @@ namespace DocCompareWPF
             if(walkthroughMode == true && walkthroughStep == 1)
             {
                 PopupBrowseFileButtonBubble.IsOpen = false;
+                lastUsedDirectory = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
+                lastUsedDirectory = Path.Join(lastUsedDirectory, "examples");
             }
 
             if (Directory.Exists(lastUsedDirectory) == false)
@@ -492,6 +494,8 @@ namespace DocCompareWPF
             if (walkthroughMode == true && walkthroughStep == 3)
             {
                 PopupBrowseFileButton2Bubble.IsOpen = false;
+                lastUsedDirectory = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
+                lastUsedDirectory = Path.Join(lastUsedDirectory, "examples");
             }
 
             if (Directory.Exists(lastUsedDirectory) == false)
@@ -1903,7 +1907,7 @@ namespace DocCompareWPF
             {
 
                 CustomMessageBox msgBox = new CustomMessageBox();
-                msgBox.Setup("Walkthrough completed", "Thanks for completing the walkthrough guide.                 Enjoy 2|Compare!. You can restart this walkthrough from     the settings page", "Okay");
+                msgBox.Setup("Walkthrough completed", "Thanks for completing the walkthrough guide.                 Enjoy 2|Compare! You can restart this walkthrough from     the settings page", "Okay");
                 msgBox.ShowDialog();
 
                 settings.shownWalkthrough = true;
@@ -2473,7 +2477,7 @@ namespace DocCompareWPF
                         SidePanelDocCompareButton.IsEnabled = true;
 
                     // Walkthrough
-                    if(walkthroughMode == true && walkthroughStep == 2 && docs.documents.Count >= 2)
+                    if(walkthroughMode == true && walkthroughStep == 2 && docs.documents.Count == 3)
                     {
                         PopupDocPreviewNameComboboxBubble.IsOpen = true;
                         PopupBrowseFileButtonBubble.IsOpen = false;

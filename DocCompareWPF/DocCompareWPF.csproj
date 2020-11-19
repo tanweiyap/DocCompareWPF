@@ -87,6 +87,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="examples\Document_A.pptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="examples\Document_B.pptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="examples\Document_C.pptx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="lib\freetype6.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

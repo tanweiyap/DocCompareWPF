@@ -785,11 +785,11 @@
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
                                                                     </Image.Effect>
                                                                 </Image>
-                                                                <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="Link Pages" Visibility="Hidden"
+                                                                <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Link Pages" Visibility="Hidden"
                                                                     Click="SideGridButtonMouseClick" IsHitTestVisible="true">
                                                                     <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
                                                                 </Button>
-                                                                <Button Tag="{Binding ForceAlignInvalidButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="This link would cross a previously set link. Please remove that link before aligning these pages." Visibility="Hidden" IsHitTestVisible="true">
+                                                                <Button Tag="{Binding ForceAlignInvalidButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="This link would cross a previously set link. Please remove that link before aligning these pages." Visibility="Hidden" IsHitTestVisible="true">
                                                                     <iconPacks:PackIconFontAwesome Kind="BanSolid" Width="15" Height="15" />
                                                                 </Button>
                                                             </Grid>
@@ -839,11 +839,11 @@
                                                                 <Image Tag="{Binding ImgMaskName}" Source="{Binding PathToMask, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Stretch="Uniform" Visibility="{Binding ShowMask}">
                                                                 </Image>
-                                                                <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Bottom" ToolTip="Link Pages" Visibility="Hidden"
+                                                                <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Link Pages" Visibility="Hidden"
                                                                     Click="SideGridButtonMouseClick" IsHitTestVisible="true">
                                                                     <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
                                                                 </Button>
-                                                                <Button Tag="{Binding ForceAlignInvalidButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Bottom" ToolTip="This link would cross a previously set link. Please remove that link before aligning these pages." Visibility="Hidden" IsHitTestVisible="true">
+                                                                <Button Tag="{Binding ForceAlignInvalidButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="This link would cross a previously set link. Please remove that link before aligning these pages." Visibility="Hidden" IsHitTestVisible="true">
                                                                     <iconPacks:PackIconFontAwesome Kind="BanSolid" Width="15" Height="15" />
                                                                 </Button>
                                                             </Grid>

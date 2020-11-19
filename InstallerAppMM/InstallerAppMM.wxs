@@ -1163,6 +1163,17 @@
             <File Id="owfBF1463865BD6A957A48EA3C5086DF240" Source="$(var.SourceDir)\es\WindowsFormsIntegration.resources.dll" KeyPath="yes" />
           </Component>
         </Directory>
+        <Directory Id="owd1537608D766BDF04B5BB621FDCB9B92C" Name="examples">
+          <Component Id="owcCA56D65E26DB46C13DA9A283B020CBDF" Guid="e0c9aba8-79e3-c196-be33-c964f9f57313" Win64="yes">
+            <File Id="owfCA56D65E26DB46C13DA9A283B020CBDF" Source="$(var.SourceDir)\examples\Document_A.pptx" KeyPath="yes" />
+          </Component>
+          <Component Id="owc294D03DBB01CD5A76C04FD4B8A13971A" Guid="c7f50cb4-5f9c-bbc1-0e5a-a2689d6187f7" Win64="yes">
+            <File Id="owf294D03DBB01CD5A76C04FD4B8A13971A" Source="$(var.SourceDir)\examples\Document_B.pptx" KeyPath="yes" />
+          </Component>
+          <Component Id="owc9B434484DB3FF939A95A6D1AA8CAF2A2" Guid="8324a20d-7cf8-b0f2-6669-6adc892dd6f0" Win64="yes">
+            <File Id="owf9B434484DB3FF939A95A6D1AA8CAF2A2" Source="$(var.SourceDir)\examples\Document_C.pptx" KeyPath="yes" />
+          </Component>
+        </Directory>
         <Directory Id="owdA426C3729D5D59516430C8F667ED8DE8" Name="fr">
           <Component Id="owc533C4FCFBCDB742AF18EFAB75EF2EA90" Guid="e5c91b2d-609c-614b-7739-18a2640ebd64" Win64="yes">
             <File Id="owf533C4FCFBCDB742AF18EFAB75EF2EA90" Source="$(var.SourceDir)\fr\PresentationCore.resources.dll" KeyPath="yes" />

@@ -77,15 +77,13 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "Version 0.4.5";
+        private readonly string versionString = "Version 0.4.6";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
         private int docCompareSideGridShown, docProcessingCounter;
         private Grid gridToAnimate;
         private bool inForceAlignMode;
-        private bool walkthroughMode;
-        private int walkthroughStep = 0;
         private string lastUsedDirectory;
 
         // License management
@@ -113,6 +111,10 @@ namespace DocCompareWPF
         private readonly Thread threadCheckTrial;
         private readonly Thread threadRenewLic;
         private Thread threadStartWalkthrough;
+
+        // Walkthrough
+        private bool walkthroughMode;
+        private WalkthroughSteps walkthroughStep = 0;
 
         public MainWindow()
         {
@@ -261,6 +263,27 @@ namespace DocCompareWPF
             SETTINGS,
         };
 
+        private enum WalkthroughSteps
+        {
+            START,
+            BROWSEFILETAB,
+            BROWSEFILEBUTTON1,
+            BROWSEFILEBUTTON2,
+            BROWSEFILECOMBOBOX,
+            BROWSEFILEOPENFURTHERFILES,
+            BROWSEFILECLOSEFILES,
+            BROWSEFILEINFOOPEN,
+            BROWSEFILEINFOCLOSE,
+            COMPARETAB,
+            COMPAREHIGHLIGHT,
+            COMPAREOPENEXTERN,
+            COMPARERELOAD,
+            COMPARELINK,
+            COMPAREUNLINK,
+            COMPAREANIMATE,
+            END,
+        }
+
         private void ShowWalkthroughStartMessage()
         {
             try
@@ -283,7 +306,7 @@ namespace DocCompareWPF
                         else
                         {
                             walkthroughMode = true;
-                            walkthroughStep = 0;
+                            walkthroughStep = WalkthroughSteps.BROWSEFILETAB;
                             PopupBrowseFileBubble.IsOpen = true;
                         }
                     });
@@ -402,7 +425,7 @@ namespace DocCompareWPF
 
         private void BrowseFileButton1_Click(object sender, RoutedEventArgs e)
         {
-            if(walkthroughMode == true && walkthroughStep == 1)
+            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
             {
                 PopupBrowseFileButtonBubble.IsOpen = false;
                 lastUsedDirectory = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
@@ -421,9 +444,9 @@ namespace DocCompareWPF
 
             if (openFileDialog.ShowDialog() == true)
             {
-                if(walkthroughStep == 1)
+                if(walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
                 {
-                    walkthroughStep++;
+                    walkthroughStep = WalkthroughSteps.BROWSEFILEBUTTON2;
                 }
 
                 string[] filenames = openFileDialog.FileNames;
@@ -482,7 +505,7 @@ namespace DocCompareWPF
             }
             else
             {
-                if (walkthroughMode == true && walkthroughStep == 1)
+                if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
                 {
                     PopupBrowseFileButtonBubble.IsOpen = true;
                 }
@@ -491,7 +514,7 @@ namespace DocCompareWPF
 
         private void BrowseFileButton2_Click(object sender, RoutedEventArgs e)
         {
-            if (walkthroughMode == true && walkthroughStep == 3)
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON2)
             {
                 PopupBrowseFileButton2Bubble.IsOpen = false;
                 lastUsedDirectory = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
@@ -562,7 +585,7 @@ namespace DocCompareWPF
             }
             else
             {
-                if (walkthroughMode == true && walkthroughStep == 3)
+                if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON2)
                 {
                     PopupBrowseFileButton2Bubble.IsOpen = true;
                 }
@@ -823,10 +846,10 @@ namespace DocCompareWPF
                     threadDisplayResult.Start();
                     ShowDocCompareFileInfoButton.IsEnabled = true;
 
-                    if(walkthroughMode == true && walkthroughStep == 7)
+                    if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREHIGHLIGHT)
                     {
                         PopupHighlightOffBubble.IsOpen = true;
-                        walkthroughStep++; // 8
+                        //walkthroughStep = WalkthroughSteps.COMPAREOPENEXTERN; // 8
                     }
                     else
                     {
@@ -1011,12 +1034,12 @@ namespace DocCompareWPF
                 ProgressBarDocCompareAlign.Visibility = Visibility.Hidden;
                 ProgressBarLoadingResults.Visibility = Visibility.Hidden;
 
-                if (walkthroughMode == true && walkthroughStep == 11)
+                if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARELINK)
                 {
                     //ListViewItem container = DocCompareSideListViewLeft.ItemContainerGenerator.ContainerFromItem(DocCompareSideListViewLeft.Items[0]) as ListViewItem;
                     //(((VisualTreeHelper.GetChild(container, 0) as Grid).Children[1] as Grid).Children[3] as Button).Visibility = Visibility.Visible;
                     PopupLinkPageBubble.IsOpen = true;
-                    walkthroughStep++;
+                    //walkthroughStep++;
                 }
             });
         }
@@ -1441,7 +1464,7 @@ namespace DocCompareWPF
         {
             if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                if (walkthroughMode == true && walkthroughStep == 1)
+                if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
                 {
                     PopupBrowseFileButtonBubble.IsOpen = false;
                 }
@@ -1488,14 +1511,14 @@ namespace DocCompareWPF
                     threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
                     threadLoadDocsProgress.Start();
 
-                    if(walkthroughStep == 1)
+                    if(walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
                     {
-                        walkthroughStep++;
+                        walkthroughStep = WalkthroughSteps.BROWSEFILEBUTTON2;
                     }
                 }
                 else
                 {
-                    if (walkthroughMode == true && walkthroughStep == 1)
+                    if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
                     {
                         PopupBrowseFileButtonBubble.IsOpen = true;
                     }
@@ -1861,10 +1884,9 @@ namespace DocCompareWPF
                 threadAnimateDiff = new Thread(new ThreadStart(AnimateDiffThread));
                 threadAnimateDiff.Start();
 
-                if(walkthroughMode == true && walkthroughStep == 15)
+                if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREANIMATE)
                 {
                     PopupAnimateBubble.IsOpen = false;
-                    walkthroughStep++;
                 }
             }
         }
@@ -1903,16 +1925,16 @@ namespace DocCompareWPF
                 }
             }
 
-            if (walkthroughMode == true && walkthroughStep == 16)
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREANIMATE)
             {
 
                 CustomMessageBox msgBox = new CustomMessageBox();
-                msgBox.Setup("Walkthrough completed", "Thanks for completing the walkthrough guide.                 Enjoy 2|Compare! You can restart this walkthrough from     the settings page", "Okay");
+                msgBox.Setup("Walkthrough completed", "Thanks for completing the walkthrough guide.                 Enjoy 2|Compare! You can restart this walkthrough from     the settings page.", "Okay");
                 msgBox.ShowDialog();
 
                 settings.shownWalkthrough = true;
                 SaveSettings();
-                walkthroughStep++;
+                walkthroughStep = WalkthroughSteps.END;
             }
         }
 
@@ -2018,17 +2040,7 @@ namespace DocCompareWPF
 
         private void HideMaskButton_Click(object sender, RoutedEventArgs e)
         {
-            showMask = false;
-            /*
-            DisplayComparisonResult();
-            Border border = (Border)VisualTreeHelper.GetChild(DocCompareMainListView, 0);
-            ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
-
-            double currOffset = scrollViewer.VerticalOffset;
-            scrollViewer.ScrollToVerticalOffset(0);
-            scrollViewer.ScrollToVerticalOffset(currOffset);
-            //HighlightSideGrid();
-            */
+            showMask = false; 
 
             foreach (CompareMainItem item in DocCompareMainListView.Items)
             {
@@ -2044,11 +2056,11 @@ namespace DocCompareWPF
             HideMaskButton.Visibility = Visibility.Hidden;
             HighlightingDisableTip.Visibility = Visibility.Visible;
 
-            if(walkthroughMode == true && walkthroughStep == 8)
+            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREHIGHLIGHT)
             {
                 PopupHighlightOffBubble.IsOpen = false;
                 PopupOpenOriBubble.IsOpen = true;
-                walkthroughStep++;
+                walkthroughStep = WalkthroughSteps.COMPAREOPENEXTERN;
             }
         }
 
@@ -2477,12 +2489,12 @@ namespace DocCompareWPF
                         SidePanelDocCompareButton.IsEnabled = true;
 
                     // Walkthrough
-                    if(walkthroughMode == true && walkthroughStep == 2 && docs.documents.Count == 3)
+                    if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON2 && docs.documents.Count == 3)
                     {
                         PopupDocPreviewNameComboboxBubble.IsOpen = true;
                         PopupBrowseFileButtonBubble.IsOpen = false;
                         PopupBrowseFileButton2Bubble.IsOpen = false;
-                        walkthroughStep++; // 3
+                        walkthroughStep = WalkthroughSteps.BROWSEFILECOMBOBOX; 
                     }else if(walkthroughMode == true)
                     {
                         PopupBrowseFileButtonBubble.IsOpen = false;
@@ -2670,10 +2682,10 @@ namespace DocCompareWPF
             threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
             threadLoadDocs.Start();
 
-            if(walkthroughMode == true && walkthroughStep == 10)
+            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARERELOAD)
             {
                 PopupReloadBubble.IsOpen = false;
-                walkthroughStep++; // 11
+                walkthroughStep = WalkthroughSteps.COMPARELINK; // 11
             }
         }
 
@@ -2902,7 +2914,7 @@ namespace DocCompareWPF
                 });
             }
 
-            if (walkthroughMode == true && walkthroughStep == 14)
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREUNLINK)
             {
                 PopupUnlinkBubble.IsOpen = false;
                 ListViewItem container = DocCompareMainListView.ItemContainerGenerator.ContainerFromItem(DocCompareMainListView.Items[0]) as ListViewItem;
@@ -2913,7 +2925,7 @@ namespace DocCompareWPF
                 PopupAnimateBubble.PlacementTarget = container;
 
                 PopupAnimateBubble.IsOpen = true;
-                walkthroughStep++;
+                walkthroughStep = WalkthroughSteps.COMPAREANIMATE;
             }
         }
 
@@ -3247,16 +3259,16 @@ namespace DocCompareWPF
                 Doc2StatLastEditorLabel0.Visibility = Visibility.Collapsed;
             }
 
-            if(walkthroughMode == true && walkthroughStep == 4)
+            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEINFOOPEN)
             {
                 PopupDocPreviewInfoButtonBubble.IsOpen = false;
                 PopupDocPreviewInfoButton2Bubble.IsOpen = true;
-                walkthroughStep++; // 5
-            }else if (walkthroughMode == true && walkthroughStep == 5)
+                walkthroughStep = WalkthroughSteps.BROWSEFILEINFOCLOSE; // 5
+            }else if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEINFOCLOSE)
             {
                 PopupDocPreviewInfoButton2Bubble.IsOpen = false;
                 PopupCompareDocBubble.IsOpen = true;
-                walkthroughStep++; // 6
+                walkthroughStep = WalkthroughSteps.COMPARETAB; // 6
             }
 
             /*
@@ -3426,10 +3438,10 @@ namespace DocCompareWPF
                     MaskSideGridInForceAlignMode();
                     DisableRemoveForceAlignButton();
 
-                    if(walkthroughMode == true && walkthroughStep == 12)
+                    if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARELINK)
                     {
                         PopupLinkPageBubble.IsOpen = false;
-                        walkthroughStep++;
+                        walkthroughStep = WalkthroughSteps.COMPAREUNLINK;
                     }
 
                 });
@@ -3504,10 +3516,9 @@ namespace DocCompareWPF
                         EnableSideScrollLeft();
                         EnableSideScrollRight();
 
-                        if (walkthroughMode == true && walkthroughStep == 13)
+                        if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREUNLINK)
                         {
-                            PopupUnlinkBubble.IsOpen = true;
-                            walkthroughStep++;
+                            PopupUnlinkBubble.IsOpen = true;                            
                         }
                     });
                 }
@@ -3797,10 +3808,10 @@ namespace DocCompareWPF
         {
             if (docs.documents.Count >= 2 && docCompareRunning == false)
             {
-                if(walkthroughMode == true && walkthroughStep == 6)
+                if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARETAB)
                 {
                     PopupCompareDocBubble.IsOpen = false;
-                    walkthroughStep++; // 7
+                    walkthroughStep = WalkthroughSteps.COMPAREHIGHLIGHT; // 7
                 }
 
                 inForceAlignMode = false;
@@ -3859,11 +3870,11 @@ namespace DocCompareWPF
         {
             SetVisiblePanel(SidePanels.DRAGDROP);
 
-            if(walkthroughMode == true && walkthroughStep == 0)
+            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILETAB)
             {
                 PopupBrowseFileBubble.IsOpen = false;
                 PopupBrowseFileButtonBubble.IsOpen = true;
-                walkthroughStep++;
+                walkthroughStep = WalkthroughSteps.BROWSEFILEBUTTON1;
             }
         }
 
@@ -4148,7 +4159,7 @@ namespace DocCompareWPF
 
         private void Doc1NameLabelComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            if(walkthroughMode == true && walkthroughStep == 3)
+            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILECOMBOBOX)
             {
                 PopupDocPreviewNameComboboxBubble.IsOpen = false;
             }
@@ -4156,10 +4167,10 @@ namespace DocCompareWPF
 
         private void Doc1NameLabelComboBox_DropDownClosed(object sender, EventArgs e)
         {
-            if(walkthroughMode == true && walkthroughStep == 3)
+            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILECOMBOBOX)
             {
                 PopupDocPreviewInfoButtonBubble.IsOpen = true;
-                walkthroughStep++; // 4
+                walkthroughStep = WalkthroughSteps.BROWSEFILEINFOOPEN;
             }
         }
 
@@ -4170,11 +4181,11 @@ namespace DocCompareWPF
             fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToCompare[1]].filePath + "\"";
             fileopener.Start();
 
-            if(walkthroughMode == true && walkthroughStep == 9)
+            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREOPENEXTERN)
             {
                 PopupOpenOriBubble.IsOpen = false;
                 PopupReloadBubble.IsOpen = true;
-                walkthroughStep++;
+                walkthroughStep = WalkthroughSteps.COMPARERELOAD;
             }
         }
 

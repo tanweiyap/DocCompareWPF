@@ -21,9 +21,9 @@
                 <!--RowDefinition Height="32"/-->
             </Grid.RowDefinitions>
             <Popup x:Name="PopupBrowseFileBubble" PlacementTarget="{Binding ElementName=SidePanelOpenDocButton}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-20" HorizontalOffset="-130" Height="150">
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-20" HorizontalOffset="10" Height="150" Placement="Bottom">
             <local:DialogBubble Message="Click on this tab to browse and inspect files before comparison"
-                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                StartPoint="5,40" TopPoint="5,10" EndPoint="35,40"
                                 RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
                                 Height="130"></local:DialogBubble>
             </Popup>
@@ -36,7 +36,7 @@
                                 Height="230"></local:DialogBubble>
             </Popup>
             <Popup x:Name="PopupBrowseFileButton2Bubble" PlacementTarget="{Binding ElementName=BrowseFileButton2}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="70" HorizontalOffset="00" Height="150" Placement="Center">
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="70" HorizontalOffset="0" Height="150" Placement="Center">
                 <local:DialogBubble Message="Please load all example files for comparison." 
                                 StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
                                 RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,215" RectPoint4="5,215"
@@ -50,23 +50,23 @@
                                 Height="130"></local:DialogBubble>
             </Popup>
             <Popup x:Name="PopupDocPreviewInfoButtonBubble" PlacementTarget="{Binding ElementName=ShowDoc2FileInfoButton}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-80" HorizontalOffset="25" Height="150" Placement="Center">
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="0" HorizontalOffset="-290" Height="150" Placement="Top">
                 <local:DialogBubble Message="Click on this button to view more document attributes" 
-                                StartPoint="120,75" TopPoint="150,135" EndPoint="180,75"
+                                StartPoint="265,75" TopPoint="295,115" EndPoint="295,75"
                                 RectInnerMargin="20,20,60,20" RectPoint1="5,5" RectPoint2="295,5" RectPoint3="295,75" RectPoint4="5,75"
-                                Height="145"></local:DialogBubble>
+                                Height="115"></local:DialogBubble>
             </Popup>
             <Popup x:Name="PopupDocPreviewInfoButton2Bubble" PlacementTarget="{Binding ElementName=ShowDoc2FileInfoButton}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-80" HorizontalOffset="25" Height="150" Placement="Center">
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="0" HorizontalOffset="-290" Height="150" Placement="Top">
                 <local:DialogBubble Message="Click again on this button to hide document attributes" 
-                                StartPoint="120,75" TopPoint="150,135" EndPoint="180,75"
+                                StartPoint="265,75" TopPoint="295,115" EndPoint="295,75"
                                 RectInnerMargin="20,20,60,20" RectPoint1="5,5" RectPoint2="295,5" RectPoint3="295,75" RectPoint4="5,75"
-                                Height="145"></local:DialogBubble>
+                                Height="115"></local:DialogBubble>
             </Popup>
             <Popup x:Name="PopupCompareDocBubble" PlacementTarget="{Binding ElementName=SidePanelDocCompareButton}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-20" HorizontalOffset="-130" Height="150">
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-20" HorizontalOffset="15" Height="150">
                 <local:DialogBubble Message="Click on this tab to switch to compare mode after document selection."
-                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                StartPoint="5,40" TopPoint="5,10" EndPoint="35,40"
                                 RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
                                 Height="130"></local:DialogBubble>
             </Popup>
@@ -98,10 +98,10 @@
                                 RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,255" RectPoint4="5,255"
                                 Height="200"></local:DialogBubble>
             </Popup>
-            <Popup x:Name="PopupUnlinkBubble" PlacementTarget="{Binding ElementName=RemoveAllForceAlignButton}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-10" HorizontalOffset="-140" Height="170">
+            <Popup x:Name="PopupUnlinkBubble" PlacementTarget="{Binding ElementName=RemoveAllForceAlignButton}" StaysOpen="True" Placement="Bottom"
+                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="0" HorizontalOffset="-290" Height="170">
                 <local:DialogBubble Message="Click here to remove all previously set link. Click on the icon between pages to remove individual links."
-                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
+                                StartPoint="265,40" TopPoint="295,10" EndPoint="295,40"
                                 RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
                                 Height="150"></local:DialogBubble>
             </Popup>

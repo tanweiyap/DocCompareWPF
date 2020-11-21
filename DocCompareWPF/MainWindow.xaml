@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:DocCompareWPF"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="DocCompare" Height="800" Width="1280" MinWidth="1024" MinHeight="600" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged"
+        Title="DocCompare" Height="600" Width="1024" MinWidth="1024" MinHeight="600" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged"
         FontSize="15" SizeChanged="Window_SizeChanged" LocationChanged="Window_LocationChanged">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="{Binding ActualHeight,ElementName=TitleBar}" />

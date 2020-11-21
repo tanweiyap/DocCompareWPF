@@ -127,10 +127,6 @@ namespace DocConvert
                     object fileAttribute = pptPresentation.BuiltInDocumentProperties;
 
                     pptPresentation.Close();
-                    if (pptApplication != null)
-                    {
-                        pptApplication.Quit();
-                    }
                     //old code by WYT...
                     //pptPresentation.Export(outputPath, "jpg", Int32.Parse(pptPresentation.SlideMaster.Width.ToString()), Int32.Parse(pptPresentation.SlideMaster.Height.ToString()));
 

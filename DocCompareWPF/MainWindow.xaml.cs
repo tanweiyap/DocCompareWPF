@@ -809,9 +809,12 @@ namespace DocCompareWPF
 
                 // show mask should always be enabled
                 showMask = true;
-                ShowMaskButton.Visibility = Visibility.Hidden;
-                HideMaskButton.Visibility = Visibility.Visible;
-                HighlightingDisableTip.Visibility = Visibility.Hidden;
+                Dispatcher.Invoke(() =>
+                {
+                    ShowMaskButton.Visibility = Visibility.Hidden;
+                    HideMaskButton.Visibility = Visibility.Visible;
+                    HighlightingDisableTip.Visibility = Visibility.Hidden;
+                });
 
                 int[,] forceIndices = new int[docs.forceAlignmentIndices.Count, 2];
                 for (int i = 0; i < docs.forceAlignmentIndices.Count; i++)

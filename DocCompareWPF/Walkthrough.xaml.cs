@@ -89,9 +89,12 @@ namespace DocCompareWPF
                     item.Text = "Use the dropdown menu to select other document for comparison with the reference document.";
                     break;
                 case 12:
-                    item.Text = "If you have made a license subscription on www.hopie.tech, you can activate the license under the settings menu.";
+                    item.Text = "When differences are difficult to spot, mouse over the page, press and hold down this icon – it will overlay the two slides for visual comparison.";
                     break;
                 case 13:
+                    item.Text = "If you have made a license subscription on www.hopie.tech, you can activate the license under the settings menu.";
+                    break;
+                case 14:
                     item.Text = "Thanks for completing the walkthrough guide. Enjoy 2|Compare! You can restart this walkthrough from the settings page.";
                     NextStepButton.Content = "Close";
                     break;
@@ -120,11 +123,11 @@ namespace DocCompareWPF
 
         private void NextStepButton_Click(object sender, RoutedEventArgs e)
         {
-            if (stepCounter <= 13)
+            if (stepCounter <= 14)
             {
                 stepCounter++;
 
-                if (stepCounter == 14)
+                if (stepCounter == 15)
                 {
                     DialogResult = true;
                 }

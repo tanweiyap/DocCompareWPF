@@ -77,7 +77,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "Version 0.4.6";
+        private readonly string versionString = "Version 0.5.1";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -295,11 +295,19 @@ namespace DocCompareWPF
                 {
                     Dispatcher.Invoke(() =>
                     {
+                        Walkthrough walkthrough = new Walkthrough();
+                        if(walkthrough.ShowDialog() == true)
+                        {
+                            settings.shownWalkthrough = true;
+                            SaveSettings();
+                        }
+
+                        /*
                         CustomMessageBox msgBox = new CustomMessageBox();
                         msgBox.Setup("Application walkthrough", "Thanks for choosing 2|Compare. We will now guide you through the application to get you familiar with the functionality", "Proceed", "Skip");
 
                         if (msgBox.ShowDialog() == true) // user wish to skip walkthrough
-                    {
+                        {
                             settings.shownWalkthrough = true;
                             SaveSettings();
                         }
@@ -309,6 +317,7 @@ namespace DocCompareWPF
                             walkthroughStep = WalkthroughSteps.BROWSEFILETAB;
                             PopupBrowseFileBubble.IsOpen = true;
                         }
+                        */
                     });
                 }
             }
@@ -734,6 +743,7 @@ namespace DocCompareWPF
                 else
                 {
                     Doc2Grid.Visibility = Visibility.Hidden;
+                    Doc2PageNumberLabel.Content = "";
                     DocCompareDragDropZone2.Visibility = Visibility.Visible;
                     DocPreviewStatGrid.Visibility = Visibility.Visible;
                     Doc1StatsGrid.Visibility = Visibility.Visible;
@@ -2353,6 +2363,26 @@ namespace DocCompareWPF
                 {
                     Dispatcher.Invoke(() =>
                     {
+                        BrowseFileTopButton1.IsEnabled = false;
+                        BrowseFileTopButton2.IsEnabled = false;
+                        BrowseFileTopButton3.IsEnabled = false;
+                        BrowseFileButton1.IsEnabled = false;
+                        BrowseFileButton2.IsEnabled = false;
+                        BrowseFileButton3.IsEnabled = false;
+
+                        DocCompareFirstDocZone.AllowDrop = false;
+                        DocCompareDragDropZone1.AllowDrop = false;
+                        DocCompareColorZone1.AllowDrop = false;
+                        DocCompareSecondDocZone.AllowDrop = false;
+                        DocCompareDragDropZone2.AllowDrop = false;
+                        DocCompareColorZone2.AllowDrop = false;
+
+                        Doc1StatsGrid.Visibility = Visibility.Collapsed;
+                        Doc2StatsGrid.Visibility = Visibility.Collapsed;
+
+                        Doc1PageNumberLabel.Content = "";
+                        Doc2PageNumberLabel.Content = "";
+
                         try
                         {
                             if (docs.documents.Count == 1)
@@ -2484,6 +2514,16 @@ namespace DocCompareWPF
                     ReloadDoc1Button.IsEnabled = true;
                     ReloadDoc2Button.IsEnabled = true;
                     ReloadDoc3Button.IsEnabled = true;
+                    BrowseFileButton1.IsEnabled = true;
+                    BrowseFileButton2.IsEnabled = true;
+                    BrowseFileButton3.IsEnabled = true;
+
+                    DocCompareFirstDocZone.AllowDrop = true;
+                    DocCompareDragDropZone1.AllowDrop = true;
+                    DocCompareColorZone1.AllowDrop = true;
+                    DocCompareSecondDocZone.AllowDrop = true;
+                    DocCompareDragDropZone2.AllowDrop = true;
+                    DocCompareColorZone2.AllowDrop = true;
 
                     CloseDoc1Button.IsEnabled = true;
                     CloseDoc2Button.IsEnabled = true;

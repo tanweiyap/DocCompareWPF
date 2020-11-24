@@ -1,0 +1,68 @@
+﻿<Window x:Class="DocCompareWPF.Walkthrough"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:local="clr-namespace:DocCompareWPF"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="DocCompare" Height="600" Width="1024" MinWidth="1024" MinHeight="600" WindowStyle="None" AllowsTransparency="True"
+        FontSize="15" ResizeMode="NoResize">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="{Binding ActualHeight,ElementName=TitleBar}" />
+    </WindowChrome.WindowChrome>
+    <Border x:Name="outerBorder" BorderBrush="Black" UseLayoutRounding="True" SnapsToDevicePixels="True" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32" />
+                <RowDefinition />
+                <!--RowDefinition Height="32"/-->
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid x:Name="LogoZone" Grid.Column="0" Grid.Row="0" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">
+                    <Image Source="/Resources/Icons/LogoSmallest.png" Margin="5,3,3,3"></Image>
+                </Grid>
+                <Grid x:Name="TitleBar" Grid.Column="1" Grid.Row="0" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">
+                    <Grid>
+                        <Label x:Name="WindowTitle" FontSize="15" VerticalAlignment="Center" Foreground="White">Walkthrough</Label>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="90"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="MessageTextBlock" FontSize="15" Margin="25,10" TextTrimming="None" TextWrapping="Wrap" Text="{Binding Text}"></TextBlock>
+                    <Image x:Name="ImageView" Grid.Row="1" Margin="0,0,0,25" Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}">
+                        <Image.Effect>
+                            <DropShadowEffect BlurRadius="25" Direction="0" ShadowDepth="0" Opacity="0.5"/>
+                        </Image.Effect>
+                    </Image>
+                </Grid>
+                <Grid Grid.Row="1" Background="{StaticResource StatusBarBackground}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="SkipButton" Visibility="Visible" Grid.Column="0" Width="100" Height="30" Margin="10,0,00,0" Click="SkipButton_Click" HorizontalAlignment="Left">Skip</Button>
+                    <Button x:Name="PreviousStepButton" Visibility="Visible" Grid.Column="1" Width="100" Height="30" Margin="0,0,10,0" Click="PreviousStepButton_Click" IsEnabled="False">Previous</Button>
+                    <Button x:Name="NextStepButton" Visibility="Visible" Grid.Column="2" Width="100" Height="30" Margin="0,0,10,0" Click="NextStepButton_Click">Next</Button>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
+

@@ -1648,6 +1648,50 @@
             <File Id="owf437BFE302C88488465F913527311A5E0" Source="$(var.SourceDir)\tr\WindowsFormsIntegration.resources.dll" KeyPath="yes" />
           </Component>
         </Directory>
+        <Directory Id="owdFAEE01E3BB9CC6B844EB2B937C2998FA" Name="WalkthroughImages">
+          <Component Id="owcCC6DA07F0C8977AC8DF031F68DE2322A" Guid="abe6abf5-4514-651b-2402-a5f2a79269ce" Win64="yes">
+            <File Id="owfCC6DA07F0C8977AC8DF031F68DE2322A" Source="$(var.SourceDir)\WalkthroughImages\LogoLarge.png" KeyPath="yes" />
+          </Component>
+          <Component Id="owc931FA089D2C9A1128ECF82708FFADA32" Guid="0f54929c-ca56-b04e-e401-dbca758400a4" Win64="yes">
+            <File Id="owf931FA089D2C9A1128ECF82708FFADA32" Source="$(var.SourceDir)\WalkthroughImages\Page1.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owc0F5CD4CEB7D7CE55920816B389A0C1DB" Guid="9907fe79-6fba-ba5e-1bef-7b756ffdbc62" Win64="yes">
+            <File Id="owf0F5CD4CEB7D7CE55920816B389A0C1DB" Source="$(var.SourceDir)\WalkthroughImages\Page10.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owc3F69F730DF6FCA8B53C6147CE389ECC3" Guid="0598f03e-e8f2-eb93-57ac-aa173f277c3c" Win64="yes">
+            <File Id="owf3F69F730DF6FCA8B53C6147CE389ECC3" Source="$(var.SourceDir)\WalkthroughImages\Page11.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owc21575D9BAAADF76997BFB61340563BE3" Guid="1b1aeb11-33b3-4406-e585-8897ed8004ff" Win64="yes">
+            <File Id="owf21575D9BAAADF76997BFB61340563BE3" Source="$(var.SourceDir)\WalkthroughImages\Page12.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owc0FC8FF3275EF7D2E72DB520CEEE502ED" Guid="4f61bd1e-f728-cf01-a869-d9b4621d37b8" Win64="yes">
+            <File Id="owf0FC8FF3275EF7D2E72DB520CEEE502ED" Source="$(var.SourceDir)\WalkthroughImages\Page13.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owcDB19DD92D5FE8AFE15C88C3442D44637" Guid="b4e57f9d-2ff9-7c13-6b2a-3929a2bc3258" Win64="yes">
+            <File Id="owfDB19DD92D5FE8AFE15C88C3442D44637" Source="$(var.SourceDir)\WalkthroughImages\Page2.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owc8A907FFB2C214D0D921895A00EC275B1" Guid="4412e22b-9aa0-28e1-3e13-aceeaaf39f3b" Win64="yes">
+            <File Id="owf8A907FFB2C214D0D921895A00EC275B1" Source="$(var.SourceDir)\WalkthroughImages\Page3.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owcF83AB298FC629AB0FAC2A0E2429B68C8" Guid="0cb471be-a5ce-ae5c-7b23-7267e92f287d" Win64="yes">
+            <File Id="owfF83AB298FC629AB0FAC2A0E2429B68C8" Source="$(var.SourceDir)\WalkthroughImages\Page4.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owcFB04E9F12B9126B43EFF099D6247BC73" Guid="2516270d-5125-2112-6da5-5b5ea384438c" Win64="yes">
+            <File Id="owfFB04E9F12B9126B43EFF099D6247BC73" Source="$(var.SourceDir)\WalkthroughImages\Page5.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owc7317426EAC86DCBAF9D65E546BEC3752" Guid="0de4d18c-4c74-734d-0267-fd956a5f784a" Win64="yes">
+            <File Id="owf7317426EAC86DCBAF9D65E546BEC3752" Source="$(var.SourceDir)\WalkthroughImages\Page6.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owc308A86C12091B5810D1139906720706F" Guid="79c0ad3b-5ffd-0ddd-1c38-dffe5ab2973b" Win64="yes">
+            <File Id="owf308A86C12091B5810D1139906720706F" Source="$(var.SourceDir)\WalkthroughImages\Page7.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owc7388690C6FCE24130ACC525242DFE65B" Guid="d2747535-076c-e12d-1db0-546091a4e375" Win64="yes">
+            <File Id="owf7388690C6FCE24130ACC525242DFE65B" Source="$(var.SourceDir)\WalkthroughImages\Page8.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owcAA1E8AA9939690A1C1A40BE2EE52AE8A" Guid="4bcba1ed-342a-80c1-c2a3-cda96f36fc3c" Win64="yes">
+            <File Id="owfAA1E8AA9939690A1C1A40BE2EE52AE8A" Source="$(var.SourceDir)\WalkthroughImages\Page9.PNG" KeyPath="yes" />
+          </Component>
+        </Directory>
         <Directory Id="owd7142663FADDFFB05CCE01DC370DE4995" Name="zh-Hans">
           <Component Id="owc861B504C48115AB2980AFFA0688B9101" Guid="543f77b9-e5ca-5b2c-690f-2b4f09d4f863" Win64="yes">
             <File Id="owf861B504C48115AB2980AFFA0688B9101" Source="$(var.SourceDir)\zh-Hans\PresentationCore.resources.dll" KeyPath="yes" />

@@ -998,7 +998,7 @@
                             <Label FontWeight="Bold" FontSize="18" Grid.Row="2">Appearance</Label>
                             <CheckBox x:Name="SettingsShowThirdPanelCheckBox" Grid.Row="3" Margin="20,0,0,0" Checked="SettingsShowThirdPanelCheckBox_Checked" Unchecked="SettingsShowThirdPanelCheckBox_Unchecked">Show third preview panel</CheckBox-->
                         </Grid>
-                        <Grid x:Name="SettingsAboutPanel" Grid.Column="1" Margin="25" Visibility="Hidden">
+                        <Grid x:Name="SettingsAboutPanel" Grid.Column="1" Margin="25" Visibility="Visible">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="2*"/>
                                 <RowDefinition Height="1*"/>
@@ -1010,17 +1010,16 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
-                                    <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <Image Source="/Resources/Icons/LogoLarge.png" Width="150" HorizontalAlignment="Center" Margin="0,50,0,0">
+                                <Image Source="/Resources/Icons/LogoLarge.png" Width="100" HorizontalAlignment="Center" Margin="0,50,0,0">
                                     <Image.Effect>
                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                     </Image.Effect>
                                 </Image>
                                 <Label Grid.Row="1" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold">2Compare</Label>
-                                <Label Grid.Row="2" x:Name="AppVersionLabel" HorizontalAlignment="Center" FontSize="13"> </Label>
+                                <Label Grid.Row="2" x:Name="AppVersionLabel" HorizontalAlignment="Center" FontSize="13"></Label>
                                 <Label Grid.Row="3" HorizontalAlignment="Center" FontSize="13">
-                                    <Hyperlink NavigateUri="https://www.hopietech.com/" RequestNavigate="Hyperlink_RequestNavigate">
+                                    <Hyperlink NavigateUri="https://www.hopie.tech/" RequestNavigate="Hyperlink_RequestNavigate">
                                         © Hopie Tech 2020
                                     </Hyperlink>
                                 </Label>

@@ -16,7 +16,7 @@ namespace DocCompareWPF.Classes
         private static readonly HttpClient client = new HttpClient() { Timeout = new TimeSpan(0, 0, 20) };
 
         //private static readonly string LocalDirectory = Directory.GetCurrentDirectory();
-        private static readonly string serverAddress = "http://licserver.portmap.host:46928/";
+        private static readonly string serverAddress = "http://18.157.228.39:3501/";
 
         [ProtoMember(1)]
         private LicenseTypes licenseType;

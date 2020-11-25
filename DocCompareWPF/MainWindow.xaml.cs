@@ -77,7 +77,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "Version 0.5.1";
+        private readonly string versionString = "Version 0.5.2";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -1683,23 +1683,26 @@ namespace DocCompareWPF
                 ListViewItem container = DocCompareMainListView.ItemContainerGenerator.ContainerFromItem(DocCompareMainListView.Items[i]) as ListViewItem;
                 accuHeight += container.ActualHeight;
 
-                if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3)
+                if (docs.documents.Count >= 2)
                 {
-                    if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
+                    if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3)
                     {
-                        DocComparePageNumberLabel1.Content = (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] + 1).ToString() + " / " +
-                            (docs.documents[docs.documentsToCompare[0]].docCompareIndices.Max() + 1).ToString();
-                    }
+                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
+                        {
+                            DocComparePageNumberLabel1.Content = (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] + 1).ToString() + " / " +
+                                (docs.documents[docs.documentsToCompare[0]].docCompareIndices.Max() + 1).ToString();
+                        }
 
-                    if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
-                    {
-                        DocComparePageNumberLabel2.Content = (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] + 1).ToString() + " / " +
-                            (docs.documents[docs.documentsToCompare[1]].docCompareIndices.Max() + 1).ToString();
-                    }
+                        if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                        {
+                            DocComparePageNumberLabel2.Content = (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] + 1).ToString() + " / " +
+                                (docs.documents[docs.documentsToCompare[1]].docCompareIndices.Max() + 1).ToString();
+                        }
 
-                    docCompareSideGridShown = i;
-                    HighlightSideGrid();
-                    break;
+                        docCompareSideGridShown = i;
+                        HighlightSideGrid();
+                        break;
+                    }
                 }
             }
         }

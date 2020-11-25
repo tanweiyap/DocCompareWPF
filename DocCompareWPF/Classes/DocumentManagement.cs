@@ -154,6 +154,10 @@ namespace DocCompareWPF.Classes
                     documentsToShow.Add(-1);
                 }
             }
+
+            // default for doc comparison
+            documentsToCompare[0] = -1;
+            documentsToCompare[1] = -1;
         }
 
         public void RemoveDocumentWithID(string ID)

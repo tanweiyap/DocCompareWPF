@@ -28,5 +28,11 @@ namespace DocCompareWPF.Classes
 
         [ProtoMember(8)]
         public bool shownWalkthrough = false;
+
+        [ProtoMember(9)]
+        public bool showExtendTrial = false;
+
+        [ProtoMember(10)]
+        public bool trialExtended = false;
     }
 }

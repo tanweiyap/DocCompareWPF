@@ -17,3 +17,4 @@ InstallerAppMM/obj/**
 *.v2
 .vs/DocCompareWPF/v16/.suo
 UpgradeLog5.htm
+*.htm

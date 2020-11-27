@@ -119,6 +119,7 @@ namespace DocCompareWPF.Classes
                     if (diff.TotalDays < 0)
                     {
                         expiryDate = returnDate;
+                        licenseStatus = LicenseStatus.INACTIVE;
                         return LicServerResponse.INVALID;
                     }
 
@@ -132,6 +133,53 @@ namespace DocCompareWPF.Classes
             else
             {
                 return LicServerResponse.UNREACHABLE; // server offline
+            }
+
+            return LicServerResponse.INVALID;
+        }
+
+        public async Task<LicServerResponse> ExtendTrial()
+        {
+            int status = await CheckServerStatus(serverAddress + "status");
+
+            expiryDate = expiryDate.AddDays(7);
+            licenseStatus = LicenseStatus.ACTIVE;
+
+            if (status == 0)
+            {
+                IDictionary<string, string> licDict = new Dictionary<string, string>
+                    {
+                        { "UUID", UUID},
+                        { "DATE", expiryDate.ToString("d",CultureInfo.GetCultureInfo("de-de"))}
+                    };
+
+                var content = new FormUrlEncodedContent(licDict);
+
+                HttpResponseMessage msg = await client.PostAsync(serverAddress + "extendtrial", content);
+                string readMsg = msg.Content.ReadAsStringAsync().Result;
+                try
+                {
+                    JObject resp = JsonConvert.DeserializeObject<JObject>(readMsg);
+                    DateTime returnDate = DateTime.Parse((string)resp["DATE"], CultureInfo.GetCultureInfo("de-de"));
+
+                    TimeSpan diff = returnDate.Subtract(expiryDate); // if local date is in the future, we know that the trial was installed
+                    if (diff.TotalDays < 0)
+                    {
+                        expiryDate = returnDate;
+                        licenseStatus = LicenseStatus.INACTIVE;
+                        return LicServerResponse.INVALID;
+                    }
+
+                    return LicServerResponse.OKAY;
+                }
+                catch (Exception ex)
+                {
+                    ErrorHandling.ReportException(ex);
+                }
+            }
+            else
+            {
+                return LicServerResponse.UNREACHABLE; // server offline               
             }
 
             return LicServerResponse.INVALID;

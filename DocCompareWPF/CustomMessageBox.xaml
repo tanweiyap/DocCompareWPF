@@ -53,8 +53,8 @@
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <Button x:Name="Button1" Visibility="Hidden" Grid.Column="1" Width="100" Height="30" Margin="0,0,10,0" Click="Button1_Click">Button1</Button>
-                    <Button x:Name="Button2" Visibility="Visible" Grid.Column="2" Width="100" Height="30" Margin="0,0,10,0" Click="Button2_Click">Okay</Button>
+                    <Button x:Name="Button1" Visibility="Hidden" Grid.Column="1" MaxWidth="200" MinWidth="100" Height="30" Margin="0,0,10,0" Click="Button1_Click">Button1</Button>
+                    <Button x:Name="Button2" Visibility="Visible" Grid.Column="2" MaxWidth="200" MinWidth="100" Height="30" Margin="0,0,10,0" Click="Button2_Click">Okay</Button>
                 </Grid>
             </Grid>
         </Grid>

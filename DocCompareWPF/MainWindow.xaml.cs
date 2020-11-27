@@ -77,7 +77,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "Version 0.5.3";
+        private readonly string versionString = "Version 0.5.4";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -90,6 +90,7 @@ namespace DocCompareWPF
         private LicenseManagement lic;
 
         private string licKeyLastInputString;
+        private string trialKeyLastInputString;
 
         // Stack panel for viewing documents in scrollviewer control in comparison view
         //private VirtualizingStackPanel childPanel1;
@@ -108,7 +109,7 @@ namespace DocCompareWPF
         private Thread threadCompare;
         private Thread threadAnimateDiff;
         private Thread threadDisplayResult;
-        private readonly Thread threadCheckTrial;
+        private Thread threadCheckTrial;
         private readonly Thread threadRenewLic;
         private Thread threadStartWalkthrough;
 
@@ -152,26 +153,7 @@ namespace DocCompareWPF
             }
 
             docs = new DocumentManagement(settings.maxDocCount, workingDir, settings);
-            /*
-            Dispatcher.Invoke(() =>
-            {
-                if (settings.numPanelsDragDrop == 3)
-                    SettingsShowThirdPanelCheckBox.IsChecked = true;
-                else
-                    SettingsShowThirdPanelCheckBox.IsChecked = false;
-
-                SettingsDefaultFolderTextBox.Content = settings.defaultFolder;
-
-                if (settings.isProVersion == true)
-                {
-                    SettingsShowThirdPanelCheckBox.IsEnabled = true;
-                }
-                else
-                {
-                    SettingsShowThirdPanelCheckBox.IsEnabled = false;
-                }
-            });
-            */
+            
 
             // License Management
             try
@@ -190,7 +172,7 @@ namespace DocCompareWPF
             catch
             {
                 lic = new LicenseManagement();
-                lic.Init(); // init 14 days trial
+                lic.Init(); // init 7 days trial
                 DisplayLicense();
                 SaveLicense();
 
@@ -219,10 +201,25 @@ namespace DocCompareWPF
             {
                 if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL)
                 {
-                    CustomMessageBox msgBox = new CustomMessageBox();
-                    msgBox.Setup("Expired lincense", "Your license has expired. Please consider making a subscription on www.hopietech.com", "Okay");
-                    msgBox.ShowDialog();
+                    if (settings.trialExtended == false)
+                    {
+                        CustomMessageBox msgBox = new CustomMessageBox();
+                        msgBox.Setup("Expired lincense", "Your license has expired. If you wish to extend the trial for 7 days, feel free to fill up a feedback survey on our website.", "Cancle", "Take survey");
 
+                        if (msgBox.ShowDialog() == true) // user wish to take survey
+                        {
+                            ProcessStartInfo info = new ProcessStartInfo("https://hopie.tech/de/blog/quiz/2compare-trial-response/")
+                            {
+                                UseShellExecute = true
+                            };
+                            Process.Start(info);
+
+                            settings.showExtendTrial = true;
+                            SaveSettings();
+                        }
+                    }
+
+                    DisplayLicense();
                     BrowseFileButton1.IsEnabled = false;
                     DocCompareFirstDocZone.AllowDrop = false;
                     DocCompareDragDropZone1.AllowDrop = false;
@@ -235,7 +232,15 @@ namespace DocCompareWPF
                     threadRenewLic.Start();
                 }
             }
+            
+            // Extend trial option
+            if(settings.showExtendTrial == true)
+            {
+                ExtendTrialGrid1.Visibility = Visibility.Visible;
+                ExtendTrialGrid2.Visibility = Visibility.Visible;
+            }
 
+            // Walkthrough if needed
             threadStartWalkthrough = new Thread(new ThreadStart(ShowWalkthroughStartMessage));
             threadStartWalkthrough.Start();
         }
@@ -667,7 +672,7 @@ namespace DocCompareWPF
                 Dispatcher.Invoke(() =>
                 {
                     CustomMessageBox msgBox = new CustomMessageBox();
-                    msgBox.Setup("Expired lincense", "A previous trial license has been activate don this machine. Please consider making a subscription on www.hopietech.com", "Okay");
+                    msgBox.Setup("Expired lincense", "A previous trial license has been activate don this machine. Please consider making a subscription on www.hopie.tech", "Okay");
                     msgBox.ShowDialog();
 
                     BrowseFileButton1.IsEnabled = false;
@@ -677,6 +682,48 @@ namespace DocCompareWPF
 
                     DisplayLicense();
                 });
+            }
+        }
+
+        private async void ExtendTrial()
+        {
+            LicenseManagement.LicServerResponse res = await lic.ExtendTrial();
+            if (res == LicenseManagement.LicServerResponse.INVALID)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("Expired lincense", "A previous trial license has been activate don this machine. Please consider making a subscription on www.hopie.tech", "Okay");
+                    msgBox.ShowDialog();
+
+                    BrowseFileButton1.IsEnabled = false;
+                    DocCompareFirstDocZone.AllowDrop = false;
+                    DocCompareDragDropZone1.AllowDrop = false;
+                    DocCompareColorZone1.AllowDrop = false;
+
+                    DisplayLicense();
+                });
+            }
+            else
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("Trial extended", "Your trial has been successfully extended", "Okay");
+                    msgBox.ShowDialog();
+
+                    BrowseFileButton1.IsEnabled = true;
+                    DocCompareFirstDocZone.AllowDrop = true;
+                    DocCompareDragDropZone1.AllowDrop = true;
+                    DocCompareColorZone1.AllowDrop = true;
+
+                    DisplayLicense();
+                });
+
+                SaveLicense();
+
+                settings.trialExtended = true;
+                SaveSettings();
             }
         }
 
@@ -1318,6 +1365,8 @@ namespace DocCompareWPF
                     UserEmailTextBox.IsEnabled = false;
                     LicenseKeyTextBox.IsEnabled = false;
                     ActivateLicenseButton.IsEnabled = false;
+                    ExtendTrialGrid1.Visibility = Visibility.Hidden;
+                    ExtendTrialGrid2.Visibility = Visibility.Hidden;
                     break;
 
                 case LicenseManagement.LicenseTypes.TRIAL:
@@ -1328,18 +1377,31 @@ namespace DocCompareWPF
                         LicenseExpiryLabel.Content = timeBuffer.TotalDays.ToString() + " days";
                     else
                         LicenseExpiryTypeLabel.Content = "Expired";
+
+                    if(settings.showExtendTrial == true && settings.trialExtended == false)
+                    {
+                        ExtendTrialGrid1.Visibility = Visibility.Visible;
+                        ExtendTrialGrid2.Visibility = Visibility.Visible;
+                    }
+
                     break;
 
                 case LicenseManagement.LicenseTypes.DEVELOPMENT:
                     LicenseTypeLabel.Content = "Developer license";
                     LicenseExpiryTypeLabel.Content = "Expires in";
                     LicenseExpiryLabel.Content = "- days";
+
+                    ExtendTrialGrid1.Visibility = Visibility.Hidden;
+                    ExtendTrialGrid2.Visibility = Visibility.Hidden;
                     break;
 
                 default:
                     LicenseTypeLabel.Content = "No license found";
                     LicenseExpiryTypeLabel.Content = "Expires in";
                     LicenseExpiryLabel.Content = "- days";
+
+                    ExtendTrialGrid1.Visibility = Visibility.Hidden;
+                    ExtendTrialGrid2.Visibility = Visibility.Hidden;
                     break;
             }
 
@@ -4271,6 +4333,91 @@ namespace DocCompareWPF
 
             threadStartWalkthrough = new Thread(new ThreadStart(ShowWalkthroughStartMessage));
             threadStartWalkthrough.Start();
+        }
+
+        private void ExtendTrialTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                string currText = (sender as TextBox).Text;
+                currText = currText.ToUpper();
+
+                if (trialKeyLastInputString == null)
+                    trialKeyLastInputString = currText;
+
+                if (trialKeyLastInputString.Length >= currText.Length)
+                {
+                    if (currText.Length == 4 || currText.Length == 9 || currText.Length == 14)
+                        currText = currText.Remove(currText.Length - 1);
+                }
+                else
+                {
+                    if (currText.Length == 4 || currText.Length == 9 || currText.Length == 14)
+                        currText += '-';
+                }
+
+                if (currText.Length > 19)
+                {
+                    currText = currText.Remove(currText.Length - 1);
+                }
+
+                (sender as TextBox).Text = currText;
+                (sender as TextBox).Select(currText.Length, 0);
+
+                if (currText.Length == 19)
+                {
+                    ValidTrialKeyTick.Visibility = Visibility.Visible;
+                    InvalidTrialKeyTick.Visibility = Visibility.Hidden;
+                    ExtendTrialButton.IsEnabled = true;
+                }
+                else
+                {
+                    ValidTrialKeyTick.Visibility = Visibility.Hidden;
+                    InvalidTrialKeyTick.Visibility = Visibility.Visible;
+                    ExtendTrialButton.IsEnabled = false;
+                }
+
+                if (currText.Length == 0)
+                {
+                    ValidKeyTick.Visibility = Visibility.Hidden;
+                    InvalidKeyTick.Visibility = Visibility.Hidden;
+                    ActivateLicenseButton.IsEnabled = false;
+                }
+
+                trialKeyLastInputString = currText;
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.ReportException(ex);
+            }
+        }
+
+        private void ExtendTrialButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if(ExtendTrialTextBox.Text == "4781-9373-6568-8184")
+                {
+                    settings.showExtendTrial = false;
+                    SaveSettings();
+                    ExtendTrialGrid1.Visibility = Visibility.Hidden;
+                    ExtendTrialGrid2.Visibility = Visibility.Hidden;
+                    threadCheckTrial = new Thread(new ThreadStart(ExtendTrial));
+                    threadCheckTrial.Start();
+                    ValidTrialKeyTick.Visibility = Visibility.Hidden;
+                    InvalidTrialKeyTick.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("Invalid code", "An invalid trial extension code entered.", "Okay");
+                    msgBox.ShowDialog();
+                }
+            }
+            catch
+            {
+
+            }
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

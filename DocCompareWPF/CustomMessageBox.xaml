@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:DocCompareWPF"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="DocCompare" Height="250" Width="500" MinWidth="500" MinHeight="250" WindowStyle="None" AllowsTransparency="True"
+        Title="DocCompare" Height="270" Width="500" MinWidth="500" MinHeight="270" WindowStyle="None" AllowsTransparency="True"
         FontSize="15" ResizeMode="NoResize">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="{Binding ActualHeight,ElementName=TitleBar}" />
@@ -45,7 +45,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" VerticalAlignment="Center" HorizontalAlignment="Center" Width="50" Height="50" />
-                    <TextBlock x:Name="MessageTextBlock" Grid.Column="1" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">Message</TextBlock>
+                    <TextBlock x:Name="MessageTextBlock" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0" TextWrapping="Wrap">Message</TextBlock>
                 </Grid>
                 <Grid Grid.Row="1" Background="{StaticResource StatusBarBackground}">
                     <Grid.ColumnDefinitions>

@@ -77,7 +77,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "Version 0.5.4";
+        private readonly string versionString = "Version 0.5.5";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -340,7 +340,7 @@ namespace DocCompareWPF
             {
                 case LicenseManagement.LicServerResponse.UNREACHABLE:
                     msgBox = new CustomMessageBox();
-                    msgBox.Setup("License server not reachable", "License server not reachable. Please check your internet connection or try again later.", "Okay");
+                    msgBox.Setup("No connection to license server", "The 2|Compare license server cannot be reached. This may be due to multiple reasons, including your firewall settings or no connection to the Internet but also server maintenance on our side. If you are connected to the Internet and your firewall is configured properly, please ignore this warning. Out server will be up and running again shortly. If you see this warning throughout multiple consecutive days, please contact us at support@hopie.tech.", "Okay");
                     msgBox.ShowDialog();
                     break;
 
@@ -3078,13 +3078,13 @@ namespace DocCompareWPF
                         if (bufferTime.TotalDays >= 0)
                         {
                             msgBox = new CustomMessageBox();
-                            msgBox.Setup("License server not reachable", "License server not reachable. Please check your internet connection or launch the application within " + bufferTime.TotalDays.ToString() + " day(s) with working internet connection.", "Okay");
+                            msgBox.Setup("No connection to license server", "The 2|Compare license server cannot be reached. This may be due to multiple reasons, including your firewall settings or no connection to the Internet but also server maintenance on our side. If you are connected to the Internet and your firewall is configured properly, please ignore this warning. Out server will be up and running again shortly. If you see this warning throughout multiple consecutive days, please contact us at support@hopie.tech.", "Okay");
                             msgBox.ShowDialog();
                         }
                         else
                         {
                             msgBox = new CustomMessageBox();
-                            msgBox.Setup("License server not reachable", "License server not reachable. Your license is no longer valid. Please contact us at support@hopietech.com for support if you have previously renewed the subscription.", "Okay");
+                            msgBox.Setup("No connection to license server", "The 2|Compare license server cannot be reached. This may be due to multiple reasons, including your firewall settings or no connection to the Internet but also server maintenance on our side. If you are connected to the Internet and your firewall is configured properly, please ignore this warning. Out server will be up and running again shortly. If you see this warning throughout multiple consecutive days, please contact us at support@hopie.tech.", "Okay");
                             msgBox.ShowDialog();
                             BrowseFileButton1.IsEnabled = false;
                             DocCompareFirstDocZone.AllowDrop = false;

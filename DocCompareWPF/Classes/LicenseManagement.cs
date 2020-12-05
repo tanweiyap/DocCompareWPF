@@ -116,9 +116,10 @@ namespace DocCompareWPF.Classes
                     DateTime returnDate = DateTime.Parse((string)resp["DATE"], CultureInfo.GetCultureInfo("de-de"));
 
                     TimeSpan diff = returnDate.Subtract(expiryDate); // if local date is in the future, we know that the trial was installed
-                    if (diff.TotalDays < 0)
-                    {
-                        expiryDate = returnDate;
+                    expiryDate = returnDate;
+
+                    if (diff.TotalDays < -7)
+                    {                        
                         licenseStatus = LicenseStatus.INACTIVE;
                         return LicServerResponse.INVALID;
                     }

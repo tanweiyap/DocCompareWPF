@@ -672,17 +672,17 @@ namespace DocCompareWPF
                 Dispatcher.Invoke(() =>
                 {
                     CustomMessageBox msgBox = new CustomMessageBox();
-                    msgBox.Setup("Expired lincense", "A previous trial license has been activate don this machine. Please consider making a subscription on www.hopie.tech", "Okay");
+                    msgBox.Setup("Expired lincense", "An expired trial license was detected for your computer. If you wish to continue to use 2|Compare, please purchase a license on https://hopie.tech.", "Okay");
                     msgBox.ShowDialog();
 
                     BrowseFileButton1.IsEnabled = false;
                     DocCompareFirstDocZone.AllowDrop = false;
                     DocCompareDragDropZone1.AllowDrop = false;
                     DocCompareColorZone1.AllowDrop = false;
-
-                    DisplayLicense();
                 });
             }
+
+            Dispatcher.Invoke(() => { DisplayLicense(); });
         }
 
         private async void ExtendTrial()
@@ -693,7 +693,7 @@ namespace DocCompareWPF
                 Dispatcher.Invoke(() =>
                 {
                     CustomMessageBox msgBox = new CustomMessageBox();
-                    msgBox.Setup("Expired lincense", "A previous trial license has been activate don this machine. Please consider making a subscription on www.hopie.tech", "Okay");
+                    msgBox.Setup("Expired lincense", "An expired trial license was detected for your computer. If you wish to continue to use 2|Compare, please purchase a license on https://hopie.tech.", "Okay");
                     msgBox.ShowDialog();
 
                     BrowseFileButton1.IsEnabled = false;

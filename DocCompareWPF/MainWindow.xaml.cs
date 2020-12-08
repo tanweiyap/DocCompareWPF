@@ -77,7 +77,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "Version 0.5.6";
+        private readonly string versionString = "Version 0.5.7";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -1735,37 +1735,44 @@ namespace DocCompareWPF
 
         private void DocCompareMainScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            double accuHeight = 0;
-
-            Border border = (Border)VisualTreeHelper.GetChild(DocCompareMainListView, 0);
-            ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
-
-            for (int i = 0; i < DocCompareMainListView.Items.Count; i++)
+            try
             {
-                ListViewItem container = DocCompareMainListView.ItemContainerGenerator.ContainerFromItem(DocCompareMainListView.Items[i]) as ListViewItem;
-                accuHeight += container.ActualHeight;
+                double accuHeight = 0;
 
-                if (docs.documents.Count >= 2)
+                Border border = (Border)VisualTreeHelper.GetChild(DocCompareMainListView, 0);
+                ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
+
+                for (int i = 0; i < DocCompareMainListView.Items.Count; i++)
                 {
-                    if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3)
+                    ListViewItem container = DocCompareMainListView.ItemContainerGenerator.ContainerFromItem(DocCompareMainListView.Items[i]) as ListViewItem;
+                    accuHeight += container.ActualHeight;
+
+                    if (docs.documents.Count >= 2)
                     {
-                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
+                        if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3)
                         {
-                            DocComparePageNumberLabel1.Content = (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] + 1).ToString() + " / " +
-                                (docs.documents[docs.documentsToCompare[0]].docCompareIndices.Max() + 1).ToString();
-                        }
+                            if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
+                            {
+                                DocComparePageNumberLabel1.Content = (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] + 1).ToString() + " / " +
+                                    (docs.documents[docs.documentsToCompare[0]].docCompareIndices.Max() + 1).ToString();
+                            }
 
-                        if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
-                        {
-                            DocComparePageNumberLabel2.Content = (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] + 1).ToString() + " / " +
-                                (docs.documents[docs.documentsToCompare[1]].docCompareIndices.Max() + 1).ToString();
-                        }
+                            if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                            {
+                                DocComparePageNumberLabel2.Content = (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] + 1).ToString() + " / " +
+                                    (docs.documents[docs.documentsToCompare[1]].docCompareIndices.Max() + 1).ToString();
+                            }
 
-                        docCompareSideGridShown = i;
-                        HighlightSideGrid();
-                        break;
+                            docCompareSideGridShown = i;
+                            HighlightSideGrid();
+                            break;
+                        }
                     }
                 }
+            }
+            catch
+            {
+
             }
         }
 
@@ -1803,102 +1810,137 @@ namespace DocCompareWPF
 
         private void DocCompareScrollViewer1_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            double accuHeight = 0;
-
-            Border border = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
-            ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
-
-            for (int i = 0; i < DocCompareListView1.Items.Count; i++)
+            try
             {
-                ListViewItem container = DocCompareListView1.ItemContainerGenerator.ContainerFromItem(DocCompareListView1.Items[i]) as ListViewItem;
+                double accuHeight = 0;
 
-                accuHeight += container.ActualHeight;
+                Border border = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
+                ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
 
-                if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3)
+                for (int i = 0; i < DocCompareListView1.Items.Count; i++)
                 {
-                    Doc1PageNumberLabel.Content = (i + 1).ToString() + " / " + DocCompareListView1.Items.Count.ToString();
-                    break;
+                    ListViewItem container = DocCompareListView1.ItemContainerGenerator.ContainerFromItem(DocCompareListView1.Items[i]) as ListViewItem;
+
+                    accuHeight += container.ActualHeight;
+
+                    if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3)
+                    {
+                        Doc1PageNumberLabel.Content = (i + 1).ToString() + " / " + DocCompareListView1.Items.Count.ToString();
+                        break;
+                    }
                 }
+            }catch
+            {
+
             }
         }
 
         private void DocCompareScrollViewer2_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            double accuHeight = 0;
-
-            Border border = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
-            ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
-
-            for (int i = 0; i < DocCompareListView2.Items.Count; i++)
+            try
             {
-                ListViewItem container = DocCompareListView2.ItemContainerGenerator.ContainerFromItem(DocCompareListView2.Items[i]) as ListViewItem;
 
-                accuHeight += container.ActualHeight;
+                double accuHeight = 0;
 
-                if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3)
+                Border border = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
+                ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
+
+                for (int i = 0; i < DocCompareListView2.Items.Count; i++)
                 {
-                    Doc2PageNumberLabel.Content = (i + 1).ToString() + " / " + DocCompareListView2.Items.Count.ToString();
-                    break;
+                    ListViewItem container = DocCompareListView2.ItemContainerGenerator.ContainerFromItem(DocCompareListView2.Items[i]) as ListViewItem;
+
+                    accuHeight += container.ActualHeight;
+
+                    if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3)
+                    {
+                        Doc2PageNumberLabel.Content = (i + 1).ToString() + " / " + DocCompareListView2.Items.Count.ToString();
+                        break;
+                    }
                 }
+            }
+            catch
+            {
+
             }
         }
 
         private void DocCompareScrollViewer3_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            double accuHeight = 0;
-
-            Border border = (Border)VisualTreeHelper.GetChild(DocCompareListView3, 0);
-            ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
-
-            for (int i = 0; i < DocCompareListView3.Items.Count; i++)
+            try
             {
-                ListViewItem container = DocCompareListView3.ItemContainerGenerator.ContainerFromItem(DocCompareListView3.Items[i]) as ListViewItem;
+                double accuHeight = 0;
 
-                accuHeight += container.ActualHeight;
+                Border border = (Border)VisualTreeHelper.GetChild(DocCompareListView3, 0);
+                ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
 
-                if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3)
+                for (int i = 0; i < DocCompareListView3.Items.Count; i++)
                 {
-                    Doc3PageNumberLabel.Content = (i + 1).ToString() + " / " + DocCompareListView3.Items.Count.ToString();
-                    break;
+                    ListViewItem container = DocCompareListView3.ItemContainerGenerator.ContainerFromItem(DocCompareListView3.Items[i]) as ListViewItem;
+
+                    accuHeight += container.ActualHeight;
+
+                    if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3)
+                    {
+                        Doc3PageNumberLabel.Content = (i + 1).ToString() + " / " + DocCompareListView3.Items.Count.ToString();
+                        break;
+                    }
                 }
+            }
+            catch
+            {
+
             }
         }
 
         private void DocCompareSideScrollViewerLeft_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            Border border = (Border)VisualTreeHelper.GetChild(DocCompareSideListViewLeft, 0);
-            ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
-
-            Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareSideListViewRight, 0);
-            ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
-
-            if (inForceAlignMode == false)
-                scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-            else
+            try
             {
-                if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
+                Border border = (Border)VisualTreeHelper.GetChild(DocCompareSideListViewLeft, 0);
+                ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
+
+                Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareSideListViewRight, 0);
+                ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                if (inForceAlignMode == false)
+                    scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                else
                 {
-                    scrollViewer.ScrollToVerticalOffset(scrollPosLeft);
+                    if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
+                    {
+                        scrollViewer.ScrollToVerticalOffset(scrollPosLeft);
+                    }
                 }
+            }
+            catch
+            {
+
             }
         }
 
         private void DocCompareSideScrollViewerRight_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            Border border = (Border)VisualTreeHelper.GetChild(DocCompareSideListViewLeft, 0);
-            ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
-
-            Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareSideListViewRight, 0);
-            ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
-
-            if (inForceAlignMode == false)
-                scrollViewer.ScrollToVerticalOffset(scrollViewer2.VerticalOffset);
-            else
+            try
             {
-                if (sideGridSelectedLeftOrRight == GridSelection.RIGHT)
+                Border border = (Border)VisualTreeHelper.GetChild(DocCompareSideListViewLeft, 0);
+                ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
+
+                Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareSideListViewRight, 0);
+                ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                if (inForceAlignMode == false)
+                    scrollViewer.ScrollToVerticalOffset(scrollViewer2.VerticalOffset);
+                else
                 {
-                    scrollViewer2.ScrollToVerticalOffset(scrollPosRight);
+                    if (sideGridSelectedLeftOrRight == GridSelection.RIGHT)
+                    {
+                        scrollViewer2.ScrollToVerticalOffset(scrollPosRight);
+                    }
                 }
+            }
+            catch
+            {
+
             }
         }
 
@@ -2727,18 +2769,25 @@ namespace DocCompareWPF
 
         private void RefDocScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            double accuHeight = 0;
-
-            for (int i = 0; i < refDocPanel.Children.Count; i++)
+            try
             {
-                Size currSize = refDocPanel.Children[i].DesiredSize;
-                accuHeight += currSize.Height;
+                double accuHeight = 0;
 
-                if (accuHeight > RefDocScrollViewer.VerticalOffset)
+                for (int i = 0; i < refDocPanel.Children.Count; i++)
                 {
-                    RefDocPageNumberLabel.Content = (i + 1).ToString() + " / " + refDocPanel.Children.Count.ToString();
-                    break;
+                    Size currSize = refDocPanel.Children[i].DesiredSize;
+                    accuHeight += currSize.Height;
+
+                    if (accuHeight > RefDocScrollViewer.VerticalOffset)
+                    {
+                        RefDocPageNumberLabel.Content = (i + 1).ToString() + " / " + refDocPanel.Children.Count.ToString();
+                        break;
+                    }
                 }
+            }
+            catch
+            {
+
             }
         }
 

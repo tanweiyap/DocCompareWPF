@@ -30,7 +30,7 @@ namespace DocCompareWPF
 
         private void InitMessage()
         {
-            item.Text = "Thanks for choosing 2|Compare. We will now guide you through the application to get you familiar with the functionality.";
+            item.Text = "Thank you for choosing 2|Compare. In this quick guide, you will learn how to navigate and operate the software. Please click the NEXT button below to start the guide.";
             item.PathToFile = Path.Join(WalkthroughImageDirectory, "LogoLarge.png");
         }
 
@@ -50,52 +50,54 @@ namespace DocCompareWPF
 
         private void SetText()
         {
+            NextStepButton.Content = "Next";
+
             switch (stepCounter)
             {
                 case 0:
-                    item.Text = "Thanks for choosing 2|Compare. We will now guide you through the application to get you familiar with the functionality.";
+                    item.Text = "Thank you for choosing 2|Compare. In this quick guide, you will learn how to navigate and operate the software. Please click the NEXT button below to start the guide.";
                     break;
                 case 1:
-                    item.Text = "Click on this tab to browse and inspect files before comparison.";
+                    item.Text = "The leftmost tab contains the document browse and inspection functionality. It is always opened on startup, and you can always return here by clicking this documents icon.";
                     break;
                 case 2:
-                    item.Text = "Click on this button to browse files for inspection. Alternatively, you can drag and drop files into this zone to load them. A total of 5 files can be loaded at once.";
+                    item.Text = "Click this button to browse for files. Alternatively, you can drag and drop up to five files onto the white canvas for subsequent document comparison.";
                     break;
                 case 3:
-                    item.Text = "Use the dropdown menu to view other loaded documents. The selected document on the left will be the reference document for the comparison.";
+                    item.Text = "The dropdown menus allow you to select loaded documents for comparison. The document on the left half of the canvas will be treated as the reference/original document.";
                     break;
                 case 4:
-                    item.Text = "Click on the info button to view more document attributes.";
+                    item.Text = "This button allows you to inspect document attributes, such as recent change dates or authors.";
                     break;
                 case 5:
-                    item.Text = "Click on this tab to switch to compare mode after document selection.";
+                    item.Text = "After document selection, click on this tab to switch to compare mode.";
                     break;
                 case 6:
-                    item.Text = "Document differences are highlighted. Click on this button to toggle highlighting.";
+                    item.Text = "Document differences are highlighted in magenta. The highlights can be toggled on or off using this button.";
                     break;
                 case 7:
-                    item.Text = "Pages are aligned automatically. If you would like to change the alignment manually, mouse over and click the 'link' icon on a page in the miniature preview, then choose any page in the second document to align these two pages.";
+                    item.Text = "Our algorithm aligns the pages of your documents automatically. If you would like to change the alignment manually, mouse over and click the link-icon on any page in the miniature preview. Then, select any page in the second document preview. The software automatically calculates a new optimal document alignment that incorporates your manual choice.";
                     break;
                 case 8:
-                    item.Text = "Click here to remove all previously set link. Click on the icon between pages to remove individual links.";
+                    item.Text = "Click here to remove all manually set alignments. Click on the link icon between pages to remove individual links.";
                     break;
                 case 9:
-                    item.Text = "Click this button to open the file in external editor.";
+                    item.Text = "If you wish to amend files quickly, click this button to open the file in your external editor.";
                     break;
                 case 10:
-                    item.Text = "Click this button to reload the file after editing for comparison.";
+                    item.Text = "After changing a document externally, please reload the file using this button.";
                     break;
                 case 11:
-                    item.Text = "Use the dropdown menu to select other document for comparison with the reference document.";
+                    item.Text = "Use the dropdown menu on the right hand document view to easily select other loaded document versions.";
                     break;
                 case 12:
-                    item.Text = "When differences are difficult to spot, mouse over the page, press and hold down this icon – it will overlay the two slides for visual comparison.";
+                    item.Text = "When differences are difficult to spot, mouse over the page, then click and hold down this icon. It will overlay the aligned pages for better visual comparison.";
                     break;
                 case 13:
-                    item.Text = "If you have made a license subscription on www.hopie.tech, you can activate the license under the settings menu.";
+                    item.Text = "If you have obtained a license key from https://hopie.tech, please activate your software under the settings tab.";
                     break;
                 case 14:
-                    item.Text = "Thanks for completing the walkthrough guide. Enjoy 2|Compare! You can restart this walkthrough from the settings page.";
+                    item.Text = "Thanks for taking the time to complete the walkthrough. You can restart it any time under the settings tab. Enjoy 2|Compare!";
                     NextStepButton.Content = "Close";
                     break;
             }

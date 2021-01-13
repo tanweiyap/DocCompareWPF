@@ -77,7 +77,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.0.1";
+        private readonly string versionString = "1.0.2";
         private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
@@ -4508,7 +4508,7 @@ namespace DocCompareWPF
         {
             try
             {
-                if (ExtendTrialTextBox.Text == "4781-9373-6568-8184")
+                if (ExtendTrialTextBox.Text == "QV9N-PQP4-5G9N-NV22")
                 {
                     settings.showExtendTrial = false;
                     SaveSettings();

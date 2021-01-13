@@ -34,5 +34,12 @@ namespace DocCompareWPF.Classes
 
         [ProtoMember(10)]
         public bool trialExtended = false;
+
+        [ProtoMember(11)]
+        public bool skipVersion = false;
+
+        [ProtoMember(12)]
+        public string skipVersionString = "";
+
     }
 }

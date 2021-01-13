@@ -127,22 +127,26 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Label x:Name="WindowTitle" FontSize="15" VerticalAlignment="Center" Foreground="White">2|Compare</Label>
-                        <Grid Grid.Column="1" MaxWidth="100"  MinWidth="100" HorizontalAlignment="Right">
+                        <Grid Grid.Column="1" MaxWidth="120"  MinWidth="120" HorizontalAlignment="Right">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition />
                                 <ColumnDefinition />
+                                <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <Button x:Name="WindowMinimizeButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="White" Grid.Column="0" Padding="0" BorderThickness="0" Click="WindowMinimizeButton_Click" WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button x:Name="WindowUpdateButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="Yellow" Grid.Column="0" Padding="0" BorderThickness="0" Click="WindowUpdateButton_Click" WindowChrome.IsHitTestVisibleInChrome="True" Visibility="Hidden" ToolTip="A newer version of 2|compare is available. Click here to download the installer.">
+                                <iconPacks:PackIconMaterialDesign Kind="NewReleases" Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            </Button>
+                            <Button x:Name="WindowMinimizeButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="White" Grid.Column="1" Padding="0" BorderThickness="0" Click="WindowMinimizeButton_Click" WindowChrome.IsHitTestVisibleInChrome="True">
                                 <iconPacks:PackIconMaterial Kind="WindowMinimize" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" />
                             </Button>
-                            <Button x:Name="WindowRestoreButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="White" Grid.Column="1" Padding="0" BorderThickness="0" Click="WindowRestoreButton_Click" Visibility="Hidden" WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button x:Name="WindowRestoreButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="White" Grid.Column="2" Padding="0" BorderThickness="0" Click="WindowRestoreButton_Click" Visibility="Hidden" WindowChrome.IsHitTestVisibleInChrome="True">
                                 <iconPacks:PackIconMaterial Kind="WindowRestore" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" />
                             </Button>
-                            <Button x:Name="WindowMaximizeButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="White" Grid.Column="1" Padding="0" BorderThickness="0" Click="WindowMaximizeButton_Click" WindowChrome.IsHitTestVisibleInChrome="True">
+                            <Button x:Name="WindowMaximizeButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="White" Grid.Column="2" Padding="0" BorderThickness="0" Click="WindowMaximizeButton_Click" WindowChrome.IsHitTestVisibleInChrome="True">
                                 <iconPacks:PackIconMaterial Kind="WindowMaximize" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" />
                             </Button>
-                            <Button x:Name="WindowCloseButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="White" Grid.Column="2" Padding="0" BorderThickness="0" Click="WindowCloseButton_Click" WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand">
+                            <Button x:Name="WindowCloseButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="White" Grid.Column="3" Padding="0" BorderThickness="0" Click="WindowCloseButton_Click" WindowChrome.IsHitTestVisibleInChrome="True" Cursor="Hand">
                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" />
                             </Button>
                         </Grid>
@@ -1128,6 +1132,7 @@
                                     <ColumnDefinition Width="2*" />
                                 </Grid.ColumnDefinitions>
                                 <Button x:Name="ActivateLicenseButton" Padding="0" Grid.Column="1" HorizontalAlignment="Stretch" Click="ActivateLicenseButton_Click">Activate</Button>
+                                <Button x:Name="ChangeLicenseButton" Padding="0" Grid.Column="1" HorizontalAlignment="Stretch" Click="ChangeLicenseButton_Click" Visibility="Hidden">Change License</Button>
                             </Grid>
                             <Grid x:Name="ExtendTrialGrid1" HorizontalAlignment="Stretch" Grid.Row="6" Margin="0,50,0,5" Visibility="Hidden">
                                 <Grid.ColumnDefinitions>

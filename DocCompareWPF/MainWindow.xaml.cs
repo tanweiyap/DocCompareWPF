@@ -77,7 +77,8 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "Version 0.6.0";
+        private readonly string versionString = "1.0.1";
+        private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -91,6 +92,9 @@ namespace DocCompareWPF
 
         private string licKeyLastInputString;
         private string trialKeyLastInputString;
+
+        // Update
+        private string updateInstallerURL;
 
         // Stack panel for viewing documents in scrollviewer control in comparison view
         //private VirtualizingStackPanel childPanel1;
@@ -110,6 +114,7 @@ namespace DocCompareWPF
         private Thread threadAnimateDiff;
         private Thread threadDisplayResult;
         private Thread threadCheckTrial;
+        private Thread threadCheckUpdate;
         private readonly Thread threadRenewLic;
         private Thread threadStartWalkthrough;
 
@@ -125,7 +130,7 @@ namespace DocCompareWPF
 
             // GUI stuff
             showMask = true;
-            AppVersionLabel.Content = versionString;
+            AppVersionLabel.Content = "Version " + versionString;
             SetVisiblePanel(SidePanels.DRAGDROP);
             SidePanelDocCompareButton.IsEnabled = false;
             ActivateLicenseButton.IsEnabled = false;
@@ -153,7 +158,7 @@ namespace DocCompareWPF
             }
 
             docs = new DocumentManagement(settings.maxDocCount, workingDir, settings);
-            
+
 
             // License Management
             try
@@ -208,7 +213,7 @@ namespace DocCompareWPF
 
                         if (msgBox.ShowDialog() == true) // user wish to take survey
                         {
-                            ProcessStartInfo info = new ProcessStartInfo("https://hopie.tech/de/blog/quiz/2compare-trial-response/")
+                            ProcessStartInfo info = new ProcessStartInfo("https://de.hopie.tech/quiz/fragen-zur-verlaengerung-der-testphase/")
                             {
                                 UseShellExecute = true
                             };
@@ -232,9 +237,9 @@ namespace DocCompareWPF
                     threadRenewLic.Start();
                 }
             }
-            
+
             // Extend trial option
-            if(settings.showExtendTrial == true)
+            if (settings.showExtendTrial == true)
             {
                 ExtendTrialGrid1.Visibility = Visibility.Visible;
                 ExtendTrialGrid2.Visibility = Visibility.Visible;
@@ -243,6 +248,10 @@ namespace DocCompareWPF
             // Walkthrough if needed
             threadStartWalkthrough = new Thread(new ThreadStart(ShowWalkthroughStartMessage));
             threadStartWalkthrough.Start();
+
+            // Check update if needed
+            threadCheckUpdate = new Thread(new ThreadStart(CheckUpdate));
+            threadCheckUpdate.Start();
         }
 
         private enum GridSelection
@@ -301,7 +310,7 @@ namespace DocCompareWPF
                     Dispatcher.Invoke(() =>
                     {
                         Walkthrough walkthrough = new Walkthrough();
-                        if(walkthrough.ShowDialog() == true)
+                        if (walkthrough.ShowDialog() == true)
                         {
                             settings.shownWalkthrough = true;
                             SaveSettings();
@@ -334,7 +343,10 @@ namespace DocCompareWPF
 
         private async void ActivateLicenseButton_Click(object sender, RoutedEventArgs e)
         {
-            LicenseManagement.LicServerResponse res = await lic.ActivateLincense(UserEmailTextBox.Text, LicenseKeyTextBox.Text);
+            // remove anyway
+            bool res_1 = await lic.RemoveLicense();
+
+            LicenseManagement.LicServerResponse res = await lic.ActivateLicense(UserEmailTextBox.Text, LicenseKeyTextBox.Text);
             CustomMessageBox msgBox;
             switch (res)
             {
@@ -439,7 +451,7 @@ namespace DocCompareWPF
 
         private void BrowseFileButton1_Click(object sender, RoutedEventArgs e)
         {
-            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
             {
                 PopupBrowseFileButtonBubble.IsOpen = false;
                 lastUsedDirectory = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
@@ -458,7 +470,7 @@ namespace DocCompareWPF
 
             if (openFileDialog.ShowDialog() == true)
             {
-                if(walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
+                if (walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
                 {
                     walkthroughStep = WalkthroughSteps.BROWSEFILEBUTTON2;
                 }
@@ -683,6 +695,51 @@ namespace DocCompareWPF
             }
 
             Dispatcher.Invoke(() => { DisplayLicense(); });
+        }
+
+        private async void CheckUpdate()
+        {
+            Thread.Sleep(7000);
+
+            List<string> res = await lic.CheckUpdate(versionString, localetype);
+            if (res != null)
+            {
+                updateInstallerURL = res[1];
+                Dispatcher.Invoke(() =>
+                {
+
+                    WindowUpdateButton.Visibility = Visibility.Visible;
+
+                    if (res[0] != settings.skipVersionString)
+                    {
+                        CustomMessageBox msgBox = new CustomMessageBox();
+                        msgBox.Setup("Update avalaible", "A newer version of 2|Compare is available. Click OKAY to proceed with downloading the installer.", "Okay", "Skip");
+
+                        if (msgBox.ShowDialog() == true)
+                        {
+                            settings.skipVersion = true;
+                            settings.skipVersionString = res[0];
+                            SaveSettings();
+                        }
+                        else
+                        {
+                            updateInstallerURL = res[1];
+                            ProcessStartInfo info = new ProcessStartInfo(updateInstallerURL)
+                            {
+                                UseShellExecute = true
+                            };
+                            Process.Start(info);
+                        }
+                    }
+                });
+            }
+            else
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    WindowUpdateButton.Visibility = Visibility.Hidden;
+                });
+            }
         }
 
         private async void ExtendTrial()
@@ -913,7 +970,7 @@ namespace DocCompareWPF
                     threadDisplayResult.Start();
                     ShowDocCompareFileInfoButton.IsEnabled = true;
 
-                    if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREHIGHLIGHT)
+                    if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREHIGHLIGHT)
                     {
                         PopupHighlightOffBubble.IsOpen = true;
                         //walkthroughStep = WalkthroughSteps.COMPAREOPENEXTERN; // 8
@@ -1260,7 +1317,7 @@ namespace DocCompareWPF
                                 */
                             }
 
-                            DocCompareListView2.ItemsSource = imageList;                            
+                            DocCompareListView2.ItemsSource = imageList;
                             DocCompareListView2.Items.Refresh();
                             DocCompareListView2.ScrollIntoView(DocCompareListView2.Items[0]);
                             Doc2Grid.Visibility = Visibility.Visible;
@@ -1364,7 +1421,10 @@ namespace DocCompareWPF
                     LicenseKeyTextBox.Text = lic.GetKey();
                     UserEmailTextBox.IsEnabled = false;
                     LicenseKeyTextBox.IsEnabled = false;
+                    ActivateLicenseButton.Visibility = Visibility.Hidden;
                     ActivateLicenseButton.IsEnabled = false;
+                    ChangeLicenseButton.Visibility = Visibility.Visible;
+                    ChangeLicenseButton.IsEnabled = true;
                     ExtendTrialGrid1.Visibility = Visibility.Hidden;
                     ExtendTrialGrid2.Visibility = Visibility.Hidden;
                     break;
@@ -1378,7 +1438,7 @@ namespace DocCompareWPF
                     else
                         LicenseExpiryTypeLabel.Content = "Expired";
 
-                    if(settings.showExtendTrial == true && settings.trialExtended == false)
+                    if (settings.showExtendTrial == true && settings.trialExtended == false)
                     {
                         ExtendTrialGrid1.Visibility = Visibility.Visible;
                         ExtendTrialGrid2.Visibility = Visibility.Visible;
@@ -1593,7 +1653,7 @@ namespace DocCompareWPF
                     threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
                     threadLoadDocsProgress.Start();
 
-                    if(walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
+                    if (walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
                     {
                         walkthroughStep = WalkthroughSteps.BROWSEFILEBUTTON2;
                     }
@@ -1829,7 +1889,8 @@ namespace DocCompareWPF
                         break;
                     }
                 }
-            }catch
+            }
+            catch
             {
 
             }
@@ -2011,7 +2072,7 @@ namespace DocCompareWPF
                 threadAnimateDiff = new Thread(new ThreadStart(AnimateDiffThread));
                 threadAnimateDiff.Start();
 
-                if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREANIMATE)
+                if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREANIMATE)
                 {
                     PopupAnimateBubble.IsOpen = false;
                 }
@@ -2167,7 +2228,7 @@ namespace DocCompareWPF
 
         private void HideMaskButton_Click(object sender, RoutedEventArgs e)
         {
-            showMask = false; 
+            showMask = false;
 
             foreach (CompareMainItem item in DocCompareMainListView.Items)
             {
@@ -2183,7 +2244,7 @@ namespace DocCompareWPF
             HideMaskButton.Visibility = Visibility.Hidden;
             HighlightingDisableTip.Visibility = Visibility.Visible;
 
-            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREHIGHLIGHT)
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREHIGHLIGHT)
             {
                 PopupHighlightOffBubble.IsOpen = false;
                 PopupOpenOriBubble.IsOpen = true;
@@ -2646,13 +2707,14 @@ namespace DocCompareWPF
                         SidePanelDocCompareButton.IsEnabled = true;
 
                     // Walkthrough
-                    if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON2 && docs.documents.Count == 3)
+                    if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON2 && docs.documents.Count == 3)
                     {
                         PopupDocPreviewNameComboboxBubble.IsOpen = true;
                         PopupBrowseFileButtonBubble.IsOpen = false;
                         PopupBrowseFileButton2Bubble.IsOpen = false;
-                        walkthroughStep = WalkthroughSteps.BROWSEFILECOMBOBOX; 
-                    }else if(walkthroughMode == true)
+                        walkthroughStep = WalkthroughSteps.BROWSEFILECOMBOBOX;
+                    }
+                    else if (walkthroughMode == true)
                     {
                         PopupBrowseFileButtonBubble.IsOpen = false;
                         PopupBrowseFileButton2Bubble.IsOpen = true;
@@ -2846,7 +2908,7 @@ namespace DocCompareWPF
             threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
             threadLoadDocs.Start();
 
-            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARERELOAD)
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARERELOAD)
             {
                 PopupReloadBubble.IsOpen = false;
                 walkthroughStep = WalkthroughSteps.COMPARELINK; // 11
@@ -3074,7 +3136,7 @@ namespace DocCompareWPF
                     EnableSideScrollLeft();
                     EnableSideScrollRight();
 
-                    
+
                 });
             }
 
@@ -3116,7 +3178,7 @@ namespace DocCompareWPF
 
         private async void RenewLicense()
         {
-            LicenseManagement.LicServerResponse res = await lic.RenewLincense();
+            LicenseManagement.LicServerResponse res = await lic.RenewLicense();
             CustomMessageBox msgBox;
             Dispatcher.Invoke(() =>
             {
@@ -3423,12 +3485,13 @@ namespace DocCompareWPF
                 Doc2StatLastEditorLabel0.Visibility = Visibility.Collapsed;
             }
 
-            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEINFOOPEN)
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEINFOOPEN)
             {
                 PopupDocPreviewInfoButtonBubble.IsOpen = false;
                 PopupDocPreviewInfoButton2Bubble.IsOpen = true;
                 walkthroughStep = WalkthroughSteps.BROWSEFILEINFOCLOSE; // 5
-            }else if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEINFOCLOSE)
+            }
+            else if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEINFOCLOSE)
             {
                 PopupDocPreviewInfoButton2Bubble.IsOpen = false;
                 PopupCompareDocBubble.IsOpen = true;
@@ -3602,7 +3665,7 @@ namespace DocCompareWPF
                     MaskSideGridInForceAlignMode();
                     DisableRemoveForceAlignButton();
 
-                    if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARELINK)
+                    if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARELINK)
                     {
                         PopupLinkPageBubble.IsOpen = false;
                         walkthroughStep = WalkthroughSteps.COMPAREUNLINK;
@@ -3682,7 +3745,7 @@ namespace DocCompareWPF
 
                         if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREUNLINK)
                         {
-                            PopupUnlinkBubble.IsOpen = true;                            
+                            PopupUnlinkBubble.IsOpen = true;
                         }
                     });
                 }
@@ -3972,7 +4035,7 @@ namespace DocCompareWPF
         {
             if (docs.documents.Count >= 2 && docCompareRunning == false)
             {
-                if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARETAB)
+                if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARETAB)
                 {
                     PopupCompareDocBubble.IsOpen = false;
                     walkthroughStep = WalkthroughSteps.COMPAREHIGHLIGHT; // 7
@@ -4034,7 +4097,7 @@ namespace DocCompareWPF
         {
             SetVisiblePanel(SidePanels.DRAGDROP);
 
-            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILETAB)
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILETAB)
             {
                 PopupBrowseFileBubble.IsOpen = false;
                 PopupBrowseFileButtonBubble.IsOpen = true;
@@ -4248,7 +4311,7 @@ namespace DocCompareWPF
 
         private void Window_LocationChanged(object sender, EventArgs e)
         {
-            if(PopupBrowseFileBubble.IsOpen == true)
+            if (PopupBrowseFileBubble.IsOpen == true)
             {
                 PopupBrowseFileBubble.HorizontalOffset++;
                 PopupBrowseFileBubble.HorizontalOffset--;
@@ -4259,7 +4322,7 @@ namespace DocCompareWPF
                 PopupBrowseFileButtonBubble.HorizontalOffset++;
                 PopupBrowseFileButtonBubble.HorizontalOffset--;
             }
-            
+
             if (PopupDocPreviewNameComboboxBubble.IsOpen == true)
             {
                 PopupDocPreviewNameComboboxBubble.HorizontalOffset++;
@@ -4323,7 +4386,7 @@ namespace DocCompareWPF
 
         private void Doc1NameLabelComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILECOMBOBOX)
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILECOMBOBOX)
             {
                 PopupDocPreviewNameComboboxBubble.IsOpen = false;
             }
@@ -4331,7 +4394,7 @@ namespace DocCompareWPF
 
         private void Doc1NameLabelComboBox_DropDownClosed(object sender, EventArgs e)
         {
-            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILECOMBOBOX)
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILECOMBOBOX)
             {
                 PopupDocPreviewInfoButtonBubble.IsOpen = true;
                 walkthroughStep = WalkthroughSteps.BROWSEFILEINFOOPEN;
@@ -4345,7 +4408,7 @@ namespace DocCompareWPF
             fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToCompare[1]].filePath + "\"";
             fileopener.Start();
 
-            if(walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREOPENEXTERN)
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREOPENEXTERN)
             {
                 PopupOpenOriBubble.IsOpen = false;
                 PopupReloadBubble.IsOpen = true;
@@ -4367,11 +4430,11 @@ namespace DocCompareWPF
             SaveSettings();
 
             SetVisiblePanel(SidePanels.DRAGDROP);
-            while(docs.documents.Count != 0)
+            while (docs.documents.Count != 0)
             {
                 docs.RemoveDocument(docs.documentsToShow[0], 0);
-            }           
-                
+            }
+
             HideDragDropZone2();
             Doc1Grid.Visibility = Visibility.Hidden;
             Doc2Grid.Visibility = Visibility.Hidden;
@@ -4445,7 +4508,7 @@ namespace DocCompareWPF
         {
             try
             {
-                if(ExtendTrialTextBox.Text == "4781-9373-6568-8184")
+                if (ExtendTrialTextBox.Text == "4781-9373-6568-8184")
                 {
                     settings.showExtendTrial = false;
                     SaveSettings();
@@ -4466,6 +4529,36 @@ namespace DocCompareWPF
             catch
             {
 
+            }
+        }
+
+        private void WindowUpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(updateInstallerURL != null)
+            {
+                ProcessStartInfo info = new ProcessStartInfo(updateInstallerURL)
+                {
+                    UseShellExecute = true
+                };
+                Process.Start(info);
+            }
+        }
+
+        private void ChangeLicenseButton_Click(object sender, RoutedEventArgs e)
+        {
+            CustomMessageBox msgBox = new CustomMessageBox();
+            msgBox.Setup("Change License", "Proceed with activating another license? Current license will be deactivated.", "No", "Yes");
+            if(msgBox.ShowDialog() == true)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    ActivateLicenseButton.IsEnabled = true;
+                    ActivateLicenseButton.Visibility = Visibility.Visible;
+                    ChangeLicenseButton.Visibility = Visibility.Hidden;
+
+                    UserEmailTextBox.IsEnabled = true;
+                    LicenseKeyTextBox.IsEnabled = true;
+                });
             }
         }
 
@@ -4490,7 +4583,7 @@ namespace DocCompareWPF
                 PopupDocPreviewNameComboboxBubble.HorizontalOffset--;
             }
 
-            if(PopupDocPreviewInfoButtonBubble.IsOpen == true)
+            if (PopupDocPreviewInfoButtonBubble.IsOpen == true)
             {
                 PopupDocPreviewInfoButtonBubble.HorizontalOffset++;
                 PopupDocPreviewInfoButtonBubble.HorizontalOffset--;
@@ -4597,6 +4690,16 @@ namespace DocCompareWPF
                 di.Delete(true);
             }
 
+
+            di = new DirectoryInfo(appDataDir);
+            foreach( DirectoryInfo di2 in di.EnumerateDirectories())
+            {
+                if(di2.Name != "lic")
+                {
+                    di2.Delete(true);
+                }
+            }
+
             Close();
         }
 
@@ -4672,7 +4775,7 @@ namespace DocCompareWPF
 
         private string _pathToImg;
         public string PathToImg { get { return _pathToImg; } set { _pathToImg = value; OnPropertyChanged(); } }
-        
+
         private string _pathToImgDummy;
         public string PathToImgDummy { get { return _pathToImgDummy; } set { _pathToImgDummy = value; OnPropertyChanged(); } }
 
@@ -4729,7 +4832,7 @@ namespace DocCompareWPF
         public Thickness Margin { get; set; }
 
         private string _pathToImg;
-        public string PathToImg { get { return _pathToImg;} set { _pathToImg = value; OnPropertyChanged(); } }
+        public string PathToImg { get { return _pathToImg; } set { _pathToImg = value; OnPropertyChanged(); } }
 
         private string _pathToImgDummy;
         public string PathToImgDummy { get { return _pathToImgDummy; } set { _pathToImgDummy = value; OnPropertyChanged(); } }

@@ -186,7 +186,7 @@ namespace DocCompareWPF.Classes
             return LicServerResponse.INVALID;
         }
 
-        public async Task<LicServerResponse> ActivateLincense(string userEmail, string licKey)
+        public async Task<LicServerResponse> ActivateLicense(string userEmail, string licKey)
         {
             int status = await CheckServerStatus(serverAddress + "status");
             if (status == 0)
@@ -248,7 +248,7 @@ namespace DocCompareWPF.Classes
             return LicServerResponse.INVALID;
         }
 
-        public async Task<LicServerResponse> RenewLincense()
+        public async Task<LicServerResponse> RenewLicense()
         {
             int status = await CheckServerStatus(serverAddress + "status");
             if (status == 0)
@@ -304,6 +304,47 @@ namespace DocCompareWPF.Classes
             return LicServerResponse.INVALID;
         }
 
+        public async Task<bool> RemoveLicense()
+        {
+            int status = await CheckServerStatus(serverAddress + "status");
+            if (status == 0)
+            {
+                IDictionary<string, string> licDict = new Dictionary<string, string>
+                    {
+                        { "Email", email},
+                        { "LicKey", key},
+                        { "UUID", UUID }
+                    };
+
+                var content = new FormUrlEncodedContent(licDict);
+
+                HttpResponseMessage msg = await client.PostAsync(serverAddress + "remove", content);
+                string readMsg = msg.Content.ReadAsStringAsync().Result;
+                try
+                {
+                    JObject resp = JsonConvert.DeserializeObject<JObject>(readMsg);
+
+                    if ((string)resp["Status"] == "OK")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorHandling.ReportException(ex);
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return false;
+        }
         public async Task<int> CheckServerStatus(string url)
         {
             try
@@ -320,6 +361,45 @@ namespace DocCompareWPF.Classes
                 ErrorHandling.ReportError("License server not reachabled", "-", "-");
                 return -1;
             }
+        }
+
+        public async Task<List<string>> CheckUpdate(string currVersion, string localeType)
+        {
+            int status = await CheckServerStatus(serverAddress + "status");
+            if (status == 0)
+            {
+                IDictionary<string, string> licDict = new Dictionary<string, string>
+                    {
+                        { "EN_DE", localeType}
+                    };
+
+                var content = new FormUrlEncodedContent(licDict);
+
+                HttpResponseMessage msg = await client.PostAsync(serverAddress + "app-release", content);
+                string readMsg = msg.Content.ReadAsStringAsync().Result;
+                try
+                {
+                    JObject resp = JsonConvert.DeserializeObject<JObject>(readMsg);
+
+                    if ((string)resp["Version"] != currVersion)
+                    {
+                        List<string> res = new List<string>();
+                        res.Add((string)resp["Version"]);
+                        res.Add((string)resp["Link"]);
+                        return res;
+                    }
+                    else
+                    {
+                        return null; 
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ErrorHandling.ReportException(ex);
+                }
+            }
+
+            return null;
         }
 
         public LicenseTypes GetLicenseTypes()

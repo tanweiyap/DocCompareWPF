@@ -77,8 +77,8 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.0.2";
-        private readonly string localetype = "DE";
+        private readonly string versionString = "1.0.4";
+        private readonly string localetype = "EN";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -696,7 +696,6 @@ namespace DocCompareWPF
 
             Dispatcher.Invoke(() => { DisplayLicense(); });
         }
-
         private async void CheckUpdate()
         {
             Thread.Sleep(7000);
@@ -2917,6 +2916,14 @@ namespace DocCompareWPF
 
         private void ReloadDocThread()
         {
+            Dispatcher.Invoke(() => {
+                ReloadDoc1Button.IsEnabled = false;
+                ReloadDoc2Button.IsEnabled = false;
+                ReloadDoc3Button.IsEnabled = false;
+                ReloadDocCompare1Button.IsEnabled = false;
+                ReloadDocCompare2Button.IsEnabled = false;
+            });
+
             if (docs.documents[docs.docToReload].ReloadDocument(workingDir) == 0)
             {
                 docs.documents[docs.docToReload].ReadStats(settings.cultureInfo);
@@ -3021,6 +3028,12 @@ namespace DocCompareWPF
                             threadCompare.Start();
                             break;
                     }
+
+                    ReloadDoc1Button.IsEnabled = true;
+                    ReloadDoc2Button.IsEnabled = true;
+                    ReloadDoc3Button.IsEnabled = true;
+                    ReloadDocCompare1Button.IsEnabled = true;
+                    ReloadDocCompare2Button.IsEnabled = true;
                 });
             }
             else
@@ -4534,13 +4547,19 @@ namespace DocCompareWPF
 
         private void WindowUpdateButton_Click(object sender, RoutedEventArgs e)
         {
-            if(updateInstallerURL != null)
+            CustomMessageBox msgBox = new CustomMessageBox();
+            msgBox.Setup("Update avalaible", "A newer version of 2|Compare is available. Click OKAY to proceed with downloading the installer.", "Okay", "Skip");
+
+            if (msgBox.ShowDialog() == false)
             {
-                ProcessStartInfo info = new ProcessStartInfo(updateInstallerURL)
+                if (updateInstallerURL != null)
                 {
-                    UseShellExecute = true
-                };
-                Process.Start(info);
+                    ProcessStartInfo info = new ProcessStartInfo(updateInstallerURL)
+                    {
+                        UseShellExecute = true
+                    };
+                    Process.Start(info);
+                }
             }
         }
 

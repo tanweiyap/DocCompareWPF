@@ -11,7 +11,7 @@
     <Product>2Compare</Product>
     <SignAssembly>false</SignAssembly>
     <DelaySign>false</DelaySign>
-    <AssemblyOriginatorKeyFile>2CompareKey.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>hopieCCC2.pfx</AssemblyOriginatorKeyFile>
     <AssemblyName>2Compare</AssemblyName>
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>

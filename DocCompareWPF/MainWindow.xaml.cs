@@ -77,8 +77,8 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.0.4";
-        private readonly string localetype = "EN";
+        private readonly string versionString = "1.0.5";
+        private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -209,7 +209,7 @@ namespace DocCompareWPF
                     if (settings.trialExtended == false)
                     {
                         CustomMessageBox msgBox = new CustomMessageBox();
-                        msgBox.Setup("Expired lincense", "Your license has expired. If you wish to extend the trial for 7 days, feel free to fill up a feedback survey on our website.", "Cancle", "Take survey");
+                        msgBox.Setup("Expired lincense", "Your license has expired. If you wish to extend the trial for 7 days, feel free to fill up a feedback survey on our website.", "Cancel", "Take survey");
 
                         if (msgBox.ShowDialog() == true) // user wish to take survey
                         {
@@ -3218,6 +3218,7 @@ namespace DocCompareWPF
                         UserEmailTextBox.IsEnabled = true;
                         LicenseKeyTextBox.IsEnabled = true; // after successful activation, we will prevent further editing
                         ActivateLicenseButton.IsEnabled = true;
+                        SaveLicense();
                         break;
 
                     case LicenseManagement.LicServerResponse.KEY_MISMATCH:

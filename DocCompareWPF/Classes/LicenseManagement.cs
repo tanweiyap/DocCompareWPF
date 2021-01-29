@@ -39,6 +39,9 @@ namespace DocCompareWPF.Classes
         [ProtoMember(7)]
         private DateTime expiryWaiveDate;
 
+        [ProtoMember(8)]
+        private bool waived = false;
+
         public LicenseManagement()
         {
         }
@@ -219,6 +222,7 @@ namespace DocCompareWPF.Classes
                         expiryDate = DateTime.Parse((string)resp["Expires"], CultureInfo.GetCultureInfo("de-de"));
                         email = userEmail;
                         key = licKey;
+                        waived = false;
                         return LicServerResponse.OKAY;
                     }
                     else
@@ -297,7 +301,11 @@ namespace DocCompareWPF.Classes
             }
             else
             {
-                expiryWaiveDate = expiryDate.AddDays(7);
+                if (waived == false)
+                {
+                    expiryWaiveDate = expiryDate.AddDays(7);
+                    waived = true;
+                }
                 return LicServerResponse.UNREACHABLE; // server offline
             }
 

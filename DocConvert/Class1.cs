@@ -130,6 +130,8 @@ namespace DocConvert
                         object fileAttribute = pptPresentation.BuiltInDocumentProperties;
 
                         pptPresentation.Close();
+                        if(pptApplication.Visible != MsoTriState.msoTrue)
+                            pptApplication.Quit();
                         //old code by WYT...
                         //pptPresentation.Export(outputPath, "jpg", Int32.Parse(pptPresentation.SlideMaster.Width.ToString()), Int32.Parse(pptPresentation.SlideMaster.Height.ToString()));
 
@@ -188,6 +190,8 @@ namespace DocConvert
                     ret.Add(GetDocumentProperty(docProperties, "Last Save Time").ToString());
 
                     pptPresentation.Close();
+                    if (pptApplication.Visible != MsoTriState.msoTrue)
+                        pptApplication.Quit();
                 }
 
                 return ret;

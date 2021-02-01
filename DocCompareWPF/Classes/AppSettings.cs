@@ -3,7 +3,7 @@
 namespace DocCompareWPF.Classes
 {
     [ProtoContract]
-    class AppSettings
+    internal class AppSettings
     {
         [ProtoMember(1)]
         public int numPanelsDragDrop = 2;
@@ -40,6 +40,5 @@ namespace DocCompareWPF.Classes
 
         [ProtoMember(12)]
         public string skipVersionString = "";
-
     }
 }

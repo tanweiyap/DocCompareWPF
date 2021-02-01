@@ -13,6 +13,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
@@ -22,6 +23,11 @@ namespace DocCompareWPF
 {
     public class CompareMainItem : INotifyPropertyChanged
     {
+        private string _pathToAniImgLeft;
+        private string _pathToAniImgRight;
+        private string _pathToImgLeft;
+        private string _pathToImgRight;
+        private string _pathToMaskImgRight;
         private Visibility _showMask;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -38,12 +44,6 @@ namespace DocCompareWPF
         public string ImgMaskRightName { get; set; }
         public string ImgRightName { get; set; }
         public Thickness Margin { get; set; }
-
-        private string _pathToAniImgLeft;
-        private string _pathToAniImgRight;
-        private string _pathToImgLeft;
-        private string _pathToImgRight;
-        private string _pathToMaskImgRight;
         public string PathToAniImgLeft { get { return _pathToAniImgLeft; } set { _pathToAniImgLeft = value; OnPropertyChanged(); } }
         public string PathToAniImgRight { get { return _pathToAniImgRight; } set { _pathToAniImgRight = value; OnPropertyChanged(); } }
         public string PathToImgLeft { get { return _pathToImgLeft; } set { _pathToImgLeft = value; OnPropertyChanged(); } }
@@ -77,8 +77,12 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.0.5";
+        // file type
+        private readonly string fileFilter = "PDF, PPT, DOC and image files (*.pdf, *.ppt, *.doc, *jpg, *jpeg, *png, *gif, *bmp)|*.pdf;*.ppt;*.pptx;*.doc;*.docx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF;*.bmp;*.BMP|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|DOC files (*.doc)|*.doc;*.docx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF,*.bmp,*.BMP |All files|*.*";
+
         private readonly string localetype = "DE";
+        private readonly Thread threadRenewLic;
+        private readonly string versionString = "1.0.5";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -91,11 +95,6 @@ namespace DocCompareWPF
         private LicenseManagement lic;
 
         private string licKeyLastInputString;
-        private string trialKeyLastInputString;
-
-        // Update
-        private string updateInstallerURL;
-
         // Stack panel for viewing documents in scrollviewer control in comparison view
         //private VirtualizingStackPanel childPanel1;
         private StackPanel refDocPanel;
@@ -103,25 +102,26 @@ namespace DocCompareWPF
         private double scrollPosLeft, scrollPosRight;
         private string selectedSideGridButtonName1 = "";
         private string selectedSideGridButtonName2 = "";
-
         // App settings
         private AppSettings settings;
 
         private GridSelection sideGridSelectedLeftOrRight, mainGridSelectedLeftOrRight;
-        private Thread threadLoadDocs;
-        private Thread threadLoadDocsProgress;
-        private Thread threadCompare;
         private Thread threadAnimateDiff;
-        private Thread threadDisplayResult;
         private Thread threadCheckTrial;
         private Thread threadCheckUpdate;
-        private readonly Thread threadRenewLic;
+        private Thread threadCompare;
+        private Thread threadDisplayResult;
+        private Thread threadLoadDocs;
+        private Thread threadLoadDocsProgress;
         private Thread threadStartWalkthrough;
+        private string trialKeyLastInputString;
 
+        // Update
+        private string updateInstallerURL;
         // Walkthrough
         private bool walkthroughMode;
-        private WalkthroughSteps walkthroughStep = 0;
 
+        private WalkthroughSteps walkthroughStep = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -158,7 +158,6 @@ namespace DocCompareWPF
             }
 
             docs = new DocumentManagement(settings.maxDocCount, workingDir, settings);
-
 
             // License Management
             try
@@ -298,49 +297,6 @@ namespace DocCompareWPF
             END,
         }
 
-        private void ShowWalkthroughStartMessage()
-        {
-            try
-            {
-                Thread.Sleep(500);
-
-                // First time launch app?
-                if (settings.shownWalkthrough == false)
-                {
-                    Dispatcher.Invoke(() =>
-                    {
-                        Walkthrough walkthrough = new Walkthrough();
-                        if (walkthrough.ShowDialog() == true)
-                        {
-                            settings.shownWalkthrough = true;
-                            SaveSettings();
-                        }
-
-                        /*
-                        CustomMessageBox msgBox = new CustomMessageBox();
-                        msgBox.Setup("Application walkthrough", "Thanks for choosing 2|Compare. We will now guide you through the application to get you familiar with the functionality", "Proceed", "Skip");
-
-                        if (msgBox.ShowDialog() == true) // user wish to skip walkthrough
-                        {
-                            settings.shownWalkthrough = true;
-                            SaveSettings();
-                        }
-                        else
-                        {
-                            walkthroughMode = true;
-                            walkthroughStep = WalkthroughSteps.BROWSEFILETAB;
-                            PopupBrowseFileBubble.IsOpen = true;
-                        }
-                        */
-                    });
-                }
-            }
-            catch
-            {
-                // thread aborted. maybe the user has close the program before we show start the walkthrough
-            }
-        }
-
         private async void ActivateLicenseButton_Click(object sender, RoutedEventArgs e)
         {
             // remove anyway
@@ -463,7 +419,7 @@ namespace DocCompareWPF
 
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "PDF, PPT and image files (*.pdf, *.ppt, *jpg, *jpeg, *png, *gif, *bmp)|*.pdf;*.ppt;*.pptx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF;*.bmp;*.BMP|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF,*.bmp,*.BMP |All files|*.*",
+                Filter = fileFilter,
                 InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };
@@ -482,9 +438,7 @@ namespace DocCompareWPF
                 foreach (string file in filenames)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+                    if (CheckFileExtension(ext))
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -552,7 +506,7 @@ namespace DocCompareWPF
 
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "PDF, PPT and image files (*.pdf, *.ppt, *jpg, *jpeg, *png, *gif, *bmp)|*.pdf;*.ppt;*.pptx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF;*.bmp;*.BMP|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF,*.bmp,*.BMP |All files|*.*",
+                Filter = fileFilter,
                 InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };
@@ -566,9 +520,7 @@ namespace DocCompareWPF
                 foreach (string file in filenames)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+                    if (CheckFileExtension(ext))
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -625,7 +577,7 @@ namespace DocCompareWPF
 
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "PDF, PPT and image files (*.pdf, *.ppt, *jpg, *jpeg, *png, *gif, *bmp)|*.pdf;*.ppt;*.pptx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF;*.bmp;*.BMP|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF,*.bmp,*.BMP |All files|*.*",
+                Filter = fileFilter,
                 InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };
@@ -639,9 +591,7 @@ namespace DocCompareWPF
                 foreach (string file in filenames)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+                    if (CheckFileExtension(ext))
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -676,6 +626,31 @@ namespace DocCompareWPF
             }
         }
 
+        private void ChangeLicenseButton_Click(object sender, RoutedEventArgs e)
+        {
+            CustomMessageBox msgBox = new CustomMessageBox();
+            msgBox.Setup("Change License", "Proceed with activating another license? Current license will be deactivated.", "No", "Yes");
+            if (msgBox.ShowDialog() == true)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    ActivateLicenseButton.IsEnabled = true;
+                    ActivateLicenseButton.Visibility = Visibility.Visible;
+                    ChangeLicenseButton.Visibility = Visibility.Hidden;
+
+                    UserEmailTextBox.IsEnabled = true;
+                    LicenseKeyTextBox.IsEnabled = true;
+                });
+            }
+        }
+
+        private bool CheckFileExtension(string ext)
+        {
+            return ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
+                        && ext != ".bmp" && ext != ".BMP" && ext != ".doc" && ext != ".docx" && ext != ".DOC" && ext != ".DOCX";
+        }
+
         private async void CheckTrial()
         {
             LicenseManagement.LicServerResponse res = await lic.ActivateTrial();
@@ -696,6 +671,7 @@ namespace DocCompareWPF
 
             Dispatcher.Invoke(() => { DisplayLicense(); });
         }
+
         private async void CheckUpdate()
         {
             Thread.Sleep(7000);
@@ -706,7 +682,6 @@ namespace DocCompareWPF
                 updateInstallerURL = res[1];
                 Dispatcher.Invoke(() =>
                 {
-
                     WindowUpdateButton.Visibility = Visibility.Visible;
 
                     if (res[0] != settings.skipVersionString)
@@ -738,48 +713,6 @@ namespace DocCompareWPF
                 {
                     WindowUpdateButton.Visibility = Visibility.Hidden;
                 });
-            }
-        }
-
-        private async void ExtendTrial()
-        {
-            LicenseManagement.LicServerResponse res = await lic.ExtendTrial();
-            if (res == LicenseManagement.LicServerResponse.INVALID)
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    CustomMessageBox msgBox = new CustomMessageBox();
-                    msgBox.Setup("Expired lincense", "An expired trial license was detected for your computer. If you wish to continue to use 2|Compare, please purchase a license on https://hopie.tech.", "Okay");
-                    msgBox.ShowDialog();
-
-                    BrowseFileButton1.IsEnabled = false;
-                    DocCompareFirstDocZone.AllowDrop = false;
-                    DocCompareDragDropZone1.AllowDrop = false;
-                    DocCompareColorZone1.AllowDrop = false;
-
-                    DisplayLicense();
-                });
-            }
-            else
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    CustomMessageBox msgBox = new CustomMessageBox();
-                    msgBox.Setup("Trial extended", "Your trial has been successfully extended", "Okay");
-                    msgBox.ShowDialog();
-
-                    BrowseFileButton1.IsEnabled = true;
-                    DocCompareFirstDocZone.AllowDrop = true;
-                    DocCompareDragDropZone1.AllowDrop = true;
-                    DocCompareColorZone1.AllowDrop = true;
-
-                    DisplayLicense();
-                });
-
-                SaveLicense();
-
-                settings.trialExtended = true;
-                SaveSettings();
             }
         }
 
@@ -823,12 +756,26 @@ namespace DocCompareWPF
         {
             if (docs.documentsToShow[0] != -1)
             {
-                DisplayImageLeft(docs.documentsToShow[0]);
+                if (docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.TXT)
+                {
+                    DisplayImageLeft(docs.documentsToShow[0]);
+                }
+                else if (docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.TXT)
+                {
+                    DisplayDocLeft(docs.documentsToShow[0]);
+                }
 
                 if (docs.documents.Count >= 2)
                 {
                     if (docs.documentsToShow[1] != -1)
-                        DisplayImageMiddle(docs.documentsToShow[1]);
+                        if (docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.TXT)
+                        {
+                            DisplayImageMiddle(docs.documentsToShow[1]);
+                        }
+                        else if (docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.TXT)
+                        {
+                            DisplayDocMiddle(docs.documentsToShow[1]);
+                        }
 
                     if (docs.documentsToShow[1] == -1)
                     {
@@ -860,7 +807,14 @@ namespace DocCompareWPF
                 if (docs.documents.Count >= 3 && settings.numPanelsDragDrop == 3)
                 {
                     if (docs.documentsToShow[2] != -1)
-                        DisplayImageRight(docs.documentsToShow[2]);
+                        if (docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.TXT)
+                        {
+                            DisplayImageRight(docs.documentsToShow[2]);
+                        }
+                        else if (docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.TXT)
+                        {
+                            DisplayDocRight(docs.documentsToShow[2]);
+                        }
 
                     if (docs.documentsToShow[2] == -1)
                     {
@@ -945,7 +899,6 @@ namespace DocCompareWPF
                 compareResultFolder = Path.Join(workingDir, Guid.NewGuid().ToString());
                 Directory.CreateDirectory(compareResultFolder);
 
-
                 Document.CompareDocs(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[1]].imageFolder, compareResultFolder, out docs.pageCompareIndices, out docs.totalLen, forceIndices);
                 docs.documents[docs.documentsToCompare[0]].docCompareIndices = new List<int>();
                 docs.documents[docs.documentsToCompare[1]].docCompareIndices = new List<int>();
@@ -978,13 +931,62 @@ namespace DocCompareWPF
                     {
                         PopupHighlightOffBubble.IsOpen = false;
                     }
-
                 });
             }
             catch
             {
                 docCompareRunning = false;
             }
+        }
+
+        private FlowDocument CreateFlowDocument(DocConvert.TextDocumentClass doc)
+        {
+            FlowDocument thisDoc = new FlowDocument();
+            thisDoc.Background = Brushes.White;
+
+            foreach (DocConvert.TextParagraph para in doc.Paragraphs)
+            {
+                Paragraph thisPara = new Paragraph();
+                thisPara.Margin = new Thickness(para.LineSpacing);
+
+                if (para.ListFormatString != "")
+                {
+                    Run thisSen = new Run
+                    {
+                        FontFamily = new FontFamily(para.Words[0].Font.FontFamily),
+                        FontSize = para.Words[0].Font.FontSize
+                    };
+
+                    double indent = 0;
+                    for (int i = 0; i < para.ListFormatLevel; i++)
+                    {
+                        indent += 10;
+                    }
+
+                    thisPara.Margin = new Thickness(indent, thisPara.Margin.Top, thisPara.Margin.Right, thisPara.Margin.Bottom);
+
+                    thisSen.Text = para.ListFormatString + " ";
+                    thisPara.Inlines.Add(thisSen);
+                }
+
+                foreach (DocConvert.TextWord word in para.Words)
+                {
+                    Run thisWord = new Run();
+                    thisWord.FontFamily = new FontFamily(word.Font.FontFamily);
+                    thisWord.FontSize = word.Font.FontSize;
+                    thisWord.Text = word.Word;
+                    if (word.Font.isItalic == true)
+                        thisWord.FontStyle = FontStyles.Italic;
+
+                    if (word.Font.isBold == true)
+                        thisWord.FontWeight = FontWeights.Bold;
+
+                    thisPara.Inlines.Add(thisWord);
+                }
+                thisDoc.Blocks.Add(thisPara);
+            }
+
+            return thisDoc;
         }
 
         private void DisableRemoveForceAlignButton()
@@ -1167,6 +1169,75 @@ namespace DocCompareWPF
             });
         }
 
+        private void DisplayDocLeft(int docIndex)
+        {
+            if (docIndex != -1)
+            {
+                if (docs.documents.Count >= 1)
+                {
+                    if (docs.documents[docIndex].filePath != null)
+                    {
+                        // Create FlowDocument
+                        FlowDocument flowDocument = CreateFlowDocument(docs.documents[docIndex].textDocument);
+                        Dispatcher.Invoke(() =>
+                        {
+                            DocCompareRichTextBox1.Document = flowDocument;
+                            Doc1Grid.Visibility = Visibility.Visible;
+                            ProgressBarDoc1.Visibility = Visibility.Hidden;
+                            DocCompareListView1.Visibility = Visibility.Hidden;
+                            DocCompareRichTextBox1.Visibility = Visibility.Visible;
+                        });
+                    }
+                }
+            }
+        }
+
+        private void DisplayDocMiddle(int docIndex)
+        {
+            if (docIndex != -1)
+            {
+                if (docs.documents.Count >= 2)
+                {
+                    if (docs.documents[docIndex].filePath != null)
+                    {
+                        // Create FlowDocument
+                        FlowDocument flowDocument = CreateFlowDocument(docs.documents[docIndex].textDocument);
+                        Dispatcher.Invoke(() =>
+                        {
+                            DocCompareRichTextBox2.Document = flowDocument;
+                            Doc2Grid.Visibility = Visibility.Visible;
+                            ProgressBarDoc2.Visibility = Visibility.Hidden;
+                            DocCompareListView2.Visibility = Visibility.Hidden;
+                            DocCompareRichTextBox2.Visibility = Visibility.Visible;
+                        });
+                    }
+                }
+            }
+        }
+
+        private void DisplayDocRight(int docIndex)
+        {
+            if (docIndex != -1)
+            {
+                if (docs.documents.Count >= 3)
+                {
+                    if (docs.documents[docIndex].filePath != null)
+                    {
+                        // Create FlowDocument
+                        FlowDocument flowDocument = CreateFlowDocument(docs.documents[docIndex].textDocument);
+                        Dispatcher.Invoke(() =>
+                        {
+                            DocCompareRichTextBox3.Document = flowDocument;
+                            Doc3Grid.Visibility = Visibility.Visible;
+                            ProgressBarDoc3.Visibility = Visibility.Hidden;
+                            DocCompareListView3.Visibility = Visibility.Hidden;
+                            DocCompareRichTextBox3.Visibility = Visibility.Visible;
+                        });
+                    }
+                }
+            }
+        }
+
         private void DisplayImageLeft(int docIndex)
         {
             if (docIndex != -1)
@@ -1240,6 +1311,8 @@ namespace DocCompareWPF
                         DocCompareListView1.ScrollIntoView(DocCompareListView1.Items[0]);
                         Doc1Grid.Visibility = Visibility.Visible;
                         ProgressBarDoc1.Visibility = Visibility.Hidden;
+                        DocCompareListView1.Visibility = Visibility.Visible;
+                        DocCompareRichTextBox1.Visibility = Visibility.Hidden;
                     }
                 }
             }
@@ -1321,6 +1394,8 @@ namespace DocCompareWPF
                             DocCompareListView2.ScrollIntoView(DocCompareListView2.Items[0]);
                             Doc2Grid.Visibility = Visibility.Visible;
                             ProgressBarDoc2.Visibility = Visibility.Hidden;
+                            DocCompareListView2.Visibility = Visibility.Visible;
+                            DocCompareRichTextBox2.Visibility = Visibility.Hidden;
                         }
                     }
                 });
@@ -1402,6 +1477,8 @@ namespace DocCompareWPF
                             DocCompareListView3.ScrollIntoView(DocCompareListView2.Items[0]);
                             Doc3Grid.Visibility = Visibility.Visible;
                             ProgressBarDoc3.Visibility = Visibility.Hidden;
+                            DocCompareListView3.Visibility = Visibility.Visible;
+                            DocCompareRichTextBox3.Visibility = Visibility.Hidden;
                         }
                     }
                 });
@@ -1535,13 +1612,38 @@ namespace DocCompareWPF
             });
         }
 
+        private void Doc1NameLabelComboBox_DropDownClosed(object sender, EventArgs e)
+        {
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILECOMBOBOX)
+            {
+                PopupDocPreviewInfoButtonBubble.IsOpen = true;
+                walkthroughStep = WalkthroughSteps.BROWSEFILEINFOOPEN;
+            }
+        }
+
+        private void Doc1NameLabelComboBox_DropDownOpened(object sender, EventArgs e)
+        {
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILECOMBOBOX)
+            {
+                PopupDocPreviewNameComboboxBubble.IsOpen = false;
+            }
+        }
+
         private void Doc1NameLabelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
             {
                 string fileName = Doc1NameLabelComboBox.SelectedItem.ToString();
                 docs.documentsToShow[0] = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
-                DisplayImageLeft(docs.documentsToShow[0]);
+                if (docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.TXT)
+                {
+                    DisplayImageLeft(docs.documentsToShow[0]);
+                }
+                else if (docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.TXT)
+                {
+                    DisplayDocLeft(docs.documentsToShow[0]);
+                }
+
                 UpdateDocSelectionComboBox();
                 UpdateFileStat(0);
             }
@@ -1559,7 +1661,14 @@ namespace DocCompareWPF
             {
                 string fileName = Doc2NameLabelComboBox.SelectedItem.ToString();
                 docs.documentsToShow[1] = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
-                DisplayImageMiddle(docs.documentsToShow[1]);
+                if (docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.TXT)
+                {
+                    DisplayImageMiddle(docs.documentsToShow[1]);
+                }
+                else if (docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.TXT)
+                {
+                    DisplayDocMiddle(docs.documentsToShow[1]);
+                }
                 UpdateDocSelectionComboBox();
                 UpdateFileStat(1);
             }
@@ -1577,7 +1686,14 @@ namespace DocCompareWPF
             {
                 string fileName = Doc3NameLabelComboBox.SelectedItem.ToString();
                 docs.documentsToShow[2] = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
-                DisplayImageRight(docs.documentsToShow[2]);
+                if (docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.TXT)
+                {
+                    DisplayImageRight(docs.documentsToShow[2]);
+                }
+                else if (docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.TXT)
+                {
+                    DisplayDocRight(docs.documentsToShow[2]);
+                }
                 UpdateDocSelectionComboBox();
                 UpdateFileStat(2);
             }
@@ -1616,9 +1732,7 @@ namespace DocCompareWPF
                 foreach (string file in data)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+                    if (CheckFileExtension(ext))
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -1692,9 +1806,7 @@ namespace DocCompareWPF
                 foreach (string file in data)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+                    if (CheckFileExtension(ext))
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -1753,9 +1865,7 @@ namespace DocCompareWPF
                 foreach (string file in data)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+                    if (CheckFileExtension(ext))
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -1831,7 +1941,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -1891,7 +2000,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -1899,7 +2007,6 @@ namespace DocCompareWPF
         {
             try
             {
-
                 double accuHeight = 0;
 
                 Border border = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
@@ -1920,7 +2027,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -1948,7 +2054,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -1974,7 +2079,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -2000,7 +2104,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -2020,6 +2123,132 @@ namespace DocCompareWPF
         private void EnableSideScrollRight()
         {
             //DocCompareSideScrollViewerRight.IsEnabled = true;
+        }
+
+        private async void ExtendTrial()
+        {
+            LicenseManagement.LicServerResponse res = await lic.ExtendTrial();
+            if (res == LicenseManagement.LicServerResponse.INVALID)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("Expired lincense", "An expired trial license was detected for your computer. If you wish to continue to use 2|Compare, please purchase a license on https://hopie.tech.", "Okay");
+                    msgBox.ShowDialog();
+
+                    BrowseFileButton1.IsEnabled = false;
+                    DocCompareFirstDocZone.AllowDrop = false;
+                    DocCompareDragDropZone1.AllowDrop = false;
+                    DocCompareColorZone1.AllowDrop = false;
+
+                    DisplayLicense();
+                });
+            }
+            else
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("Trial extended", "Your trial has been successfully extended", "Okay");
+                    msgBox.ShowDialog();
+
+                    BrowseFileButton1.IsEnabled = true;
+                    DocCompareFirstDocZone.AllowDrop = true;
+                    DocCompareDragDropZone1.AllowDrop = true;
+                    DocCompareColorZone1.AllowDrop = true;
+
+                    DisplayLicense();
+                });
+
+                SaveLicense();
+
+                settings.trialExtended = true;
+                SaveSettings();
+            }
+        }
+
+        private void ExtendTrialButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (ExtendTrialTextBox.Text == "QV9N-PQP4-5G9N-NV22")
+                {
+                    settings.showExtendTrial = false;
+                    SaveSettings();
+                    ExtendTrialGrid1.Visibility = Visibility.Hidden;
+                    ExtendTrialGrid2.Visibility = Visibility.Hidden;
+                    threadCheckTrial = new Thread(new ThreadStart(ExtendTrial));
+                    threadCheckTrial.Start();
+                    ValidTrialKeyTick.Visibility = Visibility.Hidden;
+                    InvalidTrialKeyTick.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("Invalid code", "An invalid trial extension code entered.", "Okay");
+                    msgBox.ShowDialog();
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private void ExtendTrialTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                string currText = (sender as TextBox).Text;
+                currText = currText.ToUpper();
+
+                if (trialKeyLastInputString == null)
+                    trialKeyLastInputString = currText;
+
+                if (trialKeyLastInputString.Length >= currText.Length)
+                {
+                    if (currText.Length == 4 || currText.Length == 9 || currText.Length == 14)
+                        currText = currText.Remove(currText.Length - 1);
+                }
+                else
+                {
+                    if (currText.Length == 4 || currText.Length == 9 || currText.Length == 14)
+                        currText += '-';
+                }
+
+                if (currText.Length > 19)
+                {
+                    currText = currText.Remove(currText.Length - 1);
+                }
+
+                (sender as TextBox).Text = currText;
+                (sender as TextBox).Select(currText.Length, 0);
+
+                if (currText.Length == 19)
+                {
+                    ValidTrialKeyTick.Visibility = Visibility.Visible;
+                    InvalidTrialKeyTick.Visibility = Visibility.Hidden;
+                    ExtendTrialButton.IsEnabled = true;
+                }
+                else
+                {
+                    ValidTrialKeyTick.Visibility = Visibility.Hidden;
+                    InvalidTrialKeyTick.Visibility = Visibility.Visible;
+                    ExtendTrialButton.IsEnabled = false;
+                }
+
+                if (currText.Length == 0)
+                {
+                    ValidKeyTick.Visibility = Visibility.Hidden;
+                    InvalidKeyTick.Visibility = Visibility.Hidden;
+                    ActivateLicenseButton.IsEnabled = false;
+                }
+
+                trialKeyLastInputString = currText;
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.ReportException(ex);
+            }
         }
 
         private int FindNextDocToShow()
@@ -2114,7 +2343,6 @@ namespace DocCompareWPF
 
             if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREANIMATE)
             {
-
                 CustomMessageBox msgBox = new CustomMessageBox();
                 msgBox.Setup("Walkthrough completed", "Thanks for completing the walkthrough guide.                 Enjoy 2|Compare! You can restart this walkthrough from     the settings page.", "Okay");
                 msgBox.ShowDialog();
@@ -2506,12 +2734,35 @@ namespace DocCompareWPF
             fileopener.Start();
         }
 
+        private void OpenDoc1OriginalButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            Process fileopener = new Process();
+            fileopener.StartInfo.FileName = "explorer";
+            fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToCompare[0]].filePath + "\"";
+            fileopener.Start();
+        }
+
         private void OpenDoc2OriginalButton_Click(object sender, RoutedEventArgs e)
         {
             Process fileopener = new Process();
             fileopener.StartInfo.FileName = "explorer";
             fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToShow[1]].filePath + "\"";
             fileopener.Start();
+        }
+
+        private void OpenDoc2OriginalButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            Process fileopener = new Process();
+            fileopener.StartInfo.FileName = "explorer";
+            fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToCompare[1]].filePath + "\"";
+            fileopener.Start();
+
+            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREOPENEXTERN)
+            {
+                PopupOpenOriBubble.IsOpen = false;
+                PopupReloadBubble.IsOpen = true;
+                walkthroughStep = WalkthroughSteps.COMPARERELOAD;
+            }
         }
 
         private void OpenDoc3OriginalButton3_Click(object sender, RoutedEventArgs e)
@@ -2589,7 +2840,14 @@ namespace DocCompareWPF
                     {
                         if (docs.documents[docs.documentsToShow[0]].processed == true)
                         {
-                            DisplayImageLeft(docs.documentsToShow[0]);
+                            if (docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.TXT)
+                            {
+                                DisplayImageLeft(docs.documentsToShow[0]);
+                            }
+                            else if (docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.TXT)
+                            {
+                                DisplayDocLeft(docs.documentsToShow[0]);
+                            }
                             ShowDoc1FileInfoButton.IsEnabled = true;
                             ShowDoc2FileInfoButton.IsEnabled = true;
                             OpenDoc1OriginalButton1.IsEnabled = true;
@@ -2601,7 +2859,14 @@ namespace DocCompareWPF
                             if (docs.documents.Count > 1)
                             {
                                 docs.documentsToShow[0] = FindNextDocToShow();
-                                DisplayImageLeft(docs.documentsToShow[0]);
+                                if (docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.TXT)
+                                {
+                                    DisplayImageLeft(docs.documentsToShow[0]);
+                                }
+                                else if (docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.TXT)
+                                {
+                                    DisplayDocLeft(docs.documentsToShow[0]);
+                                }
                                 OpenDoc1OriginalButton1.IsEnabled = true;
                                 ShowDoc2FileInfoButton.IsEnabled = true;
                                 ShowDoc1FileInfoButton.IsEnabled = true;
@@ -2614,7 +2879,14 @@ namespace DocCompareWPF
                         {
                             if (docs.documents[docs.documentsToShow[1]].processed == true)
                             {
-                                DisplayImageMiddle(docs.documentsToShow[1]);
+                                if (docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.TXT)
+                                {
+                                    DisplayImageMiddle(docs.documentsToShow[1]);
+                                }
+                                else if (docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.TXT)
+                                {
+                                    DisplayDocMiddle(docs.documentsToShow[1]);
+                                }
                                 OpenDoc2OriginalButton2.IsEnabled = true;
                                 ShowDoc2FileInfoButton.IsEnabled = true;
                                 Doc2StatsGrid.Visibility = Visibility.Visible;
@@ -2624,7 +2896,14 @@ namespace DocCompareWPF
                                 if (docs.documents.Count > 2)
                                 {
                                     docs.documentsToShow[1] = FindNextDocToShow();
-                                    DisplayImageMiddle(docs.documentsToShow[1]);
+                                    if (docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.TXT)
+                                    {
+                                        DisplayImageMiddle(docs.documentsToShow[1]);
+                                    }
+                                    else if (docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.TXT)
+                                    {
+                                        DisplayDocMiddle(docs.documentsToShow[1]);
+                                    }
                                     OpenDoc2OriginalButton2.IsEnabled = true;
                                     ShowDoc2FileInfoButton.IsEnabled = true;
                                     Doc2StatsGrid.Visibility = Visibility.Visible;
@@ -2644,7 +2923,14 @@ namespace DocCompareWPF
                                 {
                                     if (docs.documents.Count >= 3)
                                     {
-                                        DisplayImageRight(docs.documentsToShow[2]);
+                                        if (docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.TXT)
+                                        {
+                                            DisplayImageRight(docs.documentsToShow[2]);
+                                        }
+                                        else if (docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.TXT)
+                                        {
+                                            DisplayDocRight(docs.documentsToShow[2]);
+                                        }
                                         OpenDoc3OriginalButton3.IsEnabled = true;
                                     }
                                 }
@@ -2653,7 +2939,14 @@ namespace DocCompareWPF
                                     if (docs.documents.Count > 3)
                                     {
                                         docs.documentsToShow[2] = FindNextDocToShow();
-                                        DisplayImageRight(docs.documentsToShow[2]);
+                                        if (docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.TXT)
+                                        {
+                                            DisplayImageRight(docs.documentsToShow[2]);
+                                        }
+                                        else if (docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.TXT)
+                                        {
+                                            DisplayDocRight(docs.documentsToShow[2]);
+                                        }
                                         OpenDoc3OriginalButton3.IsEnabled = true;
                                     }
                                 }
@@ -2760,6 +3053,10 @@ namespace DocCompareWPF
                             case Document.FileTypes.PIC:
                                 ret = docs.documents[i].ReadPic();
                                 break;
+
+                            case Document.FileTypes.WORD:
+                                ret = docs.documents[i].ReadWord();
+                                break;
                         }
 
                         if (ret == -1)
@@ -2773,7 +3070,7 @@ namespace DocCompareWPF
                                     msgBox.ShowDialog();
                                 });
                             }
-                            else
+                            else if (docs.documents[i].fileType == Document.FileTypes.PPT)
                             {
                                 Dispatcher.Invoke(() =>
                                 {
@@ -2848,7 +3145,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -2916,7 +3212,8 @@ namespace DocCompareWPF
 
         private void ReloadDocThread()
         {
-            Dispatcher.Invoke(() => {
+            Dispatcher.Invoke(() =>
+            {
                 ReloadDoc1Button.IsEnabled = false;
                 ReloadDoc2Button.IsEnabled = false;
                 ReloadDoc3Button.IsEnabled = false;
@@ -2933,19 +3230,40 @@ namespace DocCompareWPF
                     switch (docs.displayToReload)
                     {
                         case 0:
-                            DisplayImageLeft(docs.documentsToShow[0]);
+                            if (docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.TXT)
+                            {
+                                DisplayImageLeft(docs.documentsToShow[0]);
+                            }
+                            else if (docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.TXT)
+                            {
+                                DisplayDocLeft(docs.documentsToShow[0]);
+                            }
                             UpdateDocSelectionComboBox();
                             UpdateFileStat(0);
                             break;
 
                         case 1:
-                            DisplayImageMiddle(docs.documentsToShow[1]);
+                            if (docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.TXT)
+                            {
+                                DisplayImageMiddle(docs.documentsToShow[1]);
+                            }
+                            else if (docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.TXT)
+                            {
+                                DisplayDocMiddle(docs.documentsToShow[1]);
+                            }
                             UpdateDocSelectionComboBox();
                             UpdateFileStat(1);
                             break;
 
                         case 2:
-                            DisplayImageRight(docs.documentsToShow[2]);
+                            if (docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.TXT)
+                            {
+                                DisplayImageRight(docs.documentsToShow[2]);
+                            }
+                            else if (docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.TXT)
+                            {
+                                DisplayDocRight(docs.documentsToShow[2]);
+                            }
                             UpdateDocSelectionComboBox();
                             UpdateFileStat(2);
                             break;
@@ -2958,19 +3276,40 @@ namespace DocCompareWPF
                                     switch (i)
                                     {
                                         case 0:
-                                            DisplayImageLeft(docs.documentsToShow[0]);
+                                            if (docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.TXT)
+                                            {
+                                                DisplayImageLeft(docs.documentsToShow[0]);
+                                            }
+                                            else if (docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.TXT)
+                                            {
+                                                DisplayDocLeft(docs.documentsToShow[0]);
+                                            }
                                             UpdateDocSelectionComboBox();
                                             UpdateFileStat(1);
                                             break;
 
                                         case 1:
-                                            DisplayImageMiddle(docs.documentsToShow[1]);
+                                            if (docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.TXT)
+                                            {
+                                                DisplayImageMiddle(docs.documentsToShow[1]);
+                                            }
+                                            else if (docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.TXT)
+                                            {
+                                                DisplayDocMiddle(docs.documentsToShow[1]);
+                                            }
                                             UpdateDocSelectionComboBox();
                                             UpdateFileStat(2);
                                             break;
 
                                         case 2:
-                                            DisplayImageRight(docs.documentsToShow[2]);
+                                            if (docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.TXT)
+                                            {
+                                                DisplayImageRight(docs.documentsToShow[2]);
+                                            }
+                                            else if (docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.TXT)
+                                            {
+                                                DisplayDocRight(docs.documentsToShow[2]);
+                                            }
                                             break;
                                     }
                                 }
@@ -2996,19 +3335,41 @@ namespace DocCompareWPF
                                     switch (i)
                                     {
                                         case 0:
-                                            DisplayImageLeft(docs.documentsToShow[0]);
+                                            if (docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.TXT)
+                                            {
+                                                DisplayImageLeft(docs.documentsToShow[0]);
+                                            }
+                                            else if (docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.TXT)
+                                            {
+                                                DisplayDocLeft(docs.documentsToShow[0]);
+                                            }
+
                                             UpdateDocSelectionComboBox();
                                             UpdateFileStat(0);
                                             break;
 
                                         case 1:
-                                            DisplayImageMiddle(docs.documentsToShow[1]);
+                                            if (docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.TXT)
+                                            {
+                                                DisplayImageMiddle(docs.documentsToShow[1]);
+                                            }
+                                            else if (docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.TXT)
+                                            {
+                                                DisplayDocMiddle(docs.documentsToShow[1]);
+                                            }
                                             UpdateDocSelectionComboBox();
                                             UpdateFileStat(1);
                                             break;
 
                                         case 2:
-                                            DisplayImageRight(docs.documentsToShow[2]);
+                                            if (docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.TXT)
+                                            {
+                                                DisplayImageRight(docs.documentsToShow[2]);
+                                            }
+                                            else if (docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.TXT)
+                                            {
+                                                DisplayDocRight(docs.documentsToShow[2]);
+                                            }
                                             UpdateDocSelectionComboBox();
                                             UpdateFileStat(2);
                                             break;
@@ -3045,15 +3406,36 @@ namespace DocCompareWPF
                     switch (docs.displayToReload)
                     {
                         case 0:
-                            DisplayImageLeft(docs.documentsToShow[0]);
+                            if (docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.TXT)
+                            {
+                                DisplayImageLeft(docs.documentsToShow[0]);
+                            }
+                            else if (docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.TXT)
+                            {
+                                DisplayDocLeft(docs.documentsToShow[0]);
+                            }
                             break;
 
                         case 1:
-                            DisplayImageMiddle(docs.documentsToShow[1]);
+                            if (docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.TXT)
+                            {
+                                DisplayImageMiddle(docs.documentsToShow[1]);
+                            }
+                            else if (docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.TXT)
+                            {
+                                DisplayDocMiddle(docs.documentsToShow[1]);
+                            }
                             break;
 
                         case 2:
-                            DisplayImageRight(docs.documentsToShow[2]);
+                            if (docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.TXT)
+                            {
+                                DisplayImageRight(docs.documentsToShow[2]);
+                            }
+                            else if (docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.TXT)
+                            {
+                                DisplayDocRight(docs.documentsToShow[2]);
+                            }
                             break;
 
                         case 3:
@@ -3064,15 +3446,36 @@ namespace DocCompareWPF
                                     switch (i)
                                     {
                                         case 0:
-                                            DisplayImageLeft(docs.documentsToShow[0]);
+                                            if (docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.TXT)
+                                            {
+                                                DisplayImageLeft(docs.documentsToShow[0]);
+                                            }
+                                            else if (docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.TXT)
+                                            {
+                                                DisplayDocLeft(docs.documentsToShow[0]);
+                                            }
                                             break;
 
                                         case 1:
-                                            DisplayImageMiddle(docs.documentsToShow[1]);
+                                            if (docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.TXT)
+                                            {
+                                                DisplayImageMiddle(docs.documentsToShow[1]);
+                                            }
+                                            else if (docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.TXT)
+                                            {
+                                                DisplayDocMiddle(docs.documentsToShow[1]);
+                                            }
                                             break;
 
                                         case 2:
-                                            DisplayImageRight(docs.documentsToShow[2]);
+                                            if (docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.TXT)
+                                            {
+                                                DisplayImageRight(docs.documentsToShow[2]);
+                                            }
+                                            else if (docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.TXT)
+                                            {
+                                                DisplayDocRight(docs.documentsToShow[2]);
+                                            }
                                             break;
                                     }
                                 }
@@ -3089,15 +3492,36 @@ namespace DocCompareWPF
                                     switch (i)
                                     {
                                         case 0:
-                                            DisplayImageLeft(docs.documentsToShow[0]);
+                                            if (docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.TXT)
+                                            {
+                                                DisplayImageLeft(docs.documentsToShow[0]);
+                                            }
+                                            else if (docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.TXT)
+                                            {
+                                                DisplayDocLeft(docs.documentsToShow[0]);
+                                            }
                                             break;
 
                                         case 1:
-                                            DisplayImageMiddle(docs.documentsToShow[1]);
+                                            if (docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.TXT)
+                                            {
+                                                DisplayImageMiddle(docs.documentsToShow[1]);
+                                            }
+                                            else if (docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.TXT)
+                                            {
+                                                DisplayDocMiddle(docs.documentsToShow[1]);
+                                            }
                                             break;
 
                                         case 2:
-                                            DisplayImageRight(docs.documentsToShow[2]);
+                                            if (docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.TXT)
+                                            {
+                                                DisplayImageRight(docs.documentsToShow[2]);
+                                            }
+                                            else if (docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.TXT)
+                                            {
+                                                DisplayDocRight(docs.documentsToShow[2]);
+                                            }
                                             break;
                                     }
                                 }
@@ -3148,8 +3572,6 @@ namespace DocCompareWPF
                     EnableRemoveForceAlignButton();
                     EnableSideScrollLeft();
                     EnableSideScrollRight();
-
-
                 });
             }
 
@@ -3254,6 +3676,29 @@ namespace DocCompareWPF
             });
         }
 
+        private void RestartWalkthroughButton_Click(object sender, RoutedEventArgs e)
+        {
+            settings.shownWalkthrough = false;
+            SaveSettings();
+
+            SetVisiblePanel(SidePanels.DRAGDROP);
+            while (docs.documents.Count != 0)
+            {
+                docs.RemoveDocument(docs.documentsToShow[0], 0);
+            }
+
+            HideDragDropZone2();
+            Doc1Grid.Visibility = Visibility.Hidden;
+            Doc2Grid.Visibility = Visibility.Hidden;
+            Doc1PageNumberLabel.Content = "";
+            Doc2PageNumberLabel.Content = "";
+
+            DocPreviewStatGrid.Visibility = Visibility.Collapsed;
+
+            threadStartWalkthrough = new Thread(new ThreadStart(ShowWalkthroughStartMessage));
+            threadStartWalkthrough.Start();
+        }
+
         private void SaveLicense()
         {
             Directory.CreateDirectory(Path.Join(appDataDir, "lic"));
@@ -3293,9 +3738,23 @@ namespace DocCompareWPF
             SaveSettings();
             docs.documentsToShow = new List<int>() { 0, 1, 2 };
             if (docs.documents.Count >= 1)
-                DisplayImageLeft(docs.documentsToShow[0]);
+                if (docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.TXT)
+                {
+                    DisplayImageLeft(docs.documentsToShow[0]);
+                }
+                else if (docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.TXT)
+                {
+                    DisplayDocLeft(docs.documentsToShow[0]);
+                }
             if (docs.documents.Count >= 2)
-                DisplayImageMiddle(docs.documentsToShow[1]);
+                if (docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.TXT)
+                {
+                    DisplayImageMiddle(docs.documentsToShow[1]);
+                }
+                else if (docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.TXT)
+                {
+                    DisplayDocMiddle(docs.documentsToShow[1]);
+                }
             if (docs.documents.Count >= 2)
             {
                 ShowDragDropZone3();
@@ -3304,7 +3763,14 @@ namespace DocCompareWPF
             }
 
             if (docs.documents.Count >= 3)
-                DisplayImageRight(docs.documentsToShow[2]);
+                if (docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[2]].fileType != Document.FileTypes.TXT)
+                {
+                    DisplayImageRight(docs.documentsToShow[2]);
+                }
+                else if (docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[2]].fileType == Document.FileTypes.TXT)
+                {
+                    DisplayDocRight(docs.documentsToShow[2]);
+                }
 
             UpdateDocSelectionComboBox();
         }
@@ -3314,8 +3780,22 @@ namespace DocCompareWPF
             settings.numPanelsDragDrop = 2;
             SaveSettings();
             docs.documentsToShow = new List<int>() { 0, 1 };
-            DisplayImageLeft(docs.documentsToShow[0]);
-            DisplayImageMiddle(docs.documentsToShow[1]);
+            if (docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[0]].fileType != Document.FileTypes.TXT)
+            {
+                DisplayImageLeft(docs.documentsToShow[0]);
+            }
+            else if (docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[0]].fileType == Document.FileTypes.TXT)
+            {
+                DisplayDocLeft(docs.documentsToShow[0]);
+            }
+            if (docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.WORD && docs.documents[docs.documentsToShow[1]].fileType != Document.FileTypes.TXT)
+            {
+                DisplayImageMiddle(docs.documentsToShow[1]);
+            }
+            else if (docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.WORD || docs.documents[docs.documentsToShow[1]].fileType == Document.FileTypes.TXT)
+            {
+                DisplayDocMiddle(docs.documentsToShow[1]);
+            }
             HideDragDropZone3();
             UpdateDocSelectionComboBox();
         }
@@ -3648,6 +4128,48 @@ namespace DocCompareWPF
             msgBox.ShowDialog();
         }
 
+        private void ShowWalkthroughStartMessage()
+        {
+            try
+            {
+                Thread.Sleep(500);
+
+                // First time launch app?
+                if (settings.shownWalkthrough == false)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        Walkthrough walkthrough = new Walkthrough();
+                        if (walkthrough.ShowDialog() == true)
+                        {
+                            settings.shownWalkthrough = true;
+                            SaveSettings();
+                        }
+
+                        /*
+                        CustomMessageBox msgBox = new CustomMessageBox();
+                        msgBox.Setup("Application walkthrough", "Thanks for choosing 2|Compare. We will now guide you through the application to get you familiar with the functionality", "Proceed", "Skip");
+
+                        if (msgBox.ShowDialog() == true) // user wish to skip walkthrough
+                        {
+                            settings.shownWalkthrough = true;
+                            SaveSettings();
+                        }
+                        else
+                        {
+                            walkthroughMode = true;
+                            walkthroughStep = WalkthroughSteps.BROWSEFILETAB;
+                            PopupBrowseFileBubble.IsOpen = true;
+                        }
+                        */
+                    });
+                }
+            }
+            catch
+            {
+                // thread aborted. maybe the user has close the program before we show start the walkthrough
+            }
+        }
         private void SideGridButtonMouseClick(object sender, RoutedEventArgs args)
         {
             Border border = (Border)VisualTreeHelper.GetChild(DocCompareSideListViewLeft, 0);
@@ -3684,7 +4206,6 @@ namespace DocCompareWPF
                         PopupLinkPageBubble.IsOpen = false;
                         walkthroughStep = WalkthroughSteps.COMPAREUNLINK;
                     }
-
                 });
             }
             else
@@ -4397,194 +4918,8 @@ namespace DocCompareWPF
                 PopupAnimateBubble.HorizontalOffset--;
             }
         }
-
-        private void Doc1NameLabelComboBox_DropDownOpened(object sender, EventArgs e)
-        {
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILECOMBOBOX)
-            {
-                PopupDocPreviewNameComboboxBubble.IsOpen = false;
-            }
-        }
-
-        private void Doc1NameLabelComboBox_DropDownClosed(object sender, EventArgs e)
-        {
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILECOMBOBOX)
-            {
-                PopupDocPreviewInfoButtonBubble.IsOpen = true;
-                walkthroughStep = WalkthroughSteps.BROWSEFILEINFOOPEN;
-            }
-        }
-
-        private void OpenDoc2OriginalButton_Click_1(object sender, RoutedEventArgs e)
-        {
-            Process fileopener = new Process();
-            fileopener.StartInfo.FileName = "explorer";
-            fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToCompare[1]].filePath + "\"";
-            fileopener.Start();
-
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREOPENEXTERN)
-            {
-                PopupOpenOriBubble.IsOpen = false;
-                PopupReloadBubble.IsOpen = true;
-                walkthroughStep = WalkthroughSteps.COMPARERELOAD;
-            }
-        }
-
-        private void OpenDoc1OriginalButton_Click_1(object sender, RoutedEventArgs e)
-        {
-            Process fileopener = new Process();
-            fileopener.StartInfo.FileName = "explorer";
-            fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToCompare[0]].filePath + "\"";
-            fileopener.Start();
-        }
-
-        private void RestartWalkthroughButton_Click(object sender, RoutedEventArgs e)
-        {
-            settings.shownWalkthrough = false;
-            SaveSettings();
-
-            SetVisiblePanel(SidePanels.DRAGDROP);
-            while (docs.documents.Count != 0)
-            {
-                docs.RemoveDocument(docs.documentsToShow[0], 0);
-            }
-
-            HideDragDropZone2();
-            Doc1Grid.Visibility = Visibility.Hidden;
-            Doc2Grid.Visibility = Visibility.Hidden;
-            Doc1PageNumberLabel.Content = "";
-            Doc2PageNumberLabel.Content = "";
-
-            DocPreviewStatGrid.Visibility = Visibility.Collapsed;
-
-            threadStartWalkthrough = new Thread(new ThreadStart(ShowWalkthroughStartMessage));
-            threadStartWalkthrough.Start();
-        }
-
-        private void ExtendTrialTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            try
-            {
-                string currText = (sender as TextBox).Text;
-                currText = currText.ToUpper();
-
-                if (trialKeyLastInputString == null)
-                    trialKeyLastInputString = currText;
-
-                if (trialKeyLastInputString.Length >= currText.Length)
-                {
-                    if (currText.Length == 4 || currText.Length == 9 || currText.Length == 14)
-                        currText = currText.Remove(currText.Length - 1);
-                }
-                else
-                {
-                    if (currText.Length == 4 || currText.Length == 9 || currText.Length == 14)
-                        currText += '-';
-                }
-
-                if (currText.Length > 19)
-                {
-                    currText = currText.Remove(currText.Length - 1);
-                }
-
-                (sender as TextBox).Text = currText;
-                (sender as TextBox).Select(currText.Length, 0);
-
-                if (currText.Length == 19)
-                {
-                    ValidTrialKeyTick.Visibility = Visibility.Visible;
-                    InvalidTrialKeyTick.Visibility = Visibility.Hidden;
-                    ExtendTrialButton.IsEnabled = true;
-                }
-                else
-                {
-                    ValidTrialKeyTick.Visibility = Visibility.Hidden;
-                    InvalidTrialKeyTick.Visibility = Visibility.Visible;
-                    ExtendTrialButton.IsEnabled = false;
-                }
-
-                if (currText.Length == 0)
-                {
-                    ValidKeyTick.Visibility = Visibility.Hidden;
-                    InvalidKeyTick.Visibility = Visibility.Hidden;
-                    ActivateLicenseButton.IsEnabled = false;
-                }
-
-                trialKeyLastInputString = currText;
-            }
-            catch (Exception ex)
-            {
-                ErrorHandling.ReportException(ex);
-            }
-        }
-
-        private void ExtendTrialButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (ExtendTrialTextBox.Text == "QV9N-PQP4-5G9N-NV22")
-                {
-                    settings.showExtendTrial = false;
-                    SaveSettings();
-                    ExtendTrialGrid1.Visibility = Visibility.Hidden;
-                    ExtendTrialGrid2.Visibility = Visibility.Hidden;
-                    threadCheckTrial = new Thread(new ThreadStart(ExtendTrial));
-                    threadCheckTrial.Start();
-                    ValidTrialKeyTick.Visibility = Visibility.Hidden;
-                    InvalidTrialKeyTick.Visibility = Visibility.Hidden;
-                }
-                else
-                {
-                    CustomMessageBox msgBox = new CustomMessageBox();
-                    msgBox.Setup("Invalid code", "An invalid trial extension code entered.", "Okay");
-                    msgBox.ShowDialog();
-                }
-            }
-            catch
-            {
-
-            }
-        }
-
-        private void WindowUpdateButton_Click(object sender, RoutedEventArgs e)
-        {
-            CustomMessageBox msgBox = new CustomMessageBox();
-            msgBox.Setup("Update avalaible", "A newer version of 2|Compare is available. Click OKAY to proceed with downloading the installer.", "Okay", "Skip");
-
-            if (msgBox.ShowDialog() == false)
-            {
-                if (updateInstallerURL != null)
-                {
-                    ProcessStartInfo info = new ProcessStartInfo(updateInstallerURL)
-                    {
-                        UseShellExecute = true
-                    };
-                    Process.Start(info);
-                }
-            }
-        }
-
-        private void ChangeLicenseButton_Click(object sender, RoutedEventArgs e)
-        {
-            CustomMessageBox msgBox = new CustomMessageBox();
-            msgBox.Setup("Change License", "Proceed with activating another license? Current license will be deactivated.", "No", "Yes");
-            if(msgBox.ShowDialog() == true)
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    ActivateLicenseButton.IsEnabled = true;
-                    ActivateLicenseButton.Visibility = Visibility.Visible;
-                    ChangeLicenseButton.Visibility = Visibility.Hidden;
-
-                    UserEmailTextBox.IsEnabled = true;
-                    LicenseKeyTextBox.IsEnabled = true;
-                });
-            }
-        }
-
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-
             if (PopupBrowseFileBubble.IsOpen == true)
             {
                 PopupBrowseFileBubble.HorizontalOffset++;
@@ -4665,15 +5000,6 @@ namespace DocCompareWPF
             */
         }
 
-        /*
-        private void ReleaseDocPreview()
-        {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-        }
-        */
-
         private void Window_StateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Normal)
@@ -4710,11 +5036,10 @@ namespace DocCompareWPF
                 di.Delete(true);
             }
 
-
             di = new DirectoryInfo(appDataDir);
-            foreach( DirectoryInfo di2 in di.EnumerateDirectories())
+            foreach (DirectoryInfo di2 in di.EnumerateDirectories())
             {
-                if(di2.Name != "lic")
+                if (di2.Name != "lic")
                 {
                     di2.Delete(true);
                 }
@@ -4746,12 +5071,41 @@ namespace DocCompareWPF
             outerBorder.Margin = new Thickness(0);
         }
 
+        private void WindowUpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            CustomMessageBox msgBox = new CustomMessageBox();
+            msgBox.Setup("Update avalaible", "A newer version of 2|Compare is available. Click OKAY to proceed with downloading the installer.", "Okay", "Skip");
+
+            if (msgBox.ShowDialog() == false)
+            {
+                if (updateInstallerURL != null)
+                {
+                    ProcessStartInfo info = new ProcessStartInfo(updateInstallerURL)
+                    {
+                        UseShellExecute = true
+                    };
+                    Process.Start(info);
+                }
+            }
+        }
+        /*
+        private void ReleaseDocPreview()
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+        }
+        */
     }
 
     public class SideGridItemLeft : INotifyPropertyChanged
     {
         private Color _color;
         private Effect _effect;
+
+        private string _pathToImg;
+
+        private string _pathToImgDummy;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -4792,11 +5146,7 @@ namespace DocCompareWPF
         public string ImgName { get; set; }
         public Thickness Margin { get; set; }
         public string PageNumberLabel { get; set; }
-
-        private string _pathToImg;
         public string PathToImg { get { return _pathToImg; } set { _pathToImg = value; OnPropertyChanged(); } }
-
-        private string _pathToImgDummy;
         public string PathToImgDummy { get { return _pathToImgDummy; } set { _pathToImgDummy = value; OnPropertyChanged(); } }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
@@ -4809,6 +5159,9 @@ namespace DocCompareWPF
     {
         private Color _color;
         private Effect _effect;
+        private string _pathToImg;
+        private string _pathToImgDummy;
+        private string _pathToMask;
         private Visibility _showMask;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -4850,14 +5203,8 @@ namespace DocCompareWPF
         public string ImgMaskName { get; set; }
         public string ImgName { get; set; }
         public Thickness Margin { get; set; }
-
-        private string _pathToImg;
         public string PathToImg { get { return _pathToImg; } set { _pathToImg = value; OnPropertyChanged(); } }
-
-        private string _pathToImgDummy;
         public string PathToImgDummy { get { return _pathToImgDummy; } set { _pathToImgDummy = value; OnPropertyChanged(); } }
-
-        private string _pathToMask;
         public string PathToMask { get { return _pathToMask; } set { _pathToMask = value; OnPropertyChanged(); } }
         public bool RemoveForceAlignButtonEnable { get; set; }
         public string RemoveForceAlignButtonName { get; set; }
@@ -4886,11 +5233,11 @@ namespace DocCompareWPF
 
     public class SimpleImageItem : INotifyPropertyChanged
     {
+        private string _pathToFile;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Thickness Margin { get; set; }
-
-        private string _pathToFile;
         public string PathToFile
         {
             get

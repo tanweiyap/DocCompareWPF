@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
@@ -10,13 +10,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Interop.Microsoft.Office.Core">
-      <HintPath>Interop.Microsoft.Office.Core.dll</HintPath>
-      <Private>true</Private>
+    <Reference Include="Microsoft.Office.Interop.PowerPoint">
+      <HintPath>Microsoft.Office.Interop.PowerPoint.dll</HintPath>
     </Reference>
-    <Reference Include="Interop.Microsoft.Office.Interop.PowerPoint">
-      <HintPath>Interop.Microsoft.Office.Interop.PowerPoint.dll</HintPath>
-      <Private>true</Private>
+    <Reference Include="Microsoft.Office.Interop.Word">
+      <HintPath>Microsoft.Office.Interop.Word.dll</HintPath>
+    </Reference>
+    <Reference Include="office">
+      <HintPath>Office.dll</HintPath>
     </Reference>
   </ItemGroup>
 

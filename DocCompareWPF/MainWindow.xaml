@@ -187,7 +187,7 @@
                     </Grid>
                 </Grid>
                 <Grid x:Name="MainPanel" Grid.Row="1">
-                    <Grid x:Name="DragDropPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DragDropPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -283,7 +283,7 @@
                                             </Style>                                        
                                         </ListView.ItemContainerStyle>
                                     </ListView>
-                                    
+                                    <FlowDocumentScrollViewer x:Name="DocCompareRichTextBox1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent"></FlowDocumentScrollViewer>
                                 </Grid>
                                 <mah:Tile x:Name="ProgressBarDoc1" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -323,7 +323,7 @@
                                         </Grid>
                                     </Grid>
                                 </Border>
-                                <Grid x:Name="Doc2Grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Visibility="Hidden">
+                                <Grid x:Name="Doc2Grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Hidden">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="{StaticResource TopBarHeight}" />
                                         <RowDefinition />
@@ -383,7 +383,7 @@
                                             </Style>                                        
                                         </ListView.ItemContainerStyle>
                                     </ListView>
-                                    
+                                    <FlowDocumentScrollViewer x:Name="DocCompareRichTextBox2" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent"></FlowDocumentScrollViewer>
                                 </Grid>
                                 <mah:Tile x:Name="ProgressBarDoc2" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -484,6 +484,7 @@
                                             </Style>                                        
                                         </ListView.ItemContainerStyle>
                                     </ListView>
+                                    <FlowDocumentScrollViewer x:Name="DocCompareRichTextBox3" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent"></FlowDocumentScrollViewer>
                                     <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition/>
@@ -914,7 +915,7 @@
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid x:Name="SettingsPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="SettingsPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="220" />
                             <ColumnDefinition />

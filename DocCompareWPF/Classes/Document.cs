@@ -20,6 +20,7 @@ namespace DocCompareWPF.Classes
         public string LastEditor;
         public bool loaded, processed;
         public string ModifiedDate;
+        public TextDocumentClass textDocument;
 
         public Document()
         {
@@ -135,10 +136,31 @@ namespace DocCompareWPF.Classes
         {
             CultureInfo culture = CultureInfo.GetCultureInfo(cultureInfo);
             FileInfo fileInfo;
+            List<string> fileAttributes;
             switch (fileType)
             {
                 case FileTypes.PPT:
-                    List<string> fileAttributes = new PPTConvertClass().GetFileAttribute(filePath);
+                    fileAttributes = new PPTConvertClass().GetFileAttribute(filePath);
+                    if (fileAttributes.Count == 4) // read successfully
+                    {
+                        Creator = fileAttributes[0];
+                        LastEditor = fileAttributes[1];
+                        CreatedDate = DateTime.Parse(fileAttributes[2]).ToString("F", culture);
+                        ModifiedDate = DateTime.Parse(fileAttributes[3]).ToString("F", culture);
+                    }
+
+                    if (Creator == null || LastEditor == null || CreatedDate == null || ModifiedDate == null)
+                    {
+                        fileInfo = new FileInfo(filePath);
+                        Creator = fileInfo.GetAccessControl().GetOwner(typeof(System.Security.Principal.NTAccount)).ToString().Split("\\")[^1];
+                        LastEditor = Creator;
+                        CreatedDate = fileInfo.CreationTime.ToString("F", culture);
+                        ModifiedDate = fileInfo.LastWriteTime.ToString("F", culture);
+                    }
+                    break;
+
+                case FileTypes.WORD:
+                    fileAttributes = new WORDConvertClass().GetFileAttribute(filePath);
                     if (fileAttributes.Count == 4) // read successfully
                     {
                         Creator = fileAttributes[0];
@@ -166,6 +188,23 @@ namespace DocCompareWPF.Classes
                     break;
             }
         }
+
+        public int ReadWord()
+        {
+            WORDConvertClass wordConvertClass = new WORDConvertClass();
+            int ret = -1;
+            try
+            {
+                ret = wordConvertClass.ConvertDoc(filePath, out textDocument);
+            }
+            catch
+            {
+                return ret;
+            }
+
+            return ret;
+        }
+
         public int ReloadDocument(string workingDir)
         {
             int ret;
@@ -182,6 +221,10 @@ namespace DocCompareWPF.Classes
 
                 case FileTypes.PPT:
                     ret = ReadPPT();
+                    break;
+
+                case FileTypes.WORD:
+                    ret = ReadWord();
                     break;
 
                 case FileTypes.PIC:

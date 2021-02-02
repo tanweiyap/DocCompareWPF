@@ -12,6 +12,7 @@ namespace DocCompareWPF.Classes
         public string ErrType;
         public string Time;
     }
+
     internal class Status
     {
         public string Message;
@@ -22,9 +23,12 @@ namespace DocCompareWPF.Classes
     internal class ErrorHandling
     {
         private static readonly HttpClient client = new HttpClient();
+
         //private static readonly string LocalDirectory = Directory.GetCurrentDirectory();
         private static readonly string serverAddressError = "http://18.157.228.39:3500/posterror";//"http://errorlogging.portmap.host:44200/posterror";
+
         private static readonly string serverAddressStatus = "http://18.157.228.39:3500/poststatus";//"http://errorlogging.portmap.host:44200/poststatus";
+
         static public void ReportError(string ErrType, string CallStack, string Message)
         {
             Error err = new Error

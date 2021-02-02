@@ -122,7 +122,7 @@ namespace DocCompareWPF.Classes
                     expiryDate = returnDate;
 
                     if (diff.TotalDays < -7)
-                    {                        
+                    {
                         licenseStatus = LicenseStatus.INACTIVE;
                         return LicServerResponse.INVALID;
                     }
@@ -183,7 +183,7 @@ namespace DocCompareWPF.Classes
             }
             else
             {
-                return LicServerResponse.UNREACHABLE; // server offline               
+                return LicServerResponse.UNREACHABLE; // server offline
             }
 
             return LicServerResponse.INVALID;
@@ -353,6 +353,7 @@ namespace DocCompareWPF.Classes
 
             return false;
         }
+
         public async Task<int> CheckServerStatus(string url)
         {
             try
@@ -398,7 +399,7 @@ namespace DocCompareWPF.Classes
                     }
                     else
                     {
-                        return null; 
+                        return null;
                     }
                 }
                 catch (Exception ex)

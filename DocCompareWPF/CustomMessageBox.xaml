@@ -36,22 +36,22 @@
             </Grid>
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="40"/>
+                    <RowDefinition />
+                    <RowDefinition Height="40" />
                 </Grid.RowDefinitions>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" VerticalAlignment="Center" HorizontalAlignment="Center" Width="50" Height="50" />
                     <TextBlock x:Name="MessageTextBlock" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0" TextWrapping="Wrap">Message</TextBlock>
                 </Grid>
                 <Grid Grid.Row="1" Background="{StaticResource StatusBarBackground}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
                     <Button x:Name="Button1" Visibility="Hidden" Grid.Column="1" MaxWidth="200" MinWidth="100" Height="30" Margin="0,0,10,0" Click="Button1_Click">Button1</Button>
                     <Button x:Name="Button2" Visibility="Visible" Grid.Column="2" MaxWidth="200" MinWidth="100" Height="30" Margin="0,0,10,0" Click="Button2_Click">Okay</Button>

@@ -11,15 +11,15 @@ namespace DocCompareWPF
     /// </summary>
     public partial class Walkthrough : Window
     {
+        private string WalkthroughImageDirectory;
+        private WalkthroughImageItem item;
+        private int stepCounter = 0;
 
-        string WalkthroughImageDirectory;
-        WalkthroughImageItem item;
-        int stepCounter = 0;
         public Walkthrough()
         {
             InitializeComponent();
             item = new WalkthroughImageItem();
-            
+
             WalkthroughImageDirectory = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
             WalkthroughImageDirectory = Path.Join(WalkthroughImageDirectory, "WalkthroughImages");
 
@@ -39,13 +39,14 @@ namespace DocCompareWPF
             CustomMessageBox msgBox = new CustomMessageBox();
             msgBox.Setup("Skip walkthrough", "Skip the entire walkthrough? You can restart the walkthrough from the settingspage.", "No", "Yes");
 
-            if(msgBox.ShowDialog() == true) // skip walkthrough
+            if (msgBox.ShowDialog() == true) // skip walkthrough
             {
                 DialogResult = true;
-            }else
+            }
+            else
             {
                 // do nothing
-            }            
+            }
         }
 
         private void SetText()
@@ -57,45 +58,59 @@ namespace DocCompareWPF
                 case 0:
                     item.Text = "Thank you for choosing 2|Compare. In this quick guide, you will learn how to navigate and operate the software. Please click the NEXT button below to start the guide.";
                     break;
+
                 case 1:
                     item.Text = "The leftmost tab contains the document browse and inspection functionality. It is always opened on startup, and you can always return here by clicking this documents icon.";
                     break;
+
                 case 2:
                     item.Text = "Click this button to browse for files. Alternatively, you can drag and drop up to five files onto the white canvas for subsequent document comparison.";
                     break;
+
                 case 3:
                     item.Text = "The dropdown menus allow you to select loaded documents for comparison. The document on the left half of the canvas will be treated as the reference/original document.";
                     break;
+
                 case 4:
                     item.Text = "This button allows you to inspect document attributes, such as recent change dates or authors.";
                     break;
+
                 case 5:
                     item.Text = "After document selection, click on this tab to switch to compare mode.";
                     break;
+
                 case 6:
                     item.Text = "Document differences are highlighted in magenta. The highlights can be toggled on or off using this button.";
                     break;
+
                 case 7:
                     item.Text = "Our algorithm aligns the pages of your documents automatically. If you would like to change the alignment manually, mouse over and click the link-icon on any page in the miniature preview. Then, select any page in the second document preview. The software automatically calculates a new optimal document alignment that incorporates your manual choice.";
                     break;
+
                 case 8:
                     item.Text = "Click here to remove all manually set alignments. Click on the link icon between pages to remove individual links.";
                     break;
+
                 case 9:
                     item.Text = "If you wish to amend files quickly, click this button to open the file in your external editor.";
                     break;
+
                 case 10:
                     item.Text = "After changing a document externally, please reload the file using this button.";
                     break;
+
                 case 11:
                     item.Text = "Use the dropdown menu on the right hand document view to easily select other loaded document versions.";
                     break;
+
                 case 12:
                     item.Text = "When differences are difficult to spot, mouse over the page, then click and hold down this icon. It will overlay the aligned pages for better visual comparison.";
                     break;
+
                 case 13:
                     item.Text = "If you have obtained a license key from https://hopie.tech, please activate your software under the settings tab.";
                     break;
+
                 case 14:
                     item.Text = "Thanks for taking the time to complete the walkthrough. You can restart it any time under the settings tab. Enjoy 2|Compare!";
                     NextStepButton.Content = "Close";
@@ -111,13 +126,13 @@ namespace DocCompareWPF
 
                 SetText();
 
-                if(stepCounter == 0)
+                if (stepCounter == 0)
                     item.PathToFile = Path.Join(WalkthroughImageDirectory, "LogoLarge.png");
                 else
                     item.PathToFile = Path.Join(WalkthroughImageDirectory, "Page" + stepCounter.ToString() + ".PNG");
             }
 
-            if(stepCounter == 0)
+            if (stepCounter == 0)
             {
                 PreviousStepButton.IsEnabled = false;
             }
@@ -140,7 +155,7 @@ namespace DocCompareWPF
                 }
             }
 
-            if(stepCounter > 0)
+            if (stepCounter > 0)
             {
                 PreviousStepButton.IsEnabled = true;
             }
@@ -152,6 +167,7 @@ namespace DocCompareWPF
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string _pathToFile;
+
         public string PathToFile
         {
             get
@@ -167,6 +183,7 @@ namespace DocCompareWPF
         }
 
         private string _text;
+
         public string Text
         {
             get

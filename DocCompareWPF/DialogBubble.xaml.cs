@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DocCompareWPF
 {
@@ -29,6 +18,7 @@ namespace DocCompareWPF
         public static readonly DependencyProperty LabelProperty =
             DependencyProperty.Register("Message", typeof(string),
               typeof(DialogBubble), new PropertyMetadata(""));
+
         public Point StartPoint
         {
             get { return (Point)GetValue(StartPointProperty); }
@@ -37,7 +27,7 @@ namespace DocCompareWPF
 
         public static readonly DependencyProperty StartPointProperty =
             DependencyProperty.Register("StartPoint", typeof(Point),
-              typeof(DialogBubble), new PropertyMetadata(new Point(0,0)));
+              typeof(DialogBubble), new PropertyMetadata(new Point(0, 0)));
 
         public Point TopPoint
         {
@@ -58,6 +48,7 @@ namespace DocCompareWPF
         public static readonly DependencyProperty EndPointProperty =
             DependencyProperty.Register("EndPoint", typeof(Point),
               typeof(DialogBubble), new PropertyMetadata(new Point(0, 0)));
+
         public Thickness RectInnerMargin
         {
             get { return (Thickness)GetValue(RectInnerMarginProperty); }
@@ -66,8 +57,7 @@ namespace DocCompareWPF
 
         public static readonly DependencyProperty RectInnerMarginProperty =
             DependencyProperty.Register("RectInnerMargin", typeof(Thickness),
-              typeof(DialogBubble), new PropertyMetadata(new Thickness(20,60,20,20)));
-
+              typeof(DialogBubble), new PropertyMetadata(new Thickness(20, 60, 20, 20)));
 
         public Point RectPoint1
         {
@@ -109,7 +99,6 @@ namespace DocCompareWPF
             DependencyProperty.Register("RectPoint4", typeof(Point),
               typeof(DialogBubble), new PropertyMetadata(new Point(0, 0)));
 
-
         /*
         public ArrowPosition ArrPosition
         {
@@ -119,7 +108,6 @@ namespace DocCompareWPF
                 SetValue(ArrPositionProperty, value);
             }
         }
-        
 
         public static readonly DependencyProperty ArrPositionProperty =
             DependencyProperty.Register("ArrPosition", typeof(ArrowPosition),
@@ -144,12 +132,14 @@ namespace DocCompareWPF
                     ((DialogBubble)control).ArrPathEndPoint.Point = new Point(80, 40);
                     ((DialogBubble)control).RectMargin = new Thickness(20, 60, 20, 20);
                     break;
+
                 case ArrowPosition.TOPMIDDLE:
                     ((DialogBubble)control).StartPoint = new Point(120, 40);
                     ((DialogBubble)control).TopPoint = new Point(150, 40);
                     ((DialogBubble)control).EndPoint = new Point(180, 40);
                     ((DialogBubble)control).RectMargin = new Thickness(20, 60, 20, 20);
                     break;
+
                 case ArrowPosition.TOPRIGHT:
                     ((DialogBubble)control).StartPoint = new Point(210, 40);
                     ((DialogBubble)control).TopPoint = new Point(240, 40);
@@ -166,5 +156,4 @@ namespace DocCompareWPF
             DataContext = this;
         }
     }
-
 }

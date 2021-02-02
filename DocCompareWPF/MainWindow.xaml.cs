@@ -1,4 +1,5 @@
-﻿using DocCompareWPF.Classes;
+﻿using DocCompareDLL;
+using DocCompareWPF.Classes;
 using Microsoft.Win32;
 using ProtoBuf;
 using System;
@@ -18,7 +19,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
-using DocCompareDLL;
 
 namespace DocCompareWPF
 {
@@ -78,6 +78,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
+
         // file type
         private readonly string fileFilter = "PDF, PPT, DOC and image files (*.pdf, *.ppt, *.doc, *jpg, *jpeg, *png, *gif, *bmp)|*.pdf;*.ppt;*.pptx;*.doc;*.docx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF;*.bmp;*.BMP|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|DOC files (*.doc)|*.doc;*.docx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF,*.bmp,*.BMP |All files|*.*";
 
@@ -96,6 +97,7 @@ namespace DocCompareWPF
         private LicenseManagement lic;
 
         private string licKeyLastInputString;
+
         // Stack panel for viewing documents in scrollviewer control in comparison view
         //private VirtualizingStackPanel childPanel1;
         private StackPanel refDocPanel;
@@ -103,6 +105,7 @@ namespace DocCompareWPF
         private double scrollPosLeft, scrollPosRight;
         private string selectedSideGridButtonName1 = "";
         private string selectedSideGridButtonName2 = "";
+
         // App settings
         private AppSettings settings;
 
@@ -119,6 +122,7 @@ namespace DocCompareWPF
 
         // Update
         private string updateInstallerURL;
+
         // Walkthrough
         private bool walkthroughMode;
 
@@ -126,6 +130,7 @@ namespace DocCompareWPF
 
         // Text view
         private readonly double minFontSize = 14;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -957,13 +962,14 @@ namespace DocCompareWPF
                 {
                     Run thisSen = new Run
                     {
-                        FontFamily = new FontFamily(para.Font.FontFamily),                        
+                        FontFamily = new FontFamily(para.Font.FontFamily),
                     };
 
-                    if(para.Font.FontSize >= minFontSize)
+                    if (para.Font.FontSize >= minFontSize)
                     {
                         thisSen.FontSize = para.Font.FontSize;
-                    }else
+                    }
+                    else
                     {
                         thisSen.FontSize = minFontSize;
                     }
@@ -4238,6 +4244,7 @@ namespace DocCompareWPF
                 // thread aborted. maybe the user has close the program before we show start the walkthrough
             }
         }
+
         private void SideGridButtonMouseClick(object sender, RoutedEventArgs args)
         {
             Border border = (Border)VisualTreeHelper.GetChild(DocCompareSideListViewLeft, 0);
@@ -4862,10 +4869,10 @@ namespace DocCompareWPF
 
             if (i == 2 && docs.documents.Count >= 3) // DOC3
             {
-                Doc2StatAuthorLabel.Text = docs.documents[docs.documentsToShow[2]].Creator;
-                Doc2StatCreatedLabel.Text = docs.documents[docs.documentsToShow[2]].CreatedDate;
-                Doc2StatLastEditorLabel.Text = docs.documents[docs.documentsToShow[2]].LastEditor;
-                Doc2StatModifiedLabel.Text = docs.documents[docs.documentsToShow[2]].ModifiedDate;
+                Doc3StatAuthorLabel.Text = docs.documents[docs.documentsToShow[2]].Creator;
+                Doc3StatCreatedLabel.Text = docs.documents[docs.documentsToShow[2]].CreatedDate;
+                Doc3StatLastEditorLabel.Text = docs.documents[docs.documentsToShow[2]].LastEditor;
+                Doc3StatModifiedLabel.Text = docs.documents[docs.documentsToShow[2]].ModifiedDate;
             }
 
             if (i == 3) // DOC compare
@@ -4986,6 +4993,7 @@ namespace DocCompareWPF
                 PopupAnimateBubble.HorizontalOffset--;
             }
         }
+
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (PopupBrowseFileBubble.IsOpen == true)
@@ -5073,14 +5081,45 @@ namespace DocCompareWPF
             docs.documentsToCompare[0] = docs.documentsToShow[0];
             docs.documentsToCompare[1] = docs.documentsToShow[1];
 
+            diff_match_patch diffMatch = new diff_match_patch();
+
             string text1 = docs.documents[docs.documentsToCompare[0]].textDocument.ToString();
             string text2 = docs.documents[docs.documentsToCompare[1]].textDocument.ToString();
+            List<Diff> GlobalDiffList = diffMatch.diff_main(text1, text2);
+            diffMatch.diff_cleanupSemantic(GlobalDiffList);
 
-            diff_match_patch diffMatch = new diff_match_patch();
-            List<Diff>  DiffList = diffMatch.diff_main(text1, text2);
-            diffMatch.diff_cleanupSemantic(DiffList);
-            diffMatch.Diff_EditCost = 3;
-            diffMatch.diff_cleanupEfficiency(DiffList);
+            List<List<int>> DistanceMatrix = new List<List<int>>();
+            List<List<Diff>> BestDiffLists = new List<List<Diff>>();
+
+            foreach (DocConvert.TextParagraph para in docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs)
+            {
+                List<int> LocalDistance = new List<int>();
+                List<Diff> bestList = new List<Diff>(); ;
+                string selfText = para.ToString();
+                foreach (DocConvert.TextParagraph para2 in docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs)
+                {
+                    string compText = para2.ToString();
+
+                    List<Diff> DiffList = diffMatch.diff_main(selfText, compText);
+                    diffMatch.diff_cleanupSemantic(DiffList);
+
+                    int dist = diffMatch.diff_levenshtein(DiffList);
+                    if (LocalDistance.Count != 0)
+                    {
+                        if (dist < LocalDistance.Min())
+                        {
+                            bestList = DiffList;
+                        }
+                    }
+                    else
+                    {
+                        bestList = DiffList;
+                    }
+                    LocalDistance.Add(dist);
+                }
+                DistanceMatrix.Add(LocalDistance);
+                BestDiffLists.Add(bestList);
+            }
         }
 
         private void Window_StateChanged(object sender, EventArgs e)
@@ -5171,6 +5210,7 @@ namespace DocCompareWPF
                 }
             }
         }
+
         /*
         private void ReleaseDocPreview()
         {
@@ -5321,6 +5361,7 @@ namespace DocCompareWPF
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Thickness Margin { get; set; }
+
         public string PathToFile
         {
             get
@@ -5374,6 +5415,7 @@ namespace DocCompareWPF
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Thickness Margin { get; set; }
+
         public FlowDocument Document
         {
             get

@@ -246,6 +246,7 @@ namespace DocCompareWPF.Classes
                 }
             }
         }
+
         public void RemoveForceAligmentPairs(int source)
         {
             int index = -1;

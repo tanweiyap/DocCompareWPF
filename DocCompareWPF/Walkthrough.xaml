@@ -36,26 +36,26 @@
             </Grid>
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="40"/>
+                    <RowDefinition />
+                    <RowDefinition Height="40" />
                 </Grid.RowDefinitions>
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="90"/>
-                        <RowDefinition/>
+                        <RowDefinition Height="90" />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
                     <TextBlock x:Name="MessageTextBlock" FontSize="15" Margin="25,10" TextTrimming="None" TextWrapping="Wrap" Text="{Binding Text}"></TextBlock>
                     <Image x:Name="ImageView" Grid.Row="1" Margin="0,0,0,25" Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}">
                         <Image.Effect>
-                            <DropShadowEffect BlurRadius="25" Direction="0" ShadowDepth="0" Opacity="0.5"/>
+                            <DropShadowEffect BlurRadius="25" Direction="0" ShadowDepth="0" Opacity="0.5" />
                         </Image.Effect>
                     </Image>
                 </Grid>
                 <Grid Grid.Row="1" Background="{StaticResource StatusBarBackground}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
                     <Button x:Name="SkipButton" Visibility="Visible" Grid.Column="0" Width="100" Height="30" Margin="10,0,00,0" Click="SkipButton_Click" HorizontalAlignment="Left">Skip</Button>
                     <Button x:Name="PreviousStepButton" Visibility="Visible" Grid.Column="1" Width="100" Height="30" Margin="0,0,10,0" Click="PreviousStepButton_Click" IsEnabled="False">Previous</Button>
@@ -65,4 +65,3 @@
         </Grid>
     </Border>
 </Window>
-

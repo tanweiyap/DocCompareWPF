@@ -18,6 +18,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using DocCompareDLL;
 
 namespace DocCompareWPF
 {
@@ -122,6 +123,9 @@ namespace DocCompareWPF
         private bool walkthroughMode;
 
         private WalkthroughSteps walkthroughStep = 0;
+
+        // Text view
+        private readonly double minFontSize = 14;
         public MainWindow()
         {
             InitializeComponent();
@@ -953,9 +957,16 @@ namespace DocCompareWPF
                 {
                     Run thisSen = new Run
                     {
-                        FontFamily = new FontFamily(para.Words[0].Font.FontFamily),
-                        FontSize = para.Words[0].Font.FontSize
+                        FontFamily = new FontFamily(para.Font.FontFamily),                        
                     };
+
+                    if(para.Font.FontSize >= minFontSize)
+                    {
+                        thisSen.FontSize = para.Font.FontSize;
+                    }else
+                    {
+                        thisSen.FontSize = minFontSize;
+                    }
 
                     double indent = 0;
                     for (int i = 0; i < para.ListFormatLevel; i++)
@@ -969,6 +980,29 @@ namespace DocCompareWPF
                     thisPara.Inlines.Add(thisSen);
                 }
 
+                Run thisText = new Run
+                {
+                    FontFamily = new FontFamily(para.Font.FontFamily),
+                    Text = para.Text
+                };
+
+                if (para.Font.FontSize >= minFontSize)
+                {
+                    thisText.FontSize = para.Font.FontSize;
+                }
+                else
+                {
+                    thisText.FontSize = minFontSize;
+                }
+
+                if (para.Font.isItalic == true)
+                    thisText.FontStyle = FontStyles.Italic;
+
+                if (para.Font.isBold == true)
+                    thisText.FontWeight = FontWeights.Bold;
+
+                thisPara.Inlines.Add(thisText);
+                /*
                 foreach (DocConvert.TextWord word in para.Words)
                 {
                     Run thisWord = new Run();
@@ -983,6 +1017,7 @@ namespace DocCompareWPF
 
                     thisPara.Inlines.Add(thisWord);
                 }
+                */
                 thisDoc.Blocks.Add(thisPara);
             }
 
@@ -1178,14 +1213,25 @@ namespace DocCompareWPF
                     if (docs.documents[docIndex].filePath != null)
                     {
                         // Create FlowDocument
-                        FlowDocument flowDocument = CreateFlowDocument(docs.documents[docIndex].textDocument);
+
+                        List<SimpleTextItem> list = new List<SimpleTextItem>();
+                        SimpleTextItem item = new SimpleTextItem
+                        {
+                            Document = CreateFlowDocument(docs.documents[docIndex].textDocument),
+                            Margin = new Thickness(10)
+                        };
+
+                        list.Add(item);
+
                         Dispatcher.Invoke(() =>
                         {
-                            DocCompareRichTextBox1.Document = flowDocument;
+                            DocCompareTextListView1.ItemsSource = list;
+                            DocCompareTextListView1.Items.Refresh();
+                            DocCompareTextListView1.ScrollIntoView(DocCompareTextListView1.Items[0]);
                             Doc1Grid.Visibility = Visibility.Visible;
                             ProgressBarDoc1.Visibility = Visibility.Hidden;
                             DocCompareListView1.Visibility = Visibility.Hidden;
-                            DocCompareRichTextBox1.Visibility = Visibility.Visible;
+                            DocCompareTextListView1.Visibility = Visibility.Visible;
                         });
                     }
                 }
@@ -1201,14 +1247,25 @@ namespace DocCompareWPF
                     if (docs.documents[docIndex].filePath != null)
                     {
                         // Create FlowDocument
-                        FlowDocument flowDocument = CreateFlowDocument(docs.documents[docIndex].textDocument);
+
+                        List<SimpleTextItem> list = new List<SimpleTextItem>();
+                        SimpleTextItem item = new SimpleTextItem
+                        {
+                            Document = CreateFlowDocument(docs.documents[docIndex].textDocument),
+                            Margin = new Thickness(10)
+                        };
+
+                        list.Add(item);
+
                         Dispatcher.Invoke(() =>
                         {
-                            DocCompareRichTextBox2.Document = flowDocument;
+                            DocCompareTextListView2.ItemsSource = list;
+                            DocCompareTextListView2.Items.Refresh();
+                            DocCompareTextListView2.ScrollIntoView(DocCompareTextListView2.Items[0]);
                             Doc2Grid.Visibility = Visibility.Visible;
                             ProgressBarDoc2.Visibility = Visibility.Hidden;
                             DocCompareListView2.Visibility = Visibility.Hidden;
-                            DocCompareRichTextBox2.Visibility = Visibility.Visible;
+                            DocCompareTextListView2.Visibility = Visibility.Visible;
                         });
                     }
                 }
@@ -1224,14 +1281,25 @@ namespace DocCompareWPF
                     if (docs.documents[docIndex].filePath != null)
                     {
                         // Create FlowDocument
-                        FlowDocument flowDocument = CreateFlowDocument(docs.documents[docIndex].textDocument);
+
+                        List<SimpleTextItem> list = new List<SimpleTextItem>();
+                        SimpleTextItem item = new SimpleTextItem
+                        {
+                            Document = CreateFlowDocument(docs.documents[docIndex].textDocument),
+                            Margin = new Thickness(10)
+                        };
+
+                        list.Add(item);
+
                         Dispatcher.Invoke(() =>
                         {
-                            DocCompareRichTextBox3.Document = flowDocument;
+                            DocCompareTextListView3.ItemsSource = list;
+                            DocCompareTextListView3.Items.Refresh();
+                            DocCompareTextListView3.ScrollIntoView(DocCompareTextListView3.Items[0]);
                             Doc3Grid.Visibility = Visibility.Visible;
                             ProgressBarDoc3.Visibility = Visibility.Hidden;
                             DocCompareListView3.Visibility = Visibility.Hidden;
-                            DocCompareRichTextBox3.Visibility = Visibility.Visible;
+                            DocCompareTextListView3.Visibility = Visibility.Visible;
                         });
                     }
                 }
@@ -1312,7 +1380,7 @@ namespace DocCompareWPF
                         Doc1Grid.Visibility = Visibility.Visible;
                         ProgressBarDoc1.Visibility = Visibility.Hidden;
                         DocCompareListView1.Visibility = Visibility.Visible;
-                        DocCompareRichTextBox1.Visibility = Visibility.Hidden;
+                        DocCompareTextListView1.Visibility = Visibility.Hidden;
                     }
                 }
             }
@@ -1395,7 +1463,7 @@ namespace DocCompareWPF
                             Doc2Grid.Visibility = Visibility.Visible;
                             ProgressBarDoc2.Visibility = Visibility.Hidden;
                             DocCompareListView2.Visibility = Visibility.Visible;
-                            DocCompareRichTextBox2.Visibility = Visibility.Hidden;
+                            DocCompareTextListView2.Visibility = Visibility.Hidden;
                         }
                     }
                 });
@@ -1478,7 +1546,7 @@ namespace DocCompareWPF
                             Doc3Grid.Visibility = Visibility.Visible;
                             ProgressBarDoc3.Visibility = Visibility.Hidden;
                             DocCompareListView3.Visibility = Visibility.Visible;
-                            DocCompareRichTextBox3.Visibility = Visibility.Hidden;
+                            DocCompareTextListView3.Visibility = Visibility.Hidden;
                         }
                     }
                 });
@@ -5000,6 +5068,21 @@ namespace DocCompareWPF
             */
         }
 
+        private void SidePanelTextCompareButton_Click(object sender, RoutedEventArgs e)
+        {
+            docs.documentsToCompare[0] = docs.documentsToShow[0];
+            docs.documentsToCompare[1] = docs.documentsToShow[1];
+
+            string text1 = docs.documents[docs.documentsToCompare[0]].textDocument.ToString();
+            string text2 = docs.documents[docs.documentsToCompare[1]].textDocument.ToString();
+
+            diff_match_patch diffMatch = new diff_match_patch();
+            List<Diff>  DiffList = diffMatch.diff_main(text1, text2);
+            diffMatch.diff_cleanupSemantic(DiffList);
+            diffMatch.Diff_EditCost = 3;
+            diffMatch.diff_cleanupEfficiency(DiffList);
+        }
+
         private void Window_StateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Normal)
@@ -5281,6 +5364,61 @@ namespace DocCompareWPF
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotImplementedException("Two way conversion is not supported.");
+        }
+    }
+
+    public class SimpleTextItem : INotifyPropertyChanged
+    {
+        private FlowDocument _Document;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Thickness Margin { get; set; }
+        public FlowDocument Document
+        {
+            get
+            {
+                return _Document;
+            }
+
+            set
+            {
+                _Document = value;
+                OnPropertyChanged();
+            }
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class BindableRichTextBox : RichTextBox
+    {
+        public static readonly DependencyProperty DocumentProperty =
+            DependencyProperty.Register("Document", typeof(FlowDocument),
+            typeof(BindableRichTextBox), new FrameworkPropertyMetadata
+            (null, new PropertyChangedCallback(OnDocumentChanged)));
+
+        public new FlowDocument Document
+        {
+            get
+            {
+                return (FlowDocument)this.GetValue(DocumentProperty);
+            }
+
+            set
+            {
+                this.SetValue(DocumentProperty, value);
+            }
+        }
+
+        public static void OnDocumentChanged(DependencyObject obj,
+            DependencyPropertyChangedEventArgs args)
+        {
+            RichTextBox rtb = (RichTextBox)obj;
+            rtb.Document = (FlowDocument)args.NewValue;
         }
     }
 }

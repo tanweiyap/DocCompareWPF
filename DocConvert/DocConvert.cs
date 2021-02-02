@@ -131,7 +131,8 @@ namespace DocConvert
                         object fileAttribute = pptPresentation.BuiltInDocumentProperties;
 
                         pptPresentation.Close();
-                        pptApplication.Quit();
+                        if (pptApplication.Visible != MsoTriState.msoTrue)
+                            pptApplication.Quit();
 
                         ret = 0;
                     }
@@ -176,7 +177,8 @@ namespace DocConvert
                         ret.Add(GetDocumentProperty(docProperties, "Last Save Time").ToString());
 
                         pptPresentation.Close();
-                        pptApplication.Quit();
+                        if (pptApplication.Visible != MsoTriState.msoTrue)
+                            pptApplication.Quit();
                     }
                 }
 
@@ -229,13 +231,13 @@ namespace DocConvert
 
                         bool trackChanges = wordDocument.TrackRevisions;
 
-                        wordDocument.TrackRevisions = false;
+                        //wordDocument.TrackRevisions = false;
 
                         textDocument = new TextDocumentClass(wordDocument.Paragraphs.Count);
 
                         foreach (Word.Paragraph para in wordDocument.Paragraphs)
                         {
-                            TextParagraph thisParagraph = new TextParagraph(para.Range.Words.Count)
+                            TextParagraph thisParagraph = new TextParagraph()
                             {
                                 ListFormatString = para.Range.ListFormat.ListString,
                                 ListFormatLevel = para.Range.ListFormat.ListLevelNumber - 1, // 0 = no indent
@@ -245,70 +247,54 @@ namespace DocConvert
 
                             if (para.Range.Text != "\r")
                             {
-                                if (para.Range.Font.Size == 9999999)
+                                thisParagraph.Text = para.Range.Text.TrimEnd('\r');
+                                thisParagraph.Font.FontFamily = "Georgia";
+                                if (para.Range.Font.Size != 9999999)
+                                    thisParagraph.Font.FontSize = para.Range.Font.Size;
+                                else
                                 {
                                     foreach (Word.Range word in para.Range.Words)
                                     {
-                                        TextWord thisWord = new TextWord
+                                        if (word.Font.Size != 9999999)
                                         {
-                                            Word = word.Text.TrimEnd('\r')
-                                        };
-                                        thisWord.Font.FontFamily = word.Font.Name;
-                                        if(word.Font.Size != 9999999)
-                                            thisWord.Font.FontSize = word.Font.Size;
-                                        else
-                                        {
-                                            foreach(Word.Range character in word.Characters)
-                                            {
-                                                if(character.Font.Size != 9999999)
-                                                {
-                                                    thisWord.Font.FontSize = character.Font.Size;
-                                                    break;
-                                                }
-                                            }
+                                            thisParagraph.Font.FontSize = word.Font.Size;
+                                            break;
                                         }
-                                        thisWord.Font.isItalic = word.Font.Italic != 0;
-                                        thisWord.Font.isBold = word.Font.Bold != 0;
-                                        thisWord.Font.isUnderline = word.Font.Underline != 0;
-                                        
-                                        thisParagraph.Words.Add(thisWord);
                                     }
                                 }
-                                else
-                                {
-                                    TextWord thisWord = new TextWord
-                                    {
-                                        Word = para.Range.Text.TrimEnd('\r')
-                                    };
-                                    thisWord.Font.FontFamily = para.Range.Font.Name;
-                                    thisWord.Font.FontSize = para.Range.Font.Size;
-                                    thisWord.Font.isItalic = para.Range.Font.Italic != 0;
-                                    thisWord.Font.isBold = para.Range.Font.Bold != 0;
-                                    thisWord.Font.isUnderline = para.Range.Font.Underline != 0;
-
-                                    thisParagraph.Words.Add(thisWord);
-                                }
+                                thisParagraph.Font.isItalic = para.Range.Font.Italic != 0;
+                                thisParagraph.Font.isBold = para.Range.Font.Bold != 0;
+                                thisParagraph.Font.isUnderline = para.Range.Font.Underline != 0;
                             }
                             else
                             {
-                                TextWord thisWord = new TextWord
+                                thisParagraph.Text = "";
+                                thisParagraph.Font.FontFamily = "Georgia";
+                                if (para.Range.Font.Size != 9999999)
+                                    thisParagraph.Font.FontSize = para.Range.Font.Size;
+                                else
                                 {
-                                    Word = ""
-                                };
-                                thisWord.Font.FontFamily = para.Range.Font.Name;
-                                thisWord.Font.FontSize = para.Range.Font.Size;
-                                thisWord.Font.isItalic = para.Range.Font.Italic != 0;
-                                thisWord.Font.isBold = para.Range.Font.Bold != 0;
-                                thisWord.Font.isUnderline = para.Range.Font.Underline != 0;
-                                thisParagraph.Words.Add(thisWord);
+                                    foreach (Word.Range word in para.Range.Words)
+                                    {
+                                        if (word.Font.Size != 9999999)
+                                        {
+                                            thisParagraph.Font.FontSize = word.Font.Size;
+                                            break;
+                                        }
+                                    }
+                                }
+                                thisParagraph.Font.isItalic = para.Range.Font.Italic != 0;
+                                thisParagraph.Font.isBold = para.Range.Font.Bold != 0;
+                                thisParagraph.Font.isUnderline = para.Range.Font.Underline != 0;
                             }
 
                             textDocument.Paragraphs.Add(thisParagraph);
                         }
 
-                        wordDocument.TrackRevisions = trackChanges;
-                        wordDocument.Close();
-                        wordApplication.Quit();
+                        //wordDocument.TrackRevisions = trackChanges;
+                        wordDocument.Close(false);
+                        if (wordApplication.Visible != true)
+                            wordApplication.Quit(false);
                     }
 
                     return 0;
@@ -348,8 +334,9 @@ namespace DocConvert
                         ret.Add(GetDocumentProperty(docProperties, "Creation Date").ToString());
                         ret.Add(GetDocumentProperty(docProperties, "Last Save Time").ToString());
 
-                        wordDocument.Close();
-                        wordApplication.Quit();
+                        wordDocument.Close(false);
+                        if (wordApplication.Visible != true)
+                            wordApplication.Quit(false);
                     }
                 }
 
@@ -392,7 +379,7 @@ namespace DocConvert
             string ret = "";
             foreach (TextParagraph para in Paragraphs)
             {
-                ret += para.ToString();
+                ret += para.ToString() + "\r";
             }
 
             return ret;
@@ -401,20 +388,17 @@ namespace DocConvert
 
     public class TextParagraph
     {
-        public List<TextWord> Words;
+        public string Text;
         public string ListFormatString = "";
         public int ListFormatLevel;
         public double LineSpacing;
         public int PageNumber;
+        public TextFont Font;
 
         public TextParagraph()
         {
-            Words = new List<TextWord>();
-        }
-
-        public TextParagraph(int count)
-        {
-            Words = new List<TextWord>(count);
+            Text = "";
+            Font = new TextFont();
         }
 
         public override string ToString()
@@ -426,10 +410,7 @@ namespace DocConvert
                 ret += "\t";
             }
 
-            foreach (TextWord word in Words)
-            {
-                ret += word.Word;
-            }
+            ret += Text;
 
             return ret;
         }
@@ -462,6 +443,7 @@ namespace DocConvert
     }
     */
 
+    /*
     public class TextWord
     {
         public string Word;
@@ -473,6 +455,7 @@ namespace DocConvert
             Font = new TextFont();
         }
     }
+    */
 
     public class TextFont
     {

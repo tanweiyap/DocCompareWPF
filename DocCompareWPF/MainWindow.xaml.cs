@@ -712,7 +712,7 @@ namespace DocCompareWPF
                     if (res[0] != settings.skipVersionString)
                     {
                         CustomMessageBox msgBox = new CustomMessageBox();
-                        msgBox.Setup("Update avalaible", "A newer version of 2|Compare is available. Click OKAY to proceed with downloading the installer.", "Okay", "Skip");
+                        msgBox.Setup("Update available", "A newer version of 2|Compare is available. Click OKAY to proceed with downloading the installer.", "Okay", "Skip");
 
                         if (msgBox.ShowDialog() == true)
                         {

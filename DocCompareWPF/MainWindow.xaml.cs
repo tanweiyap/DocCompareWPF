@@ -4754,7 +4754,7 @@ namespace DocCompareWPF
                 forceIndices[i, 1] = docs.forceAlignmentIndices[i][1];
             }
 
-            List<List<Diff>> diffList = new List<List<Diff>>();
+            List<List<Diff>> diffList;
 
             Document.CompareTextDocs(docs.documents[docs.documentsToCompare[0]].textDocument, docs.documents[docs.documentsToCompare[1]].textDocument, out docs.pageCompareIndices, out docs.totalLen, out diffList, forceIndices);
             docs.documents[docs.documentsToCompare[0]].docCompareIndices = new List<int>();
@@ -4762,7 +4762,7 @@ namespace DocCompareWPF
 
             if (docs.totalLen != 0)
             {
-                for (int i = docs.totalLen - 1; i >= 0; i--)
+                for (int i = 0; i < docs.totalLen; i++)
                 {
                     docs.documents[docs.documentsToCompare[0]].docCompareIndices.Add((int)docs.pageCompareIndices[i]);
                     docs.documents[docs.documentsToCompare[1]].docCompareIndices.Add((int)docs.pageCompareIndices[i + docs.totalLen]);                    

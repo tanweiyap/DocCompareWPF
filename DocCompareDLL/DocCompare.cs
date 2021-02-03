@@ -497,18 +497,9 @@ namespace DocCompareDLL
         {
             force_pairs ??= new int[0, 0];
             ArrayList alignment = new ArrayList();
-            ArrayList seqi = new ArrayList();
-            ArrayList seqj = new ArrayList();
 
             diff_match_patch diffMatch = new diff_match_patch();
 
-            /*
-            string text1 = doc1.ToString();
-            string text2 = doc2.ToString();
-            List<Diff> GlobalDiffList = diffMatch.diff_main(text1, text2);
-            diffMatch.diff_cleanupSemantic(GlobalDiffList);
-            */
-            
             List<List<int>> DistanceMatrix = new List<List<int>>();
             List<List<Diff>> BestDiffLists = new List<List<Diff>>();
             List<int> assignmentDoc1 = new List<int>(doc1.Paragraphs.Count);
@@ -563,7 +554,7 @@ namespace DocCompareDLL
 
                 int indDistMin = LocalDistance.IndexOf(LocalDistance.Min());
 
-                if (distDoc2[indDistMin] > LocalDistance[indDistMin] && LocalDistance[indDistMin] < Math.Max(selfText.Length, doc2.Paragraphs[indDistMin].ToString().Length)*0.5) // if difference larger than 50 %
+                if (distDoc2[indDistMin] > LocalDistance[indDistMin] && LocalDistance[indDistMin] < Math.Max(selfText.Length, doc2.Paragraphs[indDistMin].ToString().Length) * 0.5) // if difference larger than 50 %
                 {
                     assignmentDoc2[indDistMin] = i;
                     assignmentDoc1[i] = indDistMin;
@@ -577,234 +568,188 @@ namespace DocCompareDLL
                 BestDiffLists.Add(bestList);
             }
 
-            // create sequence
-
-
-            // create difflist
-
-            /*
-            double[,] distanceMatrix = new double[doc1.Paragraphs.Count, doc2.Paragraphs.Count];
-
-            //fill DistanceMatrix
-            for (int i = 0; i < doc1.Paragraphs.Count; i++)
+            // index of non -1 (paragraph assigned)
+            List<int> doc1Assigned = new List<int>();
+            foreach (int i in assignmentDoc1)
             {
-                List<int> LocalDistance = new List<int>();
-                List<Diff> bestList = new List<Diff>(); ;
-                string selfText = doc1.Paragraphs[i].ToString();
-
-                for (int j = 0; j < doc2.Paragraphs.Count; j++)
-                {
-                    string compText = doc2.Paragraphs[j].ToString();
-
-                    List<Diff> DiffList = diffMatch.diff_main(selfText, compText);
-                    diffMatch.diff_cleanupSemantic(DiffList);
-
-                    distanceMatrix[i,j] = diffMatch.diff_levenshtein(DiffList);                    
-                }
+                if (i != -1)
+                    doc1Assigned.Add(i);
             }
 
-            //normalize Distance Matrix
-            double min_dist = 1.0;
-            double max_dist = 0.0;
-            //sum over all elements in matrix, store min and max value on the go
-            for (int i = 0; i < doc1.Paragraphs.Count; i++)
+            doc1Assigned.Sort();
+            List<int> indSortedDoc1 = new List<int>();
+            foreach (int i in doc1Assigned)
             {
-                for (int j = 0; j < doc2.Paragraphs.Count; j++)
-                {
-                    if (distanceMatrix[i, j] < min_dist)
-                    {
-                        min_dist = distanceMatrix[i, j];
-                    }
-                    if (distanceMatrix[i, j] > max_dist)
-                    {
-                        max_dist = distanceMatrix[i, j];
-                    }
-                }
+                indSortedDoc1.Add(assignmentDoc1.IndexOf(i));
             }
 
-            //get these differences scalet between 0 and 1 and inverted, so that 1 is the score for match and 0 the score for minimal match in this respective document
-            //take all elements e in matrix 1 - (e - min) / (max - min)-- > transformed differences in scores
-            //--> this is the matrix we will use.
-            //- collect average non-1 scores
-            int n_non1 = 0;
-            double sum_non1 = 0;
-            if (max_dist - min_dist > 0)
+            List<int> doc2Assigned = new List<int>();
+            foreach (int i in assignmentDoc2)
             {
-                for (int i = 0; i < doc1.Paragraphs.Count; i++)
+                if (i != -1)
+                    doc2Assigned.Add(i);
+            }
+
+            doc2Assigned.Sort();
+            List<int> indSortedDoc2 = new List<int>();
+            foreach (int i in doc2Assigned)
+            {
+                indSortedDoc2.Add(assignmentDoc2.IndexOf(i));
+            }
+            // sort
+
+            List<int> seq1 = new List<int>();
+            List<int> seq2 = new List<int>();
+            int z = -2;
+
+            for (int i = 0; i < Math.Max(doc1.Paragraphs.Count, doc2.Paragraphs.Count); i++)
+            {
+                // doc1 before doc2
+                if (i < doc1.Paragraphs.Count)
                 {
-                    for (int j = 0; j < doc2.Paragraphs.Count; j++)
+                    if (assignmentDoc1[i] == -1)
                     {
-                        if (distanceMatrix[i, j] != 0.0)
+                        seq1.Add(i);
+                        seq2.Add(-1);
+                    }
+                    // check if index is in indSorted
+                    else if (indSortedDoc1.Contains(i))
+                    {
+                        int ind = indSortedDoc1.IndexOf(i);
+                        // if ind == 0
+                        if (ind == 0)
                         {
-                            distanceMatrix[i, j] = (1 - ((distanceMatrix[i, j] - min_dist) / (max_dist - min_dist))) * 0.999999; //the last factor shall make sure that the smallest distance is recognized, because we skip '1' - distanceMatrix entries
-                            sum_non1 += distanceMatrix[i, j];
-                            n_non1++;
+                            seq1.Add(i);
+                            seq2.Add(assignmentDoc1[i]);
+                        }
+                        else if (indSortedDoc1[ind] > indSortedDoc1[ind - 1])
+                        {
+                            seq1.Add(i);
+                            seq2.Add(assignmentDoc1[i]);
                         }
                         else
                         {
-                            distanceMatrix[i, j] = 1;
+                            if (assignmentDoc1[i] > -1)
+                            {
+                                seq1.Add(i);
+                                seq2.Add(z);
+                                assignmentDoc1[i] = z;
+                                assignmentDoc2[assignmentDoc2.IndexOf(i)] = z;
+                                z--;
+                            }
+                            else
+                            {
+                                seq1.Add(i);
+                                seq2.Add(assignmentDoc2[assignmentDoc2.IndexOf(assignmentDoc1[i])]);
+                            }
                         }
                     }
                 }
-            }
 
-            double av_non1 = 1;
-            //average score
-            if (n_non1 > 0)
-            {
-                av_non1 = sum_non1 / n_non1;
-            }
-
-            //else sum_non1 will be 0...
-            double gap_penalty = 0.5 * av_non1;
-
-            //catch single page, alignment should be tried without gap!
-            if (doc2.Paragraphs.Count == 1 || doc1.Paragraphs.Count == 1)
-            {
-                gap_penalty = -0.5;
-            }
-
-            //change distanceMatrix where fore_pairs is set
-            for (int i = 0; i < (int)force_pairs.GetLength(0); i++)
-            {
-                distanceMatrix[force_pairs[i, 0], force_pairs[i, 1]] = 100;
-            }
-
-            //distanceMatrix[5, 5] = 100;
-
-            //create scoring matrix according to NMW algorithm.Directly
-            //store the 'where from?' info: 0 : sequence i, 1 : sequence j, 2 : diagonal
-            double[,] score = new double[doc1.Paragraphs.Count + 1, doc2.Paragraphs.Count + 1];
-            int[,] pointers = new int[doc1.Paragraphs.Count, doc2.Paragraphs.Count];
-
-            //first rowand column:
-            for (int i = 0; i < doc1.Paragraphs.Count + 1; i++)
-            {
-                score[i, 0] = gap_penalty * ((double)i + 1);
-            }
-            for (int j = 1; j < doc2.Paragraphs.Count + 1; j++)
-            {
-                score[0, j] = gap_penalty * ((double)j + 1);
-            }
-
-            double match;
-            double del;
-            double insert;
-            for (int i = 1; i < doc1.Paragraphs.Count + 1; i++)
-            {
-                for (int j = 1; j < doc2.Paragraphs.Count + 1; j++)
+                // doc1 before doc2
+                if (i < doc2.Paragraphs.Count)
                 {
-                    match = score[i - 1, j - 1] + distanceMatrix[i - 1, j - 1];
-                    del = score[i - 1, j] + gap_penalty;
-                    insert = score[i, j - 1] + gap_penalty;
-
-                    if (match > del)
+                    if (assignmentDoc2[i] == -1)
                     {
-                        if (match > insert)
+                        seq1.Add(-1);
+                        seq2.Add(i);
+                    }
+                    // check if index is in indSorted
+                    else if (indSortedDoc2.Contains(i))
+                    {
+                        int ind = indSortedDoc2.IndexOf(i);
+                        // if ind == 0
+                        if (ind == 0)
                         {
-                            score[i, j] = match;
-                            pointers[i - 1, j - 1] = 2;
+                            seq1.Add(assignmentDoc2[i]);
+                            seq2.Add(i);
+                        }
+                        else if (indSortedDoc2[ind] > indSortedDoc2[ind - 1])
+                        {
+                            seq1.Add(assignmentDoc1[i]);
+                            seq2.Add(i);
                         }
                         else
                         {
-                            score[i, j] = insert;
-                            pointers[i - 1, j - 1] = 0;
+                            if (assignmentDoc2[i] > -1)
+                            {
+                                seq1.Add(z);
+                                seq2.Add(i);
+                                assignmentDoc1[assignmentDoc1.IndexOf(i)] = z;
+                                assignmentDoc2[i] = z;
+                                z--;
+                            }
+                            else
+                            {
+                                seq1.Add(assignmentDoc1[assignmentDoc1.IndexOf(assignmentDoc2[i])]);
+                                seq2.Add(i);
+                            }
                         }
                     }
-                    else
-                    {
-                        if (del > insert)
-                        {
-                            score[i, j] = del;
-                            pointers[i - 1, j - 1] = 1;
-                        }
-                        else
-                        {
-                            score[i, j] = insert;
-                            pointers[i - 1, j - 1] = 0;
-                        }
-                    }
                 }
             }
 
-            //find maximal value to start with
-            int currposi = doc1.Paragraphs.Count;
-            int currposj = doc2.Paragraphs.Count;
-            double mymax = score[currposi, currposj];
+            // clean up
 
-            for (int jj = 0; jj < doc2.Paragraphs.Count; jj++)
+            // find duplicate
+            List<int> indToRemove = new List<int>();
+            for(int i = 1; i < seq1.Count; i++)
             {
-                if (score[currposi, jj] > mymax)
+                if (seq1[i] == seq1[i - 1] && seq2[i] == seq2[i - 1])
+                    indToRemove.Add(i);
+            }
+
+            foreach (int ind in indToRemove.OrderByDescending(v => v))
+            {
+                seq1.RemoveAt(ind);
+                seq2.RemoveAt(ind);
+            }
+
+            // find cross similarity
+
+            indToRemove.Clear();
+            for(int i = 1; i< seq1.Count; i++)
+            {
+                if (seq1[i] == seq2[i - 1] && seq2[i] == seq1[i - 1] && seq1[i] != -1 && seq1[i - 1] != -1 && seq2[i] != -1 && seq2[i - 1] != -1)
                 {
-                    currposj = jj;
-                    mymax = score[currposi, jj];
+                    indToRemove.Add(i);
+                    seq2[i] = seq1[i];
                 }
             }
 
-            currposi -= 1;
-            currposj -= 1;
-
-            //in case alignment ends with shift
-            for (int i = doc2.Paragraphs.Count - 1; i > currposj; i--)
+            foreach (int ind in indToRemove.OrderByDescending(v => v))
             {
-                seqi.Add(-1);
-                seqj.Add(i);
+                seq1.RemoveAt(ind);
+                seq2.RemoveAt(ind);
             }
 
-            //create the sequences
-            while (currposi > -1 && currposj > -1)
+            // create alignment and difflist
+            for(int i = 0; i < seq1.Count; i++)
             {
-                if (pointers[currposi, currposj] == 2)
-                {
-                    seqi.Add(currposi);
-                    seqj.Add(currposj);
-                    currposi -= 1;
-                    currposj -= 1;
-                }
-                else if (pointers[currposi, currposj] == 1)
-                {
-                    seqi.Add(currposi);
-                    seqj.Add(-1);
-                    currposi -= 1;
-                }
-                else if (pointers[currposi, currposj] == 0)
-                {
-                    seqi.Add(-1);
-                    seqj.Add(currposj);
-                    currposj -= 1;
-                }
+                alignment.Add(seq1[i]);
             }
 
-            //finalize strings if gaps exist at beginning.Only one of currposiand currposj will be non - zero
-            for (int i = currposi; i > -1; i--)
+            for (int i = 0; i < seq2.Count; i++)
             {
-                seqi.Add(i);
-                seqj.Add(-1);
+                alignment.Add(seq2[i]);
             }
-            for (int j = currposj; j > -1; j--)
-            {
-                seqi.Add(-1);
-                seqj.Add(j);
-            }
-
-            //alignment = new ArrayList[2 * seqi.Count]; // needs to be deleted by calling routine!
-            seqlen = seqi.Count;
-
-            for (int ii = 0; ii < seqi.Count; ii++)
-            {
-                alignment.Add(seqi[ii]);
-            }
-            for (int ii = 0; ii < seqi.Count; ii++)
-            {
-                alignment.Add(seqj[ii]);
-            }
-
-            // Create Alignment List
-            // 1. check which doc starts with -1
-
-            */
 
             diffList = new List<List<Diff>>();
+
+            for(int i = 0; i < seq1.Count; i++)
+            {
+                if (seq1[i] >= 0)
+                {
+                    diffList.Add(diffListDoc1[seq1[i]]);                    
+                }
+                else
+                {
+                    diffList.Add(diffListDoc2[seq2[i]]);
+                }
+            }
+
+            seqlen = diffList.Count;
+
             return alignment;
         }
     }

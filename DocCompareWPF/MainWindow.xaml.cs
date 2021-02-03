@@ -3,6 +3,7 @@ using DocCompareWPF.Classes;
 using Microsoft.Win32;
 using ProtoBuf;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -22,6 +23,34 @@ using System.Windows.Media.Imaging;
 
 namespace DocCompareWPF
 {
+    public class BindableRichTextBox : RichTextBox
+    {
+        public static readonly DependencyProperty DocumentProperty =
+            DependencyProperty.Register("Document", typeof(FlowDocument),
+            typeof(BindableRichTextBox), new FrameworkPropertyMetadata
+            (null, new PropertyChangedCallback(OnDocumentChanged)));
+
+        public new FlowDocument Document
+        {
+            get
+            {
+                return (FlowDocument)this.GetValue(DocumentProperty);
+            }
+
+            set
+            {
+                this.SetValue(DocumentProperty, value);
+            }
+        }
+
+        public static void OnDocumentChanged(DependencyObject obj,
+            DependencyPropertyChangedEventArgs args)
+        {
+            RichTextBox rtb = (RichTextBox)obj;
+            rtb.Document = (FlowDocument)args.NewValue;
+        }
+    }
+
     public class CompareMainItem : INotifyPropertyChanged
     {
         private string _pathToAniImgLeft;
@@ -83,6 +112,9 @@ namespace DocCompareWPF
         private readonly string fileFilter = "PDF, PPT, DOC and image files (*.pdf, *.ppt, *.doc, *jpg, *jpeg, *png, *gif, *bmp)|*.pdf;*.ppt;*.pptx;*.doc;*.docx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF;*.bmp;*.BMP|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|DOC files (*.doc)|*.doc;*.docx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF,*.bmp,*.BMP |All files|*.*";
 
         private readonly string localetype = "DE";
+        // Text view
+        private readonly double minFontSize = 14;
+
         private readonly Thread threadRenewLic;
         private readonly string versionString = "1.0.5";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
@@ -127,10 +159,6 @@ namespace DocCompareWPF
         private bool walkthroughMode;
 
         private WalkthroughSteps walkthroughStep = 0;
-
-        // Text view
-        private readonly double minFontSize = 14;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -4715,6 +4743,36 @@ namespace DocCompareWPF
             }
         }
 
+        private void SidePanelTextCompareButton_Click(object sender, RoutedEventArgs e)
+        {
+            docs.documentsToCompare[0] = docs.documentsToShow[0];
+            docs.documentsToCompare[1] = docs.documentsToShow[1];
+            int[,] forceIndices = new int[docs.forceAlignmentIndices.Count, 2];
+            for (int i = 0; i < docs.forceAlignmentIndices.Count; i++)
+            {
+                forceIndices[i, 0] = docs.forceAlignmentIndices[i][0];
+                forceIndices[i, 1] = docs.forceAlignmentIndices[i][1];
+            }
+
+            List<List<Diff>> diffList = new List<List<Diff>>();
+
+            Document.CompareTextDocs(docs.documents[docs.documentsToCompare[0]].textDocument, docs.documents[docs.documentsToCompare[1]].textDocument, out docs.pageCompareIndices, out docs.totalLen, out diffList, forceIndices);
+            docs.documents[docs.documentsToCompare[0]].docCompareIndices = new List<int>();
+            docs.documents[docs.documentsToCompare[1]].docCompareIndices = new List<int>();
+
+            if (docs.totalLen != 0)
+            {
+                for (int i = docs.totalLen - 1; i >= 0; i--)
+                {
+                    docs.documents[docs.documentsToCompare[0]].docCompareIndices.Add((int)docs.pageCompareIndices[i]);
+                    docs.documents[docs.documentsToCompare[1]].docCompareIndices.Add((int)docs.pageCompareIndices[i + docs.totalLen]);                    
+                }
+
+                docs.documents[docs.documentsToCompare[0]].textDiff = diffList;
+                docs.documents[docs.documentsToCompare[1]].textDiff = diffList;
+            }
+        }
+
         private void UnMaskSideGridFromForceAlignMode()
         {
             foreach (SideGridItemLeft item in DocCompareSideListViewLeft.Items)
@@ -5075,53 +5133,6 @@ namespace DocCompareWPF
                 Doc1StatsGrid.Height = Doc2StatsGrid.ActualHeight;
             */
         }
-
-        private void SidePanelTextCompareButton_Click(object sender, RoutedEventArgs e)
-        {
-            docs.documentsToCompare[0] = docs.documentsToShow[0];
-            docs.documentsToCompare[1] = docs.documentsToShow[1];
-
-            diff_match_patch diffMatch = new diff_match_patch();
-
-            string text1 = docs.documents[docs.documentsToCompare[0]].textDocument.ToString();
-            string text2 = docs.documents[docs.documentsToCompare[1]].textDocument.ToString();
-            List<Diff> GlobalDiffList = diffMatch.diff_main(text1, text2);
-            diffMatch.diff_cleanupSemantic(GlobalDiffList);
-
-            List<List<int>> DistanceMatrix = new List<List<int>>();
-            List<List<Diff>> BestDiffLists = new List<List<Diff>>();
-
-            foreach (DocConvert.TextParagraph para in docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs)
-            {
-                List<int> LocalDistance = new List<int>();
-                List<Diff> bestList = new List<Diff>(); ;
-                string selfText = para.ToString();
-                foreach (DocConvert.TextParagraph para2 in docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs)
-                {
-                    string compText = para2.ToString();
-
-                    List<Diff> DiffList = diffMatch.diff_main(selfText, compText);
-                    diffMatch.diff_cleanupSemantic(DiffList);
-
-                    int dist = diffMatch.diff_levenshtein(DiffList);
-                    if (LocalDistance.Count != 0)
-                    {
-                        if (dist < LocalDistance.Min())
-                        {
-                            bestList = DiffList;
-                        }
-                    }
-                    else
-                    {
-                        bestList = DiffList;
-                    }
-                    LocalDistance.Add(dist);
-                }
-                DistanceMatrix.Add(LocalDistance);
-                BestDiffLists.Add(bestList);
-            }
-        }
-
         private void Window_StateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Normal)
@@ -5382,6 +5393,33 @@ namespace DocCompareWPF
         }
     }
 
+    public class SimpleTextItem : INotifyPropertyChanged
+    {
+        private FlowDocument _Document;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public FlowDocument Document
+        {
+            get
+            {
+                return _Document;
+            }
+
+            set
+            {
+                _Document = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Thickness Margin { get; set; }
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
     public class UriToCachedImageConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -5405,62 +5443,6 @@ namespace DocCompareWPF
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotImplementedException("Two way conversion is not supported.");
-        }
-    }
-
-    public class SimpleTextItem : INotifyPropertyChanged
-    {
-        private FlowDocument _Document;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public Thickness Margin { get; set; }
-
-        public FlowDocument Document
-        {
-            get
-            {
-                return _Document;
-            }
-
-            set
-            {
-                _Document = value;
-                OnPropertyChanged();
-            }
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class BindableRichTextBox : RichTextBox
-    {
-        public static readonly DependencyProperty DocumentProperty =
-            DependencyProperty.Register("Document", typeof(FlowDocument),
-            typeof(BindableRichTextBox), new FrameworkPropertyMetadata
-            (null, new PropertyChangedCallback(OnDocumentChanged)));
-
-        public new FlowDocument Document
-        {
-            get
-            {
-                return (FlowDocument)this.GetValue(DocumentProperty);
-            }
-
-            set
-            {
-                this.SetValue(DocumentProperty, value);
-            }
-        }
-
-        public static void OnDocumentChanged(DependencyObject obj,
-            DependencyPropertyChangedEventArgs args)
-        {
-            RichTextBox rtb = (RichTextBox)obj;
-            rtb.Document = (FlowDocument)args.NewValue;
         }
     }
 }

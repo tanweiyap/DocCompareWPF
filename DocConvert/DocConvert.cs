@@ -265,9 +265,11 @@ namespace DocConvert
                                 thisParagraph.Font.isItalic = para.Range.Font.Italic != 0;
                                 thisParagraph.Font.isBold = para.Range.Font.Bold != 0;
                                 thisParagraph.Font.isUnderline = para.Range.Font.Underline != 0;
+                                textDocument.Paragraphs.Add(thisParagraph);
                             }
-                            else
+                            else // Ignore empty paragraphs
                             {
+                                /*
                                 thisParagraph.Text = "";
                                 thisParagraph.Font.FontFamily = "Georgia";
                                 if (para.Range.Font.Size != 9999999)
@@ -286,9 +288,9 @@ namespace DocConvert
                                 thisParagraph.Font.isItalic = para.Range.Font.Italic != 0;
                                 thisParagraph.Font.isBold = para.Range.Font.Bold != 0;
                                 thisParagraph.Font.isUnderline = para.Range.Font.Underline != 0;
+                                */
                             }
 
-                            textDocument.Paragraphs.Add(thisParagraph);
                         }
 
                         //wordDocument.TrackRevisions = trackChanges;

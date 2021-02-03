@@ -10,4 +10,8 @@
     <PackageReference Include="OpenCvSharp4.Windows" Version="4.5.0.20201013" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DocConvert\DocConvert.csproj" />
+  </ItemGroup>
+
 </Project>

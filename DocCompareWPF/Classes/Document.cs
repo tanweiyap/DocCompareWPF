@@ -21,6 +21,7 @@ namespace DocCompareWPF.Classes
         public bool loaded, processed;
         public string ModifiedDate;
         public TextDocumentClass textDocument;
+        public List<List<Diff>> textDiff;
 
         public Document()
         {
@@ -52,6 +53,25 @@ namespace DocCompareWPF.Classes
             }
 
             return ret;
+        }
+
+        public static int CompareTextDocs(TextDocumentClass doc1, TextDocumentClass doc2, out ArrayList alignment, out int totalLen, out List<List<Diff>> diffList, int[,] forceIndices)
+        {
+            int ret = -1;
+
+            int totalLength = 0;
+            totalLen = new int();
+
+            alignment = DocCompareClass.TextCompare(ref doc1, ref doc2, ref totalLength, out diffList, forceIndices);
+
+            if (alignment != null) //? successful?
+            {
+                totalLen = totalLength;
+                ret = 0;
+            }
+
+            return ret;
+
         }
 
         public void DetectFileType()

@@ -3,7 +3,6 @@ using DocCompareWPF.Classes;
 using Microsoft.Win32;
 using ProtoBuf;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -100,6 +99,107 @@ namespace DocCompareWPF
         }
     }
 
+    public class CompareTextItem : INotifyPropertyChanged
+    {
+        private Brush _background1;
+        private Brush _background2;
+        private FlowDocument _Document1;
+        private FlowDocument _Document2;
+        private Visibility _visi1;
+        private Visibility _visi2;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public Brush Background1
+        {
+            get
+            {
+                return _background1;
+            }
+
+            set
+            {
+                _background1 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Brush Background2
+        {
+            get
+            {
+                return _background2;
+            }
+
+            set
+            {
+                _background2 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public FlowDocument Document1
+        {
+            get
+            {
+                return _Document1;
+            }
+
+            set
+            {
+                _Document1 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public FlowDocument Document2
+        {
+            get
+            {
+                return _Document2;
+            }
+
+            set
+            {
+                _Document2 = value;
+                OnPropertyChanged();
+            }
+        }
+        public Thickness Margin { get; set; }
+
+        public Visibility Visi1
+        {
+            get
+            {
+                return _visi1;
+            }
+
+            set
+            {
+                _visi1 = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Visibility Visi2
+        {
+            get
+            {
+                return _visi2;
+            }
+
+            set
+            {
+                _visi2 = value;
+                OnPropertyChanged();
+            }
+        }
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -112,6 +212,7 @@ namespace DocCompareWPF
         private readonly string fileFilter = "PDF, PPT, DOC and image files (*.pdf, *.ppt, *.doc, *jpg, *jpeg, *png, *gif, *bmp)|*.pdf;*.ppt;*.pptx;*.doc;*.docx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF;*.bmp;*.BMP|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|DOC files (*.doc)|*.doc;*.docx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF,*.bmp,*.BMP |All files|*.*";
 
         private readonly string localetype = "DE";
+
         // Text view
         private readonly double minFontSize = 14;
 
@@ -142,6 +243,7 @@ namespace DocCompareWPF
         private AppSettings settings;
 
         private GridSelection sideGridSelectedLeftOrRight, mainGridSelectedLeftOrRight;
+        private bool TextCompare = false;
         private Thread threadAnimateDiff;
         private Thread threadCheckTrial;
         private Thread threadCheckUpdate;
@@ -308,6 +410,7 @@ namespace DocCompareWPF
         {
             DRAGDROP,
             DOCCOMPARE,
+            TEXTCOMPARE,
             REFDOC,
             FILE_EXPLORER,
             SETTINGS,
@@ -1058,6 +1161,138 @@ namespace DocCompareWPF
             return thisDoc;
         }
 
+        private FlowDocument CreateFlowDocumentLink(int linkInd, int col)
+        {
+            FlowDocument thisDoc = new FlowDocument();
+            thisDoc.Background = Brushes.Transparent;
+            Paragraph thisPara = new Paragraph();
+            thisPara.Margin = new Thickness(0);
+
+            Run thisLine = new Run()
+            {
+                FontFamily = new FontFamily("Georgia"),
+                FontSize = minFontSize,
+                Foreground = Brushes.Blue
+            };
+
+            if (col == 0)
+                thisLine.Text = "This paragraph is moved from position " + (linkInd + 1).ToString();
+            else
+                thisLine.Text = "This paragraph is moved to position " + (linkInd + 1).ToString();
+
+            thisPara.Inlines.Add(thisLine);
+            thisDoc.Blocks.Add(thisPara);
+            return thisDoc;
+        }
+
+        private FlowDocument CreateFlowDocumentParagraph(DocConvert.TextParagraph para, List<Diff> diff)
+        {
+            FlowDocument thisDoc = new FlowDocument();
+            Paragraph thisPara = new Paragraph();
+            thisPara.Margin = new Thickness(para.LineSpacing);
+
+            if (diff.Count <= 1)
+            {
+                thisDoc.Background = Brushes.White;
+                if (para.ListFormatString != "")
+                {
+                    Run thisSen = new Run
+                    {
+                        FontFamily = new FontFamily(para.Font.FontFamily),
+                    };
+
+                    if (para.Font.FontSize >= minFontSize)
+                    {
+                        thisSen.FontSize = para.Font.FontSize;
+                    }
+                    else
+                    {
+                        thisSen.FontSize = minFontSize;
+                    }
+
+                    double indent = 0;
+                    for (int j = 0; j < para.ListFormatLevel; j++)
+                    {
+                        indent += 10;
+                    }
+
+                    thisPara.Margin = new Thickness(indent, thisPara.Margin.Top, thisPara.Margin.Right, thisPara.Margin.Bottom);
+
+                    thisSen.Text = para.ListFormatString + " ";
+                    thisPara.Inlines.Add(thisSen);
+                }
+
+                Run thisText = new Run
+                {
+                    FontFamily = new FontFamily(para.Font.FontFamily),
+                    Text = para.Text
+                };
+
+                if (para.Font.FontSize >= minFontSize)
+                {
+                    thisText.FontSize = para.Font.FontSize;
+                }
+                else
+                {
+                    thisText.FontSize = minFontSize;
+                }
+
+                if (para.Font.isItalic == true)
+                    thisText.FontStyle = FontStyles.Italic;
+
+                if (para.Font.isBold == true)
+                    thisText.FontWeight = FontWeights.Bold;
+
+                thisPara.Inlines.Add(thisText);
+            }
+            else
+            {
+                thisDoc.Background = Brushes.Yellow;
+                foreach (Diff d in diff)
+                {
+                    Run thisRun = new Run
+                    {
+                        Text = d.text,
+                        FontFamily = new FontFamily(para.Font.FontFamily)
+                    };
+
+                    if (para.Font.FontSize >= minFontSize)
+                    {
+                        thisRun.FontSize = para.Font.FontSize;
+                    }
+                    else
+                    {
+                        thisRun.FontSize = minFontSize;
+                    }
+
+                    if (d.operation == Operation.EQUAL)
+                    {
+                        thisRun.Foreground = Brushes.Black;
+                    }
+                    else if (d.operation == Operation.INSERT)
+                    {
+                        thisRun.Foreground = Brushes.Green;
+                    }
+                    else
+                    {
+                        thisRun.Foreground = Brushes.Red;
+                        thisRun.TextDecorations = TextDecorations.Strikethrough;
+                    }
+
+                    if (para.Font.isItalic == true)
+                        thisRun.FontStyle = FontStyles.Italic;
+
+                    if (para.Font.isBold == true)
+                        thisRun.FontWeight = FontWeights.Bold;
+
+                    thisPara.Inlines.Add(thisRun);
+                }
+            }
+
+            thisDoc.Blocks.Add(thisPara);
+            return thisDoc;
+        }
+
         private void DisableRemoveForceAlignButton()
         {
             foreach (SideGridItemRight obj in DocCompareSideListViewRight.Items)
@@ -1227,6 +1462,8 @@ namespace DocCompareWPF
                 ProgressBarDocCompare.Visibility = Visibility.Hidden;
                 ProgressBarDocCompareAlign.Visibility = Visibility.Hidden;
                 ProgressBarLoadingResults.Visibility = Visibility.Hidden;
+                DocCompareMainListView.Visibility = Visibility.Visible;
+                DocCompareMainTextListView.Visibility = Visibility.Hidden;
 
                 if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARELINK)
                 {
@@ -2057,19 +2294,22 @@ namespace DocCompareWPF
                     docs.forceAlignmentIndices = new List<List<int>>();
                 }
 
-                docCompareGrid.Visibility = Visibility.Hidden;
-                docCompareSideGridShown = 0;
-                DocCompareMainListView.ScrollIntoView(DocCompareMainListView.Items[0]);
-                DocCompareSideListViewLeft.ScrollIntoView(DocCompareSideListViewLeft.Items[0]);
-                DocCompareSideListViewRight.ScrollIntoView(DocCompareSideListViewRight.Items[0]);
-                SetVisiblePanel(SidePanels.DOCCOMPARE);
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     ProgressBarDocCompare.Visibility = Visibility.Visible;
                 });
 
-                threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                threadCompare.Start();
+                if (TextCompare == false)
+                {
+                    docCompareGrid.Visibility = Visibility.Hidden;
+                    docCompareSideGridShown = 0;
+                    DocCompareMainListView.ScrollIntoView(DocCompareMainListView.Items[0]);
+                    DocCompareSideListViewLeft.ScrollIntoView(DocCompareSideListViewLeft.Items[0]);
+                    DocCompareSideListViewRight.ScrollIntoView(DocCompareSideListViewRight.Items[0]);
+                    SetVisiblePanel(SidePanels.DOCCOMPARE);
+                    threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                    threadCompare.Start();
+                }
 
                 UpdateFileStat(3);
             }
@@ -3917,6 +4157,7 @@ namespace DocCompareWPF
                     SidePanelOpenDocBackground.Background = brush;
                     SidePanelDocCompareBackground.Background = Brushes.Transparent;
                     SettingsButtonBackground.Background = Brushes.Transparent;
+                    SidePanelTextCompareBackground.Background = Brushes.Transparent;
                     DragDropPanel.Visibility = Visibility.Visible;
                     DocComparePanel.Visibility = Visibility.Hidden;
                     SettingsPanel.Visibility = Visibility.Hidden;
@@ -3926,6 +4167,18 @@ namespace DocCompareWPF
                 case SidePanels.DOCCOMPARE:
                     SidePanelOpenDocBackground.Background = Brushes.Transparent;
                     SidePanelDocCompareBackground.Background = brush;
+                    SettingsButtonBackground.Background = Brushes.Transparent;
+                    SidePanelTextCompareBackground.Background = Brushes.Transparent;
+                    DragDropPanel.Visibility = Visibility.Hidden;
+                    DocComparePanel.Visibility = Visibility.Visible;
+                    SettingsPanel.Visibility = Visibility.Hidden;
+                    SelectReferenceDocPanel.Visibility = Visibility.Hidden;
+                    break;
+
+                case SidePanels.TEXTCOMPARE:
+                    SidePanelOpenDocBackground.Background = Brushes.Transparent;
+                    SidePanelDocCompareBackground.Background = Brushes.Transparent;
+                    SidePanelTextCompareBackground.Background = brush;
                     SettingsButtonBackground.Background = Brushes.Transparent;
                     DragDropPanel.Visibility = Visibility.Hidden;
                     DocComparePanel.Visibility = Visibility.Visible;
@@ -3937,6 +4190,7 @@ namespace DocCompareWPF
                     SidePanelOpenDocBackground.Background = Brushes.Transparent;
                     SidePanelDocCompareBackground.Background = Brushes.Transparent;
                     SettingsButtonBackground.Background = brush;
+                    SidePanelTextCompareBackground.Background = Brushes.Transparent;
                     DragDropPanel.Visibility = Visibility.Hidden;
                     DocComparePanel.Visibility = Visibility.Hidden;
                     SettingsPanel.Visibility = Visibility.Visible;
@@ -3946,6 +4200,7 @@ namespace DocCompareWPF
                 case SidePanels.REFDOC:
                     SidePanelOpenDocBackground.Background = Brushes.Transparent;
                     SidePanelDocCompareBackground.Background = brush;
+                    SidePanelTextCompareBackground.Background = Brushes.Transparent;
                     SettingsButtonBackground.Background = Brushes.Transparent;
                     DragDropPanel.Visibility = Visibility.Hidden;
                     DocComparePanel.Visibility = Visibility.Hidden;
@@ -3957,6 +4212,7 @@ namespace DocCompareWPF
                     SidePanelOpenDocBackground.Background = Brushes.Transparent;
                     SidePanelDocCompareBackground.Background = Brushes.Transparent;
                     SettingsButtonBackground.Background = Brushes.Transparent;
+                    SidePanelTextCompareBackground.Background = Brushes.Transparent;
                     DragDropPanel.Visibility = Visibility.Hidden;
                     DocComparePanel.Visibility = Visibility.Hidden;
                     SettingsPanel.Visibility = Visibility.Hidden;
@@ -4680,6 +4936,7 @@ namespace DocCompareWPF
                 }
 
                 inForceAlignMode = false;
+                TextCompare = false;
                 //DocCompareLeftStatsGrid.Visibility = Visibility.Collapsed;
                 //DocCompareRightStatsGrid.Visibility = Visibility.Collapsed;
 
@@ -4742,9 +4999,9 @@ namespace DocCompareWPF
                 walkthroughStep = WalkthroughSteps.BROWSEFILEBUTTON1;
             }
         }
-
         private void SidePanelTextCompareButton_Click(object sender, RoutedEventArgs e)
         {
+            TextCompare = true;
             docs.documentsToCompare[0] = docs.documentsToShow[0];
             docs.documentsToCompare[1] = docs.documentsToShow[1];
             int[,] forceIndices = new int[docs.forceAlignmentIndices.Count, 2];
@@ -4765,12 +5022,83 @@ namespace DocCompareWPF
                 for (int i = 0; i < docs.totalLen; i++)
                 {
                     docs.documents[docs.documentsToCompare[0]].docCompareIndices.Add((int)docs.pageCompareIndices[i]);
-                    docs.documents[docs.documentsToCompare[1]].docCompareIndices.Add((int)docs.pageCompareIndices[i + docs.totalLen]);                    
+                    docs.documents[docs.documentsToCompare[1]].docCompareIndices.Add((int)docs.pageCompareIndices[i + docs.totalLen]);
                 }
 
                 docs.documents[docs.documentsToCompare[0]].textDiff = diffList;
                 docs.documents[docs.documentsToCompare[1]].textDiff = diffList;
             }
+
+            // show result
+            SetVisiblePanel(SidePanels.TEXTCOMPARE);
+            DocCompareMainListView.Visibility = Visibility.Hidden;
+            DocCompareMainTextListView.Visibility = Visibility.Visible;
+            docCompareGrid.Visibility = Visibility.Visible;
+
+            List<CompareTextItem> list = new List<CompareTextItem>();
+
+            for (int i = 0; i < docs.totalLen; i++)
+            {
+                CompareTextItem item = new CompareTextItem();
+
+                if (i == 0)
+                {
+                    item.Margin = new Thickness(10, 10, 10, 10);
+                }
+                else
+                {
+                    item.Margin = new Thickness(10, 0, 10, 10);
+                }
+
+                if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
+                {
+                    if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] >= 0)
+                    {
+                        DocConvert.TextParagraph para = docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]];
+                        //item.Document1 = CreateFlowDocumentParagraph(para, docs.documents[docs.documentsToCompare[0]].textDiff[i]);
+                        item.Document1 = CreateFlowDocumentParagraph(para, new List<Diff>());
+                        item.Background1 = Brushes.White;
+                    }
+                    else
+                    {
+                        item.Document1 = CreateFlowDocumentLink(docs.documents[docs.documentsToCompare[1]].docCompareIndices.IndexOf(docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]),0);
+                        item.Background1 = Brushes.Transparent;
+                    }
+                }
+                else
+                {
+                    item.Visi1 = Visibility.Hidden;
+                }
+
+                if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                {
+                    if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= 0)
+                    {
+                        DocConvert.TextParagraph para = docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]];
+                        item.Document2 = CreateFlowDocumentParagraph(para, docs.documents[docs.documentsToCompare[1]].textDiff[i]);
+                        item.Background2 = Brushes.White;
+                    }
+                    else
+                    {
+                        item.Document2 = CreateFlowDocumentLink(docs.documents[docs.documentsToCompare[0]].docCompareIndices.IndexOf(docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]),1);
+                        item.Background2 = Brushes.Transparent;
+                    }
+                }
+                else
+                {
+                    item.Visi2 = Visibility.Hidden;
+                }
+
+                list.Add(item);
+            }
+
+            DocCompareMainTextListView.ItemsSource = list;
+            DocCompareMainTextListView.Items.Refresh();
+
+            DocCompareNameLabel1.Text = Path.GetFileName(docs.documents[docs.documentsToCompare[0]].filePath);
+            UpdateDocCompareComboBox();
+            //UpdateFileStat(3);
+            ShowDocCompareFileInfoButton.IsEnabled = true;
         }
 
         private void UnMaskSideGridFromForceAlignMode()
@@ -5133,6 +5461,7 @@ namespace DocCompareWPF
                 Doc1StatsGrid.Height = Doc2StatsGrid.ActualHeight;
             */
         }
+
         private void Window_StateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Normal)
@@ -5414,12 +5743,12 @@ namespace DocCompareWPF
         }
 
         public Thickness Margin { get; set; }
+
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
     public class UriToCachedImageConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

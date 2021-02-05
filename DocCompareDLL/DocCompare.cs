@@ -625,7 +625,8 @@ namespace DocCompareDLL
                         else if (indSortedDoc1[ind] > indSortedDoc1[ind - 1])
                         {
                             seq1.Add(i);
-                            seq2.Add(assignmentDoc1[i]);
+                            //seq2.Add(assignmentDoc1[i]);
+                            seq2.Add(assignmentDoc2.IndexOf(indSortedDoc1[ind]));
                         }
                         else
                         {
@@ -666,7 +667,8 @@ namespace DocCompareDLL
                         }
                         else if (indSortedDoc2[ind] > indSortedDoc2[ind - 1])
                         {
-                            seq1.Add(assignmentDoc1[i]);
+                            //seq1.Add(assignmentDoc1[i]);
+                            seq1.Add(assignmentDoc1.IndexOf(indSortedDoc2[ind]));
                             seq2.Add(i);
                         }
                         else
@@ -677,6 +679,12 @@ namespace DocCompareDLL
                                 seq2.Add(i);
                                 assignmentDoc1[assignmentDoc1.IndexOf(i)] = z;
                                 assignmentDoc2[i] = z;
+
+                                if(seq1.Contains(i))
+                                {
+                                    seq2[seq1.IndexOf(i)] = z;
+                                }
+                                
                                 z--;
                             }
                             else
@@ -713,7 +721,8 @@ namespace DocCompareDLL
                 if (seq1[i] == seq2[i - 1] && seq2[i] == seq1[i - 1] && seq1[i] != -1 && seq1[i - 1] != -1 && seq2[i] != -1 && seq2[i - 1] != -1)
                 {
                     indToRemove.Add(i);
-                    seq2[i] = seq1[i];
+                    seq1[i] = seq2[i];
+                    seq2[i-1] = seq1[i-1];
                 }
             }
 

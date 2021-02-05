@@ -194,7 +194,7 @@
                     </Grid>
                 </Grid>
                 <Grid x:Name="MainPanel" Grid.Row="1">
-                    <Grid x:Name="DragDropPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DragDropPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -668,7 +668,7 @@
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid x:Name="DocComparePanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DocComparePanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <mah:Tile x:Name="ProgressBarDocCompare" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="220" Background="White" BorderBrush="Black" BorderThickness="1">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
@@ -822,6 +822,40 @@
                                                                     <iconPacks:PackIconMaterial Kind="VectorDifference" Width="15" Height="15" />
                                                                 </Button>
                                                             </Grid>
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                </ListView>
+                                <ListView x:Name="DocCompareMainTextListView" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource DocumentBackGroundBrush}"
+                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                        <Grid HorizontalAlignment="Stretch" Background="Transparent">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition/>
+                                                                <ColumnDefinition/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <local:BindableRichTextBox Document="{Binding Document1}" Visibility="{Binding Visi1}" Background="{Binding Background1}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Padding="10,20,10,20"
+                                                                    IsReadOnly="True" IsHitTestVisible="False" >
+                                                                <RichTextBox.Effect>
+                                                                    <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
+                                                                </RichTextBox.Effect>
+                                                            </local:BindableRichTextBox>
+                                                            <local:BindableRichTextBox Document="{Binding Document2}" Visibility="{Binding Visi2}" Background="{Binding Background2}" Grid.Column="1" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Padding="10,20,10,20"
+                                                                    IsReadOnly="True" IsHitTestVisible="False" >
+                                                                <RichTextBox.Effect>
+                                                                    <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
+                                                                </RichTextBox.Effect>
+                                                            </local:BindableRichTextBox>
                                                         </Grid>
                                                     </ControlTemplate>
                                                 </Setter.Value>

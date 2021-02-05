@@ -245,9 +245,15 @@ namespace DocConvert
                                 LineSpacing = para.LineSpacing
                             };
 
-                            if (para.Range.Text != "\r")
+                            String Text = para.Range.Text;
+                            while(Text.Contains("\r"))
                             {
-                                thisParagraph.Text = para.Range.Text.TrimEnd('\r');
+                                Text = Text.TrimEnd('\r');
+                            }
+
+                            if (Text != "\r" && Text.Length != 0)
+                            {
+                                thisParagraph.Text = Text.TrimEnd('\r');
                                 thisParagraph.Font.FontFamily = "Georgia";
                                 if (para.Range.Font.Size != 9999999)
                                     thisParagraph.Font.FontSize = para.Range.Font.Size;

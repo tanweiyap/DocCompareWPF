@@ -165,6 +165,7 @@ namespace DocCompareWPF
                 OnPropertyChanged();
             }
         }
+
         public Thickness Margin { get; set; }
 
         public Visibility Visi1
@@ -194,6 +195,7 @@ namespace DocCompareWPF
                 OnPropertyChanged();
             }
         }
+
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -261,6 +263,7 @@ namespace DocCompareWPF
         private bool walkthroughMode;
 
         private WalkthroughSteps walkthroughStep = 0;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -1185,111 +1188,138 @@ namespace DocCompareWPF
             return thisDoc;
         }
 
-        private FlowDocument CreateFlowDocumentParagraph(DocConvert.TextParagraph para, List<Diff> diff)
+        private FlowDocument CreateFlowDocumentParagraph(List<DocConvert.TextParagraph> paras, List<List<Diff>> diffs, int col)
         {
             FlowDocument thisDoc = new FlowDocument();
-            Paragraph thisPara = new Paragraph();
-            thisPara.Margin = new Thickness(para.LineSpacing);
 
-            if (diff.Count <= 1)
+            for (int i = 0; i < paras.Count; i++)
             {
-                thisDoc.Background = Brushes.White;
-                if (para.ListFormatString != "")
+                DocConvert.TextParagraph para = paras[i];
+                List<Diff> diff = diffs[i];
+                Paragraph thisPara = new Paragraph();
+                thisPara.Margin = new Thickness(para.LineSpacing);
+
+                if (diff.Count <= 1)
                 {
-                    Run thisSen = new Run
+                    thisDoc.Background = Brushes.White;
+                    if (para.ListFormatString != "")
+                    {
+                        Run thisSen = new Run
+                        {
+                            FontFamily = new FontFamily(para.Font.FontFamily),
+                        };
+
+                        if (para.Font.FontSize >= minFontSize)
+                        {
+                            thisSen.FontSize = para.Font.FontSize;
+                        }
+                        else
+                        {
+                            thisSen.FontSize = minFontSize;
+                        }
+
+                        double indent = 0;
+                        for (int j = 0; j < para.ListFormatLevel; j++)
+                        {
+                            indent += 10;
+                        }
+
+                        thisPara.Margin = new Thickness(indent, thisPara.Margin.Top, thisPara.Margin.Right, thisPara.Margin.Bottom);
+
+                        thisSen.Text = para.ListFormatString + " ";
+                        thisPara.Inlines.Add(thisSen);
+                    }
+
+                    Run thisText = new Run
                     {
                         FontFamily = new FontFamily(para.Font.FontFamily),
+                        Text = para.Text
                     };
 
                     if (para.Font.FontSize >= minFontSize)
                     {
-                        thisSen.FontSize = para.Font.FontSize;
+                        thisText.FontSize = para.Font.FontSize;
                     }
                     else
                     {
-                        thisSen.FontSize = minFontSize;
-                    }
-
-                    double indent = 0;
-                    for (int j = 0; j < para.ListFormatLevel; j++)
-                    {
-                        indent += 10;
-                    }
-
-                    thisPara.Margin = new Thickness(indent, thisPara.Margin.Top, thisPara.Margin.Right, thisPara.Margin.Bottom);
-
-                    thisSen.Text = para.ListFormatString + " ";
-                    thisPara.Inlines.Add(thisSen);
-                }
-
-                Run thisText = new Run
-                {
-                    FontFamily = new FontFamily(para.Font.FontFamily),
-                    Text = para.Text
-                };
-
-                if (para.Font.FontSize >= minFontSize)
-                {
-                    thisText.FontSize = para.Font.FontSize;
-                }
-                else
-                {
-                    thisText.FontSize = minFontSize;
-                }
-
-                if (para.Font.isItalic == true)
-                    thisText.FontStyle = FontStyles.Italic;
-
-                if (para.Font.isBold == true)
-                    thisText.FontWeight = FontWeights.Bold;
-
-                thisPara.Inlines.Add(thisText);
-            }
-            else
-            {
-                thisDoc.Background = Brushes.Yellow;
-                foreach (Diff d in diff)
-                {
-                    Run thisRun = new Run
-                    {
-                        Text = d.text,
-                        FontFamily = new FontFamily(para.Font.FontFamily)
-                    };
-
-                    if (para.Font.FontSize >= minFontSize)
-                    {
-                        thisRun.FontSize = para.Font.FontSize;
-                    }
-                    else
-                    {
-                        thisRun.FontSize = minFontSize;
-                    }
-
-                    if (d.operation == Operation.EQUAL)
-                    {
-                        thisRun.Foreground = Brushes.Black;
-                    }
-                    else if (d.operation == Operation.INSERT)
-                    {
-                        thisRun.Foreground = Brushes.Green;
-                    }
-                    else
-                    {
-                        thisRun.Foreground = Brushes.Red;
-                        thisRun.TextDecorations = TextDecorations.Strikethrough;
+                        thisText.FontSize = minFontSize;
                     }
 
                     if (para.Font.isItalic == true)
-                        thisRun.FontStyle = FontStyles.Italic;
+                        thisText.FontStyle = FontStyles.Italic;
 
                     if (para.Font.isBold == true)
-                        thisRun.FontWeight = FontWeights.Bold;
+                        thisText.FontWeight = FontWeights.Bold;
 
-                    thisPara.Inlines.Add(thisRun);
+                    thisPara.Inlines.Add(thisText);
                 }
-            }
+                else
+                {
+                    thisDoc.Background = new SolidColorBrush(Color.FromArgb(50, 255, 255, 0));
+                    foreach (Diff d in diff)
+                    {
+                        Run thisRun = new Run
+                        {
+                            Text = d.text,
+                            FontFamily = new FontFamily(para.Font.FontFamily)
+                        };
 
-            thisDoc.Blocks.Add(thisPara);
+                        if (para.Font.FontSize >= minFontSize)
+                        {
+                            thisRun.FontSize = para.Font.FontSize;
+                        }
+                        else
+                        {
+                            thisRun.FontSize = minFontSize;
+                        }
+
+                        if (col == 0)
+                        {
+                            if (d.operation == Operation.EQUAL)
+                            {
+                                thisRun.Foreground = Brushes.Black;
+                            }
+                            else if (d.operation == Operation.INSERT)
+                            {
+                                thisRun.Background = Brushes.Transparent;
+                                continue;
+                            }
+                            else
+                            {
+                                thisRun.Background = Brushes.Red;
+                                //thisRun.TextDecorations = TextDecorations.Strikethrough;
+                            }
+                        }
+                        else
+                        {
+                            if (d.operation == Operation.EQUAL)
+                            {
+                                thisRun.Foreground = Brushes.Black;
+                            }
+                            else if (d.operation == Operation.INSERT)
+                            {
+                                thisRun.Background = Brushes.Green;
+                            }
+                            else
+                            {
+                                thisRun.Background = Brushes.Transparent;
+                                continue;
+                                //thisRun.TextDecorations = TextDecorations.Strikethrough;
+                            }
+                        }
+
+                        if (para.Font.isItalic == true)
+                            thisRun.FontStyle = FontStyles.Italic;
+
+                        if (para.Font.isBold == true)
+                            thisRun.FontWeight = FontWeights.Bold;
+
+                        thisPara.Inlines.Add(thisRun);
+                    }
+                }
+
+                thisDoc.Blocks.Add(thisPara);
+            }
             return thisDoc;
         }
 
@@ -4999,6 +5029,7 @@ namespace DocCompareWPF
                 walkthroughStep = WalkthroughSteps.BROWSEFILEBUTTON1;
             }
         }
+
         private void SidePanelTextCompareButton_Click(object sender, RoutedEventArgs e)
         {
             TextCompare = true;
@@ -5036,27 +5067,155 @@ namespace DocCompareWPF
             docCompareGrid.Visibility = Visibility.Visible;
 
             List<CompareTextItem> list = new List<CompareTextItem>();
-
+            List<DocConvert.TextParagraph> paras1 = new List<DocConvert.TextParagraph>();
+            List<DocConvert.TextParagraph> paras2 = new List<DocConvert.TextParagraph>();
+            List<List<Diff>> diffList1 = new List<List<Diff>>();
+            List<List<Diff>> diffList2 = new List<List<Diff>>();
+            CompareTextItem item = new CompareTextItem();
+            int colInd = 0;
+            bool continueSearch = false;
+            /*
+            if (i == 0)
+            {
+                item.Margin = new Thickness(10, 10, 10, 10);
+            }
+            else
+            {
+                item.Margin = new Thickness(10, 0, 10, 10);
+            }
+            */
             for (int i = 0; i < docs.totalLen; i++)
             {
-                CompareTextItem item = new CompareTextItem();
-
-                if (i == 0)
+                if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= 0)
                 {
-                    item.Margin = new Thickness(10, 10, 10, 10);
+                    paras1.Add(docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]]);
+                    paras2.Add(docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]]);
+                    diffList1.Add(docs.documents[docs.documentsToCompare[0]].textDiff[i]);
+                    diffList2.Add(docs.documents[docs.documentsToCompare[1]].textDiff[i]);
+
+                    if (i < docs.totalLen - 1)
+                    {
+                        if (docs.documents[docs.documentsToCompare[0]].textDiff[i].Count == 1 && docs.documents[docs.documentsToCompare[1]].textDiff[i].Count == 1)
+                        {
+                            if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i + 1] >= 0 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i + 1] >= 0)
+                            {
+                                if (docs.documents[docs.documentsToCompare[0]].textDiff[i + 1].Count == 1 && docs.documents[docs.documentsToCompare[1]].textDiff[i + 1].Count == 1)
+                                    continueSearch = true;
+                                else
+                                {
+                                    continueSearch = false;
+                                    colInd = 2;
+                                }
+                            }
+                            else
+                            {
+                                continueSearch = false;
+                                colInd = 2;
+                            }
+                        }
+                        else
+                        {
+                            continueSearch = false;
+                            colInd = 2;
+                        }
+                    }
+                    else
+                    {
+                        continueSearch = false;
+                        colInd = 2;
+                    }
                 }
-                else
+                else if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] < -1)
                 {
-                    item.Margin = new Thickness(10, 0, 10, 10);
+                    paras1.Add(docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]]);
+                    diffList1.Add(docs.documents[docs.documentsToCompare[0]].textDiff[i]);
+                    continueSearch = false;
+                    colInd = 0;
+                }
+                else if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] < -1)
+                {
+                    paras2.Add(docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]]);
+                    diffList2.Add(docs.documents[docs.documentsToCompare[1]].textDiff[i]);
+                    continueSearch = false;
+                    colInd = 1;
+                }
+                else if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] == -1)
+                {
+                    paras1.Add(docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]]);
+                    diffList1.Add(docs.documents[docs.documentsToCompare[0]].textDiff[i]);
+                    continueSearch = false;
+                    colInd = 3;
+                }
+                else if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] == -1)
+                {
+                    paras2.Add(docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]]);
+                    diffList2.Add(docs.documents[docs.documentsToCompare[1]].textDiff[i]);
+                    continueSearch = false;
+                    colInd = 4;
                 }
 
+                if (continueSearch == false)
+                {
+                    item = new CompareTextItem();
+
+                    if (colInd == 0)
+                    {
+                        item.Document1 = CreateFlowDocumentParagraph(paras1, diffList1, 0);
+                        item.Background1 = Brushes.White;
+                        item.Document2 = CreateFlowDocumentLink(docs.documents[docs.documentsToCompare[0]].docCompareIndices.IndexOf(docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]), 1);
+                        item.Background2 = Brushes.Transparent;
+                    }
+                    else if (colInd == 1)
+                    {
+                        item.Document2 = CreateFlowDocumentParagraph(paras2, diffList2, 1);
+                        item.Background2 = Brushes.White;
+                        item.Document1 = CreateFlowDocumentLink(docs.documents[docs.documentsToCompare[1]].docCompareIndices.IndexOf(docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]), 0);
+                        item.Background1 = Brushes.Transparent;
+                    }
+                    else if (colInd == 2)
+                    {
+                        item.Document1 = CreateFlowDocumentParagraph(paras1, diffList1, 0);
+                        item.Background1 = Brushes.White;
+                        item.Document2 = CreateFlowDocumentParagraph(paras2, diffList2, 1);
+                        item.Background2 = Brushes.White;
+                    }
+                    else if (colInd == 3)
+                    {
+                        item.Document1 = CreateFlowDocumentParagraph(paras1, diffList1, 0);
+                        item.Background1 = Brushes.White;
+                        item.Visi2 = Visibility.Hidden;
+                    }
+                    else if (colInd == 4)
+                    {
+                        item.Document2 = CreateFlowDocumentParagraph(paras2, diffList2, 0);
+                        item.Background2 = Brushes.White;
+                        item.Visi1 = Visibility.Hidden;
+                    }
+
+                    if(list.Count == 0)
+                    {
+                        item.Margin = new Thickness(10, 10, 10, 10);
+                    }
+                    else
+                    {
+                        item.Margin = new Thickness(10, 0, 10, 10);
+                    }
+
+                    paras1.Clear();
+                    paras2.Clear();
+                    diffList1.Clear();
+                    diffList2.Clear();
+                    list.Add(item);
+                }
+
+                /*
                 if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
                 {
                     if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] >= 0)
                     {
                         DocConvert.TextParagraph para = docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]];
-                        //item.Document1 = CreateFlowDocumentParagraph(para, docs.documents[docs.documentsToCompare[0]].textDiff[i]);
-                        item.Document1 = CreateFlowDocumentParagraph(para, new List<Diff>());
+                        item.Document1 = CreateFlowDocumentParagraph(para, docs.documents[docs.documentsToCompare[0]].textDiff[i],0);
+                        //item.Document1 = CreateFlowDocumentParagraph(para, new List<Diff>());
                         item.Background1 = Brushes.White;
                     }
                     else
@@ -5075,7 +5234,7 @@ namespace DocCompareWPF
                     if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= 0)
                     {
                         DocConvert.TextParagraph para = docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]];
-                        item.Document2 = CreateFlowDocumentParagraph(para, docs.documents[docs.documentsToCompare[1]].textDiff[i]);
+                        item.Document2 = CreateFlowDocumentParagraph(para, docs.documents[docs.documentsToCompare[1]].textDiff[i],1);
                         item.Background2 = Brushes.White;
                     }
                     else
@@ -5090,6 +5249,7 @@ namespace DocCompareWPF
                 }
 
                 list.Add(item);
+                */
             }
 
             DocCompareMainTextListView.ItemsSource = list;
@@ -5749,6 +5909,7 @@ namespace DocCompareWPF
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
+
     public class UriToCachedImageConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

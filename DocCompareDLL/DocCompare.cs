@@ -500,8 +500,6 @@ namespace DocCompareDLL
 
             diff_match_patch diffMatch = new diff_match_patch();
 
-            List<List<int>> DistanceMatrix = new List<List<int>>();
-            List<List<Diff>> BestDiffLists = new List<List<Diff>>();
             List<int> assignmentDoc1 = new List<int>(doc1.Paragraphs.Count);
             List<int> distDoc1 = new List<int>(doc1.Paragraphs.Count);
             List<List<Diff>> diffListDoc1 = new List<List<Diff>>();
@@ -556,6 +554,15 @@ namespace DocCompareDLL
 
                 if (distDoc2[indDistMin] > LocalDistance[indDistMin] && LocalDistance[indDistMin] < Math.Max(selfText.Length, doc2.Paragraphs[indDistMin].ToString().Length) * 0.5) // if difference larger than 50 %
                 {
+                    if (assignmentDoc1.Contains(indDistMin))
+                    {
+                        if (distDoc1[assignmentDoc1.IndexOf(indDistMin)] > LocalDistance.Min())
+                        {
+                            diffListDoc1[assignmentDoc1.IndexOf(indDistMin)] = new List<Diff>();
+                            assignmentDoc1[assignmentDoc1.IndexOf(indDistMin)] = -1;
+                        }
+                    }
+
                     assignmentDoc2[indDistMin] = i;
                     assignmentDoc1[i] = indDistMin;
                     distDoc1[i] = LocalDistance.Min();
@@ -563,9 +570,6 @@ namespace DocCompareDLL
                     diffListDoc1[i] = bestList;
                     diffListDoc2[indDistMin] = bestList;
                 }
-
-                DistanceMatrix.Add(LocalDistance);
-                BestDiffLists.Add(bestList);
             }
 
             // index of non -1 (paragraph assigned)
@@ -626,7 +630,7 @@ namespace DocCompareDLL
                         {
                             seq1.Add(i);
                             //seq2.Add(assignmentDoc1[i]);
-                            seq2.Add(assignmentDoc2.IndexOf(indSortedDoc1[ind]));
+                            seq2.Add(assignmentDoc1[indSortedDoc1[ind]]);
                         }
                         else
                         {
@@ -668,7 +672,7 @@ namespace DocCompareDLL
                         else if (indSortedDoc2[ind] > indSortedDoc2[ind - 1])
                         {
                             //seq1.Add(assignmentDoc1[i]);
-                            seq1.Add(assignmentDoc1.IndexOf(indSortedDoc2[ind]));
+                            seq1.Add(assignmentDoc2[indSortedDoc2[ind]]);
                             seq2.Add(i);
                         }
                         else
@@ -680,11 +684,12 @@ namespace DocCompareDLL
                                 assignmentDoc1[assignmentDoc1.IndexOf(i)] = z;
                                 assignmentDoc2[i] = z;
 
-                                if(seq1.Contains(i))
+                                /*
+                                if (seq1.Contains(i))
                                 {
                                     seq2[seq1.IndexOf(i)] = z;
                                 }
-                                
+                                */
                                 z--;
                             }
                             else
@@ -701,7 +706,7 @@ namespace DocCompareDLL
 
             // find duplicate
             List<int> indToRemove = new List<int>();
-            for(int i = 1; i < seq1.Count; i++)
+            for (int i = 1; i < seq1.Count; i++)
             {
                 if (seq1[i] == seq1[i - 1] && seq2[i] == seq2[i - 1])
                     indToRemove.Add(i);
@@ -716,13 +721,13 @@ namespace DocCompareDLL
             // find cross similarity
 
             indToRemove.Clear();
-            for(int i = 1; i< seq1.Count; i++)
+            for (int i = 1; i < seq1.Count; i++)
             {
                 if (seq1[i] == seq2[i - 1] && seq2[i] == seq1[i - 1] && seq1[i] != -1 && seq1[i - 1] != -1 && seq2[i] != -1 && seq2[i - 1] != -1)
                 {
                     indToRemove.Add(i);
                     seq1[i] = seq2[i];
-                    seq2[i-1] = seq1[i-1];
+                    seq2[i - 1] = seq1[i - 1];
                 }
             }
 
@@ -732,28 +737,109 @@ namespace DocCompareDLL
                 seq2.RemoveAt(ind);
             }
 
-            // create alignment and difflist
-            for(int i = 0; i < seq1.Count; i++)
+            // clean unnecessary indices < -1
+            indToRemove.Clear();
+            for (int i = 1; i < seq1.Count; i++)
             {
-                alignment.Add(seq1[i]);
+                if (seq1[i-1] == seq2[i] && seq1[i-1] < -1 && seq2[i] < -1)
+                {
+                    indToRemove.Add(i-1);
+                    seq2[i] = seq2[i-1];                    
+                }
             }
 
-            for (int i = 0; i < seq2.Count; i++)
+            foreach (int ind in indToRemove.OrderByDescending(v => v))
             {
-                alignment.Add(seq2[i]);
+                seq1.RemoveAt(ind);
+                seq2.RemoveAt(ind);
+            }
+            List<int> seq11 = new List<int>();
+            List<int> seq22 = new List<int>();
+
+            for (int i = 0; i < seq1.Count; i++)
+            {
+                if (seq11.Contains(seq1[i]))
+                {
+                    if (seq22[seq11.IndexOf(seq1[i])] == seq2[i])
+                    {
+                    }
+                    else
+                    {
+                        seq11.Add(seq1[i]);
+                        seq22.Add(seq2[i]);
+                    }
+                }
+                else
+                {
+                    seq11.Add(seq1[i]);
+                    seq22.Add(seq2[i]);
+                }
+            }
+
+            // index of non -1 (paragraph assigned)
+
+            List<int> seq222 = new List<int>();
+            foreach (int i in seq22)
+            {
+                if (i > -1)
+                    seq222.Add(i);
+            }
+
+            seq222.Sort();
+            List<int> indSortedSeq2 = new List<int>();
+            foreach (int i in seq222)
+            {
+                indSortedSeq2.Add(seq22.IndexOf(i));
+            }
+
+            List<List<int>> indPairsToSwap = new List<List<int>>();
+            for (int i = 1; i < indSortedSeq2.Count; i++)
+            {
+                if (indSortedSeq2[i] < indSortedSeq2[i - 1])
+                {
+                    int ind1 = seq22.IndexOf(seq22[indSortedSeq2[i - 1]]);
+                    int ind2 = seq22.IndexOf(seq22[indSortedSeq2[i]]);
+                    indPairsToSwap.Add(new List<int>() { ind1, ind2 });
+                }
+            }
+
+            foreach (List<int> pair in indPairsToSwap)
+            {
+                int seq1Ind1 = seq11[pair[0]];
+                int seq1Ind2 = seq11[pair[1]];
+
+                seq11[pair[0]] = seq1Ind2;
+                seq11[pair[1]] = seq1Ind1;
+
+                int seq2Ind1 = seq22[pair[0]];
+                int seq2Ind2 = seq22[pair[1]];
+
+                seq22[pair[0]] = seq2Ind2;
+                seq22[pair[1]] = seq2Ind1;
+            }
+
+            // create alignment and difflist
+            for (int i = 0; i < seq11.Count; i++)
+            {
+                alignment.Add(seq11[i]);
+            }
+
+            for (int i = 0; i < seq22.Count; i++)
+            {
+                alignment.Add(seq22[i]);
             }
 
             diffList = new List<List<Diff>>();
 
-            for(int i = 0; i < seq1.Count; i++)
+            for (int i = 0; i < seq11.Count; i++)
             {
-                if (seq1[i] >= 0)
+                if (seq11[i] >= 0)
                 {
-                    diffList.Add(diffListDoc1[seq1[i]]);                    
+                    diffList.Add(diffListDoc1[seq11[i]]);
                 }
                 else
                 {
-                    diffList.Add(diffListDoc2[seq2[i]]);
+                    diffList.Add(diffListDoc2[seq22[i]]);
                 }
             }
 

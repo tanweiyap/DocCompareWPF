@@ -248,10 +248,11 @@ namespace DocConvert
                             String Text = para.Range.Text;
                             while(Text.Contains("\r"))
                             {
-                                Text = Text.TrimEnd('\r');
+                                Text = Text.Replace("\r","");
+                                Text = Text.Replace("\a","");
                             }
 
-                            if (Text != "\r" && Text.Length != 0)
+                            if (!Text.Contains("\u0001") && Text.Length != 0)
                             {
                                 thisParagraph.Text = Text.TrimEnd('\r');
                                 thisParagraph.Font.FontFamily = "Georgia";

@@ -120,6 +120,7 @@ namespace DocCompareWPF
 
         // Walkthrough
         private bool walkthroughMode;
+
         private WalkthroughSteps walkthroughStep = 0;
 
         public MainWindow()
@@ -158,7 +159,6 @@ namespace DocCompareWPF
             }
 
             docs = new DocumentManagement(settings.maxDocCount, workingDir, settings);
-
 
             // License Management
             try
@@ -508,10 +508,9 @@ namespace DocCompareWPF
 
                 if (docs.documents.Count != 0)
                 {
-
                     SelectReferenceWindow selectReferenceWindow = new SelectReferenceWindow();
                     List<string> fileList = new List<string>();
-                    foreach(Document doc in docs.documents)
+                    foreach (Document doc in docs.documents)
                     {
                         fileList.Add(Path.GetFileName(doc.filePath));
                     }
@@ -714,6 +713,7 @@ namespace DocCompareWPF
 
             Dispatcher.Invoke(() => { DisplayLicense(); });
         }
+
         private async void CheckUpdate()
         {
             Thread.Sleep(7000);
@@ -724,7 +724,6 @@ namespace DocCompareWPF
                 updateInstallerURL = res[1];
                 Dispatcher.Invoke(() =>
                 {
-
                     WindowUpdateButton.Visibility = Visibility.Visible;
 
                     if (res[0] != settings.skipVersionString)
@@ -963,7 +962,6 @@ namespace DocCompareWPF
                 compareResultFolder = Path.Join(workingDir, Guid.NewGuid().ToString());
                 Directory.CreateDirectory(compareResultFolder);
 
-
                 Document.CompareDocs(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[1]].imageFolder, compareResultFolder, out docs.pageCompareIndices, out docs.totalLen, forceIndices);
                 docs.documents[docs.documentsToCompare[0]].docCompareIndices = new List<int>();
                 docs.documents[docs.documentsToCompare[1]].docCompareIndices = new List<int>();
@@ -996,7 +994,6 @@ namespace DocCompareWPF
                     {
                         PopupHighlightOffBubble.IsOpen = false;
                     }
-
                 });
             }
             catch
@@ -1864,7 +1861,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -1924,7 +1920,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -1932,7 +1927,6 @@ namespace DocCompareWPF
         {
             try
             {
-
                 double accuHeight = 0;
 
                 Border border = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
@@ -1953,7 +1947,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -1981,7 +1974,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -2007,7 +1999,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -2033,7 +2024,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -2147,7 +2137,6 @@ namespace DocCompareWPF
 
             if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREANIMATE)
             {
-
                 CustomMessageBox msgBox = new CustomMessageBox();
                 msgBox.Setup("Walkthrough completed", "Thanks for completing the walkthrough guide.                 Enjoy 2|Compare! You can restart this walkthrough from     the settings page.", "Okay");
                 msgBox.ShowDialog();
@@ -2881,7 +2870,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -2949,7 +2937,8 @@ namespace DocCompareWPF
 
         private void ReloadDocThread()
         {
-            Dispatcher.Invoke(() => {
+            Dispatcher.Invoke(() =>
+            {
                 ReloadDoc1Button.IsEnabled = false;
                 ReloadDoc2Button.IsEnabled = false;
                 ReloadDoc3Button.IsEnabled = false;
@@ -3181,8 +3170,6 @@ namespace DocCompareWPF
                     EnableRemoveForceAlignButton();
                     EnableSideScrollLeft();
                     EnableSideScrollRight();
-
-
                 });
             }
 
@@ -3717,7 +3704,6 @@ namespace DocCompareWPF
                         PopupLinkPageBubble.IsOpen = false;
                         walkthroughStep = WalkthroughSteps.COMPAREUNLINK;
                     }
-
                 });
             }
             else
@@ -4575,7 +4561,6 @@ namespace DocCompareWPF
             }
             catch
             {
-
             }
         }
 
@@ -4601,7 +4586,7 @@ namespace DocCompareWPF
         {
             CustomMessageBox msgBox = new CustomMessageBox();
             msgBox.Setup("Change License", "Proceed with activating another license? Current license will be deactivated.", "No", "Yes");
-            if(msgBox.ShowDialog() == true)
+            if (msgBox.ShowDialog() == true)
             {
                 Dispatcher.Invoke(() =>
                 {
@@ -4617,7 +4602,6 @@ namespace DocCompareWPF
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-
             if (PopupBrowseFileBubble.IsOpen == true)
             {
                 PopupBrowseFileBubble.HorizontalOffset++;
@@ -4743,11 +4727,10 @@ namespace DocCompareWPF
                 di.Delete(true);
             }
 
-
             di = new DirectoryInfo(appDataDir);
-            foreach( DirectoryInfo di2 in di.EnumerateDirectories())
+            foreach (DirectoryInfo di2 in di.EnumerateDirectories())
             {
-                if(di2.Name != "lic")
+                if (di2.Name != "lic")
                 {
                     di2.Delete(true);
                 }
@@ -4778,7 +4761,6 @@ namespace DocCompareWPF
             WindowState = WindowState.Normal;
             outerBorder.Margin = new Thickness(0);
         }
-
     }
 
     public class SideGridItemLeft : INotifyPropertyChanged
@@ -4924,6 +4906,7 @@ namespace DocCompareWPF
         public Thickness Margin { get; set; }
 
         private string _pathToFile;
+
         public string PathToFile
         {
             get

@@ -77,8 +77,8 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.0.6";
-        private readonly string localetype = "DE";
+        private readonly string versionString = "1.0.7";
+        private readonly string localetype = "EN";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -508,6 +508,24 @@ namespace DocCompareWPF
 
                 if (docs.documents.Count != 0)
                 {
+
+                    SelectReferenceWindow selectReferenceWindow = new SelectReferenceWindow();
+                    List<string> fileList = new List<string>();
+                    foreach(Document doc in docs.documents)
+                    {
+                        fileList.Add(Path.GetFileName(doc.filePath));
+                    }
+
+                    selectReferenceWindow.Setup(fileList);
+
+                    if (docs.documents.Count >= 2)
+                    {
+                        if (selectReferenceWindow.ShowDialog() == true)
+                        {
+                            docs.documentsToShow[0] = selectReferenceWindow.selectedIndex;
+                        }
+                    }
+
                     if ((sender as Button).Name.Contains("Top"))
                     {
                         if (docs.documents.Count >= 3)
@@ -1642,7 +1660,22 @@ namespace DocCompareWPF
 
                 if (docs.documents.Count != 0)
                 {
-                    docs.documentsToShow[0] = docs.documents.Count - 1;
+                    SelectReferenceWindow selectReferenceWindow = new SelectReferenceWindow();
+                    List<string> fileList = new List<string>();
+                    foreach (Document doc in docs.documents)
+                    {
+                        fileList.Add(Path.GetFileName(doc.filePath));
+                    }
+
+                    selectReferenceWindow.Setup(fileList);
+
+                    if (docs.documents.Count >= 2)
+                    {
+                        if (selectReferenceWindow.ShowDialog() == true)
+                        {
+                            docs.documentsToShow[0] = selectReferenceWindow.selectedIndex;
+                        }
+                    }
 
                     LoadFilesCommonPart();
 

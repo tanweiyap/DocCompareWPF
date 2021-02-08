@@ -605,6 +605,23 @@ namespace DocCompareWPF
 
                 if (docs.documents.Count != 0)
                 {
+                    SelectReferenceWindow selectReferenceWindow = new SelectReferenceWindow();
+                    List<string> fileList = new List<string>();
+                    foreach (Document doc in docs.documents)
+                    {
+                        fileList.Add(Path.GetFileName(doc.filePath));
+                    }
+
+                    selectReferenceWindow.Setup(fileList);
+
+                    if (docs.documents.Count >= 2)
+                    {
+                        if (selectReferenceWindow.ShowDialog() == true)
+                        {
+                            docs.documentsToShow[0] = selectReferenceWindow.selectedIndex;
+                        }
+                    }
+
                     if ((sender as Button).Name.Contains("Top"))
                     {
                         if (docs.documents.Count >= 3)
@@ -830,7 +847,7 @@ namespace DocCompareWPF
                     if (res[0] != settings.skipVersionString)
                     {
                         CustomMessageBox msgBox = new CustomMessageBox();
-                        msgBox.Setup("Update avalaible", "A newer version of 2|Compare is available. Click OKAY to proceed with downloading the installer.", "Okay", "Skip");
+                        msgBox.Setup("Update available", "A newer version of 2|Compare is available. Click OKAY to proceed with downloading the installer.", "Okay", "Skip");
 
                         if (msgBox.ShowDialog() == true)
                         {
@@ -2125,7 +2142,22 @@ namespace DocCompareWPF
 
                 if (docs.documents.Count != 0)
                 {
-                    docs.documentsToShow[0] = docs.documents.Count - 1;
+                    SelectReferenceWindow selectReferenceWindow = new SelectReferenceWindow();
+                    List<string> fileList = new List<string>();
+                    foreach (Document doc in docs.documents)
+                    {
+                        fileList.Add(Path.GetFileName(doc.filePath));
+                    }
+
+                    selectReferenceWindow.Setup(fileList);
+
+                    if (docs.documents.Count >= 2)
+                    {
+                        if (selectReferenceWindow.ShowDialog() == true)
+                        {
+                            docs.documentsToShow[0] = selectReferenceWindow.selectedIndex;
+                        }
+                    }
 
                     LoadFilesCommonPart();
 

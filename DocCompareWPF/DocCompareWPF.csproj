@@ -55,11 +55,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DocCompareDLL\DocCompareDLL.csproj" />
-    <ProjectReference Include="..\DocConvert\DocConvert.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="LogoSmallest.png" />
     <Resource Include="Page1.PNG" />
     <Resource Include="Resources\Icons\LogoLarge.png">
@@ -195,6 +190,11 @@
 
   <ItemGroup>
     <Folder Include="lic\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DocCompareDLL\DocCompareDLL.csproj" />
+    <ProjectReference Include="..\DocConvert\DocConvert.csproj" />
   </ItemGroup>
 
 </Project>

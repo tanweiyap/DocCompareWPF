@@ -522,6 +522,17 @@ namespace DocCompareWPF
                         if (selectReferenceWindow.ShowDialog() == true)
                         {
                             docs.documentsToShow[0] = selectReferenceWindow.selectedIndex;
+                            if(docs.documentsToShow[1] == docs.documentsToShow[0])
+                            {
+                                for(int i = 0; i< docs.documents.Count; i++)
+                                {
+                                    if(i != docs.documentsToShow[0])
+                                    {
+                                        docs.documentsToShow[1] = i;
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -4674,6 +4685,11 @@ namespace DocCompareWPF
                 PopupAnimateBubble.HorizontalOffset--;
             }
 
+            if(WindowState == WindowState.Normal)
+            {
+                outerBorder.Margin = new Thickness(0);
+            }
+
             /*
             if(Doc1StatsGrid.ActualHeight > Doc2StatsGrid.ActualHeight)
                 Doc2StatsGrid.Height = Doc1StatsGrid.ActualHeight;
@@ -4697,12 +4713,14 @@ namespace DocCompareWPF
             {
                 WindowMaximizeButton.Visibility = Visibility.Visible;
                 WindowRestoreButton.Visibility = Visibility.Hidden;
+                
             }
 
             if (WindowState == WindowState.Maximized)
             {
                 WindowMaximizeButton.Visibility = Visibility.Hidden;
                 WindowRestoreButton.Visibility = Visibility.Visible;
+                outerBorder.Margin = new Thickness(5, 5, 5, 0);
             }
         }
 

@@ -232,11 +232,13 @@
                                     <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc1NameLabelComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="30,0,30,0" FontSize="14" DropDownOpened="Doc1NameLabelComboBox_DropDownOpened" DropDownClosed="Doc1NameLabelComboBox_DropDownClosed">
+                                            <Label Foreground="White" Margin="85, 0,0,0">Reference Document:</Label>
+                                            <ComboBox x:Name="Doc1NameLabelComboBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
+                                                      IsEditable="False" FontSize="14" DropDownOpened="Doc1NameLabelComboBox_DropDownOpened" DropDownClosed="Doc1NameLabelComboBox_DropDownClosed">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
                                                         <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
@@ -255,7 +257,7 @@
                                             HorizontalAlignment="Left" Click="ReloadDoc1Button_Click" Margin="60,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-                                            <Button x:Name="CloseDoc1Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc1Button_Click">
+                                            <Button x:Name="CloseDoc1Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc1Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center"  Foreground="White" />
                                             </Button>
                                         </Grid>
@@ -331,11 +333,13 @@
                                     <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc2NameLabelComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="30,0,30,0" FontSize="14">
+                                            <Label Foreground="White" Margin="85, 0,0,0">Document to compare:</Label>
+                                            <ComboBox x:Name="Doc2NameLabelComboBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged"
+                                                      IsEditable="False" Padding="0,0,0,0" FontSize="14">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
                                                         <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
@@ -355,7 +359,7 @@
                                             HorizontalAlignment="Left" Click="ReloadDoc2Button_Click" Margin="60,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-                                            <Button x:Name="CloseDoc2Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc2Button_Click">
+                                            <Button x:Name="CloseDoc2Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc2Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
                                         </Grid>
@@ -914,7 +918,7 @@
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid x:Name="SettingsPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="SettingsPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="220" />
                             <ColumnDefinition />

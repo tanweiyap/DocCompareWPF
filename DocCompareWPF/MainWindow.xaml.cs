@@ -77,7 +77,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.0.7";
+        private readonly string versionString = "1.0.9";
         private readonly string localetype = "EN";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;

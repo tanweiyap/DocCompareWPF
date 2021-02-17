@@ -29,7 +29,7 @@
                 </Grid>
                 <Grid x:Name="TitleBar" Grid.Column="1" Grid.Row="0" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">
                     <Grid>
-                        <Label x:Name="WindowTitle" FontSize="15" VerticalAlignment="Center" Foreground="White">Custom Message Box</Label>
+                        <Label x:Name="WindowTitle" FontSize="15" VerticalAlignment="Center" Foreground="White">Reference Document</Label>
                     </Grid>
                 </Grid>
             </Grid>

@@ -194,7 +194,7 @@
                     </Grid>
                 </Grid>
                 <Grid x:Name="MainPanel" Grid.Row="1">
-                    <Grid x:Name="DragDropPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DragDropPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -239,11 +239,13 @@
                                     <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc1NameLabelComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="30,0,30,0" FontSize="14" DropDownOpened="Doc1NameLabelComboBox_DropDownOpened" DropDownClosed="Doc1NameLabelComboBox_DropDownClosed">
+                                            <Label Foreground="Black" Margin="85, 0,0,0" Background="{StaticResource RefDocumentBackGroundBrush}">Reference</Label>
+                                            <ComboBox x:Name="Doc1NameLabelComboBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
+                                                      IsEditable="False" FontSize="14" DropDownOpened="Doc1NameLabelComboBox_DropDownOpened" DropDownClosed="Doc1NameLabelComboBox_DropDownClosed">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
                                                         <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
@@ -262,12 +264,12 @@
                                             HorizontalAlignment="Left" Click="ReloadDoc1Button_Click" Margin="60,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-                                            <Button x:Name="CloseDoc1Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc1Button_Click">
+                                            <Button x:Name="CloseDoc1Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc1Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center"  Foreground="White" />
                                             </Button>
                                         </Grid>
                                     </Grid>
-                                    <ListView x:Name="DocCompareListView1" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareScrollViewer1_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
+                                    <ListView x:Name="DocCompareListView1" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareScrollViewer1_ScrollChanged" Background="{StaticResource RefDocumentBackGroundBrush}"
                                         VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
                                         <ListView.ItemContainerStyle>
@@ -283,6 +285,7 @@
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Image.Effect>
                                                                 </Image>
+                                                                <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
                                                             </Grid>
                                                         </ControlTemplate>
                                                     </Setter.Value>
@@ -361,11 +364,13 @@
                                     <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc2NameLabelComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="30,0,30,0" FontSize="14">
+                                            <Label Foreground="Black" Background="{StaticResource DocumentBackGroundBrush}" Margin="85, 0,0,0">Compared</Label>
+                                            <ComboBox x:Name="Doc2NameLabelComboBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged"
+                                                      IsEditable="False" Padding="0,0,0,0" FontSize="14">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
                                                         <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
@@ -385,7 +390,7 @@
                                             HorizontalAlignment="Left" Click="ReloadDoc2Button_Click" Margin="60,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-                                            <Button x:Name="CloseDoc2Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc2Button_Click">
+                                            <Button x:Name="CloseDoc2Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc2Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
                                         </Grid>
@@ -406,6 +411,7 @@
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Image.Effect>
                                                                 </Image>
+                                                                <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
                                                             </Grid>
                                                         </ControlTemplate>
                                                     </Setter.Value>
@@ -646,6 +652,12 @@
                             <Button Grid.Column="1" x:Name="ShowDoc2FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc2FileInfoButton_Click" IsEnabled="True">
                                 <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
                             </Button>
+                            <Button Grid.Column="1" x:Name="LinkScrollButton" Margin="0,0,35,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="LinkScrollButton_Click" IsEnabled="True" ToolTip="Enable parallel scrolling">
+                                <Rectangle Width="20" Height="20" Fill="{StaticResource linkscrollDrawingImage}"></Rectangle>
+                            </Button>
+                            <Button Grid.Column="1" x:Name="UnlinkScrollButton" Visibility="Hidden" Margin="0,0,35,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="UnlinkScrollButton_Click" IsEnabled="True" ToolTip="Disable parallel scrolling">
+                                <Rectangle Width="20" Height="20" Fill="{StaticResource unlinkscrollDrawingImage}"></Rectangle>
+                            </Button>
                             <Grid Grid.Row="1" Grid.Column="1" x:Name="Doc2StatsGrid" Visibility="Collapsed" Background="{StaticResource PrimaryHueDarkBrush}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
@@ -722,40 +734,59 @@
                                         <ColumnDefinition />
                                         <ColumnDefinition MaxWidth="250" MinWidth="250" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock x:Name="DocCompareNameLabel1" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Margin="60,0,0,0" Padding="30,0,30,0" TextTrimming="CharacterEllipsis"></TextBlock>
-                                    <Button x:Name="OpenDoc1OriginalButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="0" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="OpenDoc1OriginalButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="0" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
                                             HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click_1" Margin="10,0,0,0" ToolTip="Open original" Cursor="Hand">
-                                        <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
-                                    </Button>
-                                    <Button x:Name="ReloadDocCompare1Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="ReloadDocCompare1Button_Click" Margin="35,0,0,0" ToolTip="Reload document">
-                                        <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
-                                    </Button>
-                                    <ComboBox x:Name="DocCompareNameLabel2ComboBox" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="60,0,30,0" SelectedIndex="0" SelectionChanged="DocCompareNameLabel2ComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="30,0,30,0" FontSize="14">
-                                        <ComboBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
-                                            </DataTemplate>
-                                        </ComboBox.ItemTemplate>
-                                    </ComboBox>
-                                    <Button x:Name="ShowMaskButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Right" Click="ShowMaskButton_Click" Margin="0,0,10,0" Visibility="Hidden" ToolTip="Show difference mask">
+                                            <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                        </Button>
+                                        <Button x:Name="ReloadDocCompare1Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
+                                            HorizontalAlignment="Left" Click="ReloadDocCompare1Button_Click" Margin="10,0,10,0" ToolTip="Reload document" Grid.Column="1">
+                                            <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                        </Button>
+                                        <Label Grid.Column="2" Background="{StaticResource RefDocumentBackGroundBrush}">Reference</Label>
+                                        <TextBlock x:Name="DocCompareNameLabel1" Grid.Column="3" FontSize="14" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="White" Margin="10,0,10,0" Padding="0,0,0,0" TextTrimming="CharacterEllipsis"></TextBlock>
+                                    </Grid>
+                                    <Grid Grid.Column="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="OpenDoc2OriginalButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="0" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
+                                            HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click_1" Margin="10,0,0,0" ToolTip="Open original">
+                                            <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                        </Button>
+                                        <Button x:Name="ReloadDocCompare2Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
+                                            HorizontalAlignment="Left" Click="ReloadDocCompare2Button_Click" Margin="10,0,10,0" ToolTip="Reload document">
+                                            <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                        </Button>
+                                        <Label Grid.Column="2" Background="{StaticResource DocumentBackGroundBrush}">Compared</Label>
+                                        <ComboBox x:Name="DocCompareNameLabel2ComboBox" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="10,0,10,0" SelectedIndex="0" SelectionChanged="DocCompareNameLabel2ComboBox_SelectionChanged"
+                                                      IsEditable="False" Padding="0,0,0,0" FontSize="14">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                    </Grid>
+                                    
+                                    <Button x:Name="ShowMaskButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
+                                            HorizontalAlignment="Left" Click="ShowMaskButton_Click" Margin="0,0,10,0" Visibility="Hidden" ToolTip="Show difference mask">
                                         <iconPacks:PackIconMicrons Kind="Show" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                     </Button>
-                                    <Button x:Name="HideMaskButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Right" Click="HideMaskButton_Click" Margin="0,0,10,0" ToolTip="Hide difference mask">
+                                    <Button x:Name="HideMaskButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
+                                            HorizontalAlignment="Left" Click="HideMaskButton_Click" Margin="0,0,10,0" ToolTip="Hide difference mask">
                                         <iconPacks:PackIconMicrons Kind="Hide" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                     </Button>
-                                    <Button x:Name="OpenDoc2OriginalButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click_1" Margin="10,0,0,0" ToolTip="Open original">
-                                        <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
-                                    </Button>
-
-                                    <Button x:Name="ReloadDocCompare2Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="ReloadDocCompare2Button_Click" Margin="35,0,0,0" ToolTip="Reload document">
-                                        <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
-                                    </Button>
+                                    
                                     <!--Button x:Name="CloseDocCompareButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
                                             HorizontalAlignment="Right" Click="CloseDocCompareButton_Click" Margin="0,0,10,0" ToolTip="Close comparison">
                                         <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
@@ -772,7 +803,23 @@
                                     <ColumnDefinition MaxWidth="100" MinWidth="100" />
                                     <ColumnDefinition MaxWidth="150" MinWidth="150" />
                                 </Grid.ColumnDefinitions>
-                                <ListView x:Name="DocCompareMainListView" Grid.Column="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareMainScrollViewer_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource RefDocumentBackGroundBrush}"/>
+                                    <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource DocumentBackGroundBrush}"/>
+                                </Grid>
+                                <Grid Grid.Column="1" Grid.ColumnSpan="2">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource DocumentBackGroundBrush}"/>
+                                    <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource DocumentBackGroundBrush}"/>
+                                </Grid>
+                                <ListView x:Name="DocCompareMainListView" Grid.Column="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareMainScrollViewer_ScrollChanged" Background="Transparent"
                                     VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListView.ItemContainerStyle>
@@ -787,8 +834,8 @@
                                                                 <ColumnDefinition />
                                                                 <ColumnDefinition />
                                                             </Grid.ColumnDefinitions>
-                                                            <Grid Tag="{Binding ImgGridLeftName}" MouseEnter="HandleMainDocCompareGridMouseEnter" MouseLeave="HandleMainDocCompareGridMouseLeave">
-                                                                <Image Tag="{Binding ImgLeftName}" Source="{Binding PathToImgLeft, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch"
+                                                            <Grid Tag="{Binding ImgGridLeftName}" MouseEnter="HandleMainDocCompareGridMouseEnter" MouseLeave="HandleMainDocCompareGridMouseLeave" Background="Transparent">
+                                                                <Image Tag="{Binding ImgLeftName}" Source="{Binding PathToImgLeft, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Stretch="Uniform">
                                                                     <Image.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
@@ -863,7 +910,7 @@
                                         </Style>
                                     </ListView.ItemContainerStyle>
                                 </ListView>
-                                <ListView x:Name="DocCompareSideListViewLeft" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareSideScrollViewerLeft_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
+                                <ListView x:Name="DocCompareSideListViewLeft" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareSideScrollViewerLeft_ScrollChanged" Background="Transparent"
                                     VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden">
                                     <ListView.ItemContainerStyle>
@@ -914,7 +961,7 @@
                                         </Style>
                                     </ListView.ItemContainerStyle>
                                 </ListView>
-                                <ListView x:Name="DocCompareSideListViewRight" Grid.Column="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareSideScrollViewerRight_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
+                                <ListView x:Name="DocCompareSideListViewRight" Grid.Column="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareSideScrollViewerRight_ScrollChanged" Background="Transparent"
                                     VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListView.ItemContainerStyle>

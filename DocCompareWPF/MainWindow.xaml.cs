@@ -262,6 +262,9 @@ namespace DocCompareWPF
         // Walkthrough
         private bool walkthroughMode;
 
+        // link scroll
+        private bool linkscroll;
+
         private WalkthroughSteps walkthroughStep = 0;
 
         public MainWindow()
@@ -619,6 +622,17 @@ namespace DocCompareWPF
                         if (selectReferenceWindow.ShowDialog() == true)
                         {
                             docs.documentsToShow[0] = selectReferenceWindow.selectedIndex;
+                            if(docs.documentsToShow[1] == docs.documentsToShow[0])
+                            {
+                                for(int i = 0; i< docs.documents.Count; i++)
+                                {
+                                    if(i != docs.documentsToShow[0])
+                                    {
+                                        docs.documentsToShow[1] = i;
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -1644,7 +1658,8 @@ namespace DocCompareWPF
                             {
                                 SimpleImageItem thisImage = new SimpleImageItem()
                                 {
-                                    PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg")
+                                    PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"),
+                                    EoDVisi = Visibility.Hidden
                                 };
 
                                 if (pageCounter == 0)
@@ -1692,6 +1707,11 @@ namespace DocCompareWPF
                             */
                         }
 
+                        // add End of Document
+                        SimpleImageItem item = new SimpleImageItem();
+                        item.EoDVisi = Visibility.Visible;
+                        imageList.Add(item);
+
                         DocCompareListView1.ItemsSource = imageList;
                         DocCompareListView1.Items.Refresh();
                         DocCompareListView1.ScrollIntoView(DocCompareListView1.Items[0]);
@@ -1727,7 +1747,8 @@ namespace DocCompareWPF
                                 {
                                     SimpleImageItem thisImage = new SimpleImageItem()
                                     {
-                                        PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg")
+                                        PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"),
+                                        EoDVisi = Visibility.Hidden
                                     };
 
                                     if (pageCounter == 0)
@@ -1774,6 +1795,11 @@ namespace DocCompareWPF
                                 childPanel2.Height = DocCompareScrollViewer2.ActualHeight;
                                 */
                             }
+
+                            // add End of Document
+                            SimpleImageItem item = new SimpleImageItem();
+                            item.EoDVisi = Visibility.Visible;
+                            imageList.Add(item);
 
                             DocCompareListView2.ItemsSource = imageList;
                             DocCompareListView2.Items.Refresh();
@@ -2395,10 +2421,29 @@ namespace DocCompareWPF
 
                     accuHeight += container.ActualHeight;
 
-                    if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3)
+                    if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3 && Doc1Grid.Visibility == Visibility.Visible)
                     {
                         Doc1PageNumberLabel.Content = (i + 1).ToString() + " / " + DocCompareListView1.Items.Count.ToString();
                         break;
+                    }
+                    else
+                    {
+                        Doc1PageNumberLabel.Content = "";
+                    }
+                }
+
+                if (linkscroll == true)
+                {
+                    Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
+                    ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                    if(scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight )
+                    {
+                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                    }
+                    else
+                    {
+                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
                     }
                 }
             }
@@ -2422,10 +2467,29 @@ namespace DocCompareWPF
 
                     accuHeight += container.ActualHeight;
 
-                    if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3)
+                    if (accuHeight > scrollViewer.VerticalOffset + scrollViewer.ActualHeight / 3 && Doc2Grid.Visibility == Visibility.Visible)
                     {
                         Doc2PageNumberLabel.Content = (i + 1).ToString() + " / " + DocCompareListView2.Items.Count.ToString();
                         break;
+                    }
+                    else
+                    {
+                        Doc2PageNumberLabel.Content = "";
+                    }
+                }
+
+                if (linkscroll == true)
+                {
+                    Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
+                    ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                    {
+                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                    }
+                    else
+                    {
+                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
                     }
                 }
             }
@@ -5664,6 +5728,11 @@ namespace DocCompareWPF
                 PopupAnimateBubble.HorizontalOffset--;
             }
 
+            if(WindowState == WindowState.Normal)
+            {
+                outerBorder.Margin = new Thickness(0);
+            }
+
             /*
             if(Doc1StatsGrid.ActualHeight > Doc2StatsGrid.ActualHeight)
                 Doc2StatsGrid.Height = Doc1StatsGrid.ActualHeight;
@@ -5678,12 +5747,14 @@ namespace DocCompareWPF
             {
                 WindowMaximizeButton.Visibility = Visibility.Visible;
                 WindowRestoreButton.Visibility = Visibility.Hidden;
+                
             }
 
             if (WindowState == WindowState.Maximized)
             {
                 WindowMaximizeButton.Visibility = Visibility.Hidden;
                 WindowRestoreButton.Visibility = Visibility.Visible;
+                outerBorder.Margin = new Thickness(5, 5, 5, 0);
             }
         }
 
@@ -5912,6 +5983,9 @@ namespace DocCompareWPF
 
         public Thickness Margin { get; set; }
 
+        private string _pathToFile;
+        private Visibility _eodVisi;
+
         public string PathToFile
         {
             get
@@ -5952,7 +6026,19 @@ namespace DocCompareWPF
             }
         }
 
-        public Thickness Margin { get; set; }
+        public Visibility EoDVisi
+        {
+            get
+            {
+                return _eodVisi;
+            }
+
+            set
+            {
+                _eodVisi = value;
+                OnPropertyChanged();
+            }
+        }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {

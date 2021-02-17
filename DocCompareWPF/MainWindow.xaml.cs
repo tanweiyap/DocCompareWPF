@@ -4997,55 +4997,69 @@ namespace DocCompareWPF
                     walkthroughStep = WalkthroughSteps.COMPAREHIGHLIGHT; // 7
                 }
 
-                inForceAlignMode = false;
-                TextCompare = false;
-                //DocCompareLeftStatsGrid.Visibility = Visibility.Collapsed;
-                //DocCompareRightStatsGrid.Visibility = Visibility.Collapsed;
-
-                if (settings.isProVersion == true && settings.canSelectRefDoc == true)
+                docs.documentsToCompare[0] = docs.documentsToShow[0]; // default using the first document selected
+                if (docs.documents[docs.documentsToCompare[0]].processed == false)
                 {
-                    SetVisiblePanel(SidePanels.REFDOC);
+                    docs.documentsToCompare[0] = FindNextDocToShow();
+                }
 
-                    // populate list box
-                    ObservableCollection<string> items = new ObservableCollection<string>();
-                    foreach (Document doc in docs.documents)
-                    {
-                        if (doc.processed == true)
-                        {
-                            items.Add(Path.GetFileName(doc.filePath));
-                        }
-                    }
+                docs.documentsToCompare[1] = docs.documentsToShow[1]; // default using the first document selected
+                if (docs.documents[docs.documentsToCompare[1]].processed == false)
+                {
+                    docs.documentsToCompare[1] = FindNextDocToShow();
+                }
 
-                    RefDocListBox.ItemsSource = items;
-                    RefDocListBox.SelectedIndex = 0;
+                if (docs.documents[docs.documentsToCompare[0]].fileType == Document.FileTypes.WORD ||
+                    docs.documents[docs.documentsToCompare[0]].fileType == Document.FileTypes.TXT ||
+                    docs.documents[docs.documentsToCompare[1]].fileType == Document.FileTypes.WORD ||
+                    docs.documents[docs.documentsToCompare[1]].fileType == Document.FileTypes.TXT)
+                {
+                    CustomMessageBox messageBox = new CustomMessageBox();
+                    messageBox.Setup("Unsupported comparison", "2|Compare currently does not support visual comparison for text documents.");
+                    messageBox.ShowDialog();
                 }
                 else
                 {
-                    docs.documentsToCompare[0] = docs.documentsToShow[0]; // default using the first document selected
-                    if (docs.documents[docs.documentsToCompare[0]].processed == false)
-                    {
-                        docs.documentsToCompare[0] = FindNextDocToShow();
-                    }
+                    inForceAlignMode = false;
+                    TextCompare = false;
+                    //DocCompareLeftStatsGrid.Visibility = Visibility.Collapsed;
+                    //DocCompareRightStatsGrid.Visibility = Visibility.Collapsed;
 
-                    docs.documentsToCompare[1] = docs.documentsToShow[1]; // default using the first document selected
-                    if (docs.documents[docs.documentsToCompare[1]].processed == false)
+                    if (settings.isProVersion == true && settings.canSelectRefDoc == true)
                     {
-                        docs.documentsToCompare[1] = FindNextDocToShow();
-                    }
+                        SetVisiblePanel(SidePanels.REFDOC);
 
-                    //ReleaseDocPreview();
-                    UpdateDocCompareComboBox();
-                    SetVisiblePanel(SidePanels.DOCCOMPARE);
-                    docs.forceAlignmentIndices = new List<List<int>>();
-                    ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
-                    docCompareGrid.Visibility = Visibility.Hidden;
-                    docCompareSideGridShown = 0;
-                    //DocCompareMainListView.ScrollIntoView(DocCompareMainListView.Items[0]);
-                    //DocCompareSideListViewLeft.ScrollIntoView(DocCompareSideListViewLeft.Items[0]);
-                    //DocCompareSideListViewRight.ScrollIntoView(DocCompareSideListViewRight.Items[0]);
-                    ProgressBarDocCompare.Visibility = Visibility.Visible;
-                    threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                    threadCompare.Start();
+                        // populate list box
+                        ObservableCollection<string> items = new ObservableCollection<string>();
+                        foreach (Document doc in docs.documents)
+                        {
+                            if (doc.processed == true)
+                            {
+                                items.Add(Path.GetFileName(doc.filePath));
+                            }
+                        }
+
+                        RefDocListBox.ItemsSource = items;
+                        RefDocListBox.SelectedIndex = 0;
+                    }
+                    else
+                    {
+                        //ReleaseDocPreview();
+                        UpdateDocCompareComboBox();
+                        SetVisiblePanel(SidePanels.DOCCOMPARE);
+                        docs.forceAlignmentIndices = new List<List<int>>();
+                        ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                        docCompareGrid.Visibility = Visibility.Hidden;
+                        docCompareSideGridShown = 0;
+                        DocCompareMainListView.Visibility = Visibility.Visible;
+                        DocCompareMainTextListView.Visibility = Visibility.Hidden;
+                        //DocCompareMainListView.ScrollIntoView(DocCompareMainListView.Items[0]);
+                        //DocCompareSideListViewLeft.ScrollIntoView(DocCompareSideListViewLeft.Items[0]);
+                        //DocCompareSideListViewRight.ScrollIntoView(DocCompareSideListViewRight.Items[0]);
+                        ProgressBarDocCompare.Visibility = Visibility.Visible;
+                        threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                        threadCompare.Start();
+                    }
                 }
             }
         }
@@ -5062,11 +5076,9 @@ namespace DocCompareWPF
             }
         }
 
-        private void SidePanelTextCompareButton_Click(object sender, RoutedEventArgs e)
+        private void TextCompareThread()
         {
-            TextCompare = true;
-            docs.documentsToCompare[0] = docs.documentsToShow[0];
-            docs.documentsToCompare[1] = docs.documentsToShow[1];
+            docCompareRunning = true;
             int[,] forceIndices = new int[docs.forceAlignmentIndices.Count, 2];
             for (int i = 0; i < docs.forceAlignmentIndices.Count; i++)
             {
@@ -5092,12 +5104,19 @@ namespace DocCompareWPF
                 docs.documents[docs.documentsToCompare[1]].textDiff = diffList;
             }
 
-            // show result
-            SetVisiblePanel(SidePanels.TEXTCOMPARE);
-            DocCompareMainListView.Visibility = Visibility.Hidden;
-            DocCompareMainTextListView.Visibility = Visibility.Visible;
-            docCompareGrid.Visibility = Visibility.Visible;
+            // call thread to display result
+            Dispatcher.Invoke(() =>
+            {
+                ProgressBarLoadingResults.Visibility = Visibility.Visible;
+                ProgressBarDocCompare.Visibility = Visibility.Hidden;
+            });
 
+            threadDisplayResult = new Thread(new ThreadStart(TextCompareDisplayResultThread));
+            threadDisplayResult.Start();
+        }
+
+        private void TextCompareDisplayResultThread()
+        {
             List<CompareTextItem> list = new List<CompareTextItem>();
             List<DocConvert.TextParagraph> paras1 = new List<DocConvert.TextParagraph>();
             List<DocConvert.TextParagraph> paras2 = new List<DocConvert.TextParagraph>();
@@ -5116,23 +5135,32 @@ namespace DocCompareWPF
                 item.Margin = new Thickness(10, 0, 10, 10);
             }
             */
-            for (int i = 0; i < docs.totalLen; i++)
-            {
-                if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= 0)
-                {
-                    paras1.Add(docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]]);
-                    paras2.Add(docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]]);
-                    diffList1.Add(docs.documents[docs.documentsToCompare[0]].textDiff[i]);
-                    diffList2.Add(docs.documents[docs.documentsToCompare[1]].textDiff[i]);
 
-                    if (i < docs.totalLen - 1)
+            Dispatcher.Invoke(() =>
+            {
+                for (int i = 0; i < docs.totalLen; i++)
+                {
+                    if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= 0)
                     {
-                        if (docs.documents[docs.documentsToCompare[0]].textDiff[i].Count == 1 && docs.documents[docs.documentsToCompare[1]].textDiff[i].Count == 1)
+                        paras1.Add(docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]]);
+                        paras2.Add(docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]]);
+                        diffList1.Add(docs.documents[docs.documentsToCompare[0]].textDiff[i]);
+                        diffList2.Add(docs.documents[docs.documentsToCompare[1]].textDiff[i]);
+
+                        if (i < docs.totalLen - 1)
                         {
-                            if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i + 1] >= 0 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i + 1] >= 0)
+                            if (docs.documents[docs.documentsToCompare[0]].textDiff[i].Count == 1 && docs.documents[docs.documentsToCompare[1]].textDiff[i].Count == 1)
                             {
-                                if (docs.documents[docs.documentsToCompare[0]].textDiff[i + 1].Count == 1 && docs.documents[docs.documentsToCompare[1]].textDiff[i + 1].Count == 1)
-                                    continueSearch = true;
+                                if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i + 1] >= 0 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i + 1] >= 0)
+                                {
+                                    if (docs.documents[docs.documentsToCompare[0]].textDiff[i + 1].Count == 1 && docs.documents[docs.documentsToCompare[1]].textDiff[i + 1].Count == 1)
+                                        continueSearch = true;
+                                    else
+                                    {
+                                        continueSearch = false;
+                                        colInd = 2;
+                                    }
+                                }
                                 else
                                 {
                                     continueSearch = false;
@@ -5151,146 +5179,136 @@ namespace DocCompareWPF
                             colInd = 2;
                         }
                     }
-                    else
+                    else if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] < -1)
                     {
+                        paras1.Add(docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]]);
+                        diffList1.Add(docs.documents[docs.documentsToCompare[0]].textDiff[i]);
                         continueSearch = false;
-                        colInd = 2;
+                        colInd = 0;
                     }
-                }
-                else if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] < -1)
-                {
-                    paras1.Add(docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]]);
-                    diffList1.Add(docs.documents[docs.documentsToCompare[0]].textDiff[i]);
-                    continueSearch = false;
-                    colInd = 0;
-                }
-                else if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] < -1)
-                {
-                    paras2.Add(docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]]);
-                    diffList2.Add(docs.documents[docs.documentsToCompare[1]].textDiff[i]);
-                    continueSearch = false;
-                    colInd = 1;
-                }
-                else if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] == -1)
-                {
-                    paras1.Add(docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]]);
-                    diffList1.Add(docs.documents[docs.documentsToCompare[0]].textDiff[i]);
-                    continueSearch = false;
-                    colInd = 3;
-                }
-                else if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] == -1)
-                {
-                    paras2.Add(docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]]);
-                    diffList2.Add(docs.documents[docs.documentsToCompare[1]].textDiff[i]);
-                    continueSearch = false;
-                    colInd = 4;
-                }
-
-                if (continueSearch == false)
-                {
-                    item = new CompareTextItem();
-
-                    if (colInd == 0)
+                    else if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] < -1)
                     {
-                        item.Document1 = CreateFlowDocumentParagraph(paras1, diffList1, 0);
-                        item.Background1 = Brushes.White;
-                        item.Document2 = CreateFlowDocumentLink(docs.documents[docs.documentsToCompare[0]].docCompareIndices.IndexOf(docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]), 1);
-                        item.Background2 = Brushes.Transparent;
+                        paras2.Add(docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]]);
+                        diffList2.Add(docs.documents[docs.documentsToCompare[1]].textDiff[i]);
+                        continueSearch = false;
+                        colInd = 1;
                     }
-                    else if (colInd == 1)
+                    else if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] == -1)
                     {
-                        item.Document2 = CreateFlowDocumentParagraph(paras2, diffList2, 1);
-                        item.Background2 = Brushes.White;
-                        item.Document1 = CreateFlowDocumentLink(docs.documents[docs.documentsToCompare[1]].docCompareIndices.IndexOf(docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]), 0);
-                        item.Background1 = Brushes.Transparent;
+                        paras1.Add(docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]]);
+                        diffList1.Add(docs.documents[docs.documentsToCompare[0]].textDiff[i]);
+                        continueSearch = false;
+                        colInd = 3;
                     }
-                    else if (colInd == 2)
+                    else if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] == -1)
                     {
-                        item.Document1 = CreateFlowDocumentParagraph(paras1, diffList1, 0);
-                        item.Background1 = Brushes.White;
-                        item.Document2 = CreateFlowDocumentParagraph(paras2, diffList2, 1);
-                        item.Background2 = Brushes.White;
-                    }
-                    else if (colInd == 3)
-                    {
-                        item.Document1 = CreateFlowDocumentParagraph(paras1, diffList1, 0);
-                        item.Background1 = Brushes.White;
-                        item.Visi2 = Visibility.Hidden;
-                    }
-                    else if (colInd == 4)
-                    {
-                        item.Document2 = CreateFlowDocumentParagraph(paras2, diffList2, 0);
-                        item.Background2 = Brushes.White;
-                        item.Visi1 = Visibility.Hidden;
+                        paras2.Add(docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]]);
+                        diffList2.Add(docs.documents[docs.documentsToCompare[1]].textDiff[i]);
+                        continueSearch = false;
+                        colInd = 4;
                     }
 
-                    if(list.Count == 0)
+                    if (continueSearch == false)
                     {
-                        item.Margin = new Thickness(10, 10, 10, 10);
-                    }
-                    else
-                    {
-                        item.Margin = new Thickness(10, 0, 10, 10);
-                    }
+                        item = new CompareTextItem();
 
-                    paras1.Clear();
-                    paras2.Clear();
-                    diffList1.Clear();
-                    diffList2.Clear();
-                    list.Add(item);
+                        if (colInd == 0)
+                        {
+                            item.Document1 = CreateFlowDocumentParagraph(paras1, diffList1, 0);
+                            item.Background1 = Brushes.White;
+                            item.Document2 = CreateFlowDocumentLink(docs.documents[docs.documentsToCompare[0]].docCompareIndices.IndexOf(docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]), 1);
+                            item.Background2 = Brushes.Transparent;
+                        }
+                        else if (colInd == 1)
+                        {
+                            item.Document2 = CreateFlowDocumentParagraph(paras2, diffList2, 1);
+                            item.Background2 = Brushes.White;
+                            item.Document1 = CreateFlowDocumentLink(docs.documents[docs.documentsToCompare[1]].docCompareIndices.IndexOf(docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]), 0);
+                            item.Background1 = Brushes.Transparent;
+                        }
+                        else if (colInd == 2)
+                        {
+                            item.Document1 = CreateFlowDocumentParagraph(paras1, diffList1, 0);
+                            item.Background1 = Brushes.White;
+                            item.Document2 = CreateFlowDocumentParagraph(paras2, diffList2, 1);
+                            item.Background2 = Brushes.White;
+                        }
+                        else if (colInd == 3)
+                        {
+                            item.Document1 = CreateFlowDocumentParagraph(paras1, diffList1, 0);
+                            item.Background1 = Brushes.White;
+                            item.Visi2 = Visibility.Hidden;
+                        }
+                        else if (colInd == 4)
+                        {
+                            item.Document2 = CreateFlowDocumentParagraph(paras2, diffList2, 0);
+                            item.Background2 = Brushes.White;
+                            item.Visi1 = Visibility.Hidden;
+                        }
+
+                        if (list.Count == 0)
+                        {
+                            item.Margin = new Thickness(10, 10, 10, 10);
+                        }
+                        else
+                        {
+                            item.Margin = new Thickness(10, 0, 10, 10);
+                        }
+
+                        paras1.Clear();
+                        paras2.Clear();
+                        diffList1.Clear();
+                        diffList2.Clear();
+                        list.Add(item);
+                    }                    
                 }
 
-                /*
-                if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
+                DocCompareMainTextListView.ItemsSource = list;
+                DocCompareMainTextListView.Items.Refresh();
+                docCompareGrid.Visibility = Visibility.Visible;
+                DocCompareNameLabel1.Text = Path.GetFileName(docs.documents[docs.documentsToCompare[0]].filePath);
+                DocCompareSideListViewLeft.Visibility = Visibility.Hidden;
+                DocCompareSideListViewRight.Visibility = Visibility.Hidden;
+                UpdateDocCompareComboBox();
+                //UpdateFileStat(3);
+                ProgressBarLoadingResults.Visibility = Visibility.Hidden;
+                ShowDocCompareFileInfoButton.IsEnabled = true;
+                docCompareRunning = false;
+            });
+        }
+
+        private void SidePanelTextCompareButton_Click(object sender, RoutedEventArgs e)
+        {
+             if (docs.documents.Count >= 2 && docCompareRunning == false)
+            {
+                TextCompare = true;
+                docs.documentsToCompare[0] = docs.documentsToShow[0];
+                docs.documentsToCompare[1] = docs.documentsToShow[1];
+
+                if ((docs.documents[docs.documentsToCompare[0]].fileType != Document.FileTypes.WORD &&
+                    docs.documents[docs.documentsToCompare[0]].fileType != Document.FileTypes.TXT) ||
+                    (docs.documents[docs.documentsToCompare[1]].fileType != Document.FileTypes.WORD &&
+                    docs.documents[docs.documentsToCompare[1]].fileType != Document.FileTypes.TXT))
                 {
-                    if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] >= 0)
-                    {
-                        DocConvert.TextParagraph para = docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]];
-                        item.Document1 = CreateFlowDocumentParagraph(para, docs.documents[docs.documentsToCompare[0]].textDiff[i],0);
-                        //item.Document1 = CreateFlowDocumentParagraph(para, new List<Diff>());
-                        item.Background1 = Brushes.White;
-                    }
-                    else
-                    {
-                        item.Document1 = CreateFlowDocumentLink(docs.documents[docs.documentsToCompare[1]].docCompareIndices.IndexOf(docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]),0);
-                        item.Background1 = Brushes.Transparent;
-                    }
+                    CustomMessageBox messageBox = new CustomMessageBox();
+                    messageBox.Setup("Unsupported comparison", "2|Compare currently does not support text comparison for non-text document type.");
+                    messageBox.ShowDialog();
                 }
                 else
                 {
-                    item.Visi1 = Visibility.Hidden;
+                    // show result
+                    SetVisiblePanel(SidePanels.TEXTCOMPARE);
+                    DocCompareMainListView.Visibility = Visibility.Hidden;
+                    DocCompareMainTextListView.Visibility = Visibility.Visible;
+                    ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                    docCompareGrid.Visibility = Visibility.Hidden;
+                    docCompareSideGridShown = 0;
+                    // start compare thread
+                    ProgressBarDocCompare.Visibility = Visibility.Visible;
+                    threadCompare = new Thread(new ThreadStart(TextCompareThread));
+                    threadCompare.Start();
                 }
-
-                if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
-                {
-                    if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= 0)
-                    {
-                        DocConvert.TextParagraph para = docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]];
-                        item.Document2 = CreateFlowDocumentParagraph(para, docs.documents[docs.documentsToCompare[1]].textDiff[i],1);
-                        item.Background2 = Brushes.White;
-                    }
-                    else
-                    {
-                        item.Document2 = CreateFlowDocumentLink(docs.documents[docs.documentsToCompare[0]].docCompareIndices.IndexOf(docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]),1);
-                        item.Background2 = Brushes.Transparent;
-                    }
-                }
-                else
-                {
-                    item.Visi2 = Visibility.Hidden;
-                }
-
-                list.Add(item);
-                */
             }
-
-            DocCompareMainTextListView.ItemsSource = list;
-            DocCompareMainTextListView.Items.Refresh();
-
-            DocCompareNameLabel1.Text = Path.GetFileName(docs.documents[docs.documentsToCompare[0]].filePath);
-            UpdateDocCompareComboBox();
-            //UpdateFileStat(3);
-            ShowDocCompareFileInfoButton.IsEnabled = true;
         }
 
         private void UnMaskSideGridFromForceAlignMode()

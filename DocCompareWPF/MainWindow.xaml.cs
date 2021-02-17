@@ -121,6 +121,9 @@ namespace DocCompareWPF
         // Walkthrough
         private bool walkthroughMode;
 
+        // link scroll
+        private bool linkscroll;
+
         private WalkthroughSteps walkthroughStep = 0;
 
         public MainWindow()
@@ -1928,6 +1931,17 @@ namespace DocCompareWPF
                         break;
                     }
                 }
+
+                if (linkscroll == true)
+                {
+                    Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
+                    ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                    if(scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight )
+                    {
+                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                    }
+                }
             }
             catch
             {
@@ -1953,6 +1967,17 @@ namespace DocCompareWPF
                     {
                         Doc2PageNumberLabel.Content = (i + 1).ToString() + " / " + DocCompareListView2.Items.Count.ToString();
                         break;
+                    }
+                }
+
+                if (linkscroll == true)
+                {
+                    Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
+                    ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                    {
+                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
                     }
                 }
             }
@@ -4609,6 +4634,20 @@ namespace DocCompareWPF
                     LicenseKeyTextBox.IsEnabled = true;
                 });
             }
+        }
+
+        private void LinkScrollButton_Click(object sender, RoutedEventArgs e)
+        {
+            linkscroll = true;
+            UnlinkScrollButton.Visibility = Visibility.Visible;
+            LinkScrollButton.Visibility = Visibility.Hidden;
+        }
+
+        private void UnlinkScrollButton_Click(object sender, RoutedEventArgs e)
+        {
+            linkscroll = false;
+            UnlinkScrollButton.Visibility = Visibility.Hidden;
+            LinkScrollButton.Visibility = Visibility.Visible;
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

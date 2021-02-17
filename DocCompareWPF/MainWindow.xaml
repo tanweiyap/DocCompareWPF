@@ -278,6 +278,7 @@
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Image.Effect>
                                                                 </Image>
+                                                                <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
                                                             </Grid>
                                                         </ControlTemplate>
                                                     </Setter.Value>
@@ -380,6 +381,7 @@
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Image.Effect>
                                                                 </Image>
+                                                                <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
                                                             </Grid>
                                                         </ControlTemplate>
                                                     </Setter.Value>

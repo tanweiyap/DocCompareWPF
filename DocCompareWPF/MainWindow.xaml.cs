@@ -622,11 +622,11 @@ namespace DocCompareWPF
                         if (selectReferenceWindow.ShowDialog() == true)
                         {
                             docs.documentsToShow[0] = selectReferenceWindow.selectedIndex;
-                            if(docs.documentsToShow[1] == docs.documentsToShow[0])
+                            if (docs.documentsToShow[1] == docs.documentsToShow[0])
                             {
-                                for(int i = 0; i< docs.documents.Count; i++)
+                                for (int i = 0; i < docs.documents.Count; i++)
                                 {
-                                    if(i != docs.documentsToShow[0])
+                                    if (i != docs.documentsToShow[0])
                                     {
                                         docs.documentsToShow[1] = i;
                                         break;
@@ -1550,10 +1550,19 @@ namespace DocCompareWPF
                         SimpleTextItem item = new SimpleTextItem
                         {
                             Document = CreateFlowDocument(docs.documents[docIndex].textDocument),
-                            Margin = new Thickness(10)
+                            Margin = new Thickness(10),
+                            EoDVisi = Visibility.Hidden,
+                            DocVisi = Visibility.Visible,
                         };
 
                         list.Add(item);
+
+                        SimpleTextItem item2 = new SimpleTextItem
+                        {
+                            EoDVisi = Visibility.Visible,
+                            DocVisi = Visibility.Hidden,
+                        };
+                        list.Add(item2);
 
                         Dispatcher.Invoke(() =>
                         {
@@ -1584,10 +1593,19 @@ namespace DocCompareWPF
                         SimpleTextItem item = new SimpleTextItem
                         {
                             Document = CreateFlowDocument(docs.documents[docIndex].textDocument),
-                            Margin = new Thickness(10)
+                            Margin = new Thickness(10),
+                            EoDVisi = Visibility.Hidden,
+                            DocVisi = Visibility.Visible,
                         };
 
                         list.Add(item);
+
+                        SimpleTextItem item2 = new SimpleTextItem
+                        {
+                            EoDVisi = Visibility.Visible,
+                            DocVisi = Visibility.Hidden
+                        };
+                        list.Add(item2);
 
                         Dispatcher.Invoke(() =>
                         {
@@ -2437,7 +2455,7 @@ namespace DocCompareWPF
                     Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
                     ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if(scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight )
+                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
                     {
                         scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
                     }
@@ -5261,14 +5279,36 @@ namespace DocCompareWPF
                     {
                         paras1.Add(docs.documents[docs.documentsToCompare[0]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]]);
                         diffList1.Add(docs.documents[docs.documentsToCompare[0]].textDiff[i]);
-                        continueSearch = false;
+                        if (i < docs.totalLen - 1)
+                        {
+                            if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i + 1] >= 0 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i + 1] == -1)
+                                continueSearch = true;
+                            else
+                                continueSearch = false;
+                        }else
+                        {
+                            continueSearch = false;
+                        }
+
                         colInd = 3;
                     }
                     else if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] >= 0 && docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] == -1)
                     {
                         paras2.Add(docs.documents[docs.documentsToCompare[1]].textDocument.Paragraphs[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]]);
                         diffList2.Add(docs.documents[docs.documentsToCompare[1]].textDiff[i]);
-                        continueSearch = false;
+
+                        if (i < docs.totalLen - 1)
+                        {
+                            if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i + 1] >= 0 && docs.documents[docs.documentsToCompare[0]].docCompareIndices[i + 1] == -1)
+                                continueSearch = true;
+                            else
+                                continueSearch = false;
+                        }
+                        else
+                        {
+                            continueSearch = false;
+                        }
+
                         colInd = 4;
                     }
 
@@ -5324,7 +5364,7 @@ namespace DocCompareWPF
                         diffList1.Clear();
                         diffList2.Clear();
                         list.Add(item);
-                    }                    
+                    }
                 }
 
                 DocCompareMainTextListView.ItemsSource = list;
@@ -5343,7 +5383,7 @@ namespace DocCompareWPF
 
         private void SidePanelTextCompareButton_Click(object sender, RoutedEventArgs e)
         {
-             if (docs.documents.Count >= 2 && docCompareRunning == false)
+            if (docs.documents.Count >= 2 && docCompareRunning == false)
             {
                 TextCompare = true;
                 docs.documentsToCompare[0] = docs.documentsToShow[0];
@@ -5728,7 +5768,7 @@ namespace DocCompareWPF
                 PopupAnimateBubble.HorizontalOffset--;
             }
 
-            if(WindowState == WindowState.Normal)
+            if (WindowState == WindowState.Normal)
             {
                 outerBorder.Margin = new Thickness(0);
             }
@@ -5741,13 +5781,80 @@ namespace DocCompareWPF
             */
         }
 
+        private void LinkScrollButton_Click(object sender, RoutedEventArgs e)
+        {
+            linkscroll = true;
+            UnlinkScrollButton.Visibility = Visibility.Visible;
+            LinkScrollButton.Visibility = Visibility.Hidden;
+        }
+
+        private void UnlinkScrollButton_Click(object sender, RoutedEventArgs e)
+        {
+            linkscroll = false;
+            UnlinkScrollButton.Visibility = Visibility.Hidden;
+            LinkScrollButton.Visibility = Visibility.Visible;
+        }
+
+        private void DocCompareTextListView2_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            try
+            {
+                Border border = (Border)VisualTreeHelper.GetChild(DocCompareTextListView2, 0);
+                ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
+
+                if (linkscroll == true)
+                {
+                    Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareTextListView1, 0);
+                    ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                    {
+                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                    }
+                    else
+                    {
+                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private void DocCompareTextListView1_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            try
+            {
+                Border border = (Border)VisualTreeHelper.GetChild(DocCompareTextListView1, 0);
+                ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
+
+                if (linkscroll == true)
+                {
+                    Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareTextListView2, 0);
+                    ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                    {
+                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                    }
+                    else
+                    {
+                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+
         private void Window_StateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Normal)
             {
                 WindowMaximizeButton.Visibility = Visibility.Visible;
                 WindowRestoreButton.Visibility = Visibility.Hidden;
-                
             }
 
             if (WindowState == WindowState.Maximized)
@@ -5977,8 +6084,6 @@ namespace DocCompareWPF
 
     public class SimpleImageItem : INotifyPropertyChanged
     {
-        private string _pathToFile;
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Thickness Margin { get; set; }
@@ -6000,6 +6105,20 @@ namespace DocCompareWPF
             }
         }
 
+        public Visibility EoDVisi
+        {
+            get
+            {
+                return _eodVisi;
+            }
+
+            set
+            {
+                _eodVisi = value;
+                OnPropertyChanged();
+            }
+        }
+
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -6011,6 +6130,8 @@ namespace DocCompareWPF
         private FlowDocument _Document;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public Thickness Margin { get; set; }
 
         public FlowDocument Document
         {
@@ -6026,6 +6147,8 @@ namespace DocCompareWPF
             }
         }
 
+        private Visibility _eodVisi;
+
         public Visibility EoDVisi
         {
             get
@@ -6036,6 +6159,22 @@ namespace DocCompareWPF
             set
             {
                 _eodVisi = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Visibility _docVisi;
+
+        public Visibility DocVisi
+        {
+            get
+            {
+                return _docVisi;
+            }
+
+            set
+            {
+                _docVisi = value;
                 OnPropertyChanged();
             }
         }

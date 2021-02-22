@@ -575,10 +575,10 @@
                             <Button Grid.Column="1" x:Name="ShowDoc2FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc2FileInfoButton_Click" IsEnabled="True">
                                 <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
                             </Button>
-                            <Button Grid.Column="1" x:Name="LinkScrollButton" Margin="0,0,35,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="LinkScrollButton_Click" IsEnabled="True" ToolTip="Enable parallel scrolling">
+                            <Button Grid.Column="1" x:Name="LinkScrollButton" Visibility="Hidden" Margin="0,0,35,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="LinkScrollButton_Click" IsEnabled="True" ToolTip="Enable parallel scrolling">
                                 <Rectangle Width="20" Height="20" Fill="{StaticResource linkscrollDrawingImage}"></Rectangle>
                             </Button>
-                            <Button Grid.Column="1" x:Name="UnlinkScrollButton" Visibility="Hidden" Margin="0,0,35,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="UnlinkScrollButton_Click" IsEnabled="True" ToolTip="Disable parallel scrolling">
+                            <Button Grid.Column="1" x:Name="UnlinkScrollButton" Visibility="Visible" Margin="0,0,35,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="UnlinkScrollButton_Click" IsEnabled="True" ToolTip="Disable parallel scrolling">
                                 <Rectangle Width="20" Height="20" Fill="{StaticResource unlinkscrollDrawingImage}"></Rectangle>
                             </Button>
                             <Grid Grid.Row="1" Grid.Column="1" x:Name="Doc2StatsGrid" Visibility="Collapsed" Background="{StaticResource PrimaryHueDarkBrush}">

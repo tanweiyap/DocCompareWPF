@@ -77,7 +77,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.1.0";
+        private readonly string versionString = "1.1.1";
         private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
@@ -122,7 +122,7 @@ namespace DocCompareWPF
         private bool walkthroughMode;
 
         // link scroll
-        private bool linkscroll;
+        private bool linkscroll = true;
 
         private WalkthroughSteps walkthroughStep = 0;
 
@@ -877,7 +877,6 @@ namespace DocCompareWPF
                 else
                 {
                     Doc2Grid.Visibility = Visibility.Hidden;
-                    Doc2PageNumberLabel.Content = "";
                     DocCompareDragDropZone2.Visibility = Visibility.Visible;
                     DocPreviewStatGrid.Visibility = Visibility.Visible;
                     Doc1StatsGrid.Visibility = Visibility.Visible;
@@ -1275,6 +1274,7 @@ namespace DocCompareWPF
                         DocCompareListView1.ScrollIntoView(DocCompareListView1.Items[0]);
                         Doc1Grid.Visibility = Visibility.Visible;
                         ProgressBarDoc1.Visibility = Visibility.Hidden;
+                        Doc1PageNumberLabel.Content = "1 / " + DocCompareListView1.Items.Count.ToString();
                     }
                 }
             }
@@ -1362,6 +1362,7 @@ namespace DocCompareWPF
                             DocCompareListView2.ScrollIntoView(DocCompareListView2.Items[0]);
                             Doc2Grid.Visibility = Visibility.Visible;
                             ProgressBarDoc2.Visibility = Visibility.Hidden;
+                            Doc2PageNumberLabel.Content = "1 / " + DocCompareListView2.Items.Count.ToString();
                         }
                     }
                 });

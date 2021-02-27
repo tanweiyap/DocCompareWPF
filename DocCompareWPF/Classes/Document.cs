@@ -20,6 +20,7 @@ namespace DocCompareWPF.Classes
         public string LastEditor;
         public bool loaded, processed;
         public string ModifiedDate;
+        public List<bool> pptIsHidden;
 
         public Document()
         {
@@ -119,7 +120,7 @@ namespace DocCompareWPF.Classes
             int ret = -1;
             try
             {
-                ret = pptConvertClass.ConvertPPTToImages(filePath, imageFolder);
+                ret = pptConvertClass.ConvertPPTToImages(filePath, imageFolder, out pptIsHidden);
                 if (ret == 0)
                     processed = true;
             }

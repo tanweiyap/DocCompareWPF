@@ -22,7 +22,7 @@
             </Grid.RowDefinitions>
             <Popup x:Name="PopupBrowseFileBubble" PlacementTarget="{Binding ElementName=SidePanelOpenDocButton}" StaysOpen="True"
                    PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-20" HorizontalOffset="10" Height="150" Placement="Bottom">
-            <local:DialogBubble Message="Click on this tab to browse and inspect files before comparison"
+                <local:DialogBubble Message="Click on this tab to browse and inspect files before comparison"
                                 StartPoint="5,40" TopPoint="5,10" EndPoint="35,40"
                                 RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
                                 Height="130"></local:DialogBubble>
@@ -267,26 +267,50 @@
                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
                                         <ListView.ItemContainerStyle>
                                             <Style TargetType="ListViewItem">
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>                                          
-                                                <Setter Property="Background" Value="Transparent"/>  
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                <Setter Property="Background" Value="Transparent"/>
                                                 <Setter Property="Template">
                                                     <Setter.Value>
-                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">   
-                                                            <Grid HorizontalAlignment="Stretch" Background="Transparent">                                         
-                                                                <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
-                                                                    <Image.Effect>
+                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                            <Grid Tag="DocPreviewList1" HorizontalAlignment="Stretch" Background="Transparent" MouseEnter="HandleDocPreviewMouseEnter" MouseLeave="HandleDocPreviewMouseLeave">
+                                                                <Border >
+                                                                    <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
+                                                                        <Image.Effect>
+                                                                            <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
+                                                                        </Image.Effect>
+                                                                    </Image>
+                                                                    <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
-                                                                    </Image.Effect>
-                                                                </Image>
+                                                                    </Border.Effect>
+                                                                </Border>
                                                                 <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
+                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                                                    <Path.Data>
+                                                                        <PathGeometry>
+                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                <LineSegment Point="100,0"></LineSegment>
+                                                                                <LineSegment Point="100,100"></LineSegment>
+                                                                            </PathFigure>
+                                                                        </PathGeometry>
+                                                                    </Path.Data>
+                                                                    <Path.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                    </Path.Effect>
+                                                                </Path>
+                                                                <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}">
+                                                                    <Label.RenderTransform>
+                                                                        <RotateTransform Angle="45"></RotateTransform>
+                                                                    </Label.RenderTransform>
+                                                                </Label>
+
                                                             </Grid>
                                                         </ControlTemplate>
                                                     </Setter.Value>
-                                                </Setter> 
-                                            </Style>                                        
+                                                </Setter>
+                                            </Style>
                                         </ListView.ItemContainerStyle>
                                     </ListView>
-                                    
+
                                 </Grid>
                                 <mah:Tile x:Name="ProgressBarDoc1" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -370,26 +394,50 @@
                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
                                         <ListView.ItemContainerStyle>
                                             <Style TargetType="ListViewItem">
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>                                          
-                                                <Setter Property="Background" Value="Transparent"/>  
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                <Setter Property="Background" Value="Transparent"/>
                                                 <Setter Property="Template">
                                                     <Setter.Value>
-                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">   
-                                                            <Grid HorizontalAlignment="Stretch" Background="Transparent">                                         
-                                                                <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
-                                                                    <Image.Effect>
+                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                            <Grid HorizontalAlignment="Stretch" Background="Transparent" MouseEnter="HandleDocPreviewMouseEnter" MouseLeave="HandleDocPreviewMouseLeave">
+                                                                <Border >
+                                                                    <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
+                                                                        <Image.Effect>
+                                                                            <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
+                                                                        </Image.Effect>
+                                                                    </Image>
+                                                                    <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
-                                                                    </Image.Effect>
-                                                                </Image>
+                                                                    </Border.Effect>
+                                                                </Border>
                                                                 <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
+                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                                                    <Path.Data>
+                                                                        <PathGeometry>
+                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                <LineSegment Point="100,0"></LineSegment>
+                                                                                <LineSegment Point="100,100"></LineSegment>
+                                                                            </PathFigure>
+                                                                        </PathGeometry>
+                                                                    </Path.Data>
+                                                                    <Path.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                    </Path.Effect>
+                                                                </Path>
+                                                                <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}">
+                                                                    <Label.RenderTransform>
+                                                                        <RotateTransform Angle="45"></RotateTransform>
+                                                                    </Label.RenderTransform>
+                                                                </Label>
+
                                                             </Grid>
                                                         </ControlTemplate>
                                                     </Setter.Value>
-                                                </Setter> 
-                                            </Style>                                        
+                                                </Setter>
+                                            </Style>
                                         </ListView.ItemContainerStyle>
                                     </ListView>
-                                    
+
                                 </Grid>
                                 <mah:Tile x:Name="ProgressBarDoc2" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -472,22 +520,46 @@
                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                         <ListView.ItemContainerStyle>
                                             <Style TargetType="ListViewItem">
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>                                          
-                                                <Setter Property="Background" Value="Transparent"/>  
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                <Setter Property="Background" Value="Transparent"/>
                                                 <Setter Property="Template">
                                                     <Setter.Value>
-                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">   
-                                                            <Grid HorizontalAlignment="Stretch" Background="Transparent">                                         
-                                                                <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
-                                                                    <Image.Effect>
+                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                            <Grid HorizontalAlignment="Stretch" Background="Transparent" MouseEnter="HandleDocPreviewMouseEnter" MouseLeave="HandleDocPreviewMouseLeave">
+                                                                <Border >
+                                                                    <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
+                                                                        <Image.Effect>
+                                                                            <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
+                                                                        </Image.Effect>
+                                                                    </Image>
+                                                                    <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
-                                                                    </Image.Effect>
-                                                                </Image>
+                                                                    </Border.Effect>
+                                                                </Border>
+                                                                <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
+                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                                                    <Path.Data>
+                                                                        <PathGeometry>
+                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                <LineSegment Point="100,0"></LineSegment>
+                                                                                <LineSegment Point="100,100"></LineSegment>
+                                                                            </PathFigure>
+                                                                        </PathGeometry>
+                                                                    </Path.Data>
+                                                                    <Path.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                    </Path.Effect>
+                                                                </Path>
+                                                                <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}">
+                                                                    <Label.RenderTransform>
+                                                                        <RotateTransform Angle="45"></RotateTransform>
+                                                                    </Label.RenderTransform>
+                                                                </Label>
                                                             </Grid>
                                                         </ControlTemplate>
                                                     </Setter.Value>
-                                                </Setter> 
-                                            </Style>                                        
+                                                </Setter>
+                                            </Style>
                                         </ListView.ItemContainerStyle>
                                     </ListView>
                                     <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -602,7 +674,7 @@
                                 <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc2StatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
                             </Grid>
                         </Grid>
-                        
+
                     </Grid>
                     <Grid x:Name="DocComparePanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <mah:Tile x:Name="ProgressBarDocCompare" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="220" Background="White" BorderBrush="Black" BorderThickness="1">
@@ -701,7 +773,7 @@
                                             </ComboBox.ItemTemplate>
                                         </ComboBox>
                                     </Grid>
-                                    
+
                                     <Button x:Name="ShowMaskButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
                                             HorizontalAlignment="Left" Click="ShowMaskButton_Click" Margin="0,0,10,0" Visibility="Hidden" ToolTip="Show difference mask">
                                         <iconPacks:PackIconMicrons Kind="Show" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
@@ -710,7 +782,7 @@
                                             HorizontalAlignment="Left" Click="HideMaskButton_Click" Margin="0,0,10,0" ToolTip="Hide difference mask">
                                         <iconPacks:PackIconMicrons Kind="Hide" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                     </Button>
-                                    
+
                                     <!--Button x:Name="CloseDocCompareButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
                                             HorizontalAlignment="Right" Click="CloseDocCompareButton_Click" Margin="0,0,10,0" ToolTip="Close comparison">
                                         <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
@@ -748,46 +820,107 @@
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="ListViewItem">
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>                                          
-                                            <Setter Property="Background" Value="Transparent"/>  
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                            <Setter Property="Background" Value="Transparent"/>
                                             <Setter Property="Template">
                                                 <Setter.Value>
-                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">   
+                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
                                                         <Grid Tag="{Binding ImgGridName}" IsHitTestVisible="true" HorizontalAlignment="Stretch" Background="Transparent">
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition/>
                                                                 <ColumnDefinition/>
                                                             </Grid.ColumnDefinitions>
                                                             <Grid Tag="{Binding ImgGridLeftName}" MouseEnter="HandleMainDocCompareGridMouseEnter" MouseLeave="HandleMainDocCompareGridMouseLeave" Background="Transparent">
-                                                                <Image Tag="{Binding ImgLeftName}" Source="{Binding PathToImgLeft, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                <Border >
+                                                                    <Image Tag="{Binding ImgLeftName}" Source="{Binding PathToImgLeft, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Stretch="Uniform">
-                                                                    <Image.Effect>
+                                                                        <Image.Effect>
+                                                                            <BlurEffect Radius="{Binding BlurRadiusLeft}"></BlurEffect>
+                                                                        </Image.Effect>
+                                                                    </Image>
+                                                                    <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
-                                                                    </Image.Effect>
-                                                                </Image>
-                                                                <Image Tag="{Binding ImgAniLeftName}" Source="{Binding PathToAniImgLeft, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    </Border.Effect>
+                                                                </Border>
+                                                                <Border >
+                                                                    <Image Tag="{Binding ImgAniLeftName}" Source="{Binding PathToAniImgLeft, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Visibility="Hidden" Stretch="Uniform">
-                                                                    <Image.Effect>
+                                                                        <Image.Effect>
+                                                                            <BlurEffect Radius="{Binding BlurRadiusLeft}"></BlurEffect>
+                                                                        </Image.Effect>
+                                                                    </Image>
+                                                                    <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
-                                                                    </Image.Effect>
-                                                                </Image>
+                                                                    </Border.Effect>
+                                                                </Border>
+                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding ShowHiddenLeft}" HorizontalAlignment="Right" Margin="0,10,10,0">
+                                                                    <Path.Data>
+                                                                        <PathGeometry>
+                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                <LineSegment Point="100,0"></LineSegment>
+                                                                                <LineSegment Point="100,100"></LineSegment>
+                                                                            </PathFigure>
+                                                                        </PathGeometry>
+                                                                    </Path.Data>
+                                                                    <Path.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                    </Path.Effect>
+                                                                </Path>
+                                                                <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding ShowHiddenLeft}" Margin="0,10,0,0">
+                                                                    <Label.RenderTransform>
+                                                                        <RotateTransform Angle="45"></RotateTransform>
+                                                                    </Label.RenderTransform>
+                                                                </Label>
                                                             </Grid>
                                                             <Grid Grid.Column="1" Tag="{Binding ImgGridRightName}" MouseEnter="HandleMainDocCompareGridMouseEnter" MouseLeave="HandleMainDocCompareGridMouseLeave">
-                                                                <Image Tag="{Binding ImgRightName}" Source="{Binding PathToImgRight, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                <Border>
+                                                                    <Image Tag="{Binding ImgRightName}" Source="{Binding PathToImgRight, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Stretch="Uniform">
-                                                                    <Image.Effect>
+                                                                        <Image.Effect>
+                                                                            <BlurEffect Radius="{Binding BlurRadiusRight}"></BlurEffect>
+                                                                        </Image.Effect>
+                                                                    </Image>
+                                                                    <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
-                                                                    </Image.Effect>
-                                                                </Image>
-                                                                <Image Tag="{Binding ImgAniRightName}" Source="{Binding PathToAniImgRight, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    </Border.Effect>
+                                                                </Border>
+                                                                <Border>
+                                                                    <Image Tag="{Binding ImgAniRightName}" Source="{Binding PathToAniImgRight, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Visibility="Hidden" Stretch="Uniform">
-                                                                    <Image.Effect>
+                                                                        <Image.Effect>
+                                                                            <BlurEffect Radius="{Binding BlurRadiusRight}"></BlurEffect>
+                                                                        </Image.Effect>
+                                                                    </Image>
+                                                                    <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
-                                                                    </Image.Effect>
-                                                                </Image>
-                                                                <Image Tag="{Binding ImgMaskRightName}" Source="{Binding PathToMaskImgRight, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
-                                                                    VerticalAlignment="Center" Visibility="{Binding ShowMask}" Stretch="Uniform">                                                                        
-                                                                </Image>
+                                                                    </Border.Effect>
+                                                                </Border>
+                                                                <Border>
+                                                                    <Image Tag="{Binding ImgMaskRightName}" Source="{Binding PathToMaskImgRight, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Visibility="{Binding ShowMask}" Stretch="Uniform">
+                                                                        <Image.Effect>
+                                                                            <BlurEffect Radius="{Binding BlurRadiusRight}"></BlurEffect>
+                                                                        </Image.Effect>
+                                                                    </Image>
+                                                                </Border>
+                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding ShowHiddenRight}" HorizontalAlignment="Right" Margin="0,10,10,0">
+                                                                    <Path.Data>
+                                                                        <PathGeometry>
+                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                <LineSegment Point="100,0"></LineSegment>
+                                                                                <LineSegment Point="100,100"></LineSegment>
+                                                                            </PathFigure>
+                                                                        </PathGeometry>
+                                                                    </Path.Data>
+                                                                    <Path.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                    </Path.Effect>
+                                                                </Path>
+                                                                <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding ShowHiddenRight}" Margin="0,10,0,0">
+                                                                    <Label.RenderTransform>
+                                                                        <RotateTransform Angle="45"></RotateTransform>
+                                                                    </Label.RenderTransform>
+                                                                </Label>
                                                                 <Button Tag="{Binding AnimateDiffRightButtonName}" Height="25" Width="25" Padding="0" Margin="15,15,0,0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Click and hold to animate the difference" Visibility="Hidden"
                                                                     PreviewMouseDown="HandleMainDocCompareAnimateMouseDown" PreviewMouseUp="HandleMainDocCompareAnimateMouseRelease" IsEnabled="{Binding AniDiffButtonEnable}">
                                                                     <iconPacks:PackIconMaterial Kind="VectorDifference" Width="15" Height="15" />
@@ -796,8 +929,8 @@
                                                         </Grid>
                                                     </ControlTemplate>
                                                 </Setter.Value>
-                                            </Setter> 
-                                        </Style>                                        
+                                            </Setter>
+                                        </Style>
                                     </ListView.ItemContainerStyle>
                                 </ListView>
                                 <ListView x:Name="DocCompareSideListViewLeft" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareSideScrollViewerLeft_ScrollChanged" Background="Transparent"
@@ -805,11 +938,11 @@
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden">
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="ListViewItem">
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>                                          
-                                            <Setter Property="Background" Value="Transparent"/>  
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                            <Setter Property="Background" Value="Transparent"/>
                                             <Setter Property="Template">
                                                 <Setter.Value>
-                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">   
+                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
                                                         <Grid Tag="{Binding GridName}" IsHitTestVisible="true" HorizontalAlignment="Stretch" MouseLeftButtonDown="HandleMouseClickOnSideScrollView"
                                                             Effect="{Binding GridEffect}">
                                                             <Grid.Background>
@@ -830,12 +963,25 @@
                                                                 <Image Tag="{Binding ImgDummyName}" Source="{Binding PathToImgDummy, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Stretch="Uniform" Visibility="Hidden">
                                                                 </Image>
-                                                                <Image Tag="{Binding ImgMaskName}" Source="{Binding PathToImgMask, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                <!--Image Tag="{Binding ImgMaskName}" Source="{Binding PathToImgMask, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Stretch="Uniform">
                                                                     <Image.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
                                                                     </Image.Effect>
-                                                                </Image>
+                                                                </-->
+                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding ShowHidden}" HorizontalAlignment="Right" Margin="0,10,10,0">
+                                                                    <Path.Data>
+                                                                        <PathGeometry>
+                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                <LineSegment Point="20,0"></LineSegment>
+                                                                                <LineSegment Point="20,20"></LineSegment>
+                                                                            </PathFigure>
+                                                                        </PathGeometry>
+                                                                    </Path.Data>
+                                                                    <Path.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                    </Path.Effect>
+                                                                </Path>
                                                                 <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Link Pages" Visibility="Hidden"
                                                                     Click="SideGridButtonMouseClick" IsHitTestVisible="true">
                                                                     <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
@@ -847,8 +993,8 @@
                                                         </Grid>
                                                     </ControlTemplate>
                                                 </Setter.Value>
-                                            </Setter> 
-                                        </Style>                                        
+                                            </Setter>
+                                        </Style>
                                     </ListView.ItemContainerStyle>
                                 </ListView>
                                 <ListView x:Name="DocCompareSideListViewRight" Grid.Column="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareSideScrollViewerRight_ScrollChanged" Background="Transparent"
@@ -856,11 +1002,11 @@
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="ListViewItem">
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>                                          
-                                            <Setter Property="Background" Value="Transparent"/>  
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                            <Setter Property="Background" Value="Transparent"/>
                                             <Setter Property="Template">
                                                 <Setter.Value>
-                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">   
+                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
                                                         <Grid Tag="{Binding GridName}" IsHitTestVisible="true" HorizontalAlignment="Stretch" MouseLeftButtonDown="HandleMouseClickOnSideScrollView"
                                                             Effect="{Binding GridEffect}">
                                                             <Grid.Background>
@@ -890,6 +1036,19 @@
                                                                 <Image Tag="{Binding ImgMaskName}" Source="{Binding PathToMask, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Stretch="Uniform" Visibility="{Binding ShowMask}">
                                                                 </Image>
+                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding ShowHidden}" HorizontalAlignment="Right" Margin="0,10,10,0">
+                                                                    <Path.Data>
+                                                                        <PathGeometry>
+                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                <LineSegment Point="20,0"></LineSegment>
+                                                                                <LineSegment Point="20,20"></LineSegment>
+                                                                            </PathFigure>
+                                                                        </PathGeometry>
+                                                                    </Path.Data>
+                                                                    <Path.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                    </Path.Effect>
+                                                                </Path>
                                                                 <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Link Pages" Visibility="Hidden"
                                                                     Click="SideGridButtonMouseClick" IsHitTestVisible="true">
                                                                     <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
@@ -901,8 +1060,8 @@
                                                         </Grid>
                                                     </ControlTemplate>
                                                 </Setter.Value>
-                                            </Setter> 
-                                        </Style>                                        
+                                            </Setter>
+                                        </Style>
                                     </ListView.ItemContainerStyle>
                                 </ListView>
                                 <Grid x:Name="HighlightingDisableTip" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.7" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" Grid.Column="0">
@@ -954,7 +1113,7 @@
                                         <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="3" Visibility="Collapsed"/>
                                         <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="3" Visibility="Collapsed"/>
                                         <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="3"/>
-                                    </Grid>                                    
+                                    </Grid>
                                     <Grid Grid.Row="1" Grid.Column="2" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>
                                     <Grid Grid.Row="1" Grid.Column="3" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>
                                 </Grid>
@@ -1088,17 +1247,17 @@
                                         <ColumnDefinition Width="auto"/>
                                         <ColumnDefinition Width="auto"/>
                                     </Grid.ColumnDefinitions>
-                                    <Label Grid.Column="0">Poppler is licensed under </Label>
+                                    <Label Grid.Column="0">Poppler is licensed under</Label>
                                     <Label Grid.Column="1">
-                                    <Hyperlink  NavigateUri="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html" RequestNavigate="Hyperlink_RequestNavigate">
-                                        GPLv2 
-                                    </Hyperlink> 
+                                        <Hyperlink  NavigateUri="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html" RequestNavigate="Hyperlink_RequestNavigate">
+                                            GPLv2
+                                        </Hyperlink>
                                     </Label>
-                                    <Label Grid.Column="2"> and </Label>
+                                    <Label Grid.Column="2">and</Label>
                                     <Label Grid.Column="3">
-                                    <Hyperlink NavigateUri="https://www.gnu.org/licenses/gpl-3.0.html" RequestNavigate="Hyperlink_RequestNavigate">
-                                        GPLv3. 
-                                    </Hyperlink>
+                                        <Hyperlink NavigateUri="https://www.gnu.org/licenses/gpl-3.0.html" RequestNavigate="Hyperlink_RequestNavigate">
+                                            GPLv3.
+                                        </Hyperlink>
                                     </Label>
                                 </Grid>
                             </Grid>
@@ -1108,9 +1267,9 @@
                                     <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
                                 <Label FontSize="15" FontWeight="Bold">Help</Label>
-                                <Button x:Name="RestartWalkthroughButton" Grid.Row="1" HorizontalAlignment="Left" Margin="0,10,0,0" Click="RestartWalkthroughButton_Click">Restart Walkthrough</Button>    
+                                <Button x:Name="RestartWalkthroughButton" Grid.Row="1" HorizontalAlignment="Left" Margin="0,10,0,0" Click="RestartWalkthroughButton_Click">Restart Walkthrough</Button>
                             </Grid>
-                            
+
                         </Grid>
                         <Grid x:Name="SettingsSubscriptionPanel" Grid.Column="1" Margin="25" Visibility="Visible">
                             <Grid.RowDefinitions>
@@ -1248,7 +1407,7 @@
                         </Grid>
                     </mah:Tile>
                 </Grid>
-            </Grid>            
+            </Grid>
         </Grid>
     </Border>
 </Window>

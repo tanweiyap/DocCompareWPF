@@ -87,9 +87,10 @@ namespace DocConvert
         {
         }
 
-        public int ConvertPPTToImages(string filePath, string outputPath)
+        public int ConvertPPTToImages(string filePath, string outputPath, out List<bool> isHidden)
         {
             int ret = -1;
+            isHidden = new List<bool>();
 
             try
             {
@@ -110,6 +111,7 @@ namespace DocConvert
                         }
                         catch
                         {
+
                             return -1;
                         }
 
@@ -125,12 +127,22 @@ namespace DocConvert
                         for (int i = 1; i < (pptPresentation.Slides.Count + 1); i++)
                         {
                             pptPresentation.Slides[i].Export(outputPath + "\\" + (i - 1).ToString() + ".jpg", "jpg");
+
+                            if (pptPresentation.Slides[i].SlideShowTransition.Hidden == MsoTriState.msoTrue)
+                            {
+                                isHidden.Add(true);
+                            }
+                            else
+                            {
+                                isHidden.Add(false);
+                            }
+
                         }
 
                         object fileAttribute = pptPresentation.BuiltInDocumentProperties;
 
                         pptPresentation.Close();
-                        if(pptApplication.Visible != MsoTriState.msoTrue)
+                        if (pptApplication.Visible != MsoTriState.msoTrue)
                             pptApplication.Quit();
                         //old code by WYT...
                         //pptPresentation.Export(outputPath, "jpg", Int32.Parse(pptPresentation.SlideMaster.Width.ToString()), Int32.Parse(pptPresentation.SlideMaster.Height.ToString()));

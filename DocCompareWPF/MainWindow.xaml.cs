@@ -50,6 +50,41 @@ namespace DocCompareWPF
         public string PathToImgRight { get { return _pathToImgRight; } set { _pathToImgRight = value; OnPropertyChanged(); } }
         public string PathToMaskImgRight { get { return _pathToMaskImgRight; } set { _pathToMaskImgRight = value; OnPropertyChanged(); } }
 
+        private double _blurRadiusLeft;
+        private double _blurRadiusRight;
+
+        private Visibility _showHiddenLeft;
+        private Visibility _showHiddenRight;
+
+        public double BlurRadiusRight
+        {
+            get
+            {
+                return _blurRadiusRight;
+            }
+
+            set
+            {
+                _blurRadiusRight = value;
+                OnPropertyChanged();
+            }
+        }
+        public double BlurRadiusLeft
+        {
+            get
+            {
+                return _blurRadiusLeft;
+            }
+
+            set
+            {
+                _blurRadiusLeft = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+
         public Visibility ShowMask
         {
             get
@@ -60,6 +95,33 @@ namespace DocCompareWPF
             set
             {
                 _showMask = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Visibility ShowHiddenLeft
+        {
+            get
+            {
+                return _showHiddenLeft;
+            }
+
+            set
+            {
+                _showHiddenLeft = value;
+                OnPropertyChanged();
+            }
+        }
+        public Visibility ShowHiddenRight
+        {
+            get
+            {
+                return _showHiddenRight;
+            }
+
+            set
+            {
+                _showHiddenRight = value;
                 OnPropertyChanged();
             }
         }
@@ -125,6 +187,10 @@ namespace DocCompareWPF
         private bool linkscroll = true;
 
         private WalkthroughSteps walkthroughStep = 0;
+
+        // mouse over hidden ppt slides effect buffer
+        Effect hiddenPPTEffect;
+        Visibility hiddenPPTVisi;
 
         public MainWindow()
         {
@@ -415,9 +481,9 @@ namespace DocCompareWPF
                     // Turn off Mask and animate
                     foreach (object child in gridToAnimate.Children)
                     {
-                        if (child is Image)
+                        if (child is Border)
                         {
-                            Image thisImg = child as Image;
+                            Image thisImg = (child as Border).Child as Image;
                             if (thisImg.Tag.ToString().Contains("Ani"))
                             {
                                 if (imageToggler == false)
@@ -525,11 +591,11 @@ namespace DocCompareWPF
                         if (selectReferenceWindow.ShowDialog() == true)
                         {
                             docs.documentsToShow[0] = selectReferenceWindow.selectedIndex;
-                            if(docs.documentsToShow[1] == docs.documentsToShow[0])
+                            if (docs.documentsToShow[1] == docs.documentsToShow[0])
                             {
-                                for(int i = 0; i< docs.documents.Count; i++)
+                                for (int i = 0; i < docs.documents.Count; i++)
                                 {
-                                    if(i != docs.documentsToShow[0])
+                                    if (i != docs.documentsToShow[0])
                                     {
                                         docs.documentsToShow[1] = i;
                                         break;
@@ -1069,6 +1135,30 @@ namespace DocCompareWPF
                         thisItem.PathToAniImgLeft = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg");
                         thisItem.AniDiffButtonEnable = true;
                     }
+
+                    if (docs.documents[docs.documentsToCompare[0]].fileType == Document.FileTypes.PPT)
+                    {
+                        if (docs.documents[docs.documentsToCompare[0]].pptIsHidden[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] == true)
+                        {
+                            thisItem.ShowHiddenLeft = Visibility.Visible;
+                            thisItem.BlurRadiusLeft = 5;
+                        }
+                        else
+                        {
+                            thisItem.ShowHiddenLeft = Visibility.Hidden;
+                            thisItem.BlurRadiusLeft = 0;
+                        }
+                    }
+                    else
+                    {
+                        thisItem.ShowHiddenLeft = Visibility.Hidden;
+                        thisItem.BlurRadiusLeft = 0;
+                    }
+                }
+                else
+                {
+                    thisItem.ShowHiddenLeft = Visibility.Hidden;
+                    thisItem.BlurRadiusLeft = 0;
                 }
 
                 if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
@@ -1090,7 +1180,32 @@ namespace DocCompareWPF
                                 thisItem.ShowMask = Visibility.Hidden;
                         }
                     }
+
+                    if (docs.documents[docs.documentsToCompare[1]].fileType == Document.FileTypes.PPT)
+                    {
+                        if (docs.documents[docs.documentsToCompare[1]].pptIsHidden[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]] == true)
+                        {
+                            thisItem.ShowHiddenRight = Visibility.Visible;
+                            thisItem.BlurRadiusRight = 5;
+                        }
+                        else
+                        {
+                            thisItem.ShowHiddenRight = Visibility.Hidden;
+                            thisItem.BlurRadiusRight = 0;
+                        }
+                    }
+                    else
+                    {
+                        thisItem.ShowHiddenRight = Visibility.Hidden;
+                        thisItem.BlurRadiusRight = 0;
+                    }
                 }
+                else
+                {
+                    thisItem.ShowHiddenRight = Visibility.Hidden;
+                    thisItem.BlurRadiusRight = 0;
+                }
+
                 mainItemList.Add(thisItem);
             }
 
@@ -1110,6 +1225,7 @@ namespace DocCompareWPF
                     Margin = new Thickness(10),
                     PageNumberLabel = (i + 1).ToString(),
                     BackgroundBrush = Color.FromArgb(0, 255, 255, 255),
+                    ShowHidden = Visibility.Hidden,
                 };
 
                 SideGridItemRight rightItem = new SideGridItemRight()
@@ -1123,6 +1239,7 @@ namespace DocCompareWPF
                     RemoveForceAlignButtonEnable = false,
                     RemoveForceAlignButtonVisibility = Visibility.Hidden,
                     BackgroundBrush = Color.FromArgb(0, 255, 255, 255),
+                    ShowHidden = Visibility.Hidden,
                 };
 
                 if (i == 0)
@@ -1146,6 +1263,22 @@ namespace DocCompareWPF
                 {
                     leftItem.PathToImg = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg");
                     rightItem.PathToImgDummy = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg");
+
+                    if (docs.documents[docs.documentsToCompare[0]].fileType == Document.FileTypes.PPT)
+                    {
+                        if (docs.documents[docs.documentsToCompare[0]].pptIsHidden[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] == true)
+                        {
+                            leftItem.ShowHidden = Visibility.Visible;
+                        }
+                        else
+                        {
+                            leftItem.ShowHidden = Visibility.Hidden;
+                        }
+                    }
+                    else
+                    {
+                        leftItem.ShowHidden = Visibility.Hidden;
+                    }
                 }
 
                 if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1) // doc 2 has a valid page
@@ -1166,6 +1299,22 @@ namespace DocCompareWPF
                             rightItem.ShowMask = Visibility.Visible;
                         else
                             rightItem.ShowMask = Visibility.Hidden;
+                    }
+
+                    if (docs.documents[docs.documentsToCompare[1]].fileType == Document.FileTypes.PPT)
+                    {
+                        if (docs.documents[docs.documentsToCompare[1]].pptIsHidden[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]] == true)
+                        {
+                            rightItem.ShowHidden = Visibility.Visible;
+                        }
+                        else
+                        {
+                            rightItem.ShowHidden = Visibility.Hidden;
+                        }
+                    }
+                    else
+                    {
+                        rightItem.ShowHidden = Visibility.Hidden;
                     }
                 }
 
@@ -1219,6 +1368,17 @@ namespace DocCompareWPF
                                     EoDVisi = Visibility.Hidden
                                 };
 
+                                if (docs.documents[docIndex].fileType == Document.FileTypes.PPT && docs.documents[docIndex].pptIsHidden[i] == true)
+                                {
+                                    thisImage.BlurRadius = 5;
+                                    thisImage.showHidden = Visibility.Visible;
+                                }
+                                else
+                                {
+                                    thisImage.BlurRadius = 0;
+                                    thisImage.showHidden = Visibility.Hidden;
+                                }
+
                                 if (pageCounter == 0)
                                 {
                                     thisImage.Margin = new Thickness(10, 10, 10, 10);
@@ -1265,8 +1425,11 @@ namespace DocCompareWPF
                         }
 
                         // add End of Document
-                        SimpleImageItem item = new SimpleImageItem();
-                        item.EoDVisi = Visibility.Visible;
+                        SimpleImageItem item = new SimpleImageItem
+                        {
+                            EoDVisi = Visibility.Visible,
+                            showHidden = Visibility.Hidden
+                        };
                         imageList.Add(item);
 
                         DocCompareListView1.ItemsSource = imageList;
@@ -1306,6 +1469,17 @@ namespace DocCompareWPF
                                         PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"),
                                         EoDVisi = Visibility.Hidden
                                     };
+
+                                    if (docs.documents[docIndex].fileType == Document.FileTypes.PPT && docs.documents[docIndex].pptIsHidden[i] == true)
+                                    {
+                                        thisImage.BlurRadius = 5;
+                                        thisImage.showHidden = Visibility.Visible;
+                                    }
+                                    else
+                                    {
+                                        thisImage.BlurRadius = 0;
+                                        thisImage.showHidden = Visibility.Hidden;
+                                    }
 
                                     if (pageCounter == 0)
                                     {
@@ -1353,8 +1527,11 @@ namespace DocCompareWPF
                             }
 
                             // add End of Document
-                            SimpleImageItem item = new SimpleImageItem();
-                            item.EoDVisi = Visibility.Visible;
+                            SimpleImageItem item = new SimpleImageItem
+                            {
+                                EoDVisi = Visibility.Visible,
+                                showHidden = Visibility.Hidden
+                            };
                             imageList.Add(item);
 
                             DocCompareListView2.ItemsSource = imageList;
@@ -1394,6 +1571,16 @@ namespace DocCompareWPF
                                     {
                                         PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg")
                                     };
+
+                                    if (docs.documents[docIndex].pptIsHidden[i] == true)
+                                    {
+                                        thisImage.BlurRadius = 5;
+                                    }
+                                    else
+                                    {
+                                        thisImage.BlurRadius = 0;
+
+                                    }
 
                                     if (pageCounter == 0)
                                     {
@@ -1954,7 +2141,7 @@ namespace DocCompareWPF
                     Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
                     ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if(scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight )
+                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
                     {
                         scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
                     }
@@ -2154,6 +2341,8 @@ namespace DocCompareWPF
                 foreach (CompareMainItem item in DocCompareMainListView.Items)
                 {
                     item.ShowMask = Visibility.Hidden;
+                    item.BlurRadiusRight = 0;
+                    item.ShowHiddenRight = Visibility.Hidden;
                 }
 
                 threadAnimateDiff = new Thread(new ThreadStart(AnimateDiffThread));
@@ -2188,8 +2377,10 @@ namespace DocCompareWPF
                 }
             }
 
-            foreach (CompareMainItem item in DocCompareMainListView.Items)
+            for (int i = 0; i< DocCompareMainListView.Items.Count; i++)                
             {
+                CompareMainItem item = (CompareMainItem)DocCompareMainListView.Items[i];
+
                 if (showMask == true)
                 {
                     item.ShowMask = Visibility.Visible;
@@ -2198,6 +2389,29 @@ namespace DocCompareWPF
                 {
                     item.ShowMask = Visibility.Hidden;
                 }
+
+                if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                {
+                    if (docs.documents[docs.documentsToCompare[1]].fileType == Document.FileTypes.PPT)
+                    {
+                        if (docs.documents[docs.documentsToCompare[1]].pptIsHidden[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]] == true)
+                        {
+                            item.ShowHiddenRight = Visibility.Visible;
+                            item.BlurRadiusRight = 5;
+                        }
+                        else
+                        {
+                            item.ShowHiddenRight = Visibility.Hidden;
+                            item.BlurRadiusRight = 0;
+                        }
+                    }
+                    else
+                    {
+                        item.ShowHiddenRight = Visibility.Hidden;
+                        item.BlurRadiusRight = 0;
+                    }
+                }
+
             }
 
             if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREANIMATE)
@@ -2240,6 +2454,31 @@ namespace DocCompareWPF
                                 thisButton.Visibility = Visibility.Visible;
                         }
                     }
+
+
+                }
+
+                Grid item = sender as Grid;
+                Border childBorder = item.Children[0] as Border;
+                Image img = childBorder.Child as Image;
+                hiddenPPTEffect = img.Effect;
+                img.Effect = null;
+
+                if (parentGrid.Tag.ToString().Contains("Left"))
+                {
+                    hiddenPPTVisi = (item.Children[3] as Label).Visibility;
+                    System.Windows.Shapes.Path path = item.Children[2] as System.Windows.Shapes.Path;
+                    path.Visibility = Visibility.Hidden;
+                    Label label = item.Children[3] as Label;
+                    label.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    hiddenPPTVisi = (item.Children[4] as Label).Visibility;
+                    System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
+                    path.Visibility = Visibility.Hidden;
+                    Label label = item.Children[4] as Label;
+                    label.Visibility = Visibility.Hidden;
                 }
             }
         }
@@ -2272,6 +2511,26 @@ namespace DocCompareWPF
                                 thisButton.Visibility = Visibility.Hidden;
                         }
                     }
+                }
+
+                Grid item = sender as Grid;
+                Border childBorder = item.Children[0] as Border;
+                Image img = childBorder.Child as Image;
+                img.Effect = hiddenPPTEffect;
+
+                if (parentGrid.Tag.ToString().Contains("Left"))
+                {
+                    System.Windows.Shapes.Path path = item.Children[2] as System.Windows.Shapes.Path;
+                    path.Visibility = hiddenPPTVisi;
+                    Label label = item.Children[3] as Label;
+                    label.Visibility = hiddenPPTVisi;
+                }
+                else
+                {
+                    System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
+                    path.Visibility = hiddenPPTVisi;
+                    Label label = item.Children[4] as Label;
+                    label.Visibility = hiddenPPTVisi;
                 }
             }
         }
@@ -4679,6 +4938,50 @@ namespace DocCompareWPF
             LinkScrollButton.Visibility = Visibility.Visible;
         }
 
+        private void HandleDocPreviewMouseEnter(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Grid item = sender as Grid;
+                Border child = item.Children[0] as Border;
+                Image img = child.Child as Image;
+                hiddenPPTEffect = img.Effect;
+                img.Effect = null;
+
+                hiddenPPTVisi = (item.Children[3] as Label).Visibility;
+                System.Windows.Shapes.Path path = item.Children[2] as System.Windows.Shapes.Path;
+                path.Visibility = Visibility.Hidden;
+                Label label = item.Children[3] as Label;
+                label.Visibility = Visibility.Hidden;
+
+
+            }catch
+            {
+
+            }
+        }
+
+        private void HandleDocPreviewMouseLeave(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Grid item = sender as Grid;
+                Border child = item.Children[0] as Border;
+                Image img = child.Child as Image;                
+                img.Effect = hiddenPPTEffect;
+
+                System.Windows.Shapes.Path path = item.Children[2] as System.Windows.Shapes.Path;
+                path.Visibility = hiddenPPTVisi;
+                Label label = item.Children[3] as Label;
+                label.Visibility = hiddenPPTVisi;
+
+            }
+            catch
+            {
+
+            }
+        }
+
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (PopupBrowseFileBubble.IsOpen == true)
@@ -4753,7 +5056,7 @@ namespace DocCompareWPF
                 PopupAnimateBubble.HorizontalOffset--;
             }
 
-            if(WindowState == WindowState.Normal)
+            if (WindowState == WindowState.Normal)
             {
                 outerBorder.Margin = new Thickness(0);
             }
@@ -4781,7 +5084,7 @@ namespace DocCompareWPF
             {
                 WindowMaximizeButton.Visibility = Visibility.Visible;
                 WindowRestoreButton.Visibility = Visibility.Hidden;
-                
+
             }
 
             if (WindowState == WindowState.Maximized)
@@ -4856,6 +5159,22 @@ namespace DocCompareWPF
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private Visibility _showHidden;
+
+        public Visibility ShowHidden
+        {
+            get
+            {
+                return _showHidden;
+            }
+
+            set
+            {
+                _showHidden = value;
+                OnPropertyChanged();
+            }
+        }
+
         public Color BackgroundBrush
         {
             get
@@ -4913,6 +5232,22 @@ namespace DocCompareWPF
         private Visibility _showMask;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private Visibility _showHidden;
+
+        public Visibility ShowHidden
+        {
+            get
+            {
+                return _showHidden;
+            }
+
+            set
+            {
+                _showHidden = value;
+                OnPropertyChanged();
+            }
+        }
 
         public Color BackgroundBrush
         {
@@ -4993,7 +5328,8 @@ namespace DocCompareWPF
 
         private string _pathToFile;
         private Visibility _eodVisi;
-
+        private double _blurRadius;
+        private Visibility _showHidden;
         public string PathToFile
         {
             get
@@ -5018,6 +5354,34 @@ namespace DocCompareWPF
             set
             {
                 _eodVisi = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Visibility showHidden
+        {
+            get
+            {
+                return _showHidden;
+            }
+
+            set
+            {
+                _showHidden = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double BlurRadius
+        {
+            get
+            {
+                return _blurRadius;
+            }
+
+            set
+            {
+                _blurRadius = value;
                 OnPropertyChanged();
             }
         }

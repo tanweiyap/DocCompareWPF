@@ -2363,9 +2363,9 @@ namespace DocCompareWPF
                 Grid parentGrid = (sender as Button).Parent as Grid;
                 foreach (object child in parentGrid.Children)
                 {
-                    if (child is Image)
+                    if (child is Border)
                     {
-                        Image thisImg = child as Image;
+                        Image thisImg = (child as Border).Child as Image;
                         if (thisImg.Tag.ToString().Contains("Ani"))
                             thisImg.Visibility = Visibility.Hidden;
                         else if (thisImg.Tag.ToString().Contains("Mask"))

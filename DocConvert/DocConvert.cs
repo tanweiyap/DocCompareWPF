@@ -33,7 +33,7 @@ namespace DocConvert
             {
                 Process proc = new Process();
                 proc.StartInfo.FileName = popplerPath;
-                proc.StartInfo.Arguments = " -jpeg \"" + filePath + "\" \"" + outputPath + "\\page\"";
+                proc.StartInfo.Arguments = " -png \"" + filePath + "\" \"" + outputPath + "\\page\"";
                 proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 proc.StartInfo.CreateNoWindow = true;
                 proc.Start();
@@ -46,7 +46,7 @@ namespace DocConvert
                     string[] filename = fi[i].Name.Split("page-");
                     string name = Path.GetFileNameWithoutExtension(filename[1]);
                     int pageName = int.Parse(name);
-                    File.Move(fi[i].FullName, Path.Join(outputPath, (pageName - 1).ToString() + ".jpg"));
+                    File.Move(fi[i].FullName, Path.Join(outputPath, (pageName - 1).ToString() + ".png"));
                 }
                 ret = 0;
             }
@@ -61,14 +61,14 @@ namespace DocConvert
         {
         }
 
-        public int CovertPICtoJPEG(string filePath, string outputPath)
+        public int CovertPICtoPNG(string filePath, string outputPath)
         {
             int ret = -1;
 
             try
             {
                 Mat thisImage = Cv2.ImRead(filePath);
-                thisImage.SaveImage(Path.Join(outputPath, "0.jpg"));
+                thisImage.SaveImage(Path.Join(outputPath, "0.png"));
             }
             catch
             {
@@ -126,7 +126,7 @@ namespace DocConvert
 
                         for (int i = 1; i < (pptPresentation.Slides.Count + 1); i++)
                         {
-                            pptPresentation.Slides[i].Export(outputPath + "\\" + (i - 1).ToString() + ".jpg", "jpg");
+                            pptPresentation.Slides[i].Export(outputPath + "\\" + (i - 1).ToString() + ".png", "png");
 
                             if (pptPresentation.Slides[i].SlideShowTransition.Hidden == MsoTriState.msoTrue)
                             {

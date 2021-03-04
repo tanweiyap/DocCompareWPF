@@ -502,6 +502,12 @@ namespace DocCompareWPF
                                     thisImg.Visibility = Visibility.Hidden;
                             }
                         }
+
+                        if(child is Grid)
+                        {
+                            Grid thisGrid = child as Grid;
+                            thisGrid.Visibility = Visibility.Hidden;
+                        }
                     }
 
                     if (imageToggler == false)
@@ -1128,11 +1134,11 @@ namespace DocCompareWPF
 
                 if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
                 {
-                    thisItem.PathToImgLeft = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg");
+                    thisItem.PathToImgLeft = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".png");
 
                     if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
                     {
-                        thisItem.PathToAniImgLeft = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg");
+                        thisItem.PathToAniImgLeft = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
                         thisItem.AniDiffButtonEnable = true;
                     }
 
@@ -1163,11 +1169,11 @@ namespace DocCompareWPF
 
                 if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
                 {
-                    thisItem.PathToImgRight = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg");
+                    thisItem.PathToImgRight = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
 
                     if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
                     {
-                        thisItem.PathToAniImgRight = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg");
+                        thisItem.PathToAniImgRight = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".png");
 
                         if (File.Exists(Path.Join(compareResultFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png")))
                         {
@@ -1261,8 +1267,8 @@ namespace DocCompareWPF
 
                 if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
                 {
-                    leftItem.PathToImg = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg");
-                    rightItem.PathToImgDummy = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".jpg");
+                    leftItem.PathToImg = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".png");
+                    rightItem.PathToImgDummy = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".png");
 
                     if (docs.documents[docs.documentsToCompare[0]].fileType == Document.FileTypes.PPT)
                     {
@@ -1283,8 +1289,8 @@ namespace DocCompareWPF
 
                 if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1) // doc 2 has a valid page
                 {
-                    rightItem.PathToImg = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg");
-                    leftItem.PathToImgDummy = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".jpg");
+                    rightItem.PathToImg = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
+                    leftItem.PathToImgDummy = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
 
                     if (File.Exists(Path.Join(compareResultFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png")))
                     {
@@ -1364,7 +1370,7 @@ namespace DocCompareWPF
                             {
                                 SimpleImageItem thisImage = new SimpleImageItem()
                                 {
-                                    PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"),
+                                    PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".png"),
                                     EoDVisi = Visibility.Hidden
                                 };
 
@@ -1466,7 +1472,7 @@ namespace DocCompareWPF
                                 {
                                     SimpleImageItem thisImage = new SimpleImageItem()
                                     {
-                                        PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"),
+                                        PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".png"),
                                         EoDVisi = Visibility.Hidden
                                     };
 
@@ -1569,7 +1575,7 @@ namespace DocCompareWPF
                                 {
                                     SimpleImageItem thisImage = new SimpleImageItem()
                                     {
-                                        PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg")
+                                        PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".png")
                                     };
 
                                     if (docs.documents[docIndex].pptIsHidden[i] == true)
@@ -1735,7 +1741,7 @@ namespace DocCompareWPF
                     for (int i = 0; i < fi.Length; i++)
                     {
                         Image thisImage = new Image();
-                        var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".jpg"));
+                        var stream = File.OpenRead(Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".png"));
                         var bitmap = new BitmapImage();
                         bitmap.BeginInit();
                         bitmap.CacheOption = BitmapCacheOption.OnLoad;
@@ -2340,9 +2346,12 @@ namespace DocCompareWPF
 
                 foreach (CompareMainItem item in DocCompareMainListView.Items)
                 {
-                    item.ShowMask = Visibility.Hidden;
-                    item.BlurRadiusRight = 0;
-                    item.ShowHiddenRight = Visibility.Hidden;
+                    if (item.AnimateDiffRightButtonName == (sender as Button).Tag.ToString())
+                    {
+                        item.ShowMask = Visibility.Hidden;
+                        item.BlurRadiusRight = 0;
+                        item.ShowHiddenRight = Visibility.Hidden;
+                    }
                 }
 
                 threadAnimateDiff = new Thread(new ThreadStart(AnimateDiffThread));
@@ -2466,19 +2475,23 @@ namespace DocCompareWPF
 
                 if (parentGrid.Tag.ToString().Contains("Left"))
                 {
-                    hiddenPPTVisi = (item.Children[3] as Label).Visibility;
-                    System.Windows.Shapes.Path path = item.Children[2] as System.Windows.Shapes.Path;
-                    path.Visibility = Visibility.Hidden;
-                    Label label = item.Children[3] as Label;
-                    label.Visibility = Visibility.Hidden;
-                }
-                else
-                {
                     hiddenPPTVisi = (item.Children[4] as Label).Visibility;
                     System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
                     path.Visibility = Visibility.Hidden;
                     Label label = item.Children[4] as Label;
                     label.Visibility = Visibility.Hidden;
+                    Grid grid = item.Children[2] as Grid;
+                    grid.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    hiddenPPTVisi = (item.Children[5] as Label).Visibility;
+                    System.Windows.Shapes.Path path = item.Children[4] as System.Windows.Shapes.Path;
+                    path.Visibility = Visibility.Hidden;
+                    Label label = item.Children[5] as Label;
+                    label.Visibility = Visibility.Hidden;
+                    Grid grid = item.Children[3] as Grid;
+                    grid.Visibility = Visibility.Hidden;
                 }
             }
         }
@@ -2520,17 +2533,21 @@ namespace DocCompareWPF
 
                 if (parentGrid.Tag.ToString().Contains("Left"))
                 {
-                    System.Windows.Shapes.Path path = item.Children[2] as System.Windows.Shapes.Path;
-                    path.Visibility = hiddenPPTVisi;
-                    Label label = item.Children[3] as Label;
-                    label.Visibility = hiddenPPTVisi;
-                }
-                else
-                {
                     System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
                     path.Visibility = hiddenPPTVisi;
                     Label label = item.Children[4] as Label;
                     label.Visibility = hiddenPPTVisi;
+                    Grid grid = item.Children[2] as Grid;
+                    grid.Visibility = hiddenPPTVisi;
+                }
+                else
+                {
+                    System.Windows.Shapes.Path path = item.Children[4] as System.Windows.Shapes.Path;
+                    path.Visibility = hiddenPPTVisi;
+                    Label label = item.Children[5] as Label;
+                    label.Visibility = hiddenPPTVisi;
+                    Grid grid = item.Children[3] as Grid;
+                    grid.Visibility = hiddenPPTVisi;
                 }
             }
         }
@@ -4948,12 +4965,13 @@ namespace DocCompareWPF
                 hiddenPPTEffect = img.Effect;
                 img.Effect = null;
 
-                hiddenPPTVisi = (item.Children[3] as Label).Visibility;
-                System.Windows.Shapes.Path path = item.Children[2] as System.Windows.Shapes.Path;
+                hiddenPPTVisi = (item.Children[4] as Label).Visibility;
+                System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
                 path.Visibility = Visibility.Hidden;
-                Label label = item.Children[3] as Label;
+                Label label = item.Children[4] as Label;
                 label.Visibility = Visibility.Hidden;
-
+                Grid grid = item.Children[1] as Grid;
+                grid.Visibility = Visibility.Hidden;
 
             }catch
             {
@@ -4970,10 +4988,12 @@ namespace DocCompareWPF
                 Image img = child.Child as Image;                
                 img.Effect = hiddenPPTEffect;
 
-                System.Windows.Shapes.Path path = item.Children[2] as System.Windows.Shapes.Path;
+                System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
                 path.Visibility = hiddenPPTVisi;
-                Label label = item.Children[3] as Label;
+                Label label = item.Children[4] as Label;
                 label.Visibility = hiddenPPTVisi;
+                Grid grid = item.Children[1] as Grid;
+                grid.Visibility = hiddenPPTVisi;
 
             }
             catch

@@ -103,7 +103,7 @@ namespace DocCompareWPF.Classes
             int ret = -1;
             try
             {
-                ret = picConvertClass.CovertPICtoJPEG(filePath, imageFolder);
+                ret = picConvertClass.CovertPICtoPNG(filePath, imageFolder);
                 if (ret == 0)
                     processed = true;
             }

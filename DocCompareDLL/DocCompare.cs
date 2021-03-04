@@ -21,10 +21,10 @@ namespace DocCompareDLL
             ArrayList sizes = new ArrayList(); //individual image sizes of output document, for overlay
 
             //find jpgs in folder: only runs on Windows!!
-            string[] fna = System.IO.Directory.GetFiles(folder1, "*.jpg");
-            string[] fnb = System.IO.Directory.GetFiles(folder2, "*.jpg");
-            string[] fnau = System.IO.Directory.GetFiles(folder1, "*.JPG");
-            string[] fnbu = System.IO.Directory.GetFiles(folder2, "*.JPG");
+            string[] fna = System.IO.Directory.GetFiles(folder1, "*.png");
+            string[] fnb = System.IO.Directory.GetFiles(folder2, "*.png");
+            string[] fnau = System.IO.Directory.GetFiles(folder1, "*.PNG");
+            string[] fnbu = System.IO.Directory.GetFiles(folder2, "*.PNG");
 
             string[] fn1 = new string[fna.Length + fnau.Length];
             fna.CopyTo(fn1, 0);
@@ -70,7 +70,7 @@ namespace DocCompareDLL
                 //load all images in folder 1
                 for (int ii = 0; ii < m; ii++)
                 {
-                    Mat a = Cv2.ImRead(Path.Join(folder1, ii.ToString() + ".jpg"));
+                    Mat a = Cv2.ImRead(Path.Join(folder1, ii.ToString() + ".png"));
                     Cv2.Resize(a, a, work_size);
                     doc1.Add(a);
                 }
@@ -78,7 +78,7 @@ namespace DocCompareDLL
                 //load all images in folder 2
                 for (int ii = 0; ii < n; ii++)
                 {
-                    Mat b = Cv2.ImRead(Path.Join(folder2, ii.ToString() + ".jpg"));
+                    Mat b = Cv2.ImRead(Path.Join(folder2, ii.ToString() + ".png"));
                     sizes.Add(b.Size());
                     Cv2.Resize(b, b, work_size);
                     doc2.Add(b);

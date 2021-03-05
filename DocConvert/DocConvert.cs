@@ -87,10 +87,11 @@ namespace DocConvert
         {
         }
 
-        public int ConvertPPTToImages(string filePath, string outputPath, out List<bool> isHidden)
+        public int ConvertPPTToImages(string filePath, string outputPath, out List<bool> isHidden, out List<string> speakerNotes)
         {
             int ret = -1;
             isHidden = new List<bool>();
+            speakerNotes = new List<string>();
 
             try
             {
@@ -136,6 +137,8 @@ namespace DocConvert
                             {
                                 isHidden.Add(false);
                             }
+
+                            speakerNotes.Add(pptPresentation.Slides[i].NotesPage.Shapes.Placeholders[2].TextFrame.TextRange.Text);
 
                         }
 

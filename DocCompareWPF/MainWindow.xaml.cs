@@ -1378,6 +1378,7 @@ namespace DocCompareWPF
                                 {
                                     thisImage.BlurRadius = 5;
                                     thisImage.showHidden = Visibility.Visible;
+                                    thisImage.HiddenPPTGridName = "HiddenPPTGrid" + i.ToString();
                                 }
                                 else
                                 {
@@ -1393,48 +1394,31 @@ namespace DocCompareWPF
                                 {
                                     thisImage.Margin = new Thickness(10, 0, 10, 10);
                                 }
+
+                                if(docs.documents[docIndex].fileType == Document.FileTypes.PPT && docs.documents[docIndex].pptSpeakerNotes[i].Length != 0)
+                                {
+                                    thisImage.showPPTSpeakerNotesButton = Visibility.Visible;
+                                    thisImage.ShowPPTSpeakerNotesButtonName = "ShowPPTNoteButton" + i.ToString();
+                                    thisImage.PPTSpeakerNoteGridName = "PPTSpeakerNoteGrid" + i.ToString();
+                                    thisImage.ClosePPTSpeakerNotesButtonName = "ClosePPTSpeakerNoteButton" + i.ToString();
+                                    thisImage.PPTSpeakerNotes = docs.documents[docIndex].pptSpeakerNotes[i];
+                                }
+                                else
+                                {
+                                    thisImage.showPPTSpeakerNotesButton = Visibility.Hidden;
+                                }
+
                                 imageList.Add(thisImage);
                                 pageCounter++;
                             }
-                        }
-                        else
-                        {
-                            /*
-                            Grid errGrid = new Grid()
-                            {
-                                HorizontalAlignment = HorizontalAlignment.Stretch,
-                                VerticalAlignment = VerticalAlignment.Stretch,
-                                Height = DocCompareScrollViewer1.ActualHeight,
-                            };
-
-                            Tile errCard = new Tile()
-                            {
-                                HorizontalAlignment = HorizontalAlignment.Center,
-                                VerticalAlignment = VerticalAlignment.Center,
-                                Padding = new Thickness(10),
-                                Width = 250,
-                                Background = FindResource("SecondaryAccentBrush") as Brush,
-                            };
-
-                            Label errLabel = new Label()
-                            {
-                                Foreground = Brushes.White,
-                                Content = "There was an error loading this file",
-                            };
-
-                            errCard.Content = errLabel;
-
-                            errGrid.Children.Add(errCard);
-                            childPanel1.Children.Add(errGrid);
-                            childPanel1.Height = DocCompareScrollViewer1.ActualHeight;
-                            */
                         }
 
                         // add End of Document
                         SimpleImageItem item = new SimpleImageItem
                         {
                             EoDVisi = Visibility.Visible,
-                            showHidden = Visibility.Hidden
+                            showHidden = Visibility.Hidden,
+                            showPPTSpeakerNotesButton = Visibility.Hidden,
                         };
                         imageList.Add(item);
 
@@ -1480,6 +1464,7 @@ namespace DocCompareWPF
                                     {
                                         thisImage.BlurRadius = 5;
                                         thisImage.showHidden = Visibility.Visible;
+                                        thisImage.HiddenPPTGridName = "HiddenPPTGrid" + i.ToString();
                                     }
                                     else
                                     {
@@ -1495,48 +1480,31 @@ namespace DocCompareWPF
                                     {
                                         thisImage.Margin = new Thickness(10, 0, 10, 10);
                                     }
+
+                                    if (docs.documents[docIndex].fileType == Document.FileTypes.PPT && docs.documents[docIndex].pptSpeakerNotes[i].Length != 0)
+                                    {
+                                        thisImage.showPPTSpeakerNotesButton = Visibility.Visible;
+                                        thisImage.ShowPPTSpeakerNotesButtonName = "ShowPPTNoteButton" + i.ToString();
+                                        thisImage.PPTSpeakerNoteGridName = "PPTSpeakerNoteGrid" + i.ToString();
+                                        thisImage.ClosePPTSpeakerNotesButtonName = "ClosePPTSpeakerNoteButton" + i.ToString();
+                                        thisImage.PPTSpeakerNotes = docs.documents[docIndex].pptSpeakerNotes[i];
+                                    }
+                                    else
+                                    {
+                                        thisImage.showPPTSpeakerNotesButton = Visibility.Hidden;
+                                    }
+
                                     imageList.Add(thisImage);
                                     pageCounter++;
                                 }
-                            }
-                            else
-                            {
-                                /*
-                                Grid errGrid = new Grid()
-                                {
-                                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                                    VerticalAlignment = VerticalAlignment.Stretch,
-                                    Height = DocCompareScrollViewer2.ActualHeight,
-                                };
-
-                                Tile errCard = new Tile()
-                                {
-                                    HorizontalAlignment = HorizontalAlignment.Center,
-                                    VerticalAlignment = VerticalAlignment.Center,
-                                    Padding = new Thickness(10),
-                                    Width = 250,
-                                    Background = FindResource("SecondaryAccentBrush") as Brush,
-                                };
-
-                                Label errLabel = new Label()
-                                {
-                                    Foreground = Brushes.White,
-                                    Content = "There was an error loading this file",
-                                };
-
-                                errCard.Content = errLabel;
-
-                                errGrid.Children.Add(errCard);
-                                childPanel2.Children.Add(errGrid);
-                                childPanel2.Height = DocCompareScrollViewer2.ActualHeight;
-                                */
                             }
 
                             // add End of Document
                             SimpleImageItem item = new SimpleImageItem
                             {
                                 EoDVisi = Visibility.Visible,
-                                showHidden = Visibility.Hidden
+                                showHidden = Visibility.Hidden,
+                                showPPTSpeakerNotesButton = Visibility.Hidden,
                             };
                             imageList.Add(item);
 
@@ -1578,14 +1546,16 @@ namespace DocCompareWPF
                                         PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".png")
                                     };
 
-                                    if (docs.documents[docIndex].pptIsHidden[i] == true)
+                                    if (docs.documents[docIndex].fileType == Document.FileTypes.PPT && docs.documents[docIndex].pptIsHidden[i] == true)
                                     {
                                         thisImage.BlurRadius = 5;
+                                        thisImage.showHidden = Visibility.Visible;
+                                        thisImage.HiddenPPTGridName = "HiddenPPTGrid" + i.ToString();
                                     }
                                     else
                                     {
                                         thisImage.BlurRadius = 0;
-
+                                        thisImage.showHidden = Visibility.Hidden;
                                     }
 
                                     if (pageCounter == 0)
@@ -1596,42 +1566,32 @@ namespace DocCompareWPF
                                     {
                                         thisImage.Margin = new Thickness(10, 0, 10, 10);
                                     }
+
+                                    if (docs.documents[docIndex].fileType == Document.FileTypes.PPT && docs.documents[docIndex].pptSpeakerNotes[i].Length != 0)
+                                    {
+                                        thisImage.showPPTSpeakerNotesButton = Visibility.Visible;
+                                        thisImage.ShowPPTSpeakerNotesButtonName = "ShowPPTNoteButton" + i.ToString();
+                                        thisImage.PPTSpeakerNoteGridName = "PPTSpeakerNoteGrid" + i.ToString();
+                                        thisImage.ClosePPTSpeakerNotesButtonName = "ClosePPTSpeakerNoteButton" + i.ToString();
+                                        thisImage.PPTSpeakerNotes = docs.documents[docIndex].pptSpeakerNotes[i];
+                                    }
+                                    else
+                                    {
+                                        thisImage.showPPTSpeakerNotesButton = Visibility.Hidden;
+                                    }
+
                                     imageList.Add(thisImage);
                                     pageCounter++;
                                 }
                             }
-                            else
+
+                            SimpleImageItem item = new SimpleImageItem
                             {
-                                /*
-                                Grid errGrid = new Grid()
-                                {
-                                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                                    VerticalAlignment = VerticalAlignment.Stretch,
-                                    Height = DocCompareScrollViewer3.ActualHeight,
-                                };
-
-                                Tile errCard = new Tile()
-                                {
-                                    HorizontalAlignment = HorizontalAlignment.Center,
-                                    VerticalAlignment = VerticalAlignment.Center,
-                                    Padding = new Thickness(10),
-                                    Width = 250,
-                                    Background = FindResource("SecondaryAccentBrush") as Brush,
-                                };
-
-                                Label errLabel = new Label()
-                                {
-                                    Foreground = Brushes.White,
-                                    Content = "There was an error loading this file",
-                                };
-
-                                errCard.Content = errLabel;
-
-                                errGrid.Children.Add(errCard);
-                                childPanel3.Children.Add(errGrid);
-                                childPanel3.Height = DocCompareScrollViewer3.ActualHeight;
-                                */
-                            }
+                                EoDVisi = Visibility.Visible,
+                                showHidden = Visibility.Hidden,
+                                showPPTSpeakerNotesButton = Visibility.Hidden,
+                            };
+                            imageList.Add(item);
 
                             DocCompareListView3.ItemsSource = imageList;
                             DocCompareListView3.ScrollIntoView(DocCompareListView2.Items[0]);
@@ -4946,6 +4906,24 @@ namespace DocCompareWPF
             linkscroll = true;
             UnlinkScrollButton.Visibility = Visibility.Visible;
             LinkScrollButton.Visibility = Visibility.Hidden;
+
+            // trigger a scroll
+            Border border = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
+            ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
+
+            Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
+            ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+            if(scrollViewer.ScrollableHeight > scrollViewer2.ScrollableHeight)
+            {
+                scrollViewer2.ScrollToVerticalOffset(scrollViewer2.VerticalOffset + 1);
+                scrollViewer2.ScrollToVerticalOffset(scrollViewer2.VerticalOffset - 1);
+            }
+            else
+            {
+                scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + 1);
+                scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 1);
+            }
         }
 
         private void UnlinkScrollButton_Click(object sender, RoutedEventArgs e)
@@ -4994,6 +4972,68 @@ namespace DocCompareWPF
                 label.Visibility = hiddenPPTVisi;
                 Grid grid = item.Children[1] as Grid;
                 grid.Visibility = hiddenPPTVisi;
+
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void HandleShowPPTNoteButton(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Grid parentGrid = (sender as Button).Parent as Grid;
+                foreach(object obj in parentGrid.Children)
+                {
+                    if(obj is Button && (obj as Button).Tag != null)
+                    {
+                        if((obj as Button).Tag.ToString().Contains("ShowPPTNoteButton"))
+                        {
+                            (obj as Button).Visibility = Visibility.Hidden;
+                        }
+                    }
+
+                    if(obj is Grid && (obj as Grid).Tag != null)
+                    {
+                        if ((obj as Grid).Tag.ToString().Contains("PPTSpeakerNoteGrid"))
+                        {
+                            (obj as Grid).Visibility = Visibility.Visible;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void HandleClosePPTNoteButtonClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Grid containingGrid = (sender as Button).Parent as Grid;
+                Grid parentGrid = containingGrid.Parent as Grid;
+                foreach (object obj in parentGrid.Children)
+                {
+                    if (obj is Button && (obj as Button).Tag != null)
+                    {
+                        if ((obj as Button).Tag.ToString().Contains("ShowPPTNoteButton"))
+                        {
+                            (obj as Button).Visibility = Visibility.Visible;
+                        }
+                    }
+
+                    if (obj is Grid && (obj as Grid).Tag != null)
+                    {
+                        if ((obj as Grid).Tag.ToString().Contains("PPTSpeakerNoteGrid"))
+                        {
+                            (obj as Grid).Visibility = Visibility.Hidden;
+                        }
+                    }
+                }
 
             }
             catch
@@ -5350,6 +5390,15 @@ namespace DocCompareWPF
         private Visibility _eodVisi;
         private double _blurRadius;
         private Visibility _showHidden;
+        private Visibility _showPPTNoteButton;
+
+        public string ShowPPTSpeakerNotesButtonName { get; set; }
+        public string HiddenPPTGridName { get; set; }
+        public string PPTSpeakerNoteGridName { get; set; }
+        public string ClosePPTSpeakerNotesButtonName { get; set; }
+        public string PPTSpeakerNotes { get; set; }
+
+
         public string PathToFile
         {
             get
@@ -5388,6 +5437,19 @@ namespace DocCompareWPF
             set
             {
                 _showHidden = value;
+                OnPropertyChanged();
+            }
+        }
+        public Visibility showPPTSpeakerNotesButton
+        {
+            get
+            {
+                return _showPPTNoteButton;
+            }
+
+            set
+            {
+                _showPPTNoteButton = value;
                 OnPropertyChanged();
             }
         }

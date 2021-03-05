@@ -283,8 +283,8 @@
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
                                                                 </Border>
-                                                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.2">
+                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
 
                                                                     </Rectangle>
                                                                 </Grid>
@@ -310,7 +310,25 @@
                                                                         </TransformGroup>
                                                                     </Label.RenderTransform>
                                                                 </Label>
-
+                                                                <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
+                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="15" ToolTip="Click to show speaker notes of this slide"
+                                                                        Click="HandleShowPPTNoteButton">
+                                                                    <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
+                                                                </Button>
+                                                                <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
+                                                                               MaxHeight="150" Background="White" Opacity="0.7" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="25"/>
+                                                                        <RowDefinition/>
+                                                                    </Grid.RowDefinitions>
+                                                                    <Button Tag="{Binding ClosePPTSpeakerNotesButtonName}" Height="20" Width="20" Padding="0" BorderBrush="Transparent" Background="Transparent"
+                                                                            HorizontalAlignment="Right" Margin="0,0,2,0" Click="HandleClosePPTNoteButtonClick">
+                                                                        <iconPacks:PackIconCodicons Kind="Close"/>
+                                                                    </Button>
+                                                                    <ScrollViewer Padding="10" Grid.Row="1">
+                                                                        <TextBlock TextWrapping="Wrap" Text="{Binding PPTSpeakerNotes}"></TextBlock>
+                                                                    </ScrollViewer>
+                                                                </Grid>
                                                             </Grid>
                                                         </ControlTemplate>
                                                     </Setter.Value>
@@ -418,8 +436,8 @@
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
                                                                 </Border>
-                                                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.2">
+                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
 
                                                                     </Rectangle>
                                                                 </Grid>
@@ -445,7 +463,25 @@
                                                                         </TransformGroup>
                                                                     </Label.RenderTransform>
                                                                 </Label>
-
+                                                                <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
+                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="15" ToolTip="Click to show speaker notes of this slide"
+                                                                        Click="HandleShowPPTNoteButton">
+                                                                    <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
+                                                                </Button>
+                                                                <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
+                                                                               MaxHeight="150" Background="White" Opacity="0.7" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="25"/>
+                                                                        <RowDefinition/>
+                                                                    </Grid.RowDefinitions>
+                                                                    <Button Tag="{Binding ClosePPTSpeakerNotesButtonName}" Height="20" Width="20" Padding="0" BorderBrush="Transparent" Background="Transparent"
+                                                                            HorizontalAlignment="Right" Margin="0,0,2,0" Click="HandleClosePPTNoteButtonClick">
+                                                                        <iconPacks:PackIconCodicons Kind="Close"/>
+                                                                    </Button>
+                                                                    <ScrollViewer Padding="10" Grid.Row="1">
+                                                                        <TextBlock TextWrapping="Wrap" Text="{Binding PPTSpeakerNotes}"></TextBlock>
+                                                                    </ScrollViewer>
+                                                                </Grid>
                                                             </Grid>
                                                         </ControlTemplate>
                                                     </Setter.Value>
@@ -552,8 +588,8 @@
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
                                                                 </Border>
-                                                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.2">
+                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
 
                                                                     </Rectangle>
                                                                 </Grid>
@@ -579,6 +615,25 @@
                                                                         </TransformGroup>
                                                                     </Label.RenderTransform>
                                                                 </Label>
+                                                                <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
+                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="15" ToolTip="Click to show speaker notes of this slide"
+                                                                        Click="HandleShowPPTNoteButton">
+                                                                    <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
+                                                                </Button>
+                                                                <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
+                                                                               MaxHeight="150" Background="White" Opacity="0.7" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="25"/>
+                                                                        <RowDefinition/>
+                                                                    </Grid.RowDefinitions>
+                                                                    <Button Tag="{Binding ClosePPTSpeakerNotesButtonName}" Height="20" Width="20" Padding="0" BorderBrush="Transparent" Background="Transparent"
+                                                                            HorizontalAlignment="Right" Margin="0,0,2,0" Click="HandleClosePPTNoteButtonClick">
+                                                                        <iconPacks:PackIconCodicons Kind="Close"/>
+                                                                    </Button>
+                                                                    <ScrollViewer Padding="10" Grid.Row="1">
+                                                                        <TextBlock TextWrapping="Wrap" Text="{Binding PPTSpeakerNotes}"></TextBlock>
+                                                                    </ScrollViewer>
+                                                                </Grid>
                                                             </Grid>
                                                         </ControlTemplate>
                                                     </Setter.Value>
@@ -878,7 +933,7 @@
                                                                     </Border.Effect>
                                                                 </Border>
                                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHiddenLeft}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.2">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
 
                                                                     </Rectangle>
                                                                 </Grid>
@@ -933,7 +988,7 @@
                                                                     </Image>
                                                                 </Border>
                                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHiddenRight}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.2">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
 
                                                                     </Rectangle>
                                                                 </Grid>

@@ -80,6 +80,21 @@
                     </DrawingBrush>
 
                     <local:UriToCachedImageConverter x:Key="uriToImageConv"/>
+
+                    <Style TargetType="FrameworkElement" x:Key="VisibleAnimation">
+                        <Style.Triggers>
+                            <Trigger Property="Visibility" Value="Visible">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Height"
+                                                From="0.0" To="150" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

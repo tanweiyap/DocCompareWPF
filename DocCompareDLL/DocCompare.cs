@@ -70,7 +70,7 @@ namespace DocCompareDLL
                 //load all images in folder 1
                 for (int ii = 0; ii < m; ii++)
                 {
-                    Mat a = Cv2.ImRead(Path.Join(folder1, ii.ToString() + ".jpg"));
+                    Mat a = Cv2.ImRead(Path.Join(folder1, ii.ToString() + ".png"));
                     //Cv2.Resize(a, a, work_size);
                     doc1.Add(a);
                 }

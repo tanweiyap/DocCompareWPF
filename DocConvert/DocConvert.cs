@@ -33,7 +33,8 @@ namespace DocConvert
             {
                 Process proc = new Process();
                 proc.StartInfo.FileName = popplerPath;
-                proc.StartInfo.Arguments = " -png \"" + filePath + "\" \"" + outputPath + "\\page\"";
+                //proc.StartInfo.Arguments = " -jpeg \"" + filePath + "\" \"" + outputPath + "\\page\"";
+                proc.StartInfo.Arguments = "-png -r 150 \"" + filePath + "\" \"" + outputPath + "\\page\"";
                 proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 proc.StartInfo.CreateNoWindow = true;
                 proc.Start();

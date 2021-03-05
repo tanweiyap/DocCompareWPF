@@ -70,8 +70,8 @@ namespace DocCompareDLL
                 //load all images in folder 1
                 for (int ii = 0; ii < m; ii++)
                 {
-                    Mat a = Cv2.ImRead(Path.Join(folder1, ii.ToString() + ".png"));
-                    Cv2.Resize(a, a, work_size);
+                    Mat a = Cv2.ImRead(Path.Join(folder1, ii.ToString() + ".jpg"));
+                    //Cv2.Resize(a, a, work_size);
                     doc1.Add(a);
                 }
 
@@ -80,7 +80,7 @@ namespace DocCompareDLL
                 {
                     Mat b = Cv2.ImRead(Path.Join(folder2, ii.ToString() + ".png"));
                     sizes.Add(b.Size());
-                    Cv2.Resize(b, b, work_size);
+                    //Cv2.Resize(b, b, work_size);
                     doc2.Add(b);
                 }
 
@@ -91,7 +91,12 @@ namespace DocCompareDLL
                 {
                     for (int jj = 0; jj < n; jj++)
                     {
-                        Match_score_jpg((Mat)doc1[ii], (Mat)doc2[jj], ref distanceMatrix[ii, jj]);
+                        Mat c = new Mat();
+                        Mat d = new Mat();
+                        Cv2.Resize((Mat)doc1[ii], c, work_size);
+                        Cv2.Resize((Mat)doc2[jj], d, work_size);
+                        //Match_score_jpg((Mat)doc1[ii], (Mat)doc2[jj], ref distanceMatrix[ii, jj]);
+                        Match_score_jpg(c, d, ref distanceMatrix[ii, jj]);
                     }
                 }
 
@@ -323,29 +328,36 @@ namespace DocCompareDLL
         private static void Image_compare(Mat alpha, Mat beta, Size orig_size, ref Mat diffHighlights)
         {
             Mat a = new Mat();
-            Size my_size = new Size(512, 512);
+
+            Size my_size = alpha.Size();
+            //Size my_size = new Size(1024, 1024);
             Cv2.Resize(alpha, a, my_size);
             Mat b = new Mat();
             Cv2.Resize(beta, b, my_size);
             Mat diff_reduced = new Mat();
             Size blur_size = new Size(10, 10);
-            Cv2.Blur(a, a, blur_size);
-            Cv2.Blur(b, b, blur_size);
-
-            //generate shifted copies: 1 pixel in each direction
+            //Cv2.Blur(a, a, blur_size);
+            //Cv2.Blur(b, b, blur_size);
 
             Cv2.Absdiff(a, b, diff_reduced);
+
             //Cv2.NamedWindow("image", WindowMode.Normal);
             //Cv2.ImShow("image", diff_reduced);
             //Cv2.WaitKey(0);
+
+            //Cv2.NamedWindow("image", WindowMode.Normal);
+            //Cv2.ImShow("image", alpha);
+            //Cv2.WaitKey(0);
+
             //convert to black&white
             Cv2.CvtColor(diff_reduced, diff_reduced, ColorConversionCodes.BGR2GRAY);
             Cv2.Threshold(diff_reduced, diff_reduced, 0, 255, ThresholdTypes.Binary);
 
             //dilate mask to remove pixel holes
-            Cv2.Dilate(diff_reduced, diff_reduced, new Mat(), iterations: 3);
-            //draw bounding boxes
-            //Mat[] channels = new Mat[4];
+            Cv2.Dilate(diff_reduced, diff_reduced, new Mat(), iterations: 2);
+            Cv2.Erode(diff_reduced, diff_reduced, new Mat(), iterations: 3);
+            Cv2.Dilate(diff_reduced, diff_reduced, new Mat(), iterations: 2);
+            //draw bounding boxes:
             Cv2.Split(diff_reduced, out Mat[] channels);
 
             //find out if too much on page is different: i.e. more than hlaf of the pixels are marked...

@@ -321,8 +321,507 @@ namespace DocCompareDLL
                     }
                 }
             }
+            //alignment: two times n-1 ... 0 (backwards), -1 for gaps
             return alignment;
         }
+
+        //public static ArrayList DocCompare(ref string folder1, ref string folder2, ref string outfolder, ref int seqlen, int[,] force_pairs = null)
+        public static ArrayList DocCompareMult(ref string folder1, ref string folder2, ref string outfolder, ref int seqlen, int previous_docs, ArrayList previous_alignment = null)
+        //previous alignment: {reference;comp1; comp2; ...}. previous_docs is the number of already compared docs WITHOUT THE REFERENCE - so can be 0. Then, previous alignment should be empty.
+        {
+            //ArrayList previous_alignment;
+            //ArrayList previous_alignmentr;
+            //ArrayList previous_alignmentc;
+            //int previous_docs = 1;
+            previous_alignment ??= new ArrayList();
+
+            //previous_alignmentr = new ArrayList();
+            //previous_alignmentr.Add(-1);
+            //previous_alignmentr.Add(-1);
+            //previous_alignmentr.Add(3);
+            //previous_alignmentr.Add(2);
+            //previous_alignmentr.Add(-1);
+            //previous_alignmentr.Add(1);
+            //previous_alignmentr.Add(0);
+            //previous_alignmentr.Add(-1);
+
+            //previous_alignmentc = new ArrayList();
+            //previous_alignmentc.Add(-1);
+            //previous_alignmentc.Add(4);
+            //previous_alignmentc.Add(-1);
+            //previous_alignmentc.Add(3);
+            //previous_alignmentc.Add(2);
+            //previous_alignmentc.Add(-1);
+            //previous_alignmentc.Add(1);
+            //previous_alignmentc.Add(0);
+
+            //previous_alignment.Add(previous_alignmentr);
+            //previous_alignment.Add(previous_alignmentc);
+
+
+
+
+            ArrayList doc1 = new ArrayList(); //all images of fist document
+            ArrayList doc2 = new ArrayList(); //all images of second document
+
+            //initialize vectors for output sequences
+            ArrayList seqi = new ArrayList();
+            ArrayList seqj = new ArrayList();
+            ArrayList alignment = new ArrayList(); //to be returned... it is a concatenation of seqi and seqj
+            ArrayList sizes = new ArrayList(); //individual image sizes of output document, for overlay
+
+            //find jpgs in folder: only runs on Windows!!
+            string[] fna = System.IO.Directory.GetFiles(folder1, "*.jpg");
+            string[] fnb = System.IO.Directory.GetFiles(folder2, "*.jpg");
+            string[] fnau = System.IO.Directory.GetFiles(folder1, "*.JPG");
+            string[] fnbu = System.IO.Directory.GetFiles(folder2, "*.JPG");
+
+            string[] fn1 = new string[fna.Length + fnau.Length];
+            fna.CopyTo(fn1, 0);
+            fnau.CopyTo(fn1, fna.Length);
+            string[] fn2 = new string[fnb.Length + fnbu.Length];
+            fnb.CopyTo(fn2, 0);
+            fnbu.CopyTo(fn2, fnb.Length);
+
+            Size work_size = new Size(512, 512);
+
+            if (fn1.Length == 0 || fn2.Length == 0)
+            {
+                Console.WriteLine("one of the documents has no pages...");
+            }
+            else
+            {
+                //find the largest number image...
+                int m = 0; //number of pages in doc1
+                int n = 0; //number of pages in doc2
+
+                //document1
+                for (int i = 0; i < fn1.Length; i++)
+                {
+                    int pagenr1 = int.Parse(Path.GetFileNameWithoutExtension(fn1[i]));
+                    if (m < pagenr1)
+                    {
+                        m = pagenr1;
+                    }
+                }
+                m++; //beacuse we start images at 0.jpg, there is one more image than the max.nr, e.g. 14.jpg is max --> in total 15 images.
+
+                //document2
+                for (int i = 0; i < fn2.Length; i++)
+                {
+                    int pagenr2 = int.Parse(Path.GetFileNameWithoutExtension(fn2[i]));
+                    if (n < pagenr2)
+                    {
+                        n = pagenr2;
+                    }
+                }
+                n++;
+
+                //load all images in folder 1
+                for (int ii = 0; ii < m; ii++)
+                {
+                    Mat a = Cv2.ImRead(Path.Join(folder1, ii.ToString() + ".jpg"));
+                    //Cv2.Resize(a, a, work_size);
+                    doc1.Add(a);
+                }
+
+                //load all images in folder 2
+                for (int ii = 0; ii < n; ii++)
+                {
+                    Mat b = Cv2.ImRead(Path.Join(folder2, ii.ToString() + ".jpg"));
+                    sizes.Add(b.Size());
+                    //Cv2.Resize(b, b, work_size);
+                    doc2.Add(b);
+                }
+
+                double[,] distanceMatrix = new double[m, n];
+
+                //fill DistanceMatrix
+                for (int ii = 0; ii < m; ii++)
+                {
+                    for (int jj = 0; jj < n; jj++)
+                    {
+                        Mat c = new Mat();
+                        Mat d = new Mat();
+                        Cv2.Resize((Mat)doc1[ii], c, work_size);
+                        Cv2.Resize((Mat)doc2[jj], d, work_size);
+                        //Match_score_jpg((Mat)doc1[ii], (Mat)doc2[jj], ref distanceMatrix[ii, jj]);
+                        Match_score_jpg(c, d, ref distanceMatrix[ii, jj]);
+                    }
+                }
+
+                //normalize Distance Matrix
+                double min_dist = 1.0;
+                double max_dist = 0.0;
+                //sum over all elements in matrix, store min and max value on the go
+                for (int i = 0; i < m; i++)
+                {
+                    for (int j = 0; j < n; j++)
+                    {
+                        if (distanceMatrix[i, j] < min_dist)
+                        {
+                            min_dist = distanceMatrix[i, j];
+                        }
+                        if (distanceMatrix[i, j] > max_dist)
+                        {
+                            max_dist = distanceMatrix[i, j];
+                        }
+                    }
+                }
+
+                //get these differences scalet between 0 and 1 and inverted, so that 1 is the score for match and 0 the score for minimal match in this respective document
+                //take all elements e in matrix 1 - (e - min) / (max - min)-- > transformed differences in scores
+                //--> this is the matrix we will use.
+                //- collect average non-1 scores
+                int n_non1 = 0;
+                double sum_non1 = 0;
+                if (max_dist - min_dist > 0)
+                {
+                    for (int i = 0; i < m; i++)
+                    {
+                        for (int j = 0; j < n; j++)
+                        {
+                            if (distanceMatrix[i, j] != 0.0)
+                            {
+                                distanceMatrix[i, j] = (1 - ((distanceMatrix[i, j] - min_dist) / (max_dist - min_dist))) * 0.999999; //the last factor shall make sure that the smallest distance is recognized, because we skip '1' - distanceMatrix entries
+                                sum_non1 += distanceMatrix[i, j];
+                                n_non1++;
+                            }
+                            else
+                            {
+                                distanceMatrix[i, j] = 1;
+                            }
+                        }
+                    }
+                }
+
+                double av_non1 = 1;
+                //average score
+                if (n_non1 > 0)
+                {
+                    av_non1 = sum_non1 / n_non1;
+                }
+
+                //else sum_non1 will be 0...
+                double gap_penalty = 0.5 * av_non1;
+
+                //catch single page, alignment should be tried without gap!
+                if (n == 1 || m == 1)
+                {
+                    gap_penalty = -0.5;
+                }
+
+                //create scoring matrix according to NMW algorithm.Directly
+                //store the 'where from?' info: 0 : sequence i, 1 : sequence j, 2 : diagonal
+                double[,] score = new double[m + 1, n + 1];
+                int[,] pointers = new int[m, n];
+
+                //first rowand column:
+                for (int i = 0; i < m + 1; i++)
+                {
+                    score[i, 0] = gap_penalty * ((double)i + 1);
+                }
+                for (int j = 1; j < n + 1; j++)
+                {
+                    score[0, j] = gap_penalty * ((double)j + 1);
+                }
+
+                double match;
+                double del;
+                double insert;
+                for (int i = 1; i < m + 1; i++)
+                {
+                    for (int j = 1; j < n + 1; j++)
+                    {
+                        match = score[i - 1, j - 1] + distanceMatrix[i - 1, j - 1];
+                        del = score[i - 1, j] + gap_penalty;
+                        insert = score[i, j - 1] + gap_penalty;
+
+                        if (match > del)
+                        {
+                            if (match > insert)
+                            {
+                                score[i, j] = match;
+                                pointers[i - 1, j - 1] = 2;
+                            }
+                            else
+                            {
+                                score[i, j] = insert;
+                                pointers[i - 1, j - 1] = 0;
+                            }
+                        }
+                        else
+                        {
+                            if (del > insert)
+                            {
+                                score[i, j] = del;
+                                pointers[i - 1, j - 1] = 1;
+                            }
+                            else
+                            {
+                                score[i, j] = insert;
+                                pointers[i - 1, j - 1] = 0;
+                            }
+                        }
+                    }
+                }
+
+                //find maximal value to start with
+                int currposi = m;
+                int currposj = n;
+                double mymax = score[currposi, currposj];
+
+                for (int jj = 0; jj < n; jj++)
+                {
+                    if (score[currposi, jj] > mymax)
+                    {
+                        currposj = jj;
+                        mymax = score[currposi, jj];
+                    }
+                }
+
+                currposi -= 1;
+                currposj -= 1;
+
+                //in case alignment ends with shift
+                for (int i = n - 1; i > currposj; i--)
+                {
+                    seqi.Add(-1);
+                    seqj.Add(i);
+                }
+
+                //create the sequences
+                while (currposi > -1 && currposj > -1)
+                {
+                    if (pointers[currposi, currposj] == 2)
+                    {
+                        seqi.Add(currposi);
+                        seqj.Add(currposj);
+                        currposi -= 1;
+                        currposj -= 1;
+                    }
+                    else if (pointers[currposi, currposj] == 1)
+                    {
+                        seqi.Add(currposi);
+                        seqj.Add(-1);
+                        currposi -= 1;
+                    }
+                    else if (pointers[currposi, currposj] == 0)
+                    {
+                        seqi.Add(-1);
+                        seqj.Add(currposj);
+                        currposj -= 1;
+                    }
+                }
+
+                //finalize strings if gaps exist at beginning.Only one of currposiand currposj will be non - zero
+                for (int i = currposi; i > -1; i--)
+                {
+                    seqi.Add(i);
+                    seqj.Add(-1);
+                }
+                for (int j = currposj; j > -1; j--)
+                {
+                    seqi.Add(-1);
+                    seqj.Add(j);
+                }
+                if (previous_docs == 0)
+                {
+                    alignment.Add(seqi);
+                    alignment.Add(seqj);
+
+
+                    //for (int ii = 0; ii < 2 * seqi.Count; ii++)
+                    //{
+                    //	Console.Write(alignment[ii] + " ");
+                    //}
+                    //Console.WriteLine();
+
+
+                    //check if previous alignment exists
+                    //seqi.Add(-1);
+                    //seqi.Add(3);
+                    //seqi.Add(-1);
+                    //seqi.Add(-1);
+                    //seqi.Add(2);
+                    //seqi.Add(1);
+                    //seqi.Add(0);
+
+                    //seqj.Add(3);
+                    //seqj.Add(-1);
+                    //seqj.Add(2);
+                    //seqj.Add(1);
+                    //seqj.Add(0);
+                    //seqj.Add(-1);
+                    //seqj.Add(-1);
+                }
+                else
+                {
+                    //create working copies and assists
+                    ArrayList prevalig = (ArrayList)previous_alignment[0];
+                    int old_len = prevalig.Count / (previous_docs + 1); //length of previous alignment
+
+                    ArrayList newref = new ArrayList();
+                    newref.AddRange(seqi);
+                    ArrayList oldref = new ArrayList();
+                    oldref.AddRange(prevalig);
+                    ArrayList newcompared = new ArrayList();
+                    newcompared.AddRange(seqj);
+                    ArrayList oldcompared = new ArrayList();
+                    oldcompared.AddRange(previous_alignment.GetRange(1, previous_docs));
+
+
+                    int lastseen = -1;
+                    int insertindex = newref.Count - 1;
+                    //1. Shift the newcompared by all -1s in Reference and write to new array
+                    for (int ii = oldref.Count - 1; ii > -1; ii--)
+                    {
+
+                        int curr_element = (int)oldref[ii];
+                        //check if it is -1
+                        if (curr_element != -1)
+                        {
+                            //write to last seen
+                            lastseen = curr_element;
+                        }
+                        else
+                        {
+                            //find lastseen in new alignment reference
+                            if (lastseen != -1)
+                            {
+                                insertindex = newref.IndexOf(lastseen);
+                                lastseen = -1;
+                            }
+                            //shift everything in new alignment after that index by 1
+                            newcompared.Insert(insertindex + 1, -1);
+                        }
+
+                    }
+
+                    //2. Shift all previous alignments by all -1s in new alignment first half
+                    lastseen = -1;
+                    insertindex = oldref.Count - 1;
+                    //1. Shift the new alignment second half by all -1s in Reference and write to new array
+                    for (int ii = newref.Count - 1; ii > -1; ii--)
+                    {
+                        int curr_element = (int)newref[ii];
+                        //check if it is -1
+                        if (curr_element != -1)
+                        {
+                            //write to last seen
+                            lastseen = curr_element;
+                        }
+                        else
+                        {
+                            //find lastseen in new alignment reference
+
+                            if (lastseen != -1)
+                            {
+                                insertindex = oldref.IndexOf(lastseen);
+                                lastseen = -1;
+                            }
+                            //shift everything in old alignments after that index by 1
+                            oldref.Insert(insertindex, -1);
+
+                            foreach (ArrayList innerArr in oldcompared)
+                            {
+                                innerArr.Insert(insertindex, -1);
+                            }
+
+                        }
+
+                    }
+                    //3. Remove all empty rows
+                    for (int ii = newcompared.Count - 1; ii > -1; ii--)
+                    {
+                        bool allminus = true;
+                        if ((int)newcompared[ii] == -1 && (int)oldref[ii] == -1)
+                        {
+                            foreach (ArrayList innerArr in oldcompared)
+                            {
+                                if ((int)innerArr[ii] != -1)
+                                {
+                                    allminus = false;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            allminus = false;
+                        }
+                        if (allminus)
+                        {
+                            foreach (ArrayList innerArr in oldcompared)
+                            {
+                                innerArr.RemoveAt(ii);
+                            }
+                            oldref.RemoveAt(ii);
+                            newcompared.RemoveAt(ii);
+
+                        }
+
+                    }
+                    //4. Unify subsequent "-1 in reference ii and ii-1"
+                    for (int ii = newcompared.Count - 1; ii > 0; ii--) //0 because 0th element cannot be shifted upwards!
+                    {
+                        if ((int)oldref[ii] == -1 && (int)oldref[ii - 1] == -1)
+                        {
+                            bool possible = true;
+                            //check for each element if above is -1
+                            foreach (ArrayList innerArr in oldcompared)
+                            {
+                                if ((int)innerArr[ii] != -1)
+                                {
+                                    if ((int)innerArr[ii - 1] != -1)
+                                    {
+                                        possible = false;
+                                    }
+                                }
+                            }
+                            if (possible && (int)newcompared[ii] != -1)
+                            {
+                                if ((int)newcompared[ii - 1] != -1)
+                                {
+                                    possible = false;
+                                }
+                            }
+                            if (possible)
+                            {
+                                //add 1 to all entries and add to previous line, then delete
+                                foreach (ArrayList innerArr in oldcompared)
+                                {
+                                    innerArr[ii] = (int)innerArr[ii] + 1;
+                                }
+                                newcompared[ii] = (int)newcompared[ii] + 1;
+                                //add to previous
+                                foreach (ArrayList innerArr in oldcompared)
+                                {
+                                    innerArr[ii - 1] = (int)innerArr[ii - 1] + (int)innerArr[ii];
+                                }
+                                newcompared[ii - 1] = (int)newcompared[ii - 1] + (int)newcompared[ii];
+                                //now remove line ii from oldref, oldcompared and newcompared
+                                oldref.RemoveAt(ii);
+                                newcompared.RemoveAt(ii);
+                                foreach (ArrayList innerArr in oldcompared)
+                                {
+                                    innerArr.RemoveAt(ii);
+                                }
+                            }
+                        }
+                    }
+
+                    //Compile return...
+                    alignment.Add(oldref);
+                    foreach (ArrayList innerArr in oldcompared)
+                    {
+                        alignment.Add(innerArr);
+                    }
+                    alignment.Add(newcompared);
+                }
+            }
+            return alignment;
+        }
+
 
         // creates an image mask for the differences between two images
         private static void Image_compare(Mat alpha, Mat beta, Size orig_size, ref Mat diffHighlights)

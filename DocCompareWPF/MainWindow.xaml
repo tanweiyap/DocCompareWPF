@@ -958,6 +958,20 @@
                                                                         </TransformGroup>
                                                                     </Label.RenderTransform>
                                                                 </Label>
+                                                                <Grid Tag="{Binding PPTSpeakerNoteGridNameLeft}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
+                                                                               MaxHeight="150" Background="White" Opacity="0.7" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="25"/>
+                                                                        <RowDefinition/>
+                                                                    </Grid.RowDefinitions>
+                                                                    <Button Tag="{Binding ClosePPTSpeakerNotesButtonNameLeft}" Height="20" Width="20" Padding="0" BorderBrush="Transparent" Background="Transparent"
+                                                                            HorizontalAlignment="Right" Margin="0,0,2,0" Click="HandleClosePPTNoteButtonClickCompareMode">
+                                                                        <iconPacks:PackIconCodicons Kind="Close"/>
+                                                                    </Button>
+                                                                    <ScrollViewer Padding="10" Grid.Row="1">
+                                                                        <TextBlock TextWrapping="Wrap" Text="{Binding PPTSpeakerNotesLeft}"></TextBlock>
+                                                                    </ScrollViewer>
+                                                                </Grid>
                                                             </Grid>
                                                             <Grid Grid.Column="1" Tag="{Binding ImgGridRightName}" MouseEnter="HandleMainDocCompareGridMouseEnter" MouseLeave="HandleMainDocCompareGridMouseLeave">
                                                                 <Border>
@@ -1013,10 +1027,29 @@
                                                                         </TransformGroup>
                                                                     </Label.RenderTransform>
                                                                 </Label>
-                                                                <Button Tag="{Binding AnimateDiffRightButtonName}" Height="25" Width="25" Padding="0" Margin="15,15,0,0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Click and hold to animate the difference" Visibility="Hidden"
+                                                                <Button Tag="{Binding AnimateDiffRightButtonName}" Height="30" Width="30" Padding="0" Margin="15,15,0,0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Click and hold to animate the difference" Visibility="Hidden"
                                                                     PreviewMouseDown="HandleMainDocCompareAnimateMouseDown" PreviewMouseUp="HandleMainDocCompareAnimateMouseRelease" IsEnabled="{Binding AniDiffButtonEnable}">
                                                                     <iconPacks:PackIconMaterial Kind="VectorDifference" Width="15" Height="15" />
                                                                 </Button>
+                                                                <Button Tag="{Binding ShowPPTSpeakerNotesButtonNameRight}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
+                                                                        HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="15" ToolTip="Click to show speaker notes of this slide"
+                                                                        Click="HandleShowPPTNoteButtonCompareMode">
+                                                                    <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
+                                                                </Button>
+                                                                <Grid Tag="{Binding PPTSpeakerNoteGridNameRight}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
+                                                                               MaxHeight="150" Background="White" Opacity="0.7" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="25"/>
+                                                                        <RowDefinition/>
+                                                                    </Grid.RowDefinitions>
+                                                                    <Button Tag="{Binding ClosePPTSpeakerNotesButtonNameRight}" Height="20" Width="20" Padding="0" BorderBrush="Transparent" Background="Transparent"
+                                                                            HorizontalAlignment="Right" Margin="0,0,2,0" Click="HandleClosePPTNoteButtonClickCompareMode">
+                                                                        <iconPacks:PackIconCodicons Kind="Close"/>
+                                                                    </Button>
+                                                                    <ScrollViewer Padding="10" Grid.Row="1">
+                                                                        <TextBlock TextWrapping="Wrap" Text="{Binding PPTSpeakerNotesRight}"></TextBlock>
+                                                                    </ScrollViewer>
+                                                                </Grid>
                                                             </Grid>
                                                         </Grid>
                                                     </ControlTemplate>

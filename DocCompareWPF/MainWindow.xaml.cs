@@ -56,6 +56,29 @@ namespace DocCompareWPF
         private Visibility _showHiddenLeft;
         private Visibility _showHiddenRight;
 
+        public string PPTSpeakerNoteGridNameLeft;
+        public string PPTSpeakerNoteGridNameRight;
+        public string ClosePPTSpeakerNotesButtonNameLeft;
+        public string ClosePPTSpeakerNotesButtonNameRight;
+        public string PPTSpeakerNotesLeft;
+        public string PPTSpeakerNotesRight;
+        public string ShowPPTSpeakerNotesButtonNameRight;
+        private Visibility _showPPTSpeakerNotesButton;
+
+        public Visibility showPPTSpeakerNotesButton
+        {
+            get
+            {
+                return _showPPTSpeakerNotesButton;
+            }
+
+            set
+            {
+                _showPPTSpeakerNotesButton = value;
+                OnPropertyChanged();
+            }
+        }
+
         public double BlurRadiusRight
         {
             get
@@ -1130,7 +1153,15 @@ namespace DocCompareWPF
                     AnimateDiffRightButtonName = "AnimateDiffRight" + i.ToString(),
                     AniDiffButtonEnable = false,
                     Margin = new Thickness(10),
+                    PPTSpeakerNoteGridNameLeft = "PPTSpeakerNoteGridLeft" + i.ToString(),
+                    PPTSpeakerNoteGridNameRight = "PPTSpeakerNoteGridRight" + i.ToString(),
+                    ClosePPTSpeakerNotesButtonNameLeft = "ClosePPTSpeakerNotesButtonNameLeft" + i.ToString(),
+                    ClosePPTSpeakerNotesButtonNameRight = "ClosePPTSpeakerNotesButtonNameRight" + i.ToString(),
+                    ShowPPTSpeakerNotesButtonNameRight = "ShowPPTSpeakerNotesButtonNameRight" + i.ToString(),
+
                 };
+
+                bool showSpeakerNotes = false;
 
                 if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
                 {
@@ -1153,6 +1184,12 @@ namespace DocCompareWPF
                         {
                             thisItem.ShowHiddenLeft = Visibility.Hidden;
                             thisItem.BlurRadiusLeft = 0;
+                        }
+
+                        if(docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0)
+                        {
+                            thisItem.PPTSpeakerNotesLeft = docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]];
+                            showSpeakerNotes |= true;
                         }
                     }
                     else
@@ -1199,6 +1236,12 @@ namespace DocCompareWPF
                             thisItem.ShowHiddenRight = Visibility.Hidden;
                             thisItem.BlurRadiusRight = 0;
                         }
+
+                        if (docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length != 0)
+                        {
+                            thisItem.PPTSpeakerNotesLeft = docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]];
+                            showSpeakerNotes |= true;
+                        }
                     }
                     else
                     {
@@ -1210,6 +1253,15 @@ namespace DocCompareWPF
                 {
                     thisItem.ShowHiddenRight = Visibility.Hidden;
                     thisItem.BlurRadiusRight = 0;
+                }
+
+                if(showSpeakerNotes == true)
+                {
+                    thisItem.showPPTSpeakerNotesButton = Visibility.Visible;
+                }
+                else
+                {
+                    thisItem.showPPTSpeakerNotesButton = Visibility.Hidden;
                 }
 
                 mainItemList.Add(thisItem);
@@ -2414,13 +2466,19 @@ namespace DocCompareWPF
 
                         if (mainGridSelectedLeftOrRight == GridSelection.LEFT)
                         {
-                            if (thisButton.Tag.ToString().Contains("Left"))
-                                thisButton.Visibility = Visibility.Hidden;
+                            if (thisButton.Tag != null)
+                            {
+                                if (thisButton.Tag.ToString().Contains("AnimateDiffLeft"))
+                                    thisButton.Visibility = Visibility.Hidden;
+                            }
                         }
                         else
                         {
-                            if (thisButton.Tag.ToString().Contains("Right"))
-                                thisButton.Visibility = Visibility.Visible;
+                            if (thisButton.Tag != null)
+                            {
+                                if (thisButton.Tag.ToString().Contains("AnimateDiffRight"))
+                                    thisButton.Visibility = Visibility.Visible;
+                            }
                         }
                     }
 
@@ -2475,13 +2533,19 @@ namespace DocCompareWPF
 
                         if (mainGridSelectedLeftOrRight == GridSelection.LEFT)
                         {
-                            if (thisButton.Tag.ToString().Contains("Left"))
-                                thisButton.Visibility = Visibility.Hidden;
+                            if (thisButton.Tag != null)
+                            {
+                                if (thisButton.Tag.ToString().Contains("AnimateDiffLeft"))
+                                    thisButton.Visibility = Visibility.Hidden;
+                            }
                         }
                         else
                         {
-                            if (thisButton.Tag.ToString().Contains("Right"))
-                                thisButton.Visibility = Visibility.Hidden;
+                            if (thisButton.Tag != null)
+                            {
+                                if (thisButton.Tag.ToString().Contains("AnimateDiffRight"))
+                                    thisButton.Visibility = Visibility.Hidden;
+                            }
                         }
                     }
                 }
@@ -5040,6 +5104,16 @@ namespace DocCompareWPF
             {
 
             }
+        }
+
+        private void HandleClosePPTNoteButtonClickCompareMode(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void HandleShowPPTNoteButtonCompareMode(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)

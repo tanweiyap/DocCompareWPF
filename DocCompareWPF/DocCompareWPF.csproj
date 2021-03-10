@@ -40,7 +40,6 @@
     <None Remove="LogoLarge.png" />
     <None Remove="LogoSmall.png" />
     <None Remove="LogoSmallest.png" />
-    <None Remove="Page1.PNG" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,7 +60,6 @@
 
   <ItemGroup>
     <Resource Include="LogoSmallest.png" />
-    <Resource Include="Page1.PNG" />
     <Resource Include="Resources\Icons\LogoLarge.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

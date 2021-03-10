@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using DocCompareDLL;
 
 namespace DocCompareWPF.Classes
 {
@@ -16,6 +17,7 @@ namespace DocCompareWPF.Classes
         public ArrayList pageCompareIndices;
         public int totalLen;
         public string workingDir;
+        public List<List<DocCompareDLL.Diff>> pptSpeakerNotesDiff;
 
         public DocumentManagement(string p_workingDir, AppSettings settings)
         {

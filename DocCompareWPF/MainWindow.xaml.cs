@@ -104,7 +104,7 @@ namespace DocCompareWPF
                         case "D":
                         case "DELETE":
                             spanItem.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
-                            spanItem.Foreground = Brushes.LightGray;
+                            spanItem.Foreground = Brushes.Transparent;
                             span.Inlines.Add(spanItem);
                             break;
                         case "IN":
@@ -1589,6 +1589,9 @@ namespace DocCompareWPF
                     PageNumberLabel = (i + 1).ToString(),
                     BackgroundBrush = Color.FromArgb(0, 255, 255, 255),
                     ShowHidden = Visibility.Hidden,
+                    ForceAlignButtonVisi = Visibility.Hidden,
+                    ForceAlignButtonInvalidVisi = Visibility.Hidden,
+                    RemoveForceAlignButtonName = "RemoveForceAlign" + i.ToString()
                 };
 
                 SideGridItemRight rightItem = new SideGridItemRight()
@@ -1603,6 +1606,9 @@ namespace DocCompareWPF
                     RemoveForceAlignButtonVisibility = Visibility.Hidden,
                     BackgroundBrush = Color.FromArgb(0, 255, 255, 255),
                     ShowHidden = Visibility.Hidden,
+                    ForceAlignButtonVisi = Visibility.Hidden,
+                    ForceAlignButtonInvalidVisi = Visibility.Hidden,
+                    RemoveForceAlignButtonName = "RemoveForceAlign" + i.ToString(),                    
                 };
 
                 if (i == 0)
@@ -1616,9 +1622,13 @@ namespace DocCompareWPF
                 {
                     if (ind1[0] == docs.documents[docs.documentsToCompare[0]].docCompareIndices[i])
                     {
-                        rightItem.RemoveForceAlignButtonName = "RemoveForceAlign" + docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString();
+                        /*
+                        
                         rightItem.RemoveForceAlignButtonVisibility = Visibility.Visible;
                         rightItem.RemoveForceAlignButtonEnable = true;
+                        */
+                        leftItem.ForceAlignButtonVisi = Visibility.Visible;
+                        rightItem.ForceAlignButtonVisi = Visibility.Visible;
                     }
                 }
 
@@ -1656,12 +1666,19 @@ namespace DocCompareWPF
                         {
                             leftItem.BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
                             rightItem.BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
+                            rightItem.DiffVisi = Visibility.Visible;
+                            rightItem.NoDiffVisi = Visibility.Hidden;
                         }
 
                         if (showMask == true)
                             rightItem.ShowMask = Visibility.Visible;
                         else
                             rightItem.ShowMask = Visibility.Hidden;
+                    }
+                    else
+                    {
+                        rightItem.DiffVisi = Visibility.Hidden;
+                        rightItem.NoDiffVisi = Visibility.Visible;
                     }
 
                     if (docs.documents[docs.documentsToCompare[1]].fileType == Document.FileTypes.PPT)
@@ -1679,6 +1696,12 @@ namespace DocCompareWPF
                     {
                         rightItem.ShowHidden = Visibility.Hidden;
                     }
+                }
+
+                if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] == -1 || docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] == -1)
+                {
+                    rightItem.NoDiffVisi = Visibility.Hidden;
+                    rightItem.DiffVisi = Visibility.Hidden;
                 }
 
                 leftItemList.Add(leftItem);
@@ -3864,7 +3887,7 @@ namespace DocCompareWPF
             {
                 Button button = sender as Button;
                 string[] splittedName = button.Tag.ToString().Split("Align");
-                docs.RemoveForceAligmentPairs(int.Parse(splittedName[1]));
+                docs.RemoveForceAligmentPairs(docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedName[1])]);
 
                 ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                 docCompareGrid.Visibility = Visibility.Hidden;
@@ -4461,6 +4484,7 @@ namespace DocCompareWPF
             string imgName = img.Tag.ToString();
             string[] splittedName;
             string nameToLook = "";
+            string nameToLook1 = "";
 
             if (imgName.Contains("Left"))
             {
@@ -4543,62 +4567,41 @@ namespace DocCompareWPF
                 }
             }
 
-            foreach (object child in img.Children)
+            if(isLinkedPage == true)
             {
-                if (child is Button)
+                nameToLook1 = "RemoveForceAlign" + splittedName[1];
+            }
+            else
+            {
+                nameToLook1 = nameToLook;
+            }
+
+            if(inForceAlignMode == false)
+            {
+                foreach (object child in img.Children)
                 {
-                    if ((child as Button).Tag.ToString() == nameToLook)
+                    if (child is Button)
                     {
-                        Button foundButton = child as Button;
-                        if (inForceAlignMode == false)
+                        if ((child as Button).Tag.ToString() == nameToLook1)
                         {
-                            if (isLinkedPage == false)
-                                foundButton.Visibility = Visibility.Visible;
-                            else
-                            {
-                                nameToLook = "SideButtonInvalidLeft" + splittedName[1];
-
-                                foreach (object child2 in img.Children)
-                                {
-                                    if (child2 is Button)
-                                    {
-                                        if ((child2 as Button).Tag.ToString() == nameToLook)
-                                        {
-                                            foundButton = child2 as Button;
-
-                                            if (isLinkedPage == true)
-                                            {
-                                                foundButton.ToolTip = "Page linked. Please remove existing link first.";
-                                            }
-
-                                            foundButton.Visibility = Visibility.Visible;
-                                        }
-                                    }
-                                }
-
-                                nameToLook = "SideButtonInvalidRight" + splittedName[1];
-
-                                foreach (object child2 in img.Children)
-                                {
-                                    if (child2 is Button)
-                                    {
-                                        if ((child2 as Button).Tag.ToString() == nameToLook)
-                                        {
-                                            foundButton = child2 as Button;
-
-                                            if (isLinkedPage == true)
-                                            {
-                                                foundButton.ToolTip = "Page linked. Please remove existing link first.";
-                                            }
-
-                                            foundButton.Visibility = Visibility.Visible;
-                                        }
-                                    }
-                                }
-                            }
+                            (child as Button).Visibility = Visibility.Visible;
                         }
                         else
                         {
+                            (child as Button).Visibility = Visibility.Hidden;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (object child in img.Children)
+                {
+                    if (child is Button)
+                    {
+                        if ((child as Button).Tag.ToString() == nameToLook)
+                        {
+                            Button foundButton = child as Button;
                             if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
                             {
                                 if (nameToLook.Contains("Left"))
@@ -4633,6 +4636,10 @@ namespace DocCompareWPF
                                                     }
 
                                                     foundButton.Visibility = Visibility.Visible;
+                                                }
+                                                else
+                                                {
+                                                    foundButton.Visibility = Visibility.Hidden;
                                                 }
                                             }
                                         }
@@ -4674,6 +4681,10 @@ namespace DocCompareWPF
 
                                                     foundButton.Visibility = Visibility.Visible;
                                                 }
+                                                else
+                                                {
+                                                    foundButton.Visibility = Visibility.Hidden;
+                                                }
                                             }
                                         }
                                     }
@@ -4683,54 +4694,284 @@ namespace DocCompareWPF
                     }
                 }
             }
-        }
 
-        private void SideGridMouseLeave(object sender, MouseEventArgs args)
-        {
-            Grid img = sender as Grid;
-            string imgName = img.Tag.ToString();
-            string[] splittedName;
-            string nameToLook = "";
-            string nameToLook2 = "";
-
-            if (imgName.Contains("Left"))
-            {
-                splittedName = imgName.Split("Left");
-                nameToLook = "SideButtonLeft" + splittedName[1];
-                nameToLook2 = "SideButtonInvalidLeft" + splittedName[1];
-            }
-
-            if (imgName.Contains("Right"))
-            {
-                splittedName = imgName.Split("Right");
-                nameToLook = "SideButtonRight" + splittedName[1];
-                nameToLook2 = "SideButtonInvalidRight" + splittedName[1];
-            }
-
+            /*
             foreach (object child in img.Children)
             {
                 if (child is Button)
                 {
-                    if ((child as Button).Tag.ToString() == nameToLook || (child as Button).Tag.ToString() == nameToLook2)
+                    if ((child as Button).Tag.ToString() == nameToLook)
                     {
                         Button foundButton = child as Button;
                         if (inForceAlignMode == false)
                         {
-                            foundButton.Visibility = Visibility.Hidden;
+                            if (isLinkedPage == false)
+                                foundButton.Visibility = Visibility.Visible;
+                            else
+                            {
+                                nameToLook = "RemoveForceAlign" + splittedName[1];
+
+                                foreach (object child2 in img.Children)
+                                {
+                                    if (child2 is Button)
+                                    {
+                                        if ((child2 as Button).Tag.ToString() == nameToLook)
+                                        {
+                                            foundButton = child2 as Button;
+                                            
+                                            if (isLinkedPage == true)
+                                            {
+                                                foundButton.ToolTip = "Page linked. Please remove existing link first.";
+                                            }
+                                            
+                                            foundButton.Visibility = Visibility.Visible;
+                                        }
+                                        else
+                                        {
+                                            foundButton.Visibility = Visibility.Hidden;
+                                        }
+                                    }
+                                }
+                                
+                            }
                         }
                         else
                         {
-                            if (foundButton.Tag.ToString() == selectedSideGridButtonName1)
+                            if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
                             {
-                                foundButton.Visibility = Visibility.Visible;
+                                if (nameToLook.Contains("Left"))
+                                {
+                                    if (nameToLook != selectedSideGridButtonName1)
+                                        foundButton.Visibility = Visibility.Hidden;
+                                    else
+                                        foundButton.Visibility = Visibility.Visible;
+                                }
+                                else
+                                {
+                                    if (lowerIndRight <= selfInd && selfInd <= upperIndLeft && isLinkedPage == false)
+                                        foundButton.Visibility = Visibility.Visible;
+                                    else
+                                    {
+                                        nameToLook = "SideButtonInvalidRight" + splittedName[1];
+                                        foreach (object child2 in img.Children)
+                                        {
+                                            if (child2 is Button)
+                                            {
+                                                if ((child2 as Button).Tag.ToString() == nameToLook)
+                                                {
+                                                    foundButton = child2 as Button;
+
+                                                    if (isLinkedPage == true)
+                                                    {
+                                                        foundButton.ToolTip = "Page linked. Please remove existing link first.";
+                                                    }
+                                                    else
+                                                    {
+                                                        foundButton.ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.";
+                                                    }
+
+                                                    foundButton.Visibility = Visibility.Visible;
+                                                }
+                                                else
+                                                {
+                                                    foundButton.Visibility = Visibility.Hidden;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             else
                             {
-                                foundButton.Visibility = Visibility.Hidden;
+                                if (nameToLook.Contains("Right"))
+                                {
+                                    if (nameToLook != selectedSideGridButtonName1)
+                                        foundButton.Visibility = Visibility.Hidden;
+                                    else
+                                        foundButton.Visibility = Visibility.Visible;
+                                }
+                                else
+                                {
+                                    if (lowerIndRight <= selfInd && selfInd <= upperIndRight && isLinkedPage == false)
+                                        foundButton.Visibility = Visibility.Visible;
+                                    else
+                                    {
+                                        nameToLook = "SideButtonInvalidLeft" + splittedName[1];
+                                        foreach (object child2 in img.Children)
+                                        {
+                                            if (child2 is Button)
+                                            {
+                                                if ((child2 as Button).Tag.ToString() == nameToLook)
+                                                {
+                                                    foundButton = child2 as Button;
+
+                                                    if (isLinkedPage == true)
+                                                    {
+                                                        foundButton.ToolTip = "Page linked. Please remove existing link first.";
+                                                    }
+                                                    else
+                                                    {
+                                                        foundButton.ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.";
+                                                    }
+
+                                                    foundButton.Visibility = Visibility.Visible;
+                                                }
+                                                else
+                                                {
+                                                    foundButton.Visibility = Visibility.Hidden;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
+            }
+            */
+                        
+        }
+
+        private void SideGridMouseLeave(object sender, MouseEventArgs args)
+        {
+            try
+            {
+                Grid img = sender as Grid;
+                string imgName = img.Tag.ToString();
+                string[] splittedName;
+                string nameToLook = "";
+                string nameToLook2 = "";
+                string nameToLook3 = "";
+                bool leftRight = false;
+
+                if (imgName.Contains("Left"))
+                {
+                    splittedName = imgName.Split("Left");
+                    nameToLook = "SideButtonLeft" + splittedName[1];
+                    nameToLook2 = "SideButtonInvalidLeft" + splittedName[1];
+                    nameToLook3 = "RemoveForceAlign" + splittedName[1];
+                }
+                else
+                {
+                    splittedName = imgName.Split("Right");
+                    nameToLook = "SideButtonRight" + splittedName[1];
+                    nameToLook2 = "SideButtonInvalidRight" + splittedName[1];
+                    nameToLook3 = "RemoveForceAlign" + splittedName[1];
+                }
+
+                foreach (object child in img.Children)
+                {
+                    if (child is Button)
+                    {
+                        if ((child as Button).Tag.ToString() == nameToLook || (child as Button).Tag.ToString() == nameToLook2 || (child as Button).Tag.ToString() == nameToLook3)
+                        {
+                            Button foundButton = child as Button;
+                            if (inForceAlignMode == false)
+                            {
+                                if ((child as Button).Tag.ToString() == nameToLook3)
+                                {
+                                    if (docs.forceAlignmentIndices.Count != 0)
+                                    {
+                                        if (leftRight == false)
+                                        {
+                                            foreach (List<int> l in docs.forceAlignmentIndices)
+                                            {
+                                                if (l[0] == docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedName[1])])
+                                                {
+                                                    foundButton.Visibility = Visibility.Visible;
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    foundButton.Visibility = Visibility.Hidden;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            foreach (List<int> l in docs.forceAlignmentIndices)
+                                            {
+                                                if (l[1] == docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedName[1])])
+                                                {
+                                                    foundButton.Visibility = Visibility.Visible;
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    foundButton.Visibility = Visibility.Hidden;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        foundButton.Visibility = Visibility.Hidden;
+                                    }
+                                }
+                                else
+                                {
+                                    foundButton.Visibility = Visibility.Hidden;
+                                }
+                            }
+                            else
+                            {
+                                if (foundButton.Tag.ToString() == selectedSideGridButtonName1)
+                                {
+                                    foundButton.Visibility = Visibility.Visible;
+                                }
+                                else if ((child as Button).Tag.ToString() == nameToLook3)
+                                {
+                                    if (docs.forceAlignmentIndices.Count != 0)
+                                    {
+                                        if (leftRight == false)
+                                        {
+                                            foreach (List<int> l in docs.forceAlignmentIndices)
+                                            {
+                                                if (l[0] == docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedName[1])])
+                                                {
+                                                    foundButton.Visibility = Visibility.Visible;
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    foundButton.Visibility = Visibility.Hidden;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            foreach (List<int> l in docs.forceAlignmentIndices)
+                                            {
+                                                if (l[1] == docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedName[1])])
+                                                {
+                                                    foundButton.Visibility = Visibility.Visible;
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    foundButton.Visibility = Visibility.Hidden;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        foundButton.Visibility = Visibility.Hidden;
+                                    }
+                                }
+                                else
+                                {
+                                    foundButton.Visibility = Visibility.Hidden;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+
             }
         }
 
@@ -5424,17 +5665,10 @@ namespace DocCompareWPF
                     splitedName = senderName.Split("Left");
                 else
                 {
-
                     splitedName = senderName.Split("Right");
-                    try
-                    {
-                        int i = int.Parse(splitedName[splitedName.Length - 1]);
-                    }
-                    catch
-                    {
-                        splitedName = senderName.Split("RightChanged");
+                    int i = int.Parse(splitedName[splitedName.Length - 1]);
+                    if (docs.pptSpeakerNotesDiff[i].Count >= 1)
                         isChanged = true;
-                    }
 
                     leftRight = true;
                 }
@@ -5456,6 +5690,7 @@ namespace DocCompareWPF
                             item.showPPTSpeakerNotesButtonRight = Visibility.Visible;
                         else
                             item.showPPTSpeakerNotesButtonRightChanged = Visibility.Visible;
+
                         item.PPTNoteGridRightVisi = Visibility.Hidden;
                     }
                 }
@@ -5697,6 +5932,9 @@ namespace DocCompareWPF
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private Visibility _forceAlignButtonVisi;
+        private Visibility _forceAlignButtonInvalidVisi;
+
         private Visibility _showHidden;
 
         public Visibility ShowHidden
@@ -5709,6 +5947,32 @@ namespace DocCompareWPF
             set
             {
                 _showHidden = value;
+                OnPropertyChanged();
+            }
+        }
+        public Visibility ForceAlignButtonVisi
+        {
+            get
+            {
+                return _forceAlignButtonVisi;
+            }
+
+            set
+            {
+                _forceAlignButtonVisi = value;
+                OnPropertyChanged();
+            }
+        }
+        public Visibility ForceAlignButtonInvalidVisi
+        {
+            get
+            {
+                return _forceAlignButtonInvalidVisi;
+            }
+
+            set
+            {
+                _forceAlignButtonInvalidVisi = value;
                 OnPropertyChanged();
             }
         }
@@ -5756,7 +6020,7 @@ namespace DocCompareWPF
 
         private string _pathToImgDummy;
         public string PathToImgDummy { get { return _pathToImgDummy; } set { _pathToImgDummy = value; OnPropertyChanged(); } }
-
+        public string RemoveForceAlignButtonName { get; set; }
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -5772,6 +6036,11 @@ namespace DocCompareWPF
         public event PropertyChangedEventHandler PropertyChanged;
 
         private Visibility _showHidden;
+        private Visibility _forceAlignButtonVisi;
+        private Visibility _forceAlignButtonInvalidVisi;
+
+        private Visibility _diffVisi;
+        private Visibility _noDiffVisi;
 
         public Visibility ShowHidden
         {
@@ -5787,6 +6056,60 @@ namespace DocCompareWPF
             }
         }
 
+        public Visibility ForceAlignButtonVisi
+        {
+            get
+            {
+                return _forceAlignButtonVisi;
+            }
+
+            set
+            {
+                _forceAlignButtonVisi = value;
+                OnPropertyChanged();
+            }
+        }
+        public Visibility ForceAlignButtonInvalidVisi
+        {
+            get
+            {
+                return _forceAlignButtonInvalidVisi;
+            }
+
+            set
+            {
+                _forceAlignButtonInvalidVisi = value;
+                OnPropertyChanged();
+            }
+
+        }
+        public Visibility DiffVisi
+        {
+            get
+            {
+                return _diffVisi;
+            }
+
+            set
+            {
+                _diffVisi = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Visibility NoDiffVisi
+        {
+            get
+            {
+                return _noDiffVisi;
+            }
+
+            set
+            {
+                _noDiffVisi = value;
+                OnPropertyChanged();
+            }
+        }
         public Color BackgroundBrush
         {
             get

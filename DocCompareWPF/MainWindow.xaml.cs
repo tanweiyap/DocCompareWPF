@@ -61,12 +61,12 @@ namespace DocCompareWPF
         {
             XmlDocument doc = new XmlDocument();
 
-            if(value != null)
+            if (value != null)
                 doc.LoadXml(value);
 
             Span span = new Span();
 
-            if(doc.ChildNodes.Count != 0)
+            if (doc.ChildNodes.Count != 0)
                 InternalProcess(span, doc.ChildNodes[1]);
 
             return span;
@@ -200,7 +200,7 @@ namespace DocCompareWPF
                 OnPropertyChanged();
             }
         }
-        
+
         public Visibility showPPTSpeakerNotesButtonRight
         {
             get
@@ -702,7 +702,7 @@ namespace DocCompareWPF
                             }
                         }
 
-                        if(child is Grid)
+                        if (child is Grid)
                         {
                             Grid thisGrid = child as Grid;
                             thisGrid.Visibility = Visibility.Hidden;
@@ -1265,9 +1265,9 @@ namespace DocCompareWPF
                 // we will only display the difference on the right
                 docs.pptSpeakerNotesDiff = new List<List<DocCompareDLL.Diff>>(docs.totalLen);
                 DocCompareDLL.diff_match_patch diffMatch = new DocCompareDLL.diff_match_patch();
-                string text1 = ""; 
+                string text1 = "";
                 string text2 = "";
-                for(int i = 0; i < docs.totalLen; i++)
+                for (int i = 0; i < docs.totalLen; i++)
                 {
                     if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
                     {
@@ -1293,10 +1293,10 @@ namespace DocCompareWPF
                         }
                     }
 
-                    if(text1.Length != 0 && text2.Length != 0)
+                    if (text1.Length != 0 && text2.Length != 0)
                     {
                         List<DocCompareDLL.Diff> diff = diffMatch.diff_main(text1, text2);
-                        diffMatch.diff_cleanupEfficiency(diff);
+                        diffMatch.diff_cleanupSemantic(diff);
                         docs.pptSpeakerNotesDiff.Add(diff);
                     }
                     else
@@ -1380,7 +1380,7 @@ namespace DocCompareWPF
                     ClosePPTSpeakerNotesButtonNameRight = "ClosePPTSpeakerNotesButtonNameRight" + i.ToString(),
                     ShowPPTSpeakerNotesButtonNameRight = "ShowPPTSpeakerNotesButtonNameRight" + i.ToString(),
                     ShowPPTSpeakerNotesButtonNameRightChanged = "ShowPPTSpeakerNotesButtonNameRightChanged" + i.ToString(),
-                    ShowPPTSpeakerNotesButtonNameLeft = "ShowPPTSpeakerNotesButtonNameLeft" + i.ToString(),     
+                    ShowPPTSpeakerNotesButtonNameLeft = "ShowPPTSpeakerNotesButtonNameLeft" + i.ToString(),
                     PPTNoteGridLeftVisi = Visibility.Hidden,
                     PPTNoteGridRightVisi = Visibility.Hidden,
                     showPPTSpeakerNotesButtonRight = Visibility.Hidden,
@@ -1414,9 +1414,9 @@ namespace DocCompareWPF
                             thisItem.BlurRadiusLeft = 0;
                         }
 
-                        if(docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0)
+                        if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0)
                         {
-                            thisItem.Document1 = "<?xml version=\"1.0\"?> \n<text>" + docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] + "</text>"; 
+                            thisItem.Document1 = "<?xml version=\"1.0\"?> \n<text>" + docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] + "</text>";
                             showSpeakerNotesLeft = true;
                         }
                         else
@@ -1474,14 +1474,14 @@ namespace DocCompareWPF
                         {
                             if (docs.pptSpeakerNotesDiff[i].Count == 0)
                             {
-                                thisItem.Document2 = "<?xml version=\"1.0\"?> \n<text>" + docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]] +"</text>";
+                                thisItem.Document2 = "<?xml version=\"1.0\"?> \n<text>" + docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]] + "</text>";
                                 thisItem.showPPTSpeakerNotesButtonRight = Visibility.Visible;
                                 thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
                             }
                             else
                             {
                                 string doc = "<?xml version =\"1.0\"?> \n<text>";
-                                
+
 
                                 foreach (DocCompareDLL.Diff diff in docs.pptSpeakerNotesDiff[i])
                                 {
@@ -1529,9 +1529,9 @@ namespace DocCompareWPF
                     thisItem.BlurRadiusRight = 0;
                 }
 
-                if(showSpeakerNotesLeft == false)
+                if (showSpeakerNotesLeft == false)
                 {
-                    if(showSpeakerNotesRight== true)
+                    if (showSpeakerNotesRight == true)
                     {
 
                         thisItem.showPPTSpeakerNotesButtonRight = Visibility.Visible;
@@ -1608,7 +1608,7 @@ namespace DocCompareWPF
                     ShowHidden = Visibility.Hidden,
                     ForceAlignButtonVisi = Visibility.Hidden,
                     ForceAlignButtonInvalidVisi = Visibility.Hidden,
-                    RemoveForceAlignButtonName = "RemoveForceAlign" + i.ToString(),                    
+                    RemoveForceAlignButtonName = "RemoveForceAlign" + i.ToString(),
                 };
 
                 if (i == 0)
@@ -1775,7 +1775,7 @@ namespace DocCompareWPF
                                     thisImage.Margin = new Thickness(10, 0, 10, 10);
                                 }
 
-                                if(docs.documents[docIndex].fileType == Document.FileTypes.PPT && docs.documents[docIndex].pptSpeakerNotes[i].Length != 0)
+                                if (docs.documents[docIndex].fileType == Document.FileTypes.PPT && docs.documents[docIndex].pptSpeakerNotes[i].Length != 0)
                                 {
                                     thisImage.showPPTSpeakerNotesButton = Visibility.Visible;
                                     thisImage.ShowPPTSpeakerNotesButtonName = "ShowPPTNoteButton" + i.ToString();
@@ -2726,7 +2726,7 @@ namespace DocCompareWPF
                 }
             }
 
-            for (int i = 0; i< DocCompareMainListView.Items.Count; i++)                
+            for (int i = 0; i < DocCompareMainListView.Items.Count; i++)
             {
                 CompareMainItem item = (CompareMainItem)DocCompareMainListView.Items[i];
 
@@ -4567,7 +4567,7 @@ namespace DocCompareWPF
                 }
             }
 
-            if(isLinkedPage == true)
+            if (isLinkedPage == true)
             {
                 nameToLook1 = "RemoveForceAlign" + splittedName[1];
             }
@@ -4576,7 +4576,7 @@ namespace DocCompareWPF
                 nameToLook1 = nameToLook;
             }
 
-            if(inForceAlignMode == false)
+            if (inForceAlignMode == false)
             {
                 foreach (object child in img.Children)
                 {
@@ -4830,7 +4830,7 @@ namespace DocCompareWPF
                 }
             }
             */
-                        
+
         }
 
         private void SideGridMouseLeave(object sender, MouseEventArgs args)
@@ -5524,7 +5524,7 @@ namespace DocCompareWPF
             Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
             ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-            if(scrollViewer.ScrollableHeight > scrollViewer2.ScrollableHeight)
+            if (scrollViewer.ScrollableHeight > scrollViewer2.ScrollableHeight)
             {
                 scrollViewer2.ScrollToVerticalOffset(scrollViewer2.VerticalOffset + 1);
                 scrollViewer2.ScrollToVerticalOffset(scrollViewer2.VerticalOffset - 1);
@@ -5561,7 +5561,8 @@ namespace DocCompareWPF
                 Grid grid = item.Children[1] as Grid;
                 grid.Visibility = Visibility.Hidden;
 
-            }catch
+            }
+            catch
             {
 
             }
@@ -5573,7 +5574,7 @@ namespace DocCompareWPF
             {
                 Grid item = sender as Grid;
                 Border child = item.Children[0] as Border;
-                Image img = child.Child as Image;                
+                Image img = child.Child as Image;
                 img.Effect = hiddenPPTEffect;
 
                 System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
@@ -5595,17 +5596,17 @@ namespace DocCompareWPF
             try
             {
                 Grid parentGrid = (sender as Button).Parent as Grid;
-                foreach(object obj in parentGrid.Children)
+                foreach (object obj in parentGrid.Children)
                 {
-                    if(obj is Button && (obj as Button).Tag != null)
+                    if (obj is Button && (obj as Button).Tag != null)
                     {
-                        if((obj as Button).Tag.ToString().Contains("ShowPPTNoteButton"))
+                        if ((obj as Button).Tag.ToString().Contains("ShowPPTNoteButton"))
                         {
                             (obj as Button).Visibility = Visibility.Hidden;
                         }
                     }
 
-                    if(obj is Grid && (obj as Grid).Tag != null)
+                    if (obj is Grid && (obj as Grid).Tag != null)
                     {
                         if ((obj as Grid).Tag.ToString().Contains("PPTSpeakerNoteGrid"))
                         {
@@ -5659,40 +5660,31 @@ namespace DocCompareWPF
                 bool isChanged = false;
                 string senderName = (sender as Button).Tag.ToString();
                 string[] splitedName;
-                bool leftRight = false;
 
                 if (senderName.Contains("Left"))
                     splitedName = senderName.Split("Left");
                 else
                 {
-                    splitedName = senderName.Split("Right");
-                    int i = int.Parse(splitedName[splitedName.Length - 1]);
-                    if (docs.pptSpeakerNotesDiff[i].Count >= 1)
-                        isChanged = true;
-
-                    leftRight = true;
+                    splitedName = senderName.Split("Right");                    
                 }
+
+                int i = int.Parse(splitedName[splitedName.Length - 1]);
+                if (docs.pptSpeakerNotesDiff[i].Count >= 1)
+                    isChanged = true;
+
 
                 if (splitedName != null)
                 {
                     CompareMainItem item = (CompareMainItem)DocCompareMainListView.Items[int.Parse(splitedName[splitedName.Length - 1])];
-                    if (leftRight == false)
-                    {
-                        item.PPTNoteGridLeftVisi = Visibility.Hidden;
-                        item.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
-                    }
+
+                    item.PPTNoteGridLeftVisi = Visibility.Hidden;
+                    item.PPTNoteGridRightVisi = Visibility.Hidden;
+                    item.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
+                    if (isChanged == false)
+                        item.showPPTSpeakerNotesButtonRight = Visibility.Visible;
                     else
-                    {
-                        if (item.PathToImgLeft != null)
-                            item.PPTNoteGridLeftVisi = Visibility.Hidden;
+                        item.showPPTSpeakerNotesButtonRightChanged = Visibility.Visible;
 
-                        if (isChanged == false)
-                            item.showPPTSpeakerNotesButtonRight = Visibility.Visible;
-                        else
-                            item.showPPTSpeakerNotesButtonRightChanged = Visibility.Visible;
-
-                        item.PPTNoteGridRightVisi = Visibility.Hidden;
-                    }
                 }
             }
             catch
@@ -5714,7 +5706,7 @@ namespace DocCompareWPF
                     splitedName = senderName.Split("Left");
                 else
                 {
-                    
+
                     splitedName = senderName.Split("Right");
                     try
                     {
@@ -5725,11 +5717,11 @@ namespace DocCompareWPF
                         splitedName = senderName.Split("RightChanged");
                         isChanged = true;
                     }
-                    
+
                     leftRight = true;
                 }
 
-                if(splitedName != null)
+                if (splitedName != null)
                 {
                     CompareMainItem item = (CompareMainItem)DocCompareMainListView.Items[int.Parse(splitedName[splitedName.Length - 1])];
                     if (leftRight == false)
@@ -5739,7 +5731,7 @@ namespace DocCompareWPF
                     }
                     else
                     {
-                        if(item.PathToImgLeft != null)
+                        if (item.PathToImgLeft != null)
                             item.PPTNoteGridLeftVisi = Visibility.Visible;
                         if (isChanged == false)
                             item.showPPTSpeakerNotesButtonRight = Visibility.Hidden;

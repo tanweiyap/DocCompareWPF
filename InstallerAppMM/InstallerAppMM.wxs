@@ -2,7 +2,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <?define ComponentRules="OneToOne"?>
   <!-- SourceDir instructs IsWiX the location of the directory that contains files for this merge module -->
-  <?define SourceDir="..\Installer\Deploy"?>
+  <?define SourceDir="..\Installer"?>
   <Module Id="InstallerAppMM" Language="1033" Version="1.0.0.0">
     <Package Id="5c3e4d5b-252a-4b0f-bdc5-e4cef5e2a614" Manufacturer="Hopie Tech UG" InstallerVersion="200" Platform="x64" InstallScope="perMachine" />
     <Directory Id="TARGETDIR" Name="SourceDir">
@@ -322,9 +322,6 @@
         </Component>
         <Component Id="owc6F31DEF09608AA645959666A4CB7FBBC" Guid="c94570a5-5bb4-a53f-e12f-9581bddf7d08" Win64="yes">
           <File Id="owf6F31DEF09608AA645959666A4CB7FBBC" Source="$(var.SourceDir)\mscordaccore.dll" KeyPath="yes" />
-        </Component>
-        <Component Id="owc9B7EF8CF1B687952862F373AF3586ED6" Guid="2288b049-f1c4-0a19-f529-fb068a7a42b2" Win64="yes">
-          <File Id="owf9B7EF8CF1B687952862F373AF3586ED6" Source="$(var.SourceDir)\mscordaccore_amd64_amd64_4.700.20.56602.dll" KeyPath="yes" />
         </Component>
         <Component Id="owcF48B20165B07138C83157551DD14A20B" Guid="6dc8d3cf-94e2-a098-613d-c42bccae5908" Win64="yes">
           <File Id="owfF48B20165B07138C83157551DD14A20B" Source="$(var.SourceDir)\mscordaccore_amd64_amd64_4.700.21.6504.dll" KeyPath="yes" />
@@ -1020,9 +1017,6 @@
           <Component Id="owc5CF3F4A56A0A2880E29DE8FE22F8E3DA" Guid="2c88c054-5403-7a4d-3873-549e07077975" Win64="yes">
             <File Id="owf5CF3F4A56A0A2880E29DE8FE22F8E3DA" Source="$(var.SourceDir)\cs\ReachFramework.resources.dll" KeyPath="yes" />
           </Component>
-          <Component Id="owcB2F77CF28A7133D0A686BE4B2BDFF878" Guid="0905befa-4398-9d12-be08-ec5435c4c9f3" Win64="yes">
-            <File Id="owfB2F77CF28A7133D0A686BE4B2BDFF878" Source="$(var.SourceDir)\cs\System.Printing.resources.dll" KeyPath="yes" />
-          </Component>
           <Component Id="owc04E9CE79AF6DA835E291C15199D63642" Guid="f75dd601-7880-18c4-64f0-b7ad9bebb6f1" Win64="yes">
             <File Id="owf04E9CE79AF6DA835E291C15199D63642" Source="$(var.SourceDir)\cs\System.Windows.Controls.Ribbon.resources.dll" KeyPath="yes" />
           </Component>
@@ -1073,9 +1067,6 @@
           <Component Id="owcC70080F2E096585FA77943DECBB82566" Guid="a404a4b7-2eab-e537-3fcb-c60a2089db3c" Win64="yes">
             <File Id="owfC70080F2E096585FA77943DECBB82566" Source="$(var.SourceDir)\de\ReachFramework.resources.dll" KeyPath="yes" />
           </Component>
-          <Component Id="owc66392398E0E4A9481FE9579DB1F84DFA" Guid="c43114b8-f9ef-8372-27b0-f8478e0c3039" Win64="yes">
-            <File Id="owf66392398E0E4A9481FE9579DB1F84DFA" Source="$(var.SourceDir)\de\System.Printing.resources.dll" KeyPath="yes" />
-          </Component>
           <Component Id="owc1F6D7506C7DE521F2761AE62BBC009ED" Guid="d1837b19-3e80-6716-9e0b-387e085fd13e" Win64="yes">
             <File Id="owf1F6D7506C7DE521F2761AE62BBC009ED" Source="$(var.SourceDir)\de\System.Windows.Controls.Ribbon.resources.dll" KeyPath="yes" />
           </Component>
@@ -1125,9 +1116,6 @@
           </Component>
           <Component Id="owc790C632BE76E12D89A701F363EDAE4E3" Guid="16a87f9b-e696-0f88-b39d-9ed1c7ab0fdb" Win64="yes">
             <File Id="owf790C632BE76E12D89A701F363EDAE4E3" Source="$(var.SourceDir)\es\ReachFramework.resources.dll" KeyPath="yes" />
-          </Component>
-          <Component Id="owc38BC45072E23CC6316C2AC9E0BD66C38" Guid="307e3765-c445-1231-5a54-c87a9c362ee3" Win64="yes">
-            <File Id="owf38BC45072E23CC6316C2AC9E0BD66C38" Source="$(var.SourceDir)\es\System.Printing.resources.dll" KeyPath="yes" />
           </Component>
           <Component Id="owc1010D6D210027E03A077015A54D357A1" Guid="7fed2e48-598e-e6e6-7459-98b7c2ceab87" Win64="yes">
             <File Id="owf1010D6D210027E03A077015A54D357A1" Source="$(var.SourceDir)\es\System.Windows.Controls.Ribbon.resources.dll" KeyPath="yes" />
@@ -1190,9 +1178,6 @@
           <Component Id="owcFAE0B7E92E070D1C3CB120CF9DA7DE7C" Guid="7dcd3f94-5d9e-5afa-9d80-bf60108e3d6f" Win64="yes">
             <File Id="owfFAE0B7E92E070D1C3CB120CF9DA7DE7C" Source="$(var.SourceDir)\fr\ReachFramework.resources.dll" KeyPath="yes" />
           </Component>
-          <Component Id="owc0B03430186BAE555D0EF00450CD0F29D" Guid="3e45f87d-b599-05d2-29fc-db4cfa9a6983" Win64="yes">
-            <File Id="owf0B03430186BAE555D0EF00450CD0F29D" Source="$(var.SourceDir)\fr\System.Printing.resources.dll" KeyPath="yes" />
-          </Component>
           <Component Id="owc6EFFF0A106419BB4D2000006D0C365DC" Guid="cbbf61cc-cdf8-4f9d-ab1b-088bf6c2c943" Win64="yes">
             <File Id="owf6EFFF0A106419BB4D2000006D0C365DC" Source="$(var.SourceDir)\fr\System.Windows.Controls.Ribbon.resources.dll" KeyPath="yes" />
           </Component>
@@ -1242,9 +1227,6 @@
           </Component>
           <Component Id="owc1C90590F4112B5A338D0D239CA051595" Guid="f7e7a64b-8382-ce3c-7ab7-4163fd0a955c" Win64="yes">
             <File Id="owf1C90590F4112B5A338D0D239CA051595" Source="$(var.SourceDir)\it\ReachFramework.resources.dll" KeyPath="yes" />
-          </Component>
-          <Component Id="owcDE6B43F7D3A6ECCBA1D429118884D78F" Guid="8cf2f51e-ff32-0e46-19a3-008e5f456327" Win64="yes">
-            <File Id="owfDE6B43F7D3A6ECCBA1D429118884D78F" Source="$(var.SourceDir)\it\System.Printing.resources.dll" KeyPath="yes" />
           </Component>
           <Component Id="owcBCF6C1A99EF53C9EDCF0C5FA422D784A" Guid="ff836008-dd7b-0d30-1a35-07f4e0628850" Win64="yes">
             <File Id="owfBCF6C1A99EF53C9EDCF0C5FA422D784A" Source="$(var.SourceDir)\it\System.Windows.Controls.Ribbon.resources.dll" KeyPath="yes" />
@@ -1296,9 +1278,6 @@
           <Component Id="owcD867E2D426B297F60D436F3CF83F8664" Guid="06ea9359-04f1-c375-44d7-bcc7e316c5b5" Win64="yes">
             <File Id="owfD867E2D426B297F60D436F3CF83F8664" Source="$(var.SourceDir)\ja\ReachFramework.resources.dll" KeyPath="yes" />
           </Component>
-          <Component Id="owc3D5228B49329163FBAE9B65B42505ACD" Guid="54e28335-99f2-a277-2e84-09438bd547ad" Win64="yes">
-            <File Id="owf3D5228B49329163FBAE9B65B42505ACD" Source="$(var.SourceDir)\ja\System.Printing.resources.dll" KeyPath="yes" />
-          </Component>
           <Component Id="owcA4A8B2B03FAE2598A6F4AD6B43C0B64E" Guid="1e150776-e594-4336-545c-12efc9994bbd" Win64="yes">
             <File Id="owfA4A8B2B03FAE2598A6F4AD6B43C0B64E" Source="$(var.SourceDir)\ja\System.Windows.Controls.Ribbon.resources.dll" KeyPath="yes" />
           </Component>
@@ -1348,9 +1327,6 @@
           </Component>
           <Component Id="owcBE3EA5AE932FC33DF8971D0C2BDF3873" Guid="eb40d928-db66-5bec-8d31-ae9bb1afaeb0" Win64="yes">
             <File Id="owfBE3EA5AE932FC33DF8971D0C2BDF3873" Source="$(var.SourceDir)\ko\ReachFramework.resources.dll" KeyPath="yes" />
-          </Component>
-          <Component Id="owc354FAE9CC8C0BB99961F2E971479E9AD" Guid="a70f3367-5e63-e9cd-97c2-8ecb9cfdd47d" Win64="yes">
-            <File Id="owf354FAE9CC8C0BB99961F2E971479E9AD" Source="$(var.SourceDir)\ko\System.Printing.resources.dll" KeyPath="yes" />
           </Component>
           <Component Id="owcAF9336362046F88B2E7AE4B8F6DE5DD0" Guid="3a825c88-0f72-3c83-f383-53c7d078e507" Win64="yes">
             <File Id="owfAF9336362046F88B2E7AE4B8F6DE5DD0" Source="$(var.SourceDir)\ko\System.Windows.Controls.Ribbon.resources.dll" KeyPath="yes" />
@@ -1452,9 +1428,6 @@
           <Component Id="owc318E2723E96368DE691B6CB72A7F2D2C" Guid="9721c3ca-b9d9-ae78-9f06-3d7f4d602b15" Win64="yes">
             <File Id="owf318E2723E96368DE691B6CB72A7F2D2C" Source="$(var.SourceDir)\pl\ReachFramework.resources.dll" KeyPath="yes" />
           </Component>
-          <Component Id="owcAC3975EBB01E2FE4C05313001675B106" Guid="7d5eb849-5401-a5b2-89ac-63d31d25f997" Win64="yes">
-            <File Id="owfAC3975EBB01E2FE4C05313001675B106" Source="$(var.SourceDir)\pl\System.Printing.resources.dll" KeyPath="yes" />
-          </Component>
           <Component Id="owc4DEB5C210D91F913EBAB110E53C324E3" Guid="fcb769e0-604a-bb75-5e0e-3154ffb11ae8" Win64="yes">
             <File Id="owf4DEB5C210D91F913EBAB110E53C324E3" Source="$(var.SourceDir)\pl\System.Windows.Controls.Ribbon.resources.dll" KeyPath="yes" />
           </Component>
@@ -1504,9 +1477,6 @@
           </Component>
           <Component Id="owcF347AF7B323D38DDCA31DD33091769C7" Guid="754eda6d-193e-c5d9-13b2-64a8ff304513" Win64="yes">
             <File Id="owfF347AF7B323D38DDCA31DD33091769C7" Source="$(var.SourceDir)\pt-BR\ReachFramework.resources.dll" KeyPath="yes" />
-          </Component>
-          <Component Id="owcD99915C803F28D82F7D1FCB3F57CF346" Guid="010e6137-bbfb-5a91-38ec-ca0f19b39a55" Win64="yes">
-            <File Id="owfD99915C803F28D82F7D1FCB3F57CF346" Source="$(var.SourceDir)\pt-BR\System.Printing.resources.dll" KeyPath="yes" />
           </Component>
           <Component Id="owc8ED0F535623CBDEEA401FDEC010C265A" Guid="f59e69ed-3c4e-70c5-7e3d-5b841107d861" Win64="yes">
             <File Id="owf8ED0F535623CBDEEA401FDEC010C265A" Source="$(var.SourceDir)\pt-BR\System.Windows.Controls.Ribbon.resources.dll" KeyPath="yes" />
@@ -1558,9 +1528,6 @@
           <Component Id="owc46C56EBF2ED1B866278131CA3BDC17A2" Guid="036558a6-75d7-376f-276e-7f6cf1497768" Win64="yes">
             <File Id="owf46C56EBF2ED1B866278131CA3BDC17A2" Source="$(var.SourceDir)\ru\ReachFramework.resources.dll" KeyPath="yes" />
           </Component>
-          <Component Id="owcB2E3CDAF860571AEC6AE23FFF24E9F6F" Guid="feb57178-3eac-7c2f-d7fc-a0d941460c42" Win64="yes">
-            <File Id="owfB2E3CDAF860571AEC6AE23FFF24E9F6F" Source="$(var.SourceDir)\ru\System.Printing.resources.dll" KeyPath="yes" />
-          </Component>
           <Component Id="owcAD89C25AD7BB7ABD0CF3815637C75B9E" Guid="6de9a4cd-6837-fccf-8214-2e04b5b31f1a" Win64="yes">
             <File Id="owfAD89C25AD7BB7ABD0CF3815637C75B9E" Source="$(var.SourceDir)\ru\System.Windows.Controls.Ribbon.resources.dll" KeyPath="yes" />
           </Component>
@@ -1610,9 +1577,6 @@
           </Component>
           <Component Id="owcA1E822D030873896DEC23498D6DEF348" Guid="136e30ff-dbbc-0752-9001-b4d2eaf1bc17" Win64="yes">
             <File Id="owfA1E822D030873896DEC23498D6DEF348" Source="$(var.SourceDir)\tr\ReachFramework.resources.dll" KeyPath="yes" />
-          </Component>
-          <Component Id="owc66033303823820CAE58B2479A0667F3A" Guid="1a7a39b9-4fd0-463b-1f56-8be212c8f6d7" Win64="yes">
-            <File Id="owf66033303823820CAE58B2479A0667F3A" Source="$(var.SourceDir)\tr\System.Printing.resources.dll" KeyPath="yes" />
           </Component>
           <Component Id="owcE2AFA9C5E42A5E3E33F236CF717182C6" Guid="2e464e1a-ec90-78ed-ccba-6c29a9a5ed86" Win64="yes">
             <File Id="owfE2AFA9C5E42A5E3E33F236CF717182C6" Source="$(var.SourceDir)\tr\System.Windows.Controls.Ribbon.resources.dll" KeyPath="yes" />
@@ -1711,9 +1675,6 @@
           <Component Id="owcE69A8908E0A86F971AFA04008D240873" Guid="8791b83b-6818-4c9e-9e27-914e51ff3063" Win64="yes">
             <File Id="owfE69A8908E0A86F971AFA04008D240873" Source="$(var.SourceDir)\zh-Hans\ReachFramework.resources.dll" KeyPath="yes" />
           </Component>
-          <Component Id="owc9D06E7E29A9FE0F8F97ACA4B39120F02" Guid="f535036b-32d5-7e9d-b79e-a03921bf653f" Win64="yes">
-            <File Id="owf9D06E7E29A9FE0F8F97ACA4B39120F02" Source="$(var.SourceDir)\zh-Hans\System.Printing.resources.dll" KeyPath="yes" />
-          </Component>
           <Component Id="owc7A4543992C6FD1EE999346FCDC05FFE1" Guid="ea516e2c-1c0a-1159-5997-e3ab629956c2" Win64="yes">
             <File Id="owf7A4543992C6FD1EE999346FCDC05FFE1" Source="$(var.SourceDir)\zh-Hans\System.Windows.Controls.Ribbon.resources.dll" KeyPath="yes" />
           </Component>
@@ -1763,9 +1724,6 @@
           </Component>
           <Component Id="owc1EBF3EDFEDF39507BEEDA98C7D31A1E6" Guid="4a545997-1413-57e4-aad6-b0bd7f6baf62" Win64="yes">
             <File Id="owf1EBF3EDFEDF39507BEEDA98C7D31A1E6" Source="$(var.SourceDir)\zh-Hant\ReachFramework.resources.dll" KeyPath="yes" />
-          </Component>
-          <Component Id="owc4191A9DF0A36C4157DA7B884A2AD5820" Guid="d18f0df6-4c1e-bd27-9083-d2094a5d0359" Win64="yes">
-            <File Id="owf4191A9DF0A36C4157DA7B884A2AD5820" Source="$(var.SourceDir)\zh-Hant\System.Printing.resources.dll" KeyPath="yes" />
           </Component>
           <Component Id="owcCD580F12EADAB97EFCB2FA899B318701" Guid="5beebf44-3e0a-f88f-2f94-21ae66f6f662" Win64="yes">
             <File Id="owfCD580F12EADAB97EFCB2FA899B318701" Source="$(var.SourceDir)\zh-Hant\System.Windows.Controls.Ribbon.resources.dll" KeyPath="yes" />

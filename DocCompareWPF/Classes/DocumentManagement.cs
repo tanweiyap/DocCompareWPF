@@ -22,11 +22,15 @@ namespace DocCompareWPF.Classes
         public DocumentManagement(string p_workingDir, AppSettings settings)
         {
             documents = new List<Document>();
+            // TODO: Premium
+            /*
             if (settings.numPanelsDragDrop == 3)
                 documentsToShow = new List<int>() { 0, 1, 2 };
             else
                 documentsToShow = new List<int>() { 0, 1 };
+            */
 
+            documentsToShow = new List<int>() { 0, 1, 2, 3, 4 };
             documentsToCompare = new List<int>() { 0, 1 };
             workingDir = p_workingDir;
 
@@ -40,10 +44,15 @@ namespace DocCompareWPF.Classes
         {
             MAX_DOC_COUNT = p_maxDocCount;
             documents = new List<Document>();
+            // TODO: Premium
+            /*
             if (settings.numPanelsDragDrop == 3)
                 documentsToShow = new List<int>() { 0, 1, 2 };
             else
                 documentsToShow = new List<int>() { 0, 1 };
+            */
+
+            documentsToShow = new List<int>() { 0, 1, 2, 3, 4 };
             documentsToCompare = new List<int>() { 0, 1 };
             workingDir = p_workingDir;
 
@@ -83,6 +92,7 @@ namespace DocCompareWPF.Classes
         public void RemoveDocument(int index, int viewID)
         {
             //string[] docShown = new string[3] { documents[documentsToShow[0]].docID, documents[documentsToShow[1]].docID, documents[documentsToShow[2]].docID };
+            // TODO: Premium
             List<string> docShown = new List<string>();
             for (int i = 0; i < documentsToShow.Count; i++)
             {

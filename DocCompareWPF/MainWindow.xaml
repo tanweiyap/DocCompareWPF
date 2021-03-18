@@ -192,6 +192,8 @@
                             <ColumnDefinition />
                             <ColumnDefinition />
                             <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition/>
@@ -504,7 +506,7 @@
                             </Grid>
                         </Grid>
                         <Grid x:Name="DocCompareThirdDocZone" Visibility="Visible" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White" AllowDrop="True" DragOver="DocCompareDragDropZone3_DragOver" Drop="DocCompareDragDropZone3_Drop">
-                            <Grid x:Name="DocCompareDragDropZone3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid x:Name="DocCompareDragDropZone3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True">
                                 <Border Margin="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="10">
                                     <Grid x:Name="DocCompareColorZone3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -533,16 +535,17 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="{StaticResource TopBarHeight}" />
                                         <RowDefinition />
-                                        <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
                                     <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="Doc3NameLabelComboBox" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="85,0,30,0" SelectedIndex="0" SelectionChanged="Doc3NameLabelComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="30,0,30,0" FontSize="14">
+                                            <Label Foreground="Black" Background="{StaticResource DocumentBackGroundBrush}" Margin="85, 0,0,0">Compared</Label>
+                                            <ComboBox x:Name="Doc3NameLabelComboBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc3NameLabelComboBox_SelectionChanged"
+                                                      IsEditable="False" Padding="0,0,0,0" FontSize="14">
                                                 <ComboBox.ItemTemplate>
                                                     <DataTemplate>
                                                         <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
@@ -554,7 +557,7 @@
                                                 <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
                                             <Button x:Name="OpenDoc3OriginalButton3" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="OpenDoc3OriginalButton3_Click" Margin="35,0,0,0" ToolTip="Open original">
+                                            HorizontalAlignment="Left" Click="OpenDoc3OriginalButton_Click" Margin="35,0,0,0" ToolTip="Open original">
                                                 <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
 
@@ -562,14 +565,14 @@
                                             HorizontalAlignment="Left" Click="ReloadDoc3Button_Click" Margin="60,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-                                            <Button x:Name="CloseDoc3Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc3Button_Click">
+                                            <Button x:Name="CloseDoc3Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc3Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
                                         </Grid>
                                     </Grid>
                                     <ListView x:Name="DocCompareListView3" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareScrollViewer3_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
                                         VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
-                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
                                         <ListView.ItemContainerStyle>
                                             <Style TargetType="ListViewItem">
                                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -641,41 +644,7 @@
                                             </Style>
                                         </ListView.ItemContainerStyle>
                                     </ListView>
-                                    <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition/>
-                                            <ColumnDefinition Width="25"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="{StaticResource BottomBarHeight}"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <Label x:Name="Doc3PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
-                                        <Button x:Name="ShowDoc3FileInfoButton" Grid.Column="1" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc3FileInfoButton_Click" IsEnabled="False">
-                                            <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
-                                        </Button>
-                                        <Grid Grid.Row="1" x:Name="Doc3StatsGrid" Visibility="Visible" Background="{StaticResource PrimaryHueDarkBrush}">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                                <RowDefinition/>
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="2*"/>
-                                                <ColumnDefinition Width="3*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Label x:Name="Doc3StatAuthorLabel0" Content="Original author" Foreground="White" Visibility="Collapsed"/>
-                                            <Label Content="Last modified by" Foreground="White" Grid.Row="1"/>
-                                            <Label x:Name="Doc3StatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
-                                            <Label Content="Last modified on" Foreground="White" Grid.Row="3"/>
-                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="Doc3StatAuthorLabel" Text="" Foreground="White" Grid.Row="0" Grid.Column="1" Visibility="Collapsed"/>
-                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="Doc3StatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="1"/>
-                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="Doc3StatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="1" Visibility="Collapsed"/>
-                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="Doc3StatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
-                                        </Grid>
-                                        <Grid Grid.Row="1" Grid.Column="1" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>
-                                    </Grid>
+
                                 </Grid>
                                 <mah:Tile x:Name="ProgressBarDoc3" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -689,8 +658,317 @@
                                 </mah:Tile>
                             </Grid>
                         </Grid>
-                        <Grid Grid.Row="1" x:Name="DocPreviewStatGrid" Visibility="Collapsed" Grid.ColumnSpan="3" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid x:Name="DocCompareFourthDocZone" Visibility="Visible" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White" AllowDrop="True" DragOver="DocCompareDragDropZone4_DragOver" Drop="DocCompareDragDropZone4_Drop">
+                            <Grid x:Name="DocCompareDragDropZone4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True">
+                                <Border Margin="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="10">
+                                    <Grid x:Name="DocCompareColorZone4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50" />
+                                            <Label x:Name="DocCompareDropZone4Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop files here</Label>
+                                            <Button x:Name="BrowseFileButton4" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderThickness="0.5" BorderBrush="Gray" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
+                                                Click="BrowseFileButton4_Click">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+                                                    <iconPacks:PackIconUnicons Kind="FolderOpen" VerticalAlignment="Center" />
+                                                    <Label  Margin="10,0,0,0" Grid.Column="1" VerticalAlignment="Center">Browse Files</Label>
+                                                </Grid>
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                                <Grid x:Name="Doc4Grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Visibility="Hidden">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="{StaticResource TopBarHeight}" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="30" />
+                                            </Grid.ColumnDefinitions>
+                                            <Label Foreground="Black" Background="{StaticResource DocumentBackGroundBrush}" Margin="85, 0,0,0">Compared</Label>
+                                            <ComboBox x:Name="Doc4NameLabelComboBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc4NameLabelComboBox_SelectionChanged"
+                                                      IsEditable="False" Padding="0,0,0,0" FontSize="14">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+                                            <Button x:Name="BrowseFileTopButton4" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"
+                                            HorizontalAlignment="Left" Click="BrowseFileButton4_Click" Margin="10,0,0,0" ToolTip="Browse document">
+                                                <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                            </Button>
+                                            <Button x:Name="OpenDoc4OriginalButton4" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
+                                            HorizontalAlignment="Left" Click="OpenDoc4OriginalButton_Click" Margin="35,0,0,0" ToolTip="Open original">
+                                                <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                            </Button>
+
+                                            <Button x:Name="ReloadDoc4Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
+                                            HorizontalAlignment="Left" Click="ReloadDoc4Button_Click" Margin="60,0,0,0" ToolTip="Reload document">
+                                                <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                            </Button>
+                                            <Button x:Name="CloseDoc4Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc4Button_Click">
+                                                <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                    <ListView x:Name="DocCompareListView4" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareScrollViewer4_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
+                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                            <Grid HorizontalAlignment="Stretch" Background="Transparent" MouseEnter="HandleDocPreviewMouseEnter" MouseLeave="HandleDocPreviewMouseLeave">
+                                                                <Border >
+                                                                    <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
+                                                                        <Image.Effect>
+                                                                            <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
+                                                                        </Image.Effect>
+                                                                    </Image>
+                                                                    <Border.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
+                                                                    </Border.Effect>
+                                                                </Border>
+                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
+
+                                                                    </Rectangle>
+                                                                </Grid>
+                                                                <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
+                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                                                    <Path.Data>
+                                                                        <PathGeometry>
+                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                <LineSegment Point="100,0"></LineSegment>
+                                                                                <LineSegment Point="100,100"></LineSegment>
+                                                                            </PathFigure>
+                                                                        </PathGeometry>
+                                                                    </Path.Data>
+                                                                    <Path.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                    </Path.Effect>
+                                                                </Path>
+                                                                <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}" FontSize="18">
+                                                                    <Label.RenderTransform>
+                                                                        <TransformGroup>
+                                                                            <RotateTransform Angle="45"></RotateTransform>
+                                                                            <TranslateTransform X="5"></TranslateTransform>
+                                                                        </TransformGroup>
+                                                                    </Label.RenderTransform>
+                                                                </Label>
+                                                                <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
+                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="15" ToolTip="Click to show speaker notes of this slide"
+                                                                        Click="HandleShowPPTNoteButton">
+                                                                    <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
+                                                                </Button>
+                                                                <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
+                                                                               MaxHeight="150" Background="White" Opacity="0.7" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="25"/>
+                                                                        <RowDefinition/>
+                                                                    </Grid.RowDefinitions>
+                                                                    <Button Tag="{Binding ClosePPTSpeakerNotesButtonName}" Height="20" Width="20" Padding="0" BorderBrush="Transparent" Background="Transparent"
+                                                                            HorizontalAlignment="Right" Margin="0,0,2,0" Click="HandleClosePPTNoteButtonClick">
+                                                                        <iconPacks:PackIconCodicons Kind="Close"/>
+                                                                    </Button>
+                                                                    <ScrollViewer Padding="10" Grid.Row="1">
+                                                                        <TextBlock TextWrapping="Wrap" Text="{Binding PPTSpeakerNotes}"></TextBlock>
+                                                                    </ScrollViewer>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
+                                    </ListView>
+
+                                </Grid>
+                                <mah:Tile x:Name="ProgressBarDoc4" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
+                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <mah:ProgressRing Foreground="Black" IsActive="True" Width="1" Height="1" />
+                                        <Label Grid.Column="1" Margin="10,0,0,0">Loading</Label>
+                                    </Grid>
+                                </mah:Tile>
+                            </Grid>
+                        </Grid>
+                        <Grid x:Name="DocCompareFifthDocZone" Visibility="Visible" Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="White" AllowDrop="True" DragOver="DocCompareDragDropZone5_DragOver" Drop="DocCompareDragDropZone5_Drop">
+                            <Grid x:Name="DocCompareDragDropZone5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True">
+                                <Border Margin="20" BorderBrush="Gray" BorderThickness="1" CornerRadius="10">
+                                    <Grid x:Name="DocCompareColorZone5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50" />
+                                            <Label x:Name="DocCompareDropZone5Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop files here</Label>
+                                            <Button x:Name="BrowseFileButton5" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderThickness="0.5" BorderBrush="Gray" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
+                                                Click="BrowseFileButton5_Click">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
+                                                    <iconPacks:PackIconUnicons Kind="FolderOpen" VerticalAlignment="Center" />
+                                                    <Label  Margin="10,0,0,0" Grid.Column="1" VerticalAlignment="Center">Browse Files</Label>
+                                                </Grid>
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                                <Grid x:Name="Doc5Grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Visibility="Hidden">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="{StaticResource TopBarHeight}" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="30" />
+                                            </Grid.ColumnDefinitions>
+                                            <Label Foreground="Black" Background="{StaticResource DocumentBackGroundBrush}" Margin="85, 0,0,0">Compared</Label>
+                                            <ComboBox x:Name="Doc5NameLabelComboBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc5NameLabelComboBox_SelectionChanged"
+                                                      IsEditable="False" Padding="0,0,0,0" FontSize="14">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+                                            <Button x:Name="BrowseFileTopButton5" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"
+                                            HorizontalAlignment="Left" Click="BrowseFileButton5_Click" Margin="10,0,0,0" ToolTip="Browse document">
+                                                <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                            </Button>
+                                            <Button x:Name="OpenDoc5OriginalButton5" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
+                                            HorizontalAlignment="Left" Click="OpenDoc5OriginalButton_Click" Margin="35,0,0,0" ToolTip="Open original">
+                                                <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                            </Button>
+
+                                            <Button x:Name="ReloadDoc5Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
+                                            HorizontalAlignment="Left" Click="ReloadDoc5Button_Click" Margin="60,0,0,0" ToolTip="Reload document">
+                                                <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                            </Button>
+                                            <Button x:Name="CloseDoc5Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc5Button_Click">
+                                                <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                    <ListView x:Name="DocCompareListView5" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareScrollViewer5_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
+                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                            <Grid HorizontalAlignment="Stretch" Background="Transparent" MouseEnter="HandleDocPreviewMouseEnter" MouseLeave="HandleDocPreviewMouseLeave">
+                                                                <Border >
+                                                                    <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
+                                                                        <Image.Effect>
+                                                                            <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
+                                                                        </Image.Effect>
+                                                                    </Image>
+                                                                    <Border.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
+                                                                    </Border.Effect>
+                                                                </Border>
+                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
+
+                                                                    </Rectangle>
+                                                                </Grid>
+                                                                <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
+                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                                                    <Path.Data>
+                                                                        <PathGeometry>
+                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                <LineSegment Point="100,0"></LineSegment>
+                                                                                <LineSegment Point="100,100"></LineSegment>
+                                                                            </PathFigure>
+                                                                        </PathGeometry>
+                                                                    </Path.Data>
+                                                                    <Path.Effect>
+                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                    </Path.Effect>
+                                                                </Path>
+                                                                <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}" FontSize="18">
+                                                                    <Label.RenderTransform>
+                                                                        <TransformGroup>
+                                                                            <RotateTransform Angle="45"></RotateTransform>
+                                                                            <TranslateTransform X="5"></TranslateTransform>
+                                                                        </TransformGroup>
+                                                                    </Label.RenderTransform>
+                                                                </Label>
+                                                                <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
+                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="15" ToolTip="Click to show speaker notes of this slide"
+                                                                        Click="HandleShowPPTNoteButton">
+                                                                    <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
+                                                                </Button>
+                                                                <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
+                                                                               MaxHeight="150" Background="White" Opacity="0.7" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="25"/>
+                                                                        <RowDefinition/>
+                                                                    </Grid.RowDefinitions>
+                                                                    <Button Tag="{Binding ClosePPTSpeakerNotesButtonName}" Height="20" Width="20" Padding="0" BorderBrush="Transparent" Background="Transparent"
+                                                                            HorizontalAlignment="Right" Margin="0,0,2,0" Click="HandleClosePPTNoteButtonClick">
+                                                                        <iconPacks:PackIconCodicons Kind="Close"/>
+                                                                    </Button>
+                                                                    <ScrollViewer Padding="10" Grid.Row="1">
+                                                                        <TextBlock TextWrapping="Wrap" Text="{Binding PPTSpeakerNotes}"></TextBlock>
+                                                                    </ScrollViewer>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
+                                    </ListView>
+
+                                </Grid>
+                                <mah:Tile x:Name="ProgressBarDoc5" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
+                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <mah:ProgressRing Foreground="Black" IsActive="True" Width="1" Height="1" />
+                                        <Label Grid.Column="1" Margin="10,0,0,0">Loading</Label>
+                                    </Grid>
+                                </mah:Tile>
+                            </Grid>
+                        </Grid>
+                        <Grid Grid.Row="1" x:Name="DocPreviewStatGrid" Visibility="Collapsed" Grid.ColumnSpan="5" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
@@ -699,7 +977,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Label x:Name="Doc1PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
-                            <Button x:Name="ShowDoc1FileInfoButton" Grid.Column="0"  Visibility="Hidden" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc1FileInfoButton_Click" IsEnabled="False">
+                            <Button x:Name="ShowDoc1FileInfoButton" Grid.Column="0"  Visibility="Visible" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc1FileInfoButton_Click" IsEnabled="False">
                                 <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
                             </Button>
                             <Grid Grid.Row="1" x:Name="Doc1StatsGrid" Visibility="Visible" Background="{StaticResource PrimaryHueDarkBrush}">
@@ -726,12 +1004,6 @@
                             <Button Grid.Column="1" x:Name="ShowDoc2FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc2FileInfoButton_Click" IsEnabled="True">
                                 <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
                             </Button>
-                            <Button Grid.Column="1" x:Name="LinkScrollButton" Visibility="Hidden" Margin="0,0,35,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="LinkScrollButton_Click" IsEnabled="True" ToolTip="Enable parallel scrolling">
-                                <Rectangle Width="20" Height="20" Fill="{StaticResource linkscrollDrawingImage}"></Rectangle>
-                            </Button>
-                            <Button Grid.Column="1" x:Name="UnlinkScrollButton" Visibility="Visible" Margin="0,0,35,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="UnlinkScrollButton_Click" IsEnabled="True" ToolTip="Disable parallel scrolling">
-                                <Rectangle Width="20" Height="20" Fill="{StaticResource unlinkscrollDrawingImage}"></Rectangle>
-                            </Button>
                             <Grid Grid.Row="1" Grid.Column="1" x:Name="Doc2StatsGrid" Visibility="Collapsed" Background="{StaticResource PrimaryHueDarkBrush}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
@@ -752,6 +1024,84 @@
                                 <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc2StatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="1" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc2StatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
                             </Grid>
+                            <Label Grid.Column="2" x:Name="Doc3PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                            <Button Grid.Column="2" x:Name="ShowDoc3FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc3FileInfoButton_Click" IsEnabled="True">
+                                <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
+                            </Button>
+                            <Grid Grid.Row="1" Grid.Column="2" x:Name="Doc3StatsGrid" Visibility="Collapsed" Background="{StaticResource PrimaryHueDarkBrush}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label VerticalAlignment="Center" x:Name="Doc3StatAuthorLabel0" Content="Original author" Foreground="White" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" x:Name="Doc3StatLastEditorLabel0" Content="Last modified by" Foreground="White" Grid.Row="1" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" x:Name="Doc3StatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" Content="Last modified on" Foreground="White" Grid.Row="3"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc3StatAuthorLabel" Text="" Foreground="White" Grid.Row="0" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc3StatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc3StatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc3StatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
+                            </Grid>
+                            <Label Grid.Column="3" x:Name="Doc4PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                            <Button Grid.Column="3" x:Name="ShowDoc4FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc4FileInfoButton_Click" IsEnabled="True">
+                                <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
+                            </Button>
+                            <Grid Grid.Row="1" Grid.Column="3" x:Name="Doc4StatsGrid" Visibility="Collapsed" Background="{StaticResource PrimaryHueDarkBrush}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label VerticalAlignment="Center" x:Name="Doc4StatAuthorLabel0" Content="Original author" Foreground="White" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" x:Name="Doc4StatLastEditorLabel0" Content="Last modified by" Foreground="White" Grid.Row="1" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" x:Name="Doc4StatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" Content="Last modified on" Foreground="White" Grid.Row="3"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc4StatAuthorLabel" Text="" Foreground="White" Grid.Row="0" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc4StatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc4StatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc4StatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
+                            </Grid>
+                            <Label Grid.Column="4" x:Name="Doc5PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></Label>
+                            <Button Grid.Column="4" x:Name="ShowDoc5FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc5FileInfoButton_Click" IsEnabled="True">
+                                <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
+                            </Button>
+                            <Grid Grid.Row="1" Grid.Column="4" x:Name="Doc5StatsGrid" Visibility="Collapsed" Background="{StaticResource PrimaryHueDarkBrush}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label VerticalAlignment="Center" x:Name="Doc5StatAuthorLabel0" Content="Original author" Foreground="White" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" x:Name="Doc5StatLastEditorLabel0" Content="Last modified by" Foreground="White" Grid.Row="1" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" x:Name="Doc5StatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" Content="Last modified on" Foreground="White" Grid.Row="3"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc5StatAuthorLabel" Text="" Foreground="White" Grid.Row="0" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc5StatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc5StatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="1" Visibility="Collapsed"/>
+                                <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="Doc5StatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
+                            </Grid>
+                            <Button Grid.ColumnSpan="5" x:Name="LinkScrollButton" Visibility="Hidden" Margin="0,0,35,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="LinkScrollButton_Click" IsEnabled="True" ToolTip="Enable parallel scrolling">
+                                <Rectangle Width="20" Height="20" Fill="{StaticResource linkscrollDrawingImage}"></Rectangle>
+                            </Button>
+                            <Button Grid.ColumnSpan="5" x:Name="UnlinkScrollButton" Visibility="Visible" Margin="0,0,35,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="UnlinkScrollButton_Click" IsEnabled="True" ToolTip="Disable parallel scrolling">
+                                <Rectangle Width="20" Height="20" Fill="{StaticResource unlinkscrollDrawingImage}"></Rectangle>
+                            </Button>
                         </Grid>
 
                     </Grid>

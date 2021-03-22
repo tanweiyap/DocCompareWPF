@@ -77,6 +77,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="SelectDocToCompare.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -193,6 +196,13 @@
 
   <ItemGroup>
     <Folder Include="lic\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="SelectDocToCompare.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

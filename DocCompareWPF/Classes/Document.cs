@@ -145,8 +145,8 @@ namespace DocCompareWPF.Classes
                     {
                         Creator = fileAttributes[0];
                         LastEditor = fileAttributes[1];
-                        CreatedDate = DateTime.Parse(fileAttributes[2]).ToString("F", culture);
-                        ModifiedDate = DateTime.Parse(fileAttributes[3]).ToString("F", culture);
+                        CreatedDate = DateTime.Parse(fileAttributes[2]).ToString("G", culture);
+                        ModifiedDate = DateTime.Parse(fileAttributes[3]).ToString("G", culture);
                     }
 
                     if (Creator == null || LastEditor == null || CreatedDate == null || ModifiedDate == null)
@@ -154,8 +154,8 @@ namespace DocCompareWPF.Classes
                         fileInfo = new FileInfo(filePath);
                         Creator = fileInfo.GetAccessControl().GetOwner(typeof(System.Security.Principal.NTAccount)).ToString().Split("\\")[^1];
                         LastEditor = Creator;
-                        CreatedDate = fileInfo.CreationTime.ToString("F", culture);
-                        ModifiedDate = fileInfo.LastWriteTime.ToString("F", culture);
+                        CreatedDate = fileInfo.CreationTime.ToString("G", culture);
+                        ModifiedDate = fileInfo.LastWriteTime.ToString("G", culture);
                     }
                     break;
 
@@ -163,8 +163,8 @@ namespace DocCompareWPF.Classes
                     fileInfo = new FileInfo(filePath);
                     Creator = fileInfo.GetAccessControl().GetOwner(typeof(System.Security.Principal.NTAccount)).ToString().Split("\\")[^1];
                     LastEditor = Creator;
-                    CreatedDate = fileInfo.CreationTime.ToString("F", culture);
-                    ModifiedDate = fileInfo.LastWriteTime.ToString("F", culture);
+                    CreatedDate = fileInfo.CreationTime.ToString("G", culture);
+                    ModifiedDate = fileInfo.LastWriteTime.ToString("G", culture);
                     break;
             }
         }

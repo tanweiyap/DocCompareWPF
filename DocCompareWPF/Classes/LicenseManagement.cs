@@ -122,7 +122,7 @@ namespace DocCompareWPF.Classes
                     expiryDate = returnDate;
 
                     if (diff.TotalDays < -7)
-                    {                        
+                    {
                         licenseStatus = LicenseStatus.INACTIVE;
                         return LicServerResponse.INVALID;
                     }
@@ -398,7 +398,7 @@ namespace DocCompareWPF.Classes
                     }
                     else
                     {
-                        return null; 
+                        return null;
                     }
                 }
                 catch (Exception ex)

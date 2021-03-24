@@ -339,7 +339,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.1.1";
+        private readonly string versionString = "1.1.2";
         private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
@@ -1980,7 +1980,7 @@ namespace DocCompareWPF
                             double WXHRatio = 100000;
                             int largestImgInd = docIndex;
 
-                            for( int j = 0; j < alignment.Count; j++)
+                            for (int j = 0; j < alignment.Count; j++)
                             {
                                 if ((int)(alignment[j] as ArrayList)[i] != -1)
                                 {
@@ -1992,7 +1992,7 @@ namespace DocCompareWPF
                                         var width1 = decoder.Frames[0].PixelWidth;
                                         double WXHLocal = (double)width1 / (double)height1;
 
-                                        if(WXHRatio > WXHLocal)
+                                        if (WXHRatio > WXHLocal)
                                         {
                                             WXHRatio = WXHLocal;
                                             largestImgInd = j;
@@ -2250,7 +2250,7 @@ namespace DocCompareWPF
                 threadCompare = new Thread(new ThreadStart(ComparePreviewThread));
                 threadCompare.Start();
 
-                while(docCompareRunning)
+                while (docCompareRunning)
                 {
 
                 }
@@ -6474,7 +6474,7 @@ namespace DocCompareWPF
                     splitedName = senderName.Split("Right");
                 }
 
-                int i = int.Parse(splitedName[splitedName.Length - 1]);
+                int i = int.Parse(splitedName[^1]);
 
                 if (docs.pptSpeakerNotesDiff.Count != 0)
                 {
@@ -6502,7 +6502,7 @@ namespace DocCompareWPF
 
                 if (splitedName != null)
                 {
-                    CompareMainItem item = (CompareMainItem)DocCompareMainListView.Items[int.Parse(splitedName[splitedName.Length - 1])];
+                    CompareMainItem item = (CompareMainItem)DocCompareMainListView.Items[int.Parse(splitedName[^1])];
 
                     item.PPTNoteGridLeftVisi = Visibility.Hidden;
                     item.PPTNoteGridRightVisi = Visibility.Hidden;
@@ -6545,7 +6545,7 @@ namespace DocCompareWPF
                     splitedName = senderName.Split("Right");
                     try
                     {
-                        int i = int.Parse(splitedName[splitedName.Length - 1]);
+                        int i = int.Parse(splitedName[^1]);
                     }
                     catch
                     {
@@ -6558,7 +6558,7 @@ namespace DocCompareWPF
 
                 if (splitedName != null)
                 {
-                    CompareMainItem item = (CompareMainItem)DocCompareMainListView.Items[int.Parse(splitedName[splitedName.Length - 1])];
+                    CompareMainItem item = (CompareMainItem)DocCompareMainListView.Items[int.Parse(splitedName[^1])];
                     if (leftRight == false)
                     {
                         item.PPTNoteGridLeftVisi = Visibility.Visible;

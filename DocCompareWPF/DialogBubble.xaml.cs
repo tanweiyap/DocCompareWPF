@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DocCompareWPF
 {
@@ -37,7 +26,7 @@ namespace DocCompareWPF
 
         public static readonly DependencyProperty StartPointProperty =
             DependencyProperty.Register("StartPoint", typeof(Point),
-              typeof(DialogBubble), new PropertyMetadata(new Point(0,0)));
+              typeof(DialogBubble), new PropertyMetadata(new Point(0, 0)));
 
         public Point TopPoint
         {
@@ -66,7 +55,7 @@ namespace DocCompareWPF
 
         public static readonly DependencyProperty RectInnerMarginProperty =
             DependencyProperty.Register("RectInnerMargin", typeof(Thickness),
-              typeof(DialogBubble), new PropertyMetadata(new Thickness(20,60,20,20)));
+              typeof(DialogBubble), new PropertyMetadata(new Thickness(20, 60, 20, 20)));
 
 
         public Point RectPoint1

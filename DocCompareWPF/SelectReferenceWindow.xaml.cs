@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace DocCompareWPF
 {
@@ -27,8 +18,8 @@ namespace DocCompareWPF
 
         public void Setup(List<string> documentNames)
         {
-            ObservableCollection<string> items = new ObservableCollection<string> ();
-            foreach(string name in documentNames)
+            ObservableCollection<string> items = new ObservableCollection<string>();
+            foreach (string name in documentNames)
             {
                 items.Add(name);
             }

@@ -19,7 +19,7 @@ namespace DocCompareWPF
         {
             InitializeComponent();
             item = new WalkthroughImageItem();
-            
+
             WalkthroughImageDirectory = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
             WalkthroughImageDirectory = Path.Join(WalkthroughImageDirectory, "WalkthroughImages");
 
@@ -39,13 +39,14 @@ namespace DocCompareWPF
             CustomMessageBox msgBox = new CustomMessageBox();
             msgBox.Setup("Skip walkthrough", "Skip the entire walkthrough? You can restart the walkthrough from the settingspage.", "No", "Yes");
 
-            if(msgBox.ShowDialog() == true) // skip walkthrough
+            if (msgBox.ShowDialog() == true) // skip walkthrough
             {
                 DialogResult = true;
-            }else
+            }
+            else
             {
                 // do nothing
-            }            
+            }
         }
 
         private void SetText()
@@ -111,13 +112,13 @@ namespace DocCompareWPF
 
                 SetText();
 
-                if(stepCounter == 0)
+                if (stepCounter == 0)
                     item.PathToFile = Path.Join(WalkthroughImageDirectory, "LogoLarge.png");
                 else
                     item.PathToFile = Path.Join(WalkthroughImageDirectory, "Page" + stepCounter.ToString() + ".PNG");
             }
 
-            if(stepCounter == 0)
+            if (stepCounter == 0)
             {
                 PreviousStepButton.IsEnabled = false;
             }
@@ -140,7 +141,7 @@ namespace DocCompareWPF
                 }
             }
 
-            if(stepCounter > 0)
+            if (stepCounter > 0)
             {
                 PreviousStepButton.IsEnabled = true;
             }

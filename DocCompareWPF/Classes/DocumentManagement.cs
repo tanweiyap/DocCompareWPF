@@ -1,7 +1,7 @@
-﻿using System.Collections;
+﻿using DocCompareDLL;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using DocCompareDLL;
 
 namespace DocCompareWPF.Classes
 {
@@ -112,16 +112,16 @@ namespace DocCompareWPF.Classes
             documents.RemoveAt(index);
 
             // shift everything down
-            for( int i = viewID; i< documentsToShow.Count -1; i++)
+            for (int i = viewID; i < documentsToShow.Count - 1; i++)
             {
                 documentsToShow[i] = documentsToShow[i + 1];
             }
 
-            documentsToShow[documentsToShow.Count - 1] = -1;
+            documentsToShow[^1] = -1;
 
-            for(int i = 0; i < documentsToShow.Count; i++)
+            for (int i = 0; i < documentsToShow.Count; i++)
             {
-                if(documentsToShow[i] > index)
+                if (documentsToShow[i] > index)
                 {
                     documentsToShow[i]--;
                 }

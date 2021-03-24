@@ -1349,6 +1349,67 @@ namespace DocCompareWPF
             }
 
             docs.globalAlignment = alignment;
+
+            Dispatcher.Invoke(() =>
+            {
+                ProgressBarDoc1.Visibility = Visibility.Hidden;
+                UpdateAllPreview();
+                //UpdateDocSelectionComboBox();
+                UpdateFileStat(0);
+
+                ProgressBarDoc1.Visibility = Visibility.Hidden;
+                ProgressBarDoc2.Visibility = Visibility.Hidden;
+                ProgressBarDoc3.Visibility = Visibility.Hidden;
+                ProgressBarDoc4.Visibility = Visibility.Hidden;
+                ProgressBarDoc5.Visibility = Visibility.Hidden;
+                /*
+                BrowseFileTopButton1.IsEnabled = true;
+                BrowseFileTopButton2.IsEnabled = true;
+                BrowseFileTopButton3.IsEnabled = true;
+                BrowseFileTopButton4.IsEnabled = true;
+                BrowseFileTopButton5.IsEnabled = true;
+                */
+                ReloadDoc1Button.IsEnabled = true;
+                ReloadDoc2Button.IsEnabled = true;
+                ReloadDoc3Button.IsEnabled = true;
+                ReloadDoc4Button.IsEnabled = true;
+                ReloadDoc5Button.IsEnabled = true;
+                BrowseFileButton1.IsEnabled = true;
+                BrowseFileButton2.IsEnabled = true;
+                BrowseFileButton3.IsEnabled = true;
+                BrowseFileButton4.IsEnabled = true;
+                BrowseFileButton5.IsEnabled = true;
+
+                DocCompareFirstDocZone.AllowDrop = true;
+                DocCompareDragDropZone1.AllowDrop = true;
+                DocCompareColorZone1.AllowDrop = true;
+                DocCompareSecondDocZone.AllowDrop = true;
+                DocCompareDragDropZone2.AllowDrop = true;
+                DocCompareColorZone2.AllowDrop = true;
+                DocCompareThirdDocZone.AllowDrop = true;
+                DocCompareDragDropZone3.AllowDrop = true;
+                DocCompareColorZone3.AllowDrop = true;
+                DocCompareFourthDocZone.AllowDrop = true;
+                DocCompareDragDropZone4.AllowDrop = true;
+                DocCompareColorZone4.AllowDrop = true;
+                DocCompareFifthDocZone.AllowDrop = true;
+                DocCompareDragDropZone5.AllowDrop = true;
+                DocCompareColorZone5.AllowDrop = true;
+
+                CloseDoc1Button.IsEnabled = true;
+                CloseDoc2Button.IsEnabled = true;
+                CloseDoc3Button.IsEnabled = true;
+                CloseDoc4Button.IsEnabled = true;
+                CloseDoc5Button.IsEnabled = true;
+
+                OpenDoc1OriginalButton1.IsEnabled = true;
+                OpenDoc2OriginalButton2.IsEnabled = true;
+                OpenDoc3OriginalButton3.IsEnabled = true;
+                OpenDoc4OriginalButton4.IsEnabled = true;
+                OpenDoc5OriginalButton5.IsEnabled = true;
+            });
+
+
             docCompareRunning = false;
         }
 
@@ -2247,17 +2308,11 @@ namespace DocCompareWPF
                 */
 
                 docCompareRunning = true;
+
+                ProgressBarDoc1.Visibility = Visibility.Visible;
                 threadCompare = new Thread(new ThreadStart(ComparePreviewThread));
                 threadCompare.Start();
 
-                while (docCompareRunning)
-                {
-
-                }
-
-                UpdateAllPreview();
-                //UpdateDocSelectionComboBox();
-                UpdateFileStat(0);
             }
             catch
             {
@@ -3607,6 +3662,8 @@ namespace DocCompareWPF
                 {
                     if (docs.documents[docs.documentsToShow[0]].processed == true)
                     {
+                        ProgressBarDoc1.Visibility = Visibility.Visible;
+
                         if (docs.documents.Count == 1)
                         {
                             DisplayPreview(1, docs.documentsToShow[0]);
@@ -3622,6 +3679,7 @@ namespace DocCompareWPF
                         DocPreviewStatGrid.Visibility = Visibility.Visible;
                         Doc1StatsGrid.Visibility = Visibility.Visible;
                         UpdateFileStat(0);
+                        ProgressBarDoc1.Visibility = Visibility.Hidden;
                     }
                 }
 
@@ -3629,6 +3687,7 @@ namespace DocCompareWPF
                 {
                     if (docs.documents[docs.documentsToShow[1]].processed == true)
                     {
+                        ProgressBarDoc2.Visibility = Visibility.Visible;
                         DisplayPreviewWithAligment(2, docs.documentsToShow[1], docs.globalAlignment);
                         //DisplayPreview(2, docs.documentsToShow[1]);
                         OpenDoc2OriginalButton2.IsEnabled = true;
@@ -3636,6 +3695,7 @@ namespace DocCompareWPF
                         Doc2StatsGrid.Visibility = Visibility.Visible;
                         Doc2NameLabel.Content = Path.GetFileName(docs.documents[docs.documentsToShow[1]].filePath);
                         UpdateFileStat(1);
+                        ProgressBarDoc2.Visibility = Visibility.Hidden;
                     }
 
                 }
@@ -3647,6 +3707,7 @@ namespace DocCompareWPF
                     {
                         if (docs.documents[docs.documentsToShow[2]].processed == true)
                         {
+                            ProgressBarDoc3.Visibility = Visibility.Visible;
                             DisplayPreviewWithAligment(3, docs.documentsToShow[2], docs.globalAlignment);
                             //DisplayPreview(3, docs.documentsToShow[2]);
                             OpenDoc3OriginalButton3.IsEnabled = true;
@@ -3654,6 +3715,7 @@ namespace DocCompareWPF
                             Doc3StatsGrid.Visibility = Visibility.Visible;
                             Doc3NameLabel.Content = Path.GetFileName(docs.documents[docs.documentsToShow[2]].filePath);
                             UpdateFileStat(2);
+                            ProgressBarDoc3.Visibility = Visibility.Hidden;
                         }
                     }
                 }
@@ -3665,6 +3727,7 @@ namespace DocCompareWPF
                     {
                         if (docs.documents[docs.documentsToShow[3]].processed == true)
                         {
+                            ProgressBarDoc4.Visibility = Visibility.Visible;
                             DisplayPreviewWithAligment(4, docs.documentsToShow[3], docs.globalAlignment);
                             //DisplayPreview(4, docs.documentsToShow[3]);
                             OpenDoc4OriginalButton4.IsEnabled = true;
@@ -3672,6 +3735,7 @@ namespace DocCompareWPF
                             Doc4StatsGrid.Visibility = Visibility.Visible;
                             Doc4NameLabel.Content = Path.GetFileName(docs.documents[docs.documentsToShow[3]].filePath);
                             UpdateFileStat(3);
+                            ProgressBarDoc4.Visibility = Visibility.Hidden;
                         }
                     }
                 }
@@ -3683,6 +3747,7 @@ namespace DocCompareWPF
                     {
                         if (docs.documents[docs.documentsToShow[4]].processed == true)
                         {
+                            ProgressBarDoc5.Visibility = Visibility.Visible;
                             DisplayPreviewWithAligment(5, docs.documentsToShow[4], docs.globalAlignment);
                             //DisplayPreview(5, docs.documentsToShow[4]);
                             OpenDoc5OriginalButton5.IsEnabled = true;
@@ -3690,6 +3755,7 @@ namespace DocCompareWPF
                             Doc5StatsGrid.Visibility = Visibility.Visible;
                             Doc5NameLabel.Content = Path.GetFileName(docs.documents[docs.documentsToShow[4]].filePath);
                             UpdateFileStat(4);
+                            ProgressBarDoc5.Visibility = Visibility.Hidden;
                         }
                     }
                 }
@@ -3775,6 +3841,7 @@ namespace DocCompareWPF
                     Thread.Sleep(10);
                 }
 
+                /*
                 if (docs.documents.Count >= 2)
                 {
                     threadCompare = new Thread(new ThreadStart(ComparePreviewThread));
@@ -3786,7 +3853,7 @@ namespace DocCompareWPF
 
                     }
                 }
-
+                */
                 Dispatcher.Invoke(() =>
                 {
                     List<string> idToRemove = new List<string>();
@@ -3803,66 +3870,17 @@ namespace DocCompareWPF
                         docs.RemoveDocumentWithID(id);
                     }
 
-                    ProcessingDocProgressCard.Visibility = Visibility.Hidden;
-
-                    UpdateAllPreview();
-
-                    ProgressBarDoc1.Visibility = Visibility.Hidden;
-                    ProgressBarDoc2.Visibility = Visibility.Hidden;
-                    ProgressBarDoc3.Visibility = Visibility.Hidden;
-                    ProgressBarDoc4.Visibility = Visibility.Hidden;
-                    ProgressBarDoc5.Visibility = Visibility.Hidden;
-                    /*
-                    BrowseFileTopButton1.IsEnabled = true;
-                    BrowseFileTopButton2.IsEnabled = true;
-                    BrowseFileTopButton3.IsEnabled = true;
-                    BrowseFileTopButton4.IsEnabled = true;
-                    BrowseFileTopButton5.IsEnabled = true;
-                    */
-                    ReloadDoc1Button.IsEnabled = true;
-                    ReloadDoc2Button.IsEnabled = true;
-                    ReloadDoc3Button.IsEnabled = true;
-                    ReloadDoc4Button.IsEnabled = true;
-                    ReloadDoc5Button.IsEnabled = true;
-                    BrowseFileButton1.IsEnabled = true;
-                    BrowseFileButton2.IsEnabled = true;
-                    BrowseFileButton3.IsEnabled = true;
-                    BrowseFileButton4.IsEnabled = true;
-                    BrowseFileButton5.IsEnabled = true;
-
-                    DocCompareFirstDocZone.AllowDrop = true;
-                    DocCompareDragDropZone1.AllowDrop = true;
-                    DocCompareColorZone1.AllowDrop = true;
-                    DocCompareSecondDocZone.AllowDrop = true;
-                    DocCompareDragDropZone2.AllowDrop = true;
-                    DocCompareColorZone2.AllowDrop = true;
-                    DocCompareThirdDocZone.AllowDrop = true;
-                    DocCompareDragDropZone3.AllowDrop = true;
-                    DocCompareColorZone3.AllowDrop = true;
-                    DocCompareFourthDocZone.AllowDrop = true;
-                    DocCompareDragDropZone4.AllowDrop = true;
-                    DocCompareColorZone4.AllowDrop = true;
-                    DocCompareFifthDocZone.AllowDrop = true;
-                    DocCompareDragDropZone5.AllowDrop = true;
-                    DocCompareColorZone5.AllowDrop = true;
-
-                    CloseDoc1Button.IsEnabled = true;
-                    CloseDoc2Button.IsEnabled = true;
-                    CloseDoc3Button.IsEnabled = true;
-                    CloseDoc4Button.IsEnabled = true;
-                    CloseDoc5Button.IsEnabled = true;
-
-                    OpenDoc1OriginalButton1.IsEnabled = true;
-                    OpenDoc2OriginalButton2.IsEnabled = true;
-                    OpenDoc3OriginalButton3.IsEnabled = true;
-                    OpenDoc4OriginalButton4.IsEnabled = true;
-                    OpenDoc5OriginalButton5.IsEnabled = true;
 
                     UpdateDocSelectionComboBox();
+                    //UpdateAllPreview();
+
+
                     ShowInfoButtonSetVisi();
 
                     if (docs.documents.Count >= 2)
                         SidePanelDocCompareButton.IsEnabled = true;
+
+                    ProcessingDocProgressCard.Visibility = Visibility.Hidden;
 
                     // Walkthrough
                     if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON2 && docs.documents.Count == 3)

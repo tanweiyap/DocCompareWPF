@@ -326,7 +326,7 @@ namespace DocCompareDLL
         }
 
         //public static ArrayList DocCompare(ref string folder1, ref string folder2, ref string outfolder, ref int seqlen, int[,] force_pairs = null)
-        public static ArrayList DocCompareMult(ref string folder1, ref string folder2, ref string outfolder, ref int seqlen, int previous_docs, ArrayList previous_alignment = null)
+        public static ArrayList DocCompareMult(ref string folder1, ref string folder2, int previous_docs, ArrayList previous_alignment = null)
         //previous alignment: {reference;comp1; comp2; ...}. previous_docs is the number of already compared docs WITHOUT THE REFERENCE - so can be 0. Then, previous alignment should be empty.
         {
             //ArrayList previous_alignment;

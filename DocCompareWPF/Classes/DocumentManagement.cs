@@ -17,7 +17,8 @@ namespace DocCompareWPF.Classes
         public ArrayList pageCompareIndices;
         public int totalLen;
         public string workingDir;
-        public List<List<DocCompareDLL.Diff>> pptSpeakerNotesDiff;
+        public List<List<Diff>> pptSpeakerNotesDiff;
+        public ArrayList globalAlignment;
 
         public DocumentManagement(string p_workingDir, AppSettings settings)
         {
@@ -93,6 +94,7 @@ namespace DocCompareWPF.Classes
         {
             //string[] docShown = new string[3] { documents[documentsToShow[0]].docID, documents[documentsToShow[1]].docID, documents[documentsToShow[2]].docID };
             // TODO: Premium
+            /*
             List<string> docShown = new List<string>();
             for (int i = 0; i < documentsToShow.Count; i++)
             {
@@ -101,7 +103,7 @@ namespace DocCompareWPF.Classes
                     docShown.Add(documents[documentsToShow[i]].docID);
                 }
             }
-
+            */
             // clean up folder
 
             DirectoryInfo di = new DirectoryInfo(documents[index].imageFolder);
@@ -109,13 +111,29 @@ namespace DocCompareWPF.Classes
 
             documents.RemoveAt(index);
 
+            // shift everything down
+            for( int i = viewID; i< documentsToShow.Count -1; i++)
+            {
+                documentsToShow[i] = documentsToShow[i + 1];
+            }
+
+            documentsToShow[documentsToShow.Count - 1] = -1;
+
+            for(int i = 0; i < documentsToShow.Count; i++)
+            {
+                if(documentsToShow[i] > index)
+                {
+                    documentsToShow[i]--;
+                }
+            }
+            /*
             // we now check for docs to show
-            for (int i = 0; i < docShown.Count; i++)
+            for (int i = 0; i < docShown.Count - 1; i++)
             {
                 if (i == viewID) // view, where the doc was removed
                 {
                     string docIDToConsider;
-                    for (int j = 0; j < documents.Count; j++)
+                    for (int j = 0; j < documents.Count - 1; j++)
                     {
                         docIDToConsider = documents[j].docID;
                         bool ok = false;
@@ -158,7 +176,7 @@ namespace DocCompareWPF.Classes
                 documentsToShow[1] = -1;
             }
 
-            for (int i = 0; i < documentsToShow.Count; i++)
+            for (int i = 0; i < documentsToShow.Count - 1; i++)
             {
                 if (documentsToShow[i] == -1)
                 {
@@ -166,6 +184,18 @@ namespace DocCompareWPF.Classes
                     documentsToShow.Add(-1);
                 }
             }
+
+            if (documents.Count > 1)
+            {
+                for (int i = 0; i < documentsToShow.Count - 1; i++)
+                {
+                    if (documentsToShow[i] > index)
+                    {
+                        documentsToShow[i]--;
+                    }
+                }
+            }
+            */
 
             // default for doc comparison
             documentsToCompare[0] = -1;

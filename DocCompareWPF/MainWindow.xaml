@@ -268,11 +268,15 @@
                                                         <ControlTemplate TargetType="{x:Type ListViewItem}">
                                                             <Grid Tag="DocPreviewList1" HorizontalAlignment="Stretch" Background="Transparent" MouseEnter="HandleDocPreviewMouseEnter" MouseLeave="HandleDocPreviewMouseLeave">
                                                                 <Border >
-                                                                    <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
-                                                                        <Image.Effect>
-                                                                            <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
-                                                                        </Image.Effect>
-                                                                    </Image>                                                                    
+                                                                    <Grid>
+                                                                        <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
+                                                                            <Image.Effect>
+                                                                                <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
+                                                                            </Image.Effect>
+                                                                        </Image>
+                                                                        <Image Source="{Binding PathToFileHidden, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform" Visibility="Hidden">
+                                                                        </Image>
+                                                                    </Grid>
                                                                     <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
@@ -305,12 +309,12 @@
                                                                     </Label.RenderTransform>
                                                                 </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
-                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="Click to show speaker notes of this slide"
+                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="Click to show speaker notes"
                                                                         Click="HandleShowPPTNoteButton">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
-                                                                               MaxHeight="95" Background="White" Opacity="0.7" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
+                                                                               MaxHeight="95" Background="White" Opacity="0.9" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
                                                                     <Grid.RowDefinitions>
                                                                         <RowDefinition Height="25"/>
                                                                         <RowDefinition/>
@@ -423,11 +427,15 @@
                                                         <ControlTemplate TargetType="{x:Type ListViewItem}">
                                                             <Grid HorizontalAlignment="Stretch" Background="Transparent" MouseEnter="HandleDocPreviewMouseEnter" MouseLeave="HandleDocPreviewMouseLeave">
                                                                 <Border >
-                                                                    <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
-                                                                        <Image.Effect>
-                                                                            <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
-                                                                        </Image.Effect>
-                                                                    </Image>
+                                                                    <Grid>
+                                                                        <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
+                                                                            <Image.Effect>
+                                                                                <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
+                                                                            </Image.Effect>
+                                                                        </Image>
+                                                                        <Image Source="{Binding PathToFileHidden, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform" Visibility="Hidden">
+                                                                        </Image>
+                                                                    </Grid>
                                                                     <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
@@ -460,12 +468,12 @@
                                                                     </Label.RenderTransform>
                                                                 </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
-                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="Click to show speaker notes of this slide"
+                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="Click to show speaker notes"
                                                                         Click="HandleShowPPTNoteButton">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
-                                                                               MaxHeight="95" Background="White" Opacity="0.7" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
+                                                                               MaxHeight="95" Background="White" Opacity="0.9" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
                                                                     <Grid.RowDefinitions>
                                                                         <RowDefinition Height="25"/>
                                                                         <RowDefinition/>
@@ -577,11 +585,15 @@
                                                         <ControlTemplate TargetType="{x:Type ListViewItem}">
                                                             <Grid HorizontalAlignment="Stretch" Background="Transparent" MouseEnter="HandleDocPreviewMouseEnter" MouseLeave="HandleDocPreviewMouseLeave">
                                                                 <Border >
-                                                                    <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
-                                                                        <Image.Effect>
-                                                                            <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
-                                                                        </Image.Effect>
-                                                                    </Image>
+                                                                    <Grid>
+                                                                        <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
+                                                                            <Image.Effect>
+                                                                                <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
+                                                                            </Image.Effect>
+                                                                        </Image>
+                                                                        <Image Source="{Binding PathToFileHidden, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform" Visibility="Hidden">
+                                                                        </Image>
+                                                                    </Grid>
                                                                     <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
@@ -614,12 +626,12 @@
                                                                     </Label.RenderTransform>
                                                                 </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
-                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="Click to show speaker notes of this slide"
+                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="Click to show speaker notes"
                                                                         Click="HandleShowPPTNoteButton">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
-                                                                               MaxHeight="95" Background="White" Opacity="0.7" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
+                                                                               MaxHeight="95" Background="White" Opacity="0.9" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
                                                                     <Grid.RowDefinitions>
                                                                         <RowDefinition Height="25"/>
                                                                         <RowDefinition/>
@@ -732,11 +744,15 @@
                                                         <ControlTemplate TargetType="{x:Type ListViewItem}">
                                                             <Grid HorizontalAlignment="Stretch" Background="Transparent" MouseEnter="HandleDocPreviewMouseEnter" MouseLeave="HandleDocPreviewMouseLeave">
                                                                 <Border >
-                                                                    <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
-                                                                        <Image.Effect>
-                                                                            <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
-                                                                        </Image.Effect>
-                                                                    </Image>
+                                                                    <Grid>
+                                                                        <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
+                                                                            <Image.Effect>
+                                                                                <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
+                                                                            </Image.Effect>
+                                                                        </Image>
+                                                                        <Image Source="{Binding PathToFileHidden, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform" Visibility="Hidden">
+                                                                        </Image>
+                                                                    </Grid>
                                                                     <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
@@ -769,12 +785,12 @@
                                                                     </Label.RenderTransform>
                                                                 </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
-                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="Click to show speaker notes of this slide"
+                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="Click to show speaker notes"
                                                                         Click="HandleShowPPTNoteButton">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
-                                                                               MaxHeight="95" Background="White" Opacity="0.7" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
+                                                                               MaxHeight="95" Background="White" Opacity="0.9" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
                                                                     <Grid.RowDefinitions>
                                                                         <RowDefinition Height="25"/>
                                                                         <RowDefinition/>
@@ -887,11 +903,15 @@
                                                         <ControlTemplate TargetType="{x:Type ListViewItem}">
                                                             <Grid HorizontalAlignment="Stretch" Background="Transparent" MouseEnter="HandleDocPreviewMouseEnter" MouseLeave="HandleDocPreviewMouseLeave">
                                                                 <Border >
-                                                                    <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
-                                                                        <Image.Effect>
-                                                                            <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
-                                                                        </Image.Effect>
-                                                                    </Image>
+                                                                    <Grid>
+                                                                        <Image Source="{Binding PathToFile, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform">
+                                                                            <Image.Effect>
+                                                                                <BlurEffect Radius="{Binding BlurRadius}"></BlurEffect>
+                                                                            </Image.Effect>
+                                                                        </Image>
+                                                                        <Image Source="{Binding PathToFileHidden, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform" Visibility="Hidden">
+                                                                        </Image>
+                                                                    </Grid>
                                                                     <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
@@ -924,12 +944,12 @@
                                                                     </Label.RenderTransform>
                                                                 </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
-                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="Click to show speaker notes of this slide"
+                                                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="Click to show speaker notes"
                                                                         Click="HandleShowPPTNoteButton">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
-                                                                               MaxHeight="95" Background="White" Opacity="0.7" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
+                                                                               MaxHeight="95" Background="White" Opacity="0.9" Visibility="Hidden" Style="{StaticResource VisibleAnimation}">
                                                                     <Grid.RowDefinitions>
                                                                         <RowDefinition Height="25"/>
                                                                         <RowDefinition/>
@@ -1323,12 +1343,12 @@
                                                                     </Label.RenderTransform>
                                                                 </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonNameLeft}" Visibility="{Binding showPPTSpeakerNotesButtonLeft}" Foreground="Black" Width="30" Height="30"
-                                                                        HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="15" ToolTip="Click to show speaker notes of this slide"
+                                                                        HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="15" ToolTip="Click to show speaker notes"
                                                                         Click="HandleShowPPTNoteButtonCompareMode">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridNameLeft}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
-                                                                               MaxHeight="150" Background="White" Opacity="0.7" Visibility="{Binding PPTNoteGridLeftVisi}" Style="{StaticResource VisibleAnimation}">
+                                                                               MaxHeight="150" Background="White" Opacity="0.9" Visibility="{Binding PPTNoteGridLeftVisi}" Style="{StaticResource VisibleAnimation}">
                                                                     <Grid.RowDefinitions>
                                                                         <RowDefinition Height="25"/>
                                                                         <RowDefinition/>
@@ -1338,7 +1358,7 @@
                                                                         <iconPacks:PackIconCodicons Kind="Close"/>
                                                                     </Button>
                                                                     <ScrollViewer Padding="10" Grid.Row="1">
-                                                                        <TextBlock local:TextBlockHelper.FormattedText="{Binding Document1}" />
+                                                                        <TextBlock TextWrapping="Wrap" local:TextBlockHelper.FormattedText="{Binding Document1}" />
                                                                     </ScrollViewer>
                                                                 </Grid>
                                                             </Grid>
@@ -1401,17 +1421,17 @@
                                                                     <iconPacks:PackIconMaterial Kind="VectorDifference" Width="15" Height="15" />
                                                                 </Button>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonNameRight}" Visibility="{Binding showPPTSpeakerNotesButtonRight}" Foreground="Black" Width="30" Height="30"
-                                                                        HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="15" ToolTip="Click to show speaker notes of this slide"
+                                                                        HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="15" ToolTip="Click to show speaker notes"
                                                                         Click="HandleShowPPTNoteButtonCompareMode" Background="White">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonNameRightChanged}" Visibility="{Binding showPPTSpeakerNotesButtonRightChanged}" Foreground="Black" Width="30" Height="30"
-                                                                        HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="15" ToolTip="Click to show speaker notes of this slide"
+                                                                        HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="15" ToolTip="Click to show speaker notes"
                                                                         Click="HandleShowPPTNoteButtonCompareMode" Background="{StaticResource WarningBackgroundBrush}">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridNameRight}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
-                                                                               MaxHeight="150" Background="White" Opacity="0.7" Visibility="{Binding PPTNoteGridRightVisi}" Style="{StaticResource VisibleAnimation}">
+                                                                               MaxHeight="150" Background="White" Opacity="0.9" Visibility="{Binding PPTNoteGridRightVisi}" Style="{StaticResource VisibleAnimation}">
                                                                     <Grid.RowDefinitions>
                                                                         <RowDefinition Height="25"/>
                                                                         <RowDefinition/>
@@ -1421,7 +1441,7 @@
                                                                         <iconPacks:PackIconCodicons Kind="Close"/>
                                                                     </Button>
                                                                     <ScrollViewer Padding="10" Grid.Row="1">
-                                                                        <TextBlock local:TextBlockHelper.FormattedText="{Binding Document2}" />
+                                                                        <TextBlock TextWrapping="Wrap" local:TextBlockHelper.FormattedText="{Binding Document2}" />
                                                                     </ScrollViewer>
                                                                 </Grid>
                                                             </Grid>

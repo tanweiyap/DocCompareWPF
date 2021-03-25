@@ -1,4 +1,5 @@
 ﻿using DocCompareWPF.Classes;
+using DocCompareWPF.UIhelper;
 using Microsoft.Win32;
 using ProtoBuf;
 using System;
@@ -14,323 +15,13 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
-using System.Xml;
 
 namespace DocCompareWPF
 {
-    public static class TextBlockHelper
-    {
-        #region FormattedText Attached dependency property
-
-        public static string GetFormattedText(DependencyObject obj)
-        {
-            return (string)obj.GetValue(FormattedTextProperty);
-        }
-
-        public static void SetFormattedText(DependencyObject obj, string value)
-        {
-            obj.SetValue(FormattedTextProperty, value);
-        }
-
-        public static readonly DependencyProperty FormattedTextProperty =
-            DependencyProperty.RegisterAttached("FormattedText",
-            typeof(string),
-            typeof(TextBlockHelper),
-            new UIPropertyMetadata("", FormattedTextChanged));
-
-        private static void FormattedTextChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            string value = e.NewValue as string;
-
-            TextBlock textBlock = sender as TextBlock;
-
-            if (textBlock != null)
-            {
-                textBlock.Inlines.Clear();
-                textBlock.Inlines.Add(Process(value));
-            }
-        }
-
-        #endregion
-
-        static Inline Process(string value)
-        {
-            XmlDocument doc = new XmlDocument();
-
-            if (value != null)
-                doc.LoadXml(value);
-
-            Span span = new Span();
-
-            if (doc.ChildNodes.Count != 0)
-                InternalProcess(span, doc.ChildNodes[1]);
-
-            return span;
-        }
-
-        private static void InternalProcess(Span span, XmlNode xmlNode)
-        {
-            foreach (XmlNode child in xmlNode)
-            {
-                if (child is XmlText)
-                {
-                    span.Inlines.Add(new Run(child.InnerText));
-                }
-                else if (child is XmlElement)
-                {
-                    Span spanItem = new Span();
-                    InternalProcess(spanItem, child);
-                    switch (child.Name.ToUpper())
-                    {
-                        case "B":
-                        case "BOLD":
-                            Bold bold = new Bold(spanItem);
-                            span.Inlines.Add(bold);
-                            break;
-                        case "I":
-                        case "ITALIC":
-                            Italic italic = new Italic(spanItem);
-                            span.Inlines.Add(italic);
-                            break;
-                        case "U":
-                        case "UNDERLINE":
-                            Underline underline = new Underline(spanItem);
-                            span.Inlines.Add(underline);
-                            break;
-                        case "D":
-                        case "DELETE":
-                            spanItem.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
-                            spanItem.Foreground = Brushes.Transparent;
-                            span.Inlines.Add(spanItem);
-                            break;
-                        case "IN":
-                        case "INSERT":
-                            spanItem.Background = new SolidColorBrush(Color.FromArgb(128, 255, 44, 108));
-                            span.Inlines.Add(spanItem);
-                            break;
-                    }
-                }
-            }
-        }
-    }
-
-    public class CompareMainItem : INotifyPropertyChanged
-    {
-        private Visibility _showMask;
-
-        public string Document1 { get; set; }
-        public string Document2 { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public bool AniDiffButtonEnable { get; set; }
-        public string AnimateDiffLeftButtonName { get; set; }
-        public string AnimateDiffRightButtonName { get; set; }
-        public string ImgAniLeftName { get; set; }
-        public string ImgAniRightName { get; set; }
-        public string ImgGridLeftName { get; set; }
-        public string ImgGridName { get; set; }
-        public string ImgGridRightName { get; set; }
-        public string ImgLeftName { get; set; }
-        public string ImgMaskRightName { get; set; }
-        public string ImgRightName { get; set; }
-        public Thickness Margin { get; set; }
-
-        private string _pathToAniImgLeft;
-        private string _pathToAniImgRight;
-        private string _pathToImgLeft;
-        private string _pathToImgRight;
-        private string _pathToMaskImgRight;
-        public string PathToAniImgLeft { get { return _pathToAniImgLeft; } set { _pathToAniImgLeft = value; OnPropertyChanged(); } }
-        public string PathToAniImgRight { get { return _pathToAniImgRight; } set { _pathToAniImgRight = value; OnPropertyChanged(); } }
-        public string PathToImgLeft { get { return _pathToImgLeft; } set { _pathToImgLeft = value; OnPropertyChanged(); } }
-        public string PathToImgRight { get { return _pathToImgRight; } set { _pathToImgRight = value; OnPropertyChanged(); } }
-        public string PathToMaskImgRight { get { return _pathToMaskImgRight; } set { _pathToMaskImgRight = value; OnPropertyChanged(); } }
-
-        private double _blurRadiusLeft;
-        private double _blurRadiusRight;
-
-        private Visibility _showHiddenLeft;
-        private Visibility _showHiddenRight;
-        private Visibility _pptNoteGridLeftVisi;
-        private Visibility _pptNoteGridRightVisi;
-
-        public string PPTSpeakerNoteGridNameLeft { get; set; }
-        public string PPTSpeakerNoteGridNameRight { get; set; }
-        public string ClosePPTSpeakerNotesButtonNameLeft { get; set; }
-        public string ClosePPTSpeakerNotesButtonNameRight { get; set; }
-        //public string PPTSpeakerNotesLeft { get; set; }
-        //public string PPTSpeakerNotesRight { get; set; }
-        public string ShowPPTSpeakerNotesButtonNameLeft { get; set; }
-        public string ShowPPTSpeakerNotesButtonNameRight { get; set; }
-        public string ShowPPTSpeakerNotesButtonNameRightChanged { get; set; }
-        private Visibility _showPPTSpeakerNotesButtonLeft;
-        private Visibility _showPPTSpeakerNotesButtonRight;
-        private Visibility _showPPTSpeakerNotesButtonRightChanged;
-
-        private SolidColorBrush _showPPTButtonBackground;
-        public SolidColorBrush ShowPPTNoteButtonBackground
-        {
-            get
-            {
-                return _showPPTButtonBackground;
-            }
-
-            set
-            {
-                _showPPTButtonBackground = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Visibility showPPTSpeakerNotesButtonLeft
-        {
-            get
-            {
-                return _showPPTSpeakerNotesButtonLeft;
-            }
-
-            set
-            {
-                _showPPTSpeakerNotesButtonLeft = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Visibility showPPTSpeakerNotesButtonRight
-        {
-            get
-            {
-                return _showPPTSpeakerNotesButtonRight;
-            }
-
-            set
-            {
-                _showPPTSpeakerNotesButtonRight = value;
-                OnPropertyChanged();
-            }
-        }
-        public Visibility showPPTSpeakerNotesButtonRightChanged
-        {
-            get
-            {
-                return _showPPTSpeakerNotesButtonRightChanged;
-            }
-
-            set
-            {
-                _showPPTSpeakerNotesButtonRightChanged = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Visibility PPTNoteGridLeftVisi
-        {
-            get
-            {
-                return _pptNoteGridLeftVisi;
-            }
-
-            set
-            {
-                _pptNoteGridLeftVisi = value;
-                OnPropertyChanged();
-            }
-        }
-        public Visibility PPTNoteGridRightVisi
-        {
-            get
-            {
-                return _pptNoteGridRightVisi;
-            }
-
-            set
-            {
-                _pptNoteGridRightVisi = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public double BlurRadiusRight
-        {
-            get
-            {
-                return _blurRadiusRight;
-            }
-
-            set
-            {
-                _blurRadiusRight = value;
-                OnPropertyChanged();
-            }
-        }
-        public double BlurRadiusLeft
-        {
-            get
-            {
-                return _blurRadiusLeft;
-            }
-
-            set
-            {
-                _blurRadiusLeft = value;
-                OnPropertyChanged();
-            }
-        }
-
-
-
-        public Visibility ShowMask
-        {
-            get
-            {
-                return _showMask;
-            }
-
-            set
-            {
-                _showMask = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Visibility ShowHiddenLeft
-        {
-            get
-            {
-                return _showHiddenLeft;
-            }
-
-            set
-            {
-                _showHiddenLeft = value;
-                OnPropertyChanged();
-            }
-        }
-        public Visibility ShowHiddenRight
-        {
-            get
-            {
-                return _showHiddenRight;
-            }
-
-            set
-            {
-                _showHiddenRight = value;
-                OnPropertyChanged();
-            }
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -379,9 +70,6 @@ namespace DocCompareWPF
         private Thread threadCheckUpdate;
         private readonly Thread threadRenewLic;
         private Thread threadStartWalkthrough;
-
-        // Walkthrough
-        private bool walkthroughMode;
 
         // link scroll
         private bool linkscroll = true;
@@ -733,13 +421,6 @@ namespace DocCompareWPF
 
         private void BrowseFileButton1_Click(object sender, RoutedEventArgs e)
         {
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
-            {
-                PopupBrowseFileButtonBubble.IsOpen = false;
-                lastUsedDirectory = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
-                lastUsedDirectory = Path.Join(lastUsedDirectory, "examples");
-            }
-
             if (Directory.Exists(lastUsedDirectory) == false)
                 lastUsedDirectory = settings.defaultFolder;
 
@@ -818,20 +499,7 @@ namespace DocCompareWPF
                             docs.documentsToShow[0] = selectReferenceWindow.selectedIndex;
                         }
                     }
-
-                    /*
-                    if ((sender as Button).Name.Contains("Top"))
-                    {
-                        if (docs.documents.Count >= 3)
-                        {
-                            docs.documentsToShow[0] = docs.documents.Count - 1;
-                        }
-                        else if (docs.documents.Count == 2)
-                        {
-                            docs.documentsToShow[1] = 1;
-                        }
-                    }
-                    */
+              
                     LoadFilesCommonPart();
 
                     threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
@@ -841,24 +509,10 @@ namespace DocCompareWPF
                     threadLoadDocsProgress.Start();
                 }
             }
-            else
-            {
-                if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
-                {
-                    PopupBrowseFileButtonBubble.IsOpen = true;
-                }
-            }
         }
 
         private void BrowseFileButton2_Click(object sender, RoutedEventArgs e)
         {
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON2)
-            {
-                PopupBrowseFileButton2Bubble.IsOpen = false;
-                lastUsedDirectory = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
-                lastUsedDirectory = Path.Join(lastUsedDirectory, "examples");
-            }
-
             if (Directory.Exists(lastUsedDirectory) == false)
                 lastUsedDirectory = settings.defaultFolder;
 
@@ -921,13 +575,6 @@ namespace DocCompareWPF
 
                     threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
                     threadLoadDocsProgress.Start();
-                }
-            }
-            else
-            {
-                if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON2)
-                {
-                    PopupBrowseFileButton2Bubble.IsOpen = true;
                 }
             }
         }
@@ -1355,16 +1002,6 @@ namespace DocCompareWPF
 
                     threadDisplayResult.Start();
                     ShowDocCompareFileInfoButton.IsEnabled = true;
-
-                    if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREHIGHLIGHT)
-                    {
-                        PopupHighlightOffBubble.IsOpen = true;
-                        //walkthroughStep = WalkthroughSteps.COMPAREOPENEXTERN; // 8
-                    }
-                    else
-                    {
-                        PopupHighlightOffBubble.IsOpen = false;
-                    }
                 });
             }
             catch
@@ -1876,14 +1513,6 @@ namespace DocCompareWPF
                 ProgressBarDocCompare.Visibility = Visibility.Hidden;
                 ProgressBarDocCompareAlign.Visibility = Visibility.Hidden;
                 ProgressBarLoadingResults.Visibility = Visibility.Hidden;
-
-                if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARELINK)
-                {
-                    //ListViewItem container = DocCompareSideListViewLeft.ItemContainerGenerator.ContainerFromItem(DocCompareSideListViewLeft.Items[0]) as ListViewItem;
-                    //(((VisualTreeHelper.GetChild(container, 0) as Grid).Children[1] as Grid).Children[3] as Button).Visibility = Visibility.Visible;
-                    PopupLinkPageBubble.IsOpen = true;
-                    //walkthroughStep++;
-                }
             });
         }
 
@@ -2420,11 +2049,6 @@ namespace DocCompareWPF
         {
             if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
-                {
-                    PopupBrowseFileButtonBubble.IsOpen = false;
-                }
-
                 var data = e.Data.GetData(DataFormats.FileDrop) as string[];
                 string ext;
 
@@ -2493,18 +2117,6 @@ namespace DocCompareWPF
 
                     threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
                     threadLoadDocsProgress.Start();
-
-                    if (walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
-                    {
-                        walkthroughStep = WalkthroughSteps.BROWSEFILEBUTTON2;
-                    }
-                }
-                else
-                {
-                    if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON1)
-                    {
-                        PopupBrowseFileButtonBubble.IsOpen = true;
-                    }
                 }
             }
         }
@@ -3078,11 +2690,6 @@ namespace DocCompareWPF
 
                 threadAnimateDiff = new Thread(new ThreadStart(AnimateDiffThread));
                 threadAnimateDiff.Start();
-
-                if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREANIMATE)
-                {
-                    PopupAnimateBubble.IsOpen = false;
-                }
             }
         }
 
@@ -3145,16 +2752,6 @@ namespace DocCompareWPF
 
             }
 
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREANIMATE)
-            {
-                CustomMessageBox msgBox = new CustomMessageBox();
-                msgBox.Setup("Walkthrough completed", "Thanks for completing the walkthrough guide.                 Enjoy 2|Compare! You can restart this walkthrough from     the settings page.", "Okay");
-                msgBox.ShowDialog();
-
-                settings.shownWalkthrough = true;
-                SaveSettings();
-                walkthroughStep = WalkthroughSteps.END;
-            }
         }
 
         private void HandleMainDocCompareGridMouseEnter(object sender, MouseEventArgs args)
@@ -3367,13 +2964,6 @@ namespace DocCompareWPF
             ShowMaskButton.Visibility = Visibility.Visible;
             HideMaskButton.Visibility = Visibility.Hidden;
             HighlightingDisableTip.Visibility = Visibility.Visible;
-
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREHIGHLIGHT)
-            {
-                PopupHighlightOffBubble.IsOpen = false;
-                PopupOpenOriBubble.IsOpen = true;
-                walkthroughStep = WalkthroughSteps.COMPAREOPENEXTERN;
-            }
         }
 
         private void HighlightSideGrid()
@@ -3933,24 +3523,7 @@ namespace DocCompareWPF
 
                     ProcessingDocProgressCard.Visibility = Visibility.Hidden;
 
-                    // Walkthrough
-                    if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEBUTTON2 && docs.documents.Count == 3)
-                    {
-                        PopupDocPreviewNameComboboxBubble.IsOpen = true;
-                        PopupBrowseFileButtonBubble.IsOpen = false;
-                        PopupBrowseFileButton2Bubble.IsOpen = false;
-                        walkthroughStep = WalkthroughSteps.BROWSEFILECOMBOBOX;
-                    }
-                    else if (walkthroughMode == true)
-                    {
-                        PopupBrowseFileButtonBubble.IsOpen = false;
-                        PopupBrowseFileButton2Bubble.IsOpen = true;
-                    }
-                    else
-                    {
-                        PopupBrowseFileButtonBubble.IsOpen = false;
-                        PopupBrowseFileButton2Bubble.IsOpen = false;
-                    }
+                    
                 });
             }
             catch (Exception ex)
@@ -4194,12 +3767,6 @@ namespace DocCompareWPF
 
             threadLoadDocs = new Thread(new ThreadStart(ReloadDocThread));
             threadLoadDocs.Start();
-
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARERELOAD)
-            {
-                PopupReloadBubble.IsOpen = false;
-                walkthroughStep = WalkthroughSteps.COMPARELINK; // 11
-            }
         }
 
         private void ReloadDocThread()
@@ -4504,20 +4071,6 @@ namespace DocCompareWPF
                     EnableSideScrollLeft();
                     EnableSideScrollRight();
                 });
-            }
-
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREUNLINK)
-            {
-                PopupUnlinkBubble.IsOpen = false;
-                ListViewItem container = DocCompareMainListView.ItemContainerGenerator.ContainerFromItem(DocCompareMainListView.Items[0]) as ListViewItem;
-                Grid thisGrid = VisualTreeHelper.GetChild(VisualTreeHelper.GetChild(container, 0) as Grid, 1) as Grid;
-                Button thisButton = VisualTreeHelper.GetChild(thisGrid, 3) as Button;
-                thisButton.Visibility = Visibility.Visible;
-
-                PopupAnimateBubble.PlacementTarget = container;
-
-                PopupAnimateBubble.IsOpen = true;
-                walkthroughStep = WalkthroughSteps.COMPAREANIMATE;
             }
         }
 
@@ -4927,26 +4480,6 @@ namespace DocCompareWPF
                 Doc5StatLastEditorLabel.Visibility = Visibility.Collapsed;
                 Doc5StatLastEditorLabel0.Visibility = Visibility.Collapsed;
             }
-
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEINFOOPEN)
-            {
-                PopupDocPreviewInfoButtonBubble.IsOpen = false;
-                PopupDocPreviewInfoButton2Bubble.IsOpen = true;
-                walkthroughStep = WalkthroughSteps.BROWSEFILEINFOCLOSE; // 5
-            }
-            else if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILEINFOCLOSE)
-            {
-                PopupDocPreviewInfoButton2Bubble.IsOpen = false;
-                PopupCompareDocBubble.IsOpen = true;
-                walkthroughStep = WalkthroughSteps.COMPARETAB; // 6
-            }
-
-            /*
-            if(Doc1StatsGrid.ActualHeight > Doc2StatsGrid.ActualHeight)
-                Doc2StatsGrid.Height = Doc1StatsGrid.ActualHeight;
-            else
-                Doc1StatsGrid.Height = Doc2StatsGrid.ActualHeight;
-            */
         }
 
         private void ShowDoc3FileInfoButton_Click(object sender, RoutedEventArgs e)
@@ -5183,12 +4716,6 @@ namespace DocCompareWPF
                 {
                     MaskSideGridInForceAlignMode();
                     DisableRemoveForceAlignButton();
-
-                    if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARELINK)
-                    {
-                        PopupLinkPageBubble.IsOpen = false;
-                        walkthroughStep = WalkthroughSteps.COMPAREUNLINK;
-                    }
                 });
             }
             else
@@ -5260,11 +4787,6 @@ namespace DocCompareWPF
                         EnableRemoveForceAlignButton();
                         EnableSideScrollLeft();
                         EnableSideScrollRight();
-
-                        if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREUNLINK)
-                        {
-                            PopupUnlinkBubble.IsOpen = true;
-                        }
                     });
                 }
             }
@@ -5486,143 +5008,6 @@ namespace DocCompareWPF
                     }
                 }
             }
-
-            /*
-            foreach (object child in img.Children)
-            {
-                if (child is Button)
-                {
-                    if ((child as Button).Tag.ToString() == nameToLook)
-                    {
-                        Button foundButton = child as Button;
-                        if (inForceAlignMode == false)
-                        {
-                            if (isLinkedPage == false)
-                                foundButton.Visibility = Visibility.Visible;
-                            else
-                            {
-                                nameToLook = "RemoveForceAlign" + splittedName[1];
-
-                                foreach (object child2 in img.Children)
-                                {
-                                    if (child2 is Button)
-                                    {
-                                        if ((child2 as Button).Tag.ToString() == nameToLook)
-                                        {
-                                            foundButton = child2 as Button;
-                                            
-                                            if (isLinkedPage == true)
-                                            {
-                                                foundButton.ToolTip = "Page linked. Please remove existing link first.";
-                                            }
-                                            
-                                            foundButton.Visibility = Visibility.Visible;
-                                        }
-                                        else
-                                        {
-                                            foundButton.Visibility = Visibility.Hidden;
-                                        }
-                                    }
-                                }
-                                
-                            }
-                        }
-                        else
-                        {
-                            if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
-                            {
-                                if (nameToLook.Contains("Left"))
-                                {
-                                    if (nameToLook != selectedSideGridButtonName1)
-                                        foundButton.Visibility = Visibility.Hidden;
-                                    else
-                                        foundButton.Visibility = Visibility.Visible;
-                                }
-                                else
-                                {
-                                    if (lowerIndRight <= selfInd && selfInd <= upperIndLeft && isLinkedPage == false)
-                                        foundButton.Visibility = Visibility.Visible;
-                                    else
-                                    {
-                                        nameToLook = "SideButtonInvalidRight" + splittedName[1];
-                                        foreach (object child2 in img.Children)
-                                        {
-                                            if (child2 is Button)
-                                            {
-                                                if ((child2 as Button).Tag.ToString() == nameToLook)
-                                                {
-                                                    foundButton = child2 as Button;
-
-                                                    if (isLinkedPage == true)
-                                                    {
-                                                        foundButton.ToolTip = "Page linked. Please remove existing link first.";
-                                                    }
-                                                    else
-                                                    {
-                                                        foundButton.ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.";
-                                                    }
-
-                                                    foundButton.Visibility = Visibility.Visible;
-                                                }
-                                                else
-                                                {
-                                                    foundButton.Visibility = Visibility.Hidden;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (nameToLook.Contains("Right"))
-                                {
-                                    if (nameToLook != selectedSideGridButtonName1)
-                                        foundButton.Visibility = Visibility.Hidden;
-                                    else
-                                        foundButton.Visibility = Visibility.Visible;
-                                }
-                                else
-                                {
-                                    if (lowerIndRight <= selfInd && selfInd <= upperIndRight && isLinkedPage == false)
-                                        foundButton.Visibility = Visibility.Visible;
-                                    else
-                                    {
-                                        nameToLook = "SideButtonInvalidLeft" + splittedName[1];
-                                        foreach (object child2 in img.Children)
-                                        {
-                                            if (child2 is Button)
-                                            {
-                                                if ((child2 as Button).Tag.ToString() == nameToLook)
-                                                {
-                                                    foundButton = child2 as Button;
-
-                                                    if (isLinkedPage == true)
-                                                    {
-                                                        foundButton.ToolTip = "Page linked. Please remove existing link first.";
-                                                    }
-                                                    else
-                                                    {
-                                                        foundButton.ToolTip = "This link would cross a previously set link. Please remove that link before aligning these pages.";
-                                                    }
-
-                                                    foundButton.Visibility = Visibility.Visible;
-                                                }
-                                                else
-                                                {
-                                                    foundButton.Visibility = Visibility.Hidden;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            */
-
         }
 
         private void SideGridMouseLeave(object sender, MouseEventArgs args)
@@ -5771,12 +5156,6 @@ namespace DocCompareWPF
         {
             if (docs.documents.Count >= 2 && docCompareRunning == false && currentVisiblePanel != SidePanels.DOCCOMPARE)
             {
-                if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPARETAB)
-                {
-                    PopupCompareDocBubble.IsOpen = false;
-                    walkthroughStep = WalkthroughSteps.COMPAREHIGHLIGHT; // 7
-                }
-
                 inForceAlignMode = false;
                 //DocCompareLeftStatsGrid.Visibility = Visibility.Collapsed;
                 //DocCompareRightStatsGrid.Visibility = Visibility.Collapsed;
@@ -5834,13 +5213,6 @@ namespace DocCompareWPF
         private void SidePanelOpenDocButton_Click(object sender, RoutedEventArgs e)
         {
             SetVisiblePanel(SidePanels.DRAGDROP);
-
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILETAB)
-            {
-                PopupBrowseFileBubble.IsOpen = false;
-                PopupBrowseFileButtonBubble.IsOpen = true;
-                walkthroughStep = WalkthroughSteps.BROWSEFILEBUTTON1;
-            }
         }
 
         private void UnMaskSideGridFromForceAlignMode()
@@ -5885,22 +5257,7 @@ namespace DocCompareWPF
             for (int i = 0; i < docs.documents.Count; i++)
             {
                 bool ok = true;
-                /*
-                for (int j = 0; j < docs.documentsToShow.Count; j++)
-                {
-                    if (j != 0)
-                    {
-                        if (i != docs.documentsToShow[j])
-                        {
-                            ok &= true;
-                        }
-                        else
-                        {
-                            ok &= false;
-                        }
-                    }
-                }
-                */
+                
                 if (ok == true)
                     items.Add(Path.GetFileName(docs.documents[i].filePath));
 
@@ -5911,134 +5268,6 @@ namespace DocCompareWPF
             }
             Doc1NameLabelComboBox.ItemsSource = items;
             Doc1NameLabelComboBox.SelectedIndex = ind;
-
-            // update combo box middle
-            /*
-            items = new ObservableCollection<string>();
-            for (int i = 0; i < docs.documents.Count; i++)
-            {
-                bool ok = true;
-                for (int j = 0; j < docs.documentsToShow.Count; j++)
-                {
-                    if (j != 1)
-                    {
-                        if (i != docs.documentsToShow[j])
-                        {
-                            ok &= true;
-                        }
-                        else
-                        {
-                            ok &= false;
-                        }
-                    }
-                }
-
-                if (ok == true)
-                    items.Add(Path.GetFileName(docs.documents[i].filePath));
-
-                if (i == docs.documentsToShow[1])
-                {
-                    ind = items.Count - 1;
-                }
-            }
-            Doc2NameLabelComboBox.ItemsSource = items;
-            Doc2NameLabelComboBox.SelectedIndex = ind;
-
-            // TODO: Premium
-            //if (settings.numPanelsDragDrop == 3)
-            {
-                // update combo box right
-                items = new ObservableCollection<string>();
-                for (int i = 0; i < docs.documents.Count; i++)
-                {
-                    bool ok = true;
-                    for (int j = 0; j < docs.documentsToShow.Count; j++)
-                    {
-                        if (j != 2)
-                        {
-                            if (i != docs.documentsToShow[j])
-                            {
-                                ok &= true;
-                            }
-                            else
-                            {
-                                ok &= false;
-                            }
-                        }
-                    }
-
-                    if (ok == true)
-                        items.Add(Path.GetFileName(docs.documents[i].filePath));
-
-                    if (i == docs.documentsToShow[2])
-                    {
-                        ind = items.Count - 1;
-                    }
-                }
-                Doc3NameLabelComboBox.ItemsSource = items;
-                Doc3NameLabelComboBox.SelectedIndex = ind;
-
-                items = new ObservableCollection<string>();
-                for (int i = 0; i < docs.documents.Count; i++)
-                {
-                    bool ok = true;
-                    for (int j = 0; j < docs.documentsToShow.Count; j++)
-                    {
-                        if (j != 2)
-                        {
-                            if (i != docs.documentsToShow[j])
-                            {
-                                ok &= true;
-                            }
-                            else
-                            {
-                                ok &= false;
-                            }
-                        }
-                    }
-
-                    if (ok == true)
-                        items.Add(Path.GetFileName(docs.documents[i].filePath));
-
-                    if (i == docs.documentsToShow[3])
-                    {
-                        ind = items.Count - 1;
-                    }
-                }
-                Doc4NameLabelComboBox.ItemsSource = items;
-                Doc4NameLabelComboBox.SelectedIndex = ind;
-
-                items = new ObservableCollection<string>();
-                for (int i = 0; i < docs.documents.Count; i++)
-                {
-                    bool ok = true;
-                    for (int j = 0; j < docs.documentsToShow.Count; j++)
-                    {
-                        if (j != 2)
-                        {
-                            if (i != docs.documentsToShow[j])
-                            {
-                                ok &= true;
-                            }
-                            else
-                            {
-                                ok &= false;
-                            }
-                        }
-                    }
-
-                    if (ok == true)
-                        items.Add(Path.GetFileName(docs.documents[i].filePath));
-
-                    if (i == docs.documentsToShow[4])
-                    {
-                        ind = items.Count - 1;
-                    }
-                }
-                Doc5NameLabelComboBox.ItemsSource = items;
-                Doc5NameLabelComboBox.SelectedIndex = ind;
-            }
-            */
         }
 
         private void UpdateFileStat(int i)
@@ -6129,94 +5358,17 @@ namespace DocCompareWPF
 
         private void Window_LocationChanged(object sender, EventArgs e)
         {
-            if (PopupBrowseFileBubble.IsOpen == true)
-            {
-                PopupBrowseFileBubble.HorizontalOffset++;
-                PopupBrowseFileBubble.HorizontalOffset--;
-            }
-
-            if (PopupBrowseFileButtonBubble.IsOpen == true)
-            {
-                PopupBrowseFileButtonBubble.HorizontalOffset++;
-                PopupBrowseFileButtonBubble.HorizontalOffset--;
-            }
-
-            if (PopupDocPreviewNameComboboxBubble.IsOpen == true)
-            {
-                PopupDocPreviewNameComboboxBubble.HorizontalOffset++;
-                PopupDocPreviewNameComboboxBubble.HorizontalOffset--;
-            }
-
-            if (PopupDocPreviewInfoButtonBubble.IsOpen == true)
-            {
-                PopupDocPreviewInfoButtonBubble.HorizontalOffset++;
-                PopupDocPreviewInfoButtonBubble.HorizontalOffset--;
-            }
-
-            if (PopupDocPreviewInfoButton2Bubble.IsOpen == true)
-            {
-                PopupDocPreviewInfoButton2Bubble.HorizontalOffset++;
-                PopupDocPreviewInfoButton2Bubble.HorizontalOffset--;
-            }
-
-            if (PopupCompareDocBubble.IsOpen == true)
-            {
-                PopupCompareDocBubble.HorizontalOffset++;
-                PopupCompareDocBubble.HorizontalOffset--;
-            }
-
-            if (PopupHighlightOffBubble.IsOpen == true)
-            {
-                PopupHighlightOffBubble.HorizontalOffset++;
-                PopupHighlightOffBubble.HorizontalOffset--;
-            }
-
-            if (PopupOpenOriBubble.IsOpen == true)
-            {
-                PopupOpenOriBubble.HorizontalOffset++;
-                PopupOpenOriBubble.HorizontalOffset--;
-            }
-
-            if (PopupReloadBubble.IsOpen == true)
-            {
-                PopupReloadBubble.HorizontalOffset++;
-                PopupReloadBubble.HorizontalOffset--;
-            }
-
-            if (PopupLinkPageBubble.IsOpen == true)
-            {
-                PopupLinkPageBubble.HorizontalOffset++;
-                PopupLinkPageBubble.HorizontalOffset--;
-            }
-
-            if (PopupUnlinkBubble.IsOpen == true)
-            {
-                PopupUnlinkBubble.HorizontalOffset++;
-                PopupUnlinkBubble.HorizontalOffset--;
-            }
-
-            if (PopupAnimateBubble.IsOpen == true)
-            {
-                PopupAnimateBubble.HorizontalOffset++;
-                PopupAnimateBubble.HorizontalOffset--;
-            }
+           
         }
 
         private void Doc1NameLabelComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILECOMBOBOX)
-            {
-                PopupDocPreviewNameComboboxBubble.IsOpen = false;
-            }
+            
         }
 
         private void Doc1NameLabelComboBox_DropDownClosed(object sender, EventArgs e)
         {
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.BROWSEFILECOMBOBOX)
-            {
-                PopupDocPreviewInfoButtonBubble.IsOpen = true;
-                walkthroughStep = WalkthroughSteps.BROWSEFILEINFOOPEN;
-            }
+            
         }
 
         private void OpenDoc2OriginalButton_Click_1(object sender, RoutedEventArgs e)
@@ -6225,13 +5377,6 @@ namespace DocCompareWPF
             fileopener.StartInfo.FileName = "explorer";
             fileopener.StartInfo.Arguments = "\"" + docs.documents[docs.documentsToCompare[1]].filePath + "\"";
             fileopener.Start();
-
-            if (walkthroughMode == true && walkthroughStep == WalkthroughSteps.COMPAREOPENEXTERN)
-            {
-                PopupOpenOriBubble.IsOpen = false;
-                PopupReloadBubble.IsOpen = true;
-                walkthroughStep = WalkthroughSteps.COMPARERELOAD;
-            }
         }
 
         private void OpenDoc1OriginalButton_Click_1(object sender, RoutedEventArgs e)
@@ -7492,101 +6637,33 @@ namespace DocCompareWPF
             CompareDoc5Button.Visibility = Visibility.Hidden;
         }
 
+        private void WindowGetProButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (localetype == "DE")
+            {
+                ProcessStartInfo info = new ProcessStartInfo("https://de.hopie.tech/")
+                {
+                    UseShellExecute = true
+                };
+                Process.Start(info);
+            }
+            else
+            {
+                ProcessStartInfo info = new ProcessStartInfo("https://en.hopie.tech/")
+                {
+                    UseShellExecute = true
+                };
+                Process.Start(info);
+            }
+        }
+
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (PopupBrowseFileBubble.IsOpen == true)
-            {
-                PopupBrowseFileBubble.HorizontalOffset++;
-                PopupBrowseFileBubble.HorizontalOffset--;
-            }
-
-            if (PopupBrowseFileButtonBubble.IsOpen == true)
-            {
-                PopupBrowseFileButtonBubble.HorizontalOffset++;
-                PopupBrowseFileButtonBubble.HorizontalOffset--;
-            }
-
-            if (PopupDocPreviewNameComboboxBubble.IsOpen == true)
-            {
-                PopupDocPreviewNameComboboxBubble.HorizontalOffset++;
-                PopupDocPreviewNameComboboxBubble.HorizontalOffset--;
-            }
-
-            if (PopupDocPreviewInfoButtonBubble.IsOpen == true)
-            {
-                PopupDocPreviewInfoButtonBubble.HorizontalOffset++;
-                PopupDocPreviewInfoButtonBubble.HorizontalOffset--;
-            }
-
-            if (PopupDocPreviewInfoButton2Bubble.IsOpen == true)
-            {
-                PopupDocPreviewInfoButton2Bubble.HorizontalOffset++;
-                PopupDocPreviewInfoButton2Bubble.HorizontalOffset--;
-            }
-
-            if (PopupCompareDocBubble.IsOpen == true)
-            {
-                PopupCompareDocBubble.HorizontalOffset++;
-                PopupCompareDocBubble.HorizontalOffset--;
-            }
-
-            if (PopupHighlightOffBubble.IsOpen == true)
-            {
-                PopupHighlightOffBubble.HorizontalOffset++;
-                PopupHighlightOffBubble.HorizontalOffset--;
-            }
-
-            if (PopupOpenOriBubble.IsOpen == true)
-            {
-                PopupOpenOriBubble.HorizontalOffset++;
-                PopupOpenOriBubble.HorizontalOffset--;
-            }
-
-            if (PopupReloadBubble.IsOpen == true)
-            {
-                PopupReloadBubble.HorizontalOffset++;
-                PopupReloadBubble.HorizontalOffset--;
-            }
-
-            if (PopupLinkPageBubble.IsOpen == true)
-            {
-                PopupLinkPageBubble.HorizontalOffset++;
-                PopupLinkPageBubble.HorizontalOffset--;
-            }
-
-            if (PopupUnlinkBubble.IsOpen == true)
-            {
-                PopupUnlinkBubble.HorizontalOffset++;
-                PopupUnlinkBubble.HorizontalOffset--;
-            }
-
-            if (PopupAnimateBubble.IsOpen == true)
-            {
-                PopupAnimateBubble.HorizontalOffset++;
-                PopupAnimateBubble.HorizontalOffset--;
-            }
-
             if (WindowState == WindowState.Normal)
             {
                 outerBorder.Margin = new Thickness(0);
             }
-
-            /*
-            if(Doc1StatsGrid.ActualHeight > Doc2StatsGrid.ActualHeight)
-                Doc2StatsGrid.Height = Doc1StatsGrid.ActualHeight;
-            else
-                Doc1StatsGrid.Height = Doc2StatsGrid.ActualHeight;
-            */
         }
-
-        /*
-        private void ReleaseDocPreview()
-        {
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-        }
-        */
 
         private void Window_StateChanged(object sender, EventArgs e)
         {
@@ -7607,8 +6684,6 @@ namespace DocCompareWPF
 
         private void WindowCloseButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: implement handling for query before closing
-
             DirectoryInfo di;
 
             foreach (Document doc in docs.documents)
@@ -7635,8 +6710,6 @@ namespace DocCompareWPF
                 }
             }
 
-            // stop any thread still running
-
             Close();
         }
 
@@ -7661,397 +6734,6 @@ namespace DocCompareWPF
             WindowRestoreButton.Visibility = Visibility.Hidden;
             WindowState = WindowState.Normal;
             outerBorder.Margin = new Thickness(0);
-        }
-    }
-
-    public class SideGridItemLeft : INotifyPropertyChanged
-    {
-        private Color _color;
-        private Effect _effect;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private Visibility _forceAlignButtonVisi;
-        private Visibility _forceAlignButtonInvalidVisi;
-
-        private Visibility _showHidden;
-
-        public Visibility ShowHidden
-        {
-            get
-            {
-                return _showHidden;
-            }
-
-            set
-            {
-                _showHidden = value;
-                OnPropertyChanged();
-            }
-        }
-        public Visibility ForceAlignButtonVisi
-        {
-            get
-            {
-                return _forceAlignButtonVisi;
-            }
-
-            set
-            {
-                _forceAlignButtonVisi = value;
-                OnPropertyChanged();
-            }
-        }
-        public Visibility ForceAlignButtonInvalidVisi
-        {
-            get
-            {
-                return _forceAlignButtonInvalidVisi;
-            }
-
-            set
-            {
-                _forceAlignButtonInvalidVisi = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Color BackgroundBrush
-        {
-            get
-            {
-                return _color;
-            }
-
-            set
-            {
-                _color = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string ForceAlignButtonName { get; set; }
-        public string ForceAlignInvalidButtonName { get; set; }
-
-        public Effect GridEffect
-        {
-            get
-            {
-                return _effect;
-            }
-
-            set
-            {
-                _effect = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string GridName { get; set; }
-        public string ImgDummyName { get; set; }
-        public string ImgGridName { get; set; }
-        public string ImgName { get; set; }
-        public Thickness Margin { get; set; }
-        public string PageNumberLabel { get; set; }
-
-        private string _pathToImg;
-        public string PathToImg { get { return _pathToImg; } set { _pathToImg = value; OnPropertyChanged(); } }
-
-        private string _pathToImgDummy;
-        public string PathToImgDummy { get { return _pathToImgDummy; } set { _pathToImgDummy = value; OnPropertyChanged(); } }
-        public string RemoveForceAlignButtonName { get; set; }
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class SideGridItemRight : INotifyPropertyChanged
-    {
-        private Color _color;
-        private Effect _effect;
-        private Visibility _showMask;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private Visibility _showHidden;
-        private Visibility _forceAlignButtonVisi;
-        private Visibility _forceAlignButtonInvalidVisi;
-
-        private Visibility _diffVisi;
-        private Visibility _noDiffVisi;
-
-        public Visibility ShowHidden
-        {
-            get
-            {
-                return _showHidden;
-            }
-
-            set
-            {
-                _showHidden = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Visibility ForceAlignButtonVisi
-        {
-            get
-            {
-                return _forceAlignButtonVisi;
-            }
-
-            set
-            {
-                _forceAlignButtonVisi = value;
-                OnPropertyChanged();
-            }
-        }
-        public Visibility ForceAlignButtonInvalidVisi
-        {
-            get
-            {
-                return _forceAlignButtonInvalidVisi;
-            }
-
-            set
-            {
-                _forceAlignButtonInvalidVisi = value;
-                OnPropertyChanged();
-            }
-
-        }
-        public Visibility DiffVisi
-        {
-            get
-            {
-                return _diffVisi;
-            }
-
-            set
-            {
-                _diffVisi = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Visibility NoDiffVisi
-        {
-            get
-            {
-                return _noDiffVisi;
-            }
-
-            set
-            {
-                _noDiffVisi = value;
-                OnPropertyChanged();
-            }
-        }
-        public Color BackgroundBrush
-        {
-            get
-            {
-                return _color;
-            }
-
-            set
-            {
-                _color = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string ForceAlignButtonName { get; set; }
-        public string ForceAlignInvalidButtonName { get; set; }
-
-        public Effect GridEffect
-        {
-            get
-            {
-                return _effect;
-            }
-
-            set
-            {
-                _effect = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string GridName { get; set; }
-        public string ImgDummyName { get; set; }
-        public string ImgGridName { get; set; }
-        public string ImgMaskName { get; set; }
-        public string ImgName { get; set; }
-        public Thickness Margin { get; set; }
-
-        private string _pathToImg;
-        public string PathToImg { get { return _pathToImg; } set { _pathToImg = value; OnPropertyChanged(); } }
-
-        private string _pathToImgDummy;
-        public string PathToImgDummy { get { return _pathToImgDummy; } set { _pathToImgDummy = value; OnPropertyChanged(); } }
-
-        private string _pathToMask;
-        public string PathToMask { get { return _pathToMask; } set { _pathToMask = value; OnPropertyChanged(); } }
-        public bool RemoveForceAlignButtonEnable { get; set; }
-        public string RemoveForceAlignButtonName { get; set; }
-
-        public Visibility RemoveForceAlignButtonVisibility { get; set; }
-
-        public Visibility ShowMask
-        {
-            get
-            {
-                return _showMask;
-            }
-
-            set
-            {
-                _showMask = value;
-                OnPropertyChanged();
-            }
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class SimpleImageItem : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public Thickness Margin { get; set; }
-
-        private string _pathToFile;
-        private string _pathToFileHidden;
-        private Visibility _eodVisi;
-        private double _blurRadius;
-        private Visibility _showHidden;
-        private Visibility _showPPTNoteButton;
-
-        public string ShowPPTSpeakerNotesButtonName { get; set; }
-        public string HiddenPPTGridName { get; set; }
-        public string PPTSpeakerNoteGridName { get; set; }
-        public string ClosePPTSpeakerNotesButtonName { get; set; }
-        public string PPTSpeakerNotes { get; set; }
-
-
-        public string PathToFile
-        {
-            get
-            {
-                return _pathToFile;
-            }
-
-            set
-            {
-                _pathToFile = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public string PathToFileHidden
-        {
-            get
-            {
-                return _pathToFileHidden;
-            }
-
-            set
-            {
-                _pathToFileHidden = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Visibility EoDVisi
-        {
-            get
-            {
-                return _eodVisi;
-            }
-
-            set
-            {
-                _eodVisi = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public Visibility showHidden
-        {
-            get
-            {
-                return _showHidden;
-            }
-
-            set
-            {
-                _showHidden = value;
-                OnPropertyChanged();
-            }
-        }
-        public Visibility showPPTSpeakerNotesButton
-        {
-            get
-            {
-                return _showPPTNoteButton;
-            }
-
-            set
-            {
-                _showPPTNoteButton = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public double BlurRadius
-        {
-            get
-            {
-                return _blurRadius;
-            }
-
-            set
-            {
-                _blurRadius = value;
-                OnPropertyChanged();
-            }
-        }
-
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    public class UriToCachedImageConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value == null)
-                return null;
-
-            if (!string.IsNullOrEmpty(value.ToString()))
-            {
-                BitmapImage bi = new BitmapImage();
-                bi.BeginInit();
-                bi.UriSource = new Uri(value.ToString());
-                bi.CacheOption = BitmapCacheOption.OnLoad;
-                bi.EndInit();
-                return bi;
-            }
-
-            return null;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotImplementedException("Two way conversion is not supported.");
         }
     }
 }

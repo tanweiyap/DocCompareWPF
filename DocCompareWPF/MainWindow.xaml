@@ -6,6 +6,7 @@
         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:local="clr-namespace:DocCompareWPF"
+        xmlns:uihelper="clr-namespace:DocCompareWPF.UIhelper"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="DocCompare" Height="600" Width="1024" MinWidth="1024" MinHeight="600" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged"
@@ -20,98 +21,6 @@
                 <RowDefinition />
                 <!--RowDefinition Height="32"/-->
             </Grid.RowDefinitions>
-            <Popup x:Name="PopupBrowseFileBubble" PlacementTarget="{Binding ElementName=SidePanelOpenDocButton}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-20" HorizontalOffset="10" Height="150" Placement="Bottom">
-                <local:DialogBubble Message="Click on this tab to browse and inspect files before comparison"
-                                StartPoint="5,40" TopPoint="5,10" EndPoint="35,40"
-                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
-                                Height="130"></local:DialogBubble>
-            </Popup>
-            <Popup x:Name="PopupBrowseFileButtonBubble" PlacementTarget="{Binding ElementName=BrowseFileButton1}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="120" HorizontalOffset="0" Height="250" Placement="Center">
-                <local:DialogBubble Message="Click on this button to browse files for inspection. Alternatively, you can drag and drop files into this zone to load them.            
-                                          A total of 5 files can be loaded at once.            Try click on this button and select all 3 example files." 
-                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
-                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,215" RectPoint4="5,215"
-                                Height="230"></local:DialogBubble>
-            </Popup>
-            <Popup x:Name="PopupBrowseFileButton2Bubble" PlacementTarget="{Binding ElementName=BrowseFileButton2}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="70" HorizontalOffset="0" Height="150" Placement="Center">
-                <local:DialogBubble Message="Please load all example files for comparison." 
-                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
-                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,215" RectPoint4="5,215"
-                                Height="130"></local:DialogBubble>
-            </Popup>
-            <Popup x:Name="PopupDocPreviewNameComboboxBubble" PlacementTarget="{Binding ElementName=Doc1NameLabelComboBox}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="60" HorizontalOffset="0" Height="150" Placement="Center">
-                <local:DialogBubble Message="Use the dropdown menu to view other loaded documents" 
-                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
-                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,215" RectPoint4="5,215"
-                                Height="130"></local:DialogBubble>
-            </Popup>
-            <Popup x:Name="PopupDocPreviewInfoButtonBubble" PlacementTarget="{Binding ElementName=ShowDoc2FileInfoButton}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="0" HorizontalOffset="-290" Height="150" Placement="Top">
-                <local:DialogBubble Message="Click on this button to view more document attributes" 
-                                StartPoint="265,75" TopPoint="295,115" EndPoint="295,75"
-                                RectInnerMargin="20,20,60,20" RectPoint1="5,5" RectPoint2="295,5" RectPoint3="295,75" RectPoint4="5,75"
-                                Height="115"></local:DialogBubble>
-            </Popup>
-            <Popup x:Name="PopupDocPreviewInfoButton2Bubble" PlacementTarget="{Binding ElementName=ShowDoc2FileInfoButton}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="0" HorizontalOffset="-290" Height="150" Placement="Top">
-                <local:DialogBubble Message="Click again on this button to hide document attributes" 
-                                StartPoint="265,75" TopPoint="295,115" EndPoint="295,75"
-                                RectInnerMargin="20,20,60,20" RectPoint1="5,5" RectPoint2="295,5" RectPoint3="295,75" RectPoint4="5,75"
-                                Height="115"></local:DialogBubble>
-            </Popup>
-            <Popup x:Name="PopupCompareDocBubble" PlacementTarget="{Binding ElementName=SidePanelDocCompareButton}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-20" HorizontalOffset="15" Height="150">
-                <local:DialogBubble Message="Click on this tab to switch to compare mode after document selection."
-                                StartPoint="5,40" TopPoint="5,10" EndPoint="35,40"
-                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
-                                Height="130"></local:DialogBubble>
-            </Popup>
-            <Popup x:Name="PopupHighlightOffBubble" PlacementTarget="{Binding ElementName=HideMaskButton}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-10" HorizontalOffset="-140" Height="160">
-                <local:DialogBubble Message="Document differences are highlighted. Click on this button to toggle highlighting"
-                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
-                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
-                                Height="140"></local:DialogBubble>
-            </Popup>
-            <Popup x:Name="PopupOpenOriBubble" PlacementTarget="{Binding ElementName=OpenDoc2OriginalButton}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-10" HorizontalOffset="-140" Height="160">
-                <local:DialogBubble Message="Click this button to open the file in external editor."
-                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
-                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
-                                Height="140"></local:DialogBubble>
-            </Popup>
-            <Popup x:Name="PopupReloadBubble" PlacementTarget="{Binding ElementName=ReloadDocCompare2Button}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="-10" HorizontalOffset="-140" Height="160">
-                <local:DialogBubble Message="Click this button to reload the file in after editing."
-                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
-                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
-                                Height="140"></local:DialogBubble>
-            </Popup>
-            <Popup x:Name="PopupLinkPageBubble" PlacementTarget="{Binding ElementName=DocCompareSideListViewLeft}" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="260" HorizontalOffset="-65" Height="260" Placement="Top">
-                <local:DialogBubble Message="Pages are aligned automatically. If you would like to change the alignment manually, mouse over and click the 'link' icon on a page in the miniature preview, then choose any page in the second document to align these two pages."
-                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
-                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,255" RectPoint4="5,255"
-                                Height="200"></local:DialogBubble>
-            </Popup>
-            <Popup x:Name="PopupUnlinkBubble" PlacementTarget="{Binding ElementName=RemoveAllForceAlignButton}" StaysOpen="True" Placement="Bottom"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="0" HorizontalOffset="-290" Height="170">
-                <local:DialogBubble Message="Click here to remove all previously set link. Click on the icon between pages to remove individual links."
-                                StartPoint="265,40" TopPoint="295,10" EndPoint="295,40"
-                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
-                                Height="150"></local:DialogBubble>
-            </Popup>
-            <Popup x:Name="PopupAnimateBubble" StaysOpen="True"
-                   PopupAnimation="Fade" AllowsTransparency="True" VerticalOffset="100" HorizontalOffset="30" Height="180" Placement="Center">
-                <local:DialogBubble Message="When differences are difficult to spot, mouse over the page, press and hold down this icon – it will overlay the two slides for visual comparison."
-                                StartPoint="120,40" TopPoint="150,10" EndPoint="180,40"
-                                RectInnerMargin="20,60,20,20" RectPoint1="5,40" RectPoint2="295,40" RectPoint3="295,195" RectPoint4="5,195"
-                                Height="160"></local:DialogBubble>
-            </Popup>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30" />
@@ -120,19 +29,25 @@
                 <Grid x:Name="LogoZone" Grid.Column="0" Grid.Row="0" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">
                     <Image Source="/Resources/Icons/LogoSmallest.png" Margin="5,3,3,3"></Image>
                 </Grid>
-                <Grid x:Name="TitleBar" Grid.Column="1" Grid.Row="0" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">
-                    <Grid>
+                <Grid x:Name="TitleBar" Grid.Column="1" Grid.Row="0" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}" HorizontalAlignment="Stretch">
+                    <Grid HorizontalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Label x:Name="WindowTitle" FontSize="15" VerticalAlignment="Center" Foreground="White">2|Compare</Label>
-                        <Grid Grid.Column="1" MaxWidth="120"  MinWidth="120" HorizontalAlignment="Right">
+                        <Button x:Name="WindowGetProButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource RefDocumentBackGroundBrush}" Foreground="Black"
+                                    Padding="0" BorderThickness="0" Click="WindowGetProButton_Click" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Get the pro version"
+                                    Grid.Column="1" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Stretch" Width="100">
+                            Get Pro!
+                        </Button>
+                        <Grid Grid.Column="2" MaxWidth="128"  MinWidth="128" HorizontalAlignment="Right">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
+                                <ColumnDefinition Width="32"/>
+                                <ColumnDefinition Width="32"/>
+                                <ColumnDefinition Width="32"/>
+                                <ColumnDefinition Width="32"/>
                             </Grid.ColumnDefinitions>
                             <Button x:Name="WindowUpdateButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="Yellow" Grid.Column="0" Padding="0" BorderThickness="0" Click="WindowUpdateButton_Click" WindowChrome.IsHitTestVisibleInChrome="True" Visibility="Hidden" ToolTip="A newer version of 2|compare is available. Click here to download the installer.">
                                 <iconPacks:PackIconMaterialDesign Kind="NewReleases" Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center" />
@@ -334,7 +249,6 @@
                                             </Style>
                                         </ListView.ItemContainerStyle>
                                     </ListView>
-
                                 </Grid>
                                 <mah:Tile x:Name="ProgressBarDoc1" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -386,19 +300,6 @@
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
-                                            <!--Label Foreground="Black" Background="{StaticResource DocumentBackGroundBrush}" Margin="85, 0,0,0">Compared</-->
-                                            <!--ComboBox x:Name="Doc2NameLabelComboBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc2NameLabelComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="0,0,0,0" FontSize="14">
-                                                <ComboBox.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
-                                                    </DataTemplate>
-                                                </ComboBox.ItemTemplate>
-                                            </-->
-                                            <!--Button x:Name="BrowseFileTopButton2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"
-                                            HorizontalAlignment="Left" Click="BrowseFileButton2_Click" Margin="10,0,0,0" ToolTip="Browse document">
-                                                <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
-                                            </-->
                                             <Button x:Name="OpenDoc2OriginalButton2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
                                             HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
                                                 <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
@@ -545,19 +446,6 @@
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
-                                            <!--Label Foreground="Black" Background="{StaticResource DocumentBackGroundBrush}" Margin="85, 0,0,0">Compared</>
-                                            <ComboBox x:Name="Doc3NameLabelComboBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc3NameLabelComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="0,0,0,0" FontSize="14">
-                                                <ComboBox.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
-                                                    </DataTemplate>
-                                                </ComboBox.ItemTemplate>
-                                            </ComboBox-->
-                                            <!--Button x:Name="BrowseFileTopButton3" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"
-                                            HorizontalAlignment="Left" Click="BrowseFileButton3_Click" Margin="10,0,0,0" ToolTip="Browse document">
-                                                <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
-                                            </-->
                                             <Button x:Name="OpenDoc3OriginalButton3" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
                                             HorizontalAlignment="Left" Click="OpenDoc3OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
                                                 <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
@@ -703,19 +591,6 @@
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
-                                            <!--Label Foreground="Black" Background="{StaticResource DocumentBackGroundBrush}" Margin="85, 0,0,0">Compared</>
-                                            <ComboBox x:Name="Doc4NameLabelComboBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc4NameLabelComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="0,0,0,0" FontSize="14">
-                                                <ComboBox.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
-                                                    </DataTemplate>
-                                                </ComboBox.ItemTemplate>
-                                            </ComboBox-->
-                                            <!--Button x:Name="BrowseFileTopButton4" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"
-                                            HorizontalAlignment="Left" Click="BrowseFileButton4_Click" Margin="10,0,0,0" ToolTip="Browse document">
-                                                <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
-                                            </-->
                                             <Button x:Name="OpenDoc4OriginalButton4" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
                                             HorizontalAlignment="Left" Click="OpenDoc4OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
                                                 <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
@@ -862,19 +737,6 @@
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
-                                            <!--Label Foreground="Black" Background="{StaticResource DocumentBackGroundBrush}" Margin="85, 0,0,0">Compared</>
-                                            <ComboBox x:Name="Doc5NameLabelComboBox" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="White" Style="{StaticResource MahApps.Styles.ComboBox}" Background="Transparent" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc5NameLabelComboBox_SelectionChanged"
-                                                      IsEditable="False" Padding="0,0,0,0" FontSize="14">
-                                                <ComboBox.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
-                                                    </DataTemplate>
-                                                </ComboBox.ItemTemplate>
-                                            </ComboBox-->
-                                            <!--Button x:Name="BrowseFileTopButton5" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"
-                                            HorizontalAlignment="Left" Click="BrowseFileButton5_Click" Margin="10,0,0,0" ToolTip="Browse document">
-                                                <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
-                                            </-->
                                             <Button x:Name="OpenDoc5OriginalButton5" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
                                             HorizontalAlignment="Left" Click="OpenDoc5OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original">
                                                 <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
@@ -969,7 +831,6 @@
                                             </Style>
                                         </ListView.ItemContainerStyle>
                                     </ListView>
-
                                 </Grid>
                                 <mah:Tile x:Name="ProgressBarDoc5" Padding="4" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden" Height="40" Width="120" Background="White" BorderBrush="Black" BorderThickness="1">
                                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -1004,7 +865,6 @@
                                         </DataTemplate>
                                     </ComboBox.ItemTemplate>
                                 </ComboBox>
-                                <!--Label x:Name="Doc1PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></-->
                                 <Button x:Name="ShowDoc1FileInfoButton" Visibility="Visible" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc1FileInfoButton_Click" IsEnabled="False"
                                         Margin="0,0,5,0">
                                     <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
@@ -1031,7 +891,6 @@
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15"  TextWrapping="WrapWithOverflow" x:Name="Doc1StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
                             </Grid>
                             <Label x:Name="Doc2NameLabel" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,30,0"></Label>
-                            <!--Label Grid.Column="1" x:Name="Doc2PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></-->
                             <Button Grid.Column="1" x:Name="ShowDoc2FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc2FileInfoButton_Click" IsEnabled="True">
                                 <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
                             </Button>
@@ -1056,7 +915,6 @@
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15" TextWrapping="WrapWithOverflow" x:Name="Doc2StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
                             </Grid>
                             <Label x:Name="Doc3NameLabel" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,30,0"></Label>
-                            <!--Label Grid.Column="2" x:Name="Doc3PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></-->
                             <Button Grid.Column="2" x:Name="ShowDoc3FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc3FileInfoButton_Click" IsEnabled="True">
                                 <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
                             </Button>
@@ -1081,7 +939,6 @@
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15" TextWrapping="WrapWithOverflow" x:Name="Doc3StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
                             </Grid>
                             <Label x:Name="Doc4NameLabel" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,30,0"></Label>
-                            <!--Label Grid.Column="3" x:Name="Doc4PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></-->
                             <Button Grid.Column="3" x:Name="ShowDoc4FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc4FileInfoButton_Click" IsEnabled="True">
                                 <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
                             </Button>
@@ -1106,7 +963,6 @@
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15" TextWrapping="WrapWithOverflow" x:Name="Doc4StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
                             </Grid>
                             <Label x:Name="Doc5NameLabel" Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,60,0"></Label>
-                            <!--Label Grid.Column="4" x:Name="Doc5PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></-->
                             <Button Grid.Column="4" x:Name="ShowDoc5FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDoc5FileInfoButton_Click" IsEnabled="True">
                                 <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
                             </Button>
@@ -1236,7 +1092,6 @@
                                             </ComboBox.ItemTemplate>
                                         </ComboBox>
                                     </Grid>
-
                                     <Button x:Name="ShowMaskButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
                                             HorizontalAlignment="Left" Click="ShowMaskButton_Click" Margin="0,0,10,0" Visibility="Hidden" ToolTip="Show difference mask">
                                         <iconPacks:PackIconMicrons Kind="Show" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
@@ -1245,11 +1100,6 @@
                                             HorizontalAlignment="Left" Click="HideMaskButton_Click" Margin="0,0,10,0" ToolTip="Hide difference mask">
                                         <iconPacks:PackIconMicrons Kind="Hide" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                     </Button>
-
-                                    <!--Button x:Name="CloseDocCompareButton" Style="{StaticResource MaterialDesignFlatButton}" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Right" Click="CloseDocCompareButton_Click" Margin="0,0,10,0" ToolTip="Close comparison">
-                                        <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
-                                    </-->
                                     <Button x:Name="RemoveAllForceAlignButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
                                             HorizontalAlignment="Center" Click="RemoveAllForceAlignButton_Click" Margin="0,0,20,0" ToolTip="Remove all links">
                                         <iconPacks:PackIconFontAwesome Kind="UnlinkSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
@@ -1358,7 +1208,7 @@
                                                                         <iconPacks:PackIconCodicons Kind="Close"/>
                                                                     </Button>
                                                                     <ScrollViewer Padding="10" Grid.Row="1">
-                                                                        <TextBlock TextWrapping="Wrap" local:TextBlockHelper.FormattedText="{Binding Document1}" />
+                                                                        <TextBlock TextWrapping="Wrap" uihelper:TextBlockHelper.FormattedText="{Binding Document1}" />
                                                                     </ScrollViewer>
                                                                 </Grid>
                                                             </Grid>
@@ -1441,7 +1291,7 @@
                                                                         <iconPacks:PackIconCodicons Kind="Close"/>
                                                                     </Button>
                                                                     <ScrollViewer Padding="10" Grid.Row="1">
-                                                                        <TextBlock TextWrapping="Wrap" local:TextBlockHelper.FormattedText="{Binding Document2}" />
+                                                                        <TextBlock TextWrapping="Wrap" uihelper:TextBlockHelper.FormattedText="{Binding Document2}" />
                                                                     </ScrollViewer>
                                                                 </Grid>
                                                             </Grid>
@@ -1482,13 +1332,7 @@
                                                                 <Image Tag="{Binding ImgDummyName}" Source="{Binding PathToImgDummy, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Stretch="Uniform" Visibility="Hidden">
                                                                 </Image>
-                                                                <!--Image Tag="{Binding ImgMaskName}" Source="{Binding PathToImgMask, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
-                                                                    VerticalAlignment="Center" Stretch="Uniform">
-                                                                    <Image.Effect>
-                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
-                                                                    </Image.Effect>
-                                                                </-->
-                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHidden}" Margin="{Binding Margin}">
+                                                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHidden}" Margin="{Binding Margin}">
                                                                     <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
 
                                                                     </Rectangle>
@@ -1565,7 +1409,7 @@
                                                                 <Image Tag="{Binding ImgMaskName}" Source="{Binding PathToMask, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Stretch="Uniform" Visibility="{Binding ShowMask}">
                                                                 </Image>
-                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHidden}" Margin="{Binding Margin}">
+                                                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHidden}" Margin="{Binding Margin}">
                                                                     <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
 
                                                                     </Rectangle>
@@ -1688,17 +1532,6 @@
                                         <Label Grid.Column="1">Subscription</Label>
                                     </Grid>
                                 </Button>
-                                <!--Button x:Name="SettingsBrowseDocButton" Grid.Row="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource SidePanelActiveButton}"  BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0"
-                                        Click="SettingsBrowseDocButton_Click" Visibility="Collapsed">
-                                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="200">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="40" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <iconPacks:PackIconMaterial Kind="FileDocumentMultiple" Grid.Column="0" Height="20" Width="20" Foreground="Black" VerticalAlignment="Stretch" Margin="10,0,0,0" />
-                                        <Label Grid.Column="1">Document browsing</Label>
-                                    </Grid>
-                                </Button-->
                                 <Button x:Name="SettingsAboutButton" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0"
                                         Click="SettingsAboutButton_Click">
                                     <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="200">
@@ -1710,16 +1543,6 @@
                                         <Label Grid.Column="1">About</Label>
                                     </Grid>
                                 </Button>
-                                <!--Button x:Name="SettingsDocCompareButton" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderBrush="Transparent" Height="50"  HorizontalAlignment="Stretch" Margin="0" Padding="0">
-                                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Width="200" Visibility="Collapsed">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="40" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <iconPacks:PackIconMaterial Kind="Compare" Grid.Column="0" Height="20" Width="20" Foreground="Black" VerticalAlignment="Stretch" Margin="10,0,0,0" />
-                                        <Label Grid.Column="1">Document comparison</Label>
-                                    </Grid>
-                                </Button-->
                             </Grid>
                         </Grid>
                         <Grid x:Name="SettingsDocBrowsingPanel" Grid.Column="1" Margin="25">
@@ -1730,27 +1553,6 @@
                                 <RowDefinition Height="35" />
                                 <RowDefinition />
                             </Grid.RowDefinitions>
-                            <!--Label FontWeight="Bold" FontSize="18">Default folder< />
-                            <Grid Grid.Row="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="150" />
-                                </Grid.ColumnDefinitions>
-                                <Label x:Name="SettingsDefaultFolderTextBox" Margin="20,0,0,0"></Label>
-                                <Button x:Name="SettingsBrowDefaultFolderButton" Grid.Column="1" Style="{StaticResource MaterialDesignOutlinedButton}" HorizontalAlignment="Center" Margin="5,0,0,0"
-                                                Click="SettingsBrowDefaultFolderButton_Click" Height="35" Width="140" HorizontalContentAlignment="Stretch">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="20" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <iconPacks:PackIconUnicons Kind="FolderOpen" VerticalAlignment="Center" />
-                                        <Label  Margin="10,0,0,0" Grid.Column="1" VerticalAlignment="Center">Browse</Label>
-                                    </Grid>
-                                </Button>
-                            </Grid>
-                            <Label FontWeight="Bold" FontSize="18" Grid.Row="2">Appearance</Label>
-                            <CheckBox x:Name="SettingsShowThirdPanelCheckBox" Grid.Row="3" Margin="20,0,0,0" Checked="SettingsShowThirdPanelCheckBox_Checked" Unchecked="SettingsShowThirdPanelCheckBox_Unchecked">Show third preview panel</CheckBox-->
                         </Grid>
                         <Grid x:Name="SettingsAboutPanel" Grid.Column="1" Margin="25" Visibility="Hidden">
                             <Grid.RowDefinitions>

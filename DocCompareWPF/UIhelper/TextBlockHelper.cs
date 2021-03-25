@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -13,6 +14,23 @@ namespace DocCompareWPF.UIhelper
         public static string GetFormattedText(DependencyObject obj)
         {
             return (string)obj.GetValue(FormattedTextProperty);
+        }
+
+        public static string UnescapeXMLValue(string xmlString)
+        {
+            if (xmlString == null)
+                throw new ArgumentNullException("xmlString");
+
+            return xmlString.Replace("&amp;", "&");
+        }
+
+        public static string EscapeXMLValue(string xmlString)
+        {
+
+            if (xmlString == null)
+                throw new ArgumentNullException("xmlString");
+
+            return xmlString.Replace("&", "&amp;");
         }
 
         public static void SetFormattedText(DependencyObject obj, string value)
@@ -46,7 +64,10 @@ namespace DocCompareWPF.UIhelper
             XmlDocument doc = new XmlDocument();
 
             if (value != null)
-                doc.LoadXml(value);
+            {
+                string local = EscapeXMLValue(value);
+                doc.LoadXml(local);
+            }
 
             Span span = new Span();
 
@@ -62,7 +83,8 @@ namespace DocCompareWPF.UIhelper
             {
                 if (child is XmlText)
                 {
-                    span.Inlines.Add(new Run(child.InnerText));
+                    string local = UnescapeXMLValue(child.InnerText);
+                    span.Inlines.Add(new Run(local));
                 }
                 else if (child is XmlElement)
                 {

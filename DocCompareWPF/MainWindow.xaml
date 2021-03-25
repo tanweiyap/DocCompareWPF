@@ -21,6 +21,9 @@
                 <RowDefinition />
                 <!--RowDefinition Height="32"/-->
             </Grid.RowDefinitions>
+            <Popup Name="floatingTip" AllowsTransparency="True" Placement="Relative" PlacementTarget="{Binding ElementName=outerBorder}">
+                <TextBlock>This is a hidden slide. Get the pro version to view and compare this slide.</TextBlock>
+            </Popup>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30" />

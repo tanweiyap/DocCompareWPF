@@ -159,7 +159,7 @@ namespace DocCompareWPF
                 ErrorHandling.ReportStatus("New free version", "on " + lic.GetUUID());
             }
 
-            
+
             TimeSpan timeBuffer = lic.GetExpiryDate().Subtract(DateTime.Today);
             /*
             // Reminder to subscribe
@@ -252,22 +252,6 @@ namespace DocCompareWPF
                             SaveSettings();
                         }
 
-                        /*
-                        CustomMessageBox msgBox = new CustomMessageBox();
-                        msgBox.Setup("Application walkthrough", "Thanks for choosing 2|Compare. We will now guide you through the application to get you familiar with the functionality", "Proceed", "Skip");
-
-                        if (msgBox.ShowDialog() == true) // user wish to skip walkthrough
-                        {
-                            settings.shownWalkthrough = true;
-                            SaveSettings();
-                        }
-                        else
-                        {
-                            walkthroughMode = true;
-                            walkthroughStep = WalkthroughSteps.BROWSEFILETAB;
-                            PopupBrowseFileBubble.IsOpen = true;
-                        }
-                        */
                     });
                 }
             }
@@ -374,9 +358,9 @@ namespace DocCompareWPF
                         {
                             Grid thisGrid = child as Grid;
 
-                            if(thisGrid.Tag != null)
-                            if(thisGrid.Tag.ToString().Contains("Right") == false)
-                                thisGrid.Visibility = Visibility.Hidden;
+                            if (thisGrid.Tag != null)
+                                if (thisGrid.Tag.ToString().Contains("Right") == false)
+                                    thisGrid.Visibility = Visibility.Hidden;
                         }
                     }
 
@@ -474,7 +458,7 @@ namespace DocCompareWPF
                             docs.documentsToShow[0] = selectReferenceWindow.selectedIndex;
                         }
                     }
-              
+
                     LoadFilesCommonPart();
 
                     threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
@@ -696,11 +680,12 @@ namespace DocCompareWPF
                     msgBox.Setup("Expired lincense", "An expired trial license was detected for your computer. If you wish to continue to use 2|Compare, please purchase a license on https://hopie.tech.", "Okay");
                     msgBox.ShowDialog();
 
+                    /*
                     BrowseFileButton1.IsEnabled = false;
                     DocCompareFirstDocZone.AllowDrop = false;
                     DocCompareDragDropZone1.AllowDrop = false;
                     DocCompareColorZone1.AllowDrop = false;
-
+                    */
                     DisplayLicense();
                 });
             }
@@ -808,7 +793,7 @@ namespace DocCompareWPF
                     Doc3StatsGrid.Visibility = Visibility.Collapsed;
                     DragDropPanel.ColumnDefinitions[2].Width = new GridLength(0.7, GridUnitType.Star);
                     DocPreviewStatGrid.ColumnDefinitions[2].Width = new GridLength(0.7, GridUnitType.Star);
-                    
+
                 }
 
                 if (docs.documents.Count >= 3)
@@ -852,7 +837,7 @@ namespace DocCompareWPF
 
                 ShowInfoButtonSetVisi();
             }
-            
+
         }
 
         private void CompareDocsThread()
@@ -879,16 +864,18 @@ namespace DocCompareWPF
                     forceIndices[i, 1] = docs.forceAlignmentIndices[i][1];
                 }
 
-                if(docs.forceAlignmentIndices.Count != 0)
+                if (docs.forceAlignmentIndices.Count != 0)
                 {
-                    Dispatcher.Invoke(() => {
+                    Dispatcher.Invoke(() =>
+                    {
                         AutoAlignedLabel.Visibility = Visibility.Hidden;
                         ManuallyAlignedLabel.Visibility = Visibility.Visible;
                     });
                 }
                 else
                 {
-                    Dispatcher.Invoke(() => {
+                    Dispatcher.Invoke(() =>
+                    {
                         AutoAlignedLabel.Visibility = Visibility.Visible;
                         ManuallyAlignedLabel.Visibility = Visibility.Hidden;
                     });
@@ -1219,7 +1206,7 @@ namespace DocCompareWPF
                         }
 
 
-                        if(docs.pptSpeakerNotesDiff[i].Count != 0)
+                        if (docs.pptSpeakerNotesDiff[i].Count != 0)
                         {
                             string doc;
 
@@ -1839,7 +1826,7 @@ namespace DocCompareWPF
                     LicenseExpiryTypeLabel.Visibility = Visibility.Collapsed;
                     LicenseExpiryLabel.Visibility = Visibility.Collapsed;
                     LicenseStatusTypeLabel.Visibility = Visibility.Collapsed;
-                    LicenseStatusLabel.Visibility = Visibility.Collapsed; 
+                    LicenseStatusLabel.Visibility = Visibility.Collapsed;
                     WindowGetProButton.Visibility = Visibility.Hidden;
                     break;
 
@@ -1871,10 +1858,12 @@ namespace DocCompareWPF
                 case LicenseManagement.LicenseStatus.INACTIVE:
                     LicenseStatusTypeLabel.Content = "License status";
                     LicenseStatusLabel.Content = "Inactive";
+                    /*
                     BrowseFileButton1.IsEnabled = false;
                     DocCompareFirstDocZone.AllowDrop = false;
                     DocCompareDragDropZone1.AllowDrop = false;
                     DocCompareColorZone1.AllowDrop = false;
+                    */
                     break;
             }
         }
@@ -1976,7 +1965,8 @@ namespace DocCompareWPF
                     ProgressBarDoc1.Visibility = Visibility.Visible;
                     threadCompare = new Thread(new ThreadStart(ComparePreviewThread));
                     threadCompare.Start();
-                }else
+                }
+                else
                 {
                     UpdateAllPreview();
                 }
@@ -3079,12 +3069,6 @@ namespace DocCompareWPF
         {
             SidePanelDocCompareButton.IsEnabled = false;
             docs.doneGlobalAlignment = false;
-            /*
-            if (settings.numPanelsDragDrop == 3)
-                docs.documentsToShow = new List<int>() { 0, 1, 2 };
-            else
-                docs.documentsToShow = new List<int>() { 0, 1 };
-            */
 
             if (docs.documents.Count >= 1)
             {
@@ -3104,15 +3088,24 @@ namespace DocCompareWPF
                 if (docs.documents[docs.documentsToShow[1]].processed == false)
                 {
                     Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Doc2Grid.Visibility = Visibility.Hidden;
+                        ProgressBarDoc2.Visibility = Visibility.Visible;
+                        Doc3Grid.Visibility = Visibility.Hidden;
+                        DocCompareDragDropZone3.Visibility = Visibility.Visible;
+                        ShowDragDropZone3();
+                        DragDropPanel.ColumnDefinitions[2].Width = new GridLength(0.7, GridUnitType.Star);
+                        DocPreviewStatGrid.ColumnDefinitions[2].Width = new GridLength(0.7, GridUnitType.Star);
+                    });
+                }
+
+                if(lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE || 
+                   lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                   lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
                 {
-                    Doc2Grid.Visibility = Visibility.Hidden;
-                    ProgressBarDoc2.Visibility = Visibility.Visible;
-                    Doc3Grid.Visibility = Visibility.Hidden;
-                    DocCompareDragDropZone3.Visibility = Visibility.Visible;
-                    ShowDragDropZone3();
-                    DragDropPanel.ColumnDefinitions[2].Width = new GridLength(0.7, GridUnitType.Star);
-                    DocPreviewStatGrid.ColumnDefinitions[2].Width = new GridLength(0.7, GridUnitType.Star);
-                });
+                    DocCompareDragDropZone3.IsEnabled = false;
+                    BrowseFileButton3.IsEnabled = false;
+                    HideDragDropZone3();
                 }
             }
 
@@ -3503,7 +3496,7 @@ namespace DocCompareWPF
 
                     UpdateDocSelectionComboBox();
 
-                    if(docs.doneGlobalAlignment == false)
+                    if (docs.doneGlobalAlignment == false)
                     {
                         threadCompare = new Thread(new ThreadStart(ComparePreviewThread));
                         threadCompare.Start();
@@ -3516,7 +3509,7 @@ namespace DocCompareWPF
 
                     ProcessingDocProgressCard.Visibility = Visibility.Hidden;
 
-                    
+
                 });
             }
             catch (Exception ex)
@@ -4109,10 +4102,12 @@ namespace DocCompareWPF
                             msgBox = new CustomMessageBox();
                             msgBox.Setup("No connection to license server", "The 2|Compare license server cannot be reached. This may be due to multiple reasons, including your firewall settings or no connection to the Internet but also server maintenance on our side. If you are connected to the Internet and your firewall is configured properly, please ignore this warning. Out server will be up and running again shortly. If you see this warning throughout multiple consecutive days, please contact us at support@hopie.tech.", "Okay");
                             msgBox.ShowDialog();
+                            /*
                             BrowseFileButton1.IsEnabled = false;
                             DocCompareFirstDocZone.AllowDrop = false;
                             DocCompareDragDropZone1.AllowDrop = false;
                             DocCompareColorZone1.AllowDrop = false;
+                            */
                         }
                         UserEmailTextBox.IsEnabled = true;
                         LicenseKeyTextBox.IsEnabled = true; // after successful activation, we will prevent further editing
@@ -5250,7 +5245,7 @@ namespace DocCompareWPF
             for (int i = 0; i < docs.documents.Count; i++)
             {
                 bool ok = true;
-                
+
                 if (ok == true)
                     items.Add(Path.GetFileName(docs.documents[i].filePath));
 
@@ -5351,17 +5346,17 @@ namespace DocCompareWPF
 
         private void Window_LocationChanged(object sender, EventArgs e)
         {
-           
+
         }
 
         private void Doc1NameLabelComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            
+
         }
 
         private void Doc1NameLabelComboBox_DropDownClosed(object sender, EventArgs e)
         {
-            
+
         }
 
         private void OpenDoc2OriginalButton_Click_1(object sender, RoutedEventArgs e)
@@ -5559,20 +5554,39 @@ namespace DocCompareWPF
         {
             try
             {
-                Grid item = sender as Grid;
-                Border child = item.Children[0] as Border;
-                Grid childGrid = child.Child as Grid;
-                Image img = childGrid.Children[0] as Image;
-                hiddenPPTEffect = img.Effect;
-                img.Effect = null;
+                if (lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.TRIAL &&
+                    lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.FREE)
+                {
+                    Grid item = sender as Grid;
+                    Border child = item.Children[0] as Border;
+                    Grid childGrid = child.Child as Grid;
+                    Image img = childGrid.Children[0] as Image;
+                    hiddenPPTEffect = img.Effect;
+                    img.Effect = null;
 
-                hiddenPPTVisi = (item.Children[4] as Label).Visibility;
-                System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
-                //path.Visibility = Visibility.Hidden;
-                Label label = item.Children[4] as Label;
-                //label.Visibility = Visibility.Hidden;
-                Grid grid = item.Children[1] as Grid;
-                grid.Visibility = Visibility.Hidden;
+                    hiddenPPTVisi = (item.Children[4] as Label).Visibility;
+                    System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
+                    //path.Visibility = Visibility.Hidden;
+                    Label label = item.Children[4] as Label;
+                    //label.Visibility = Visibility.Hidden;
+                    Grid grid = item.Children[1] as Grid;
+                    grid.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    Grid item = sender as Grid;
+                    if ((item.Children[3] as System.Windows.Shapes.Path).Visibility == Visibility.Visible)
+                    {
+
+                        if (!floatingTip.IsOpen) { floatingTip.IsOpen = true; }
+
+                        Point currentPos = e.GetPosition(outerBorder);
+
+                        // The + 20 part is so your mouse pointer doesn't overlap.
+                        floatingTip.HorizontalOffset = currentPos.X + 20;
+                        floatingTip.VerticalOffset = currentPos.Y;
+                    }
+                }
 
             }
             catch
@@ -5585,18 +5599,28 @@ namespace DocCompareWPF
         {
             try
             {
-                Grid item = sender as Grid;
-                Border child = item.Children[0] as Border;
-                Grid childGrid = child.Child as Grid;
-                Image img = childGrid.Children[0] as Image;
-                img.Effect = hiddenPPTEffect;
+                if (lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.TRIAL &&
+                    lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.FREE)
+                {
+                    Grid item = sender as Grid;
+                    Border child = item.Children[0] as Border;
+                    Grid childGrid = child.Child as Grid;
+                    Image img = childGrid.Children[0] as Image;
+                    img.Effect = hiddenPPTEffect;
 
-                System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
-                path.Visibility = hiddenPPTVisi;
-                Label label = item.Children[4] as Label;
-                label.Visibility = hiddenPPTVisi;
-                Grid grid = item.Children[1] as Grid;
-                grid.Visibility = hiddenPPTVisi;
+                    System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
+                    path.Visibility = hiddenPPTVisi;
+                    Label label = item.Children[4] as Label;
+                    label.Visibility = hiddenPPTVisi;
+                    Grid grid = item.Children[1] as Grid;
+                    grid.Visibility = hiddenPPTVisi;
+
+                    
+                }
+                else
+                {
+                    floatingTip.IsOpen = false;
+                }
 
             }
             catch

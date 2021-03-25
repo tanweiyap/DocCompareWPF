@@ -127,10 +127,17 @@ namespace DocCompareWPF
                 LoadLicense();
                 DisplayLicense();
 
+                // history
                 if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL)
                 {
-                    threadCheckTrial = new Thread(new ThreadStart(CheckTrial));
-                    threadCheckTrial.Start();
+                    lic.ConvertTrialToFree();
+                    SaveLicense();
+                    WindowGetProButton.Visibility = Visibility.Visible;
+                }
+                else if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.ANNUAL_SUBSCRIPTION ||
+                         lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.DEVELOPMENT)
+                {
+                    WindowGetProButton.Visibility = Visibility.Hidden;
                 }
 
                 ErrorHandling.ReportStatus("App Launch", "App version: " + versionString + " successfully launched with license: " + lic.GetLicenseTypesString() + ", expires/renewal on " + lic.GetExpiryDateString() + " on " + lic.GetUUID());
@@ -143,17 +150,18 @@ namespace DocCompareWPF
                 SaveLicense();
 
                 CustomMessageBox msgBox = new CustomMessageBox();
-                msgBox.Setup("Product activation", "A trial license for 7 days has been started. If you have subscribed to a license, proceed to activating your subcription under the settings menu.", "Okay");
+                msgBox.Setup("2|Compare free", "You are using a free version of 2|Compare. If you like the functions, please consider making a subscription on https://hopie.tech", "Okay");
                 msgBox.ShowDialog();
 
                 threadCheckTrial = new Thread(new ThreadStart(CheckTrial));
                 threadCheckTrial.Start();
 
-                ErrorHandling.ReportStatus("New trial license", "on " + lic.GetUUID() + ", Expires on " + lic.GetExpiryDateString());
+                ErrorHandling.ReportStatus("New free version", "on " + lic.GetUUID());
             }
 
+            
             TimeSpan timeBuffer = lic.GetExpiryDate().Subtract(DateTime.Today);
-
+            /*
             // Reminder to subscribe
             if (timeBuffer.TotalDays <= 5 && timeBuffer.TotalDays > 0 && lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL)
             {
@@ -161,49 +169,16 @@ namespace DocCompareWPF
                 msgBox.Setup("Expired lincense", "Your trial license will expire in " + timeBuffer.TotalDays + " day(s). Please consider making a subscription on www.hopietech.com", "Okay");
                 msgBox.ShowDialog();
             }
+            */
 
             // if license expires or needs renewal
             if (timeBuffer.TotalDays <= 0)
             {
-                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL)
-                {
-                    if (settings.trialExtended == false)
-                    {
-                        CustomMessageBox msgBox = new CustomMessageBox();
-                        msgBox.Setup("Expired lincense", "Your license has expired. If you wish to extend the trial for 7 days, feel free to fill up a feedback survey on our website.", "Cancel", "Take survey");
-
-                        if (msgBox.ShowDialog() == true) // user wish to take survey
-                        {
-                            ProcessStartInfo info = new ProcessStartInfo("https://de.hopie.tech/quiz/fragen-zur-verlaengerung-der-testphase/")
-                            {
-                                UseShellExecute = true
-                            };
-                            Process.Start(info);
-
-                            settings.showExtendTrial = true;
-                            SaveSettings();
-                        }
-                    }
-
-                    DisplayLicense();
-                    BrowseFileButton1.IsEnabled = false;
-                    DocCompareFirstDocZone.AllowDrop = false;
-                    DocCompareDragDropZone1.AllowDrop = false;
-                    DocCompareColorZone1.AllowDrop = false;
-                }
-
                 if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.ANNUAL_SUBSCRIPTION)
                 {
                     threadRenewLic = new Thread(new ThreadStart(RenewLicense));
                     threadRenewLic.Start();
                 }
-            }
-
-            // Extend trial option
-            if (settings.showExtendTrial == true)
-            {
-                ExtendTrialGrid1.Visibility = Visibility.Visible;
-                ExtendTrialGrid2.Visibility = Visibility.Visible;
             }
 
             // Walkthrough if needed
@@ -640,6 +615,7 @@ namespace DocCompareWPF
         private async void CheckTrial()
         {
             LicenseManagement.LicServerResponse res = await lic.ActivateTrial();
+            /*
             if (res == LicenseManagement.LicServerResponse.INVALID)
             {
                 Dispatcher.Invoke(() =>
@@ -654,6 +630,7 @@ namespace DocCompareWPF
                     DocCompareColorZone1.AllowDrop = false;
                 });
             }
+            */
 
             Dispatcher.Invoke(() => { DisplayLicense(); });
         }
@@ -1826,23 +1803,30 @@ namespace DocCompareWPF
                     ChangeLicenseButton.IsEnabled = true;
                     ExtendTrialGrid1.Visibility = Visibility.Hidden;
                     ExtendTrialGrid2.Visibility = Visibility.Hidden;
+                    LicenseExpiryTypeLabel.Visibility = Visibility.Visible;
+                    LicenseExpiryLabel.Visibility = Visibility.Visible;
+                    LicenseStatusTypeLabel.Visibility = Visibility.Visible;
+                    LicenseStatusLabel.Visibility = Visibility.Visible;
+                    WindowGetProButton.Visibility = Visibility.Hidden;
                     break;
 
                 case LicenseManagement.LicenseTypes.TRIAL:
-                    LicenseTypeLabel.Content = "Trial license";
-                    LicenseExpiryTypeLabel.Content = "Expires in";
+                case LicenseManagement.LicenseTypes.FREE:
+                    LicenseTypeLabel.Content = "Free version";
+                    LicenseExpiryTypeLabel.Content = "";
+                    /*
                     TimeSpan timeBuffer = lic.GetExpiryDate().Subtract(DateTime.Today);
                     if (timeBuffer.TotalDays >= 0)
                         LicenseExpiryLabel.Content = timeBuffer.TotalDays.ToString() + " days";
                     else
                         LicenseExpiryTypeLabel.Content = "Expired";
-
-                    if (settings.showExtendTrial == true && settings.trialExtended == false)
-                    {
-                        ExtendTrialGrid1.Visibility = Visibility.Visible;
-                        ExtendTrialGrid2.Visibility = Visibility.Visible;
-                    }
-
+                    */
+                    LicenseExpiryLabel.Content = "";
+                    LicenseExpiryTypeLabel.Visibility = Visibility.Collapsed;
+                    LicenseExpiryLabel.Visibility = Visibility.Collapsed;
+                    LicenseStatusTypeLabel.Visibility = Visibility.Collapsed;
+                    LicenseStatusLabel.Visibility = Visibility.Collapsed;
+                    WindowGetProButton.Visibility = Visibility.Visible;
                     break;
 
                 case LicenseManagement.LicenseTypes.DEVELOPMENT:
@@ -1852,15 +1836,24 @@ namespace DocCompareWPF
 
                     ExtendTrialGrid1.Visibility = Visibility.Hidden;
                     ExtendTrialGrid2.Visibility = Visibility.Hidden;
+                    LicenseExpiryTypeLabel.Visibility = Visibility.Collapsed;
+                    LicenseExpiryLabel.Visibility = Visibility.Collapsed;
+                    LicenseStatusTypeLabel.Visibility = Visibility.Collapsed;
+                    LicenseStatusLabel.Visibility = Visibility.Collapsed; 
+                    WindowGetProButton.Visibility = Visibility.Hidden;
                     break;
 
                 default:
                     LicenseTypeLabel.Content = "No license found";
                     LicenseExpiryTypeLabel.Content = "Expires in";
                     LicenseExpiryLabel.Content = "- days";
-
                     ExtendTrialGrid1.Visibility = Visibility.Hidden;
                     ExtendTrialGrid2.Visibility = Visibility.Hidden;
+                    LicenseExpiryTypeLabel.Visibility = Visibility.Collapsed;
+                    LicenseExpiryLabel.Visibility = Visibility.Collapsed;
+                    LicenseStatusTypeLabel.Visibility = Visibility.Collapsed;
+                    LicenseStatusLabel.Visibility = Visibility.Collapsed;
+                    WindowGetProButton.Visibility = Visibility.Visible;
                     break;
             }
 

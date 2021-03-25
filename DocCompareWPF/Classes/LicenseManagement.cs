@@ -63,7 +63,7 @@ namespace DocCompareWPF.Classes
                 }
 
                 // development mode
-                licenseType = LicenseTypes.TRIAL;
+                licenseType = LicenseTypes.FREE;
                 licenseStatus = LicenseStatus.ACTIVE;
                 expiryDate = DateTime.Today.AddDays(7);
                 //expiryDate = DateTime.Today.Subtract(TimeSpan.FromDays(2));
@@ -77,6 +77,7 @@ namespace DocCompareWPF.Classes
         public enum LicenseTypes
         {
             TRIAL,
+            FREE,
             ANNUAL_SUBSCRIPTION,
             DEVELOPMENT,
             UNKNOWN,
@@ -187,6 +188,15 @@ namespace DocCompareWPF.Classes
             }
 
             return LicServerResponse.INVALID;
+        }
+
+        public void ConvertTrialToFree()
+        {
+            if (licenseType == LicenseTypes.TRIAL)
+            {
+                licenseType = LicenseTypes.FREE;
+            }
+
         }
 
         public async Task<LicServerResponse> ActivateLicense(string userEmail, string licKey)

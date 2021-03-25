@@ -19,6 +19,7 @@ namespace DocCompareWPF.Classes
         public string workingDir;
         public List<List<Diff>> pptSpeakerNotesDiff;
         public ArrayList globalAlignment;
+        public bool doneGlobalAlignment;
 
         public DocumentManagement(string p_workingDir, AppSettings settings)
         {
@@ -108,7 +109,6 @@ namespace DocCompareWPF.Classes
 
             DirectoryInfo di = new DirectoryInfo(documents[index].imageFolder);
             di.Delete(true);
-
             documents.RemoveAt(index);
 
             // shift everything down

@@ -282,7 +282,7 @@
                                                                     </Border.Effect>
                                                                 </Border>
                                                                 <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
 
                                                                     </Rectangle>
                                                                 </Grid>
@@ -441,7 +441,7 @@
                                                                     </Border.Effect>
                                                                 </Border>
                                                                 <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
 
                                                                     </Rectangle>
                                                                 </Grid>
@@ -599,7 +599,7 @@
                                                                     </Border.Effect>
                                                                 </Border>
                                                                 <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
 
                                                                     </Rectangle>
                                                                 </Grid>
@@ -758,7 +758,7 @@
                                                                     </Border.Effect>
                                                                 </Border>
                                                                 <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
 
                                                                     </Rectangle>
                                                                 </Grid>
@@ -917,7 +917,7 @@
                                                                     </Border.Effect>
                                                                 </Border>
                                                                 <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
 
                                                                     </Rectangle>
                                                                 </Grid>
@@ -1021,14 +1021,14 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Label VerticalAlignment="Center" x:Name="Doc1StatAuthorLabel0" Content="Original author:" Foreground="White" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" x:Name="Doc1StatLastEditorLabel0" Content="Last modified by:" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" x:Name="Doc1StatCreatedLabel0" Content="Created on:" Foreground="White" Grid.Row="4" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" Content="Last modified on:" Foreground="White" Grid.Row="6"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc1StatAuthorLabel0" Content="Original author:" Foreground="White" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc1StatLastEditorLabel0" Content="Last modified by:" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc1StatCreatedLabel0" Content="Created on:" Foreground="White" Grid.Row="4" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" Content="Last modified on:" Foreground="White" Grid.Row="6"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc1StatAuthorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc1StatLastEditorLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc1StatCreatedLabel" Text="" Foreground="White" Grid.Row="5" Grid.Column="0" Visibility="Collapsed"/>
-                                <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc1StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
+                                <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15"  TextWrapping="WrapWithOverflow" x:Name="Doc1StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
                             </Grid>
                             <Label x:Name="Doc2NameLabel" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,30,0"></Label>
                             <!--Label Grid.Column="1" x:Name="Doc2PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></-->
@@ -1046,14 +1046,14 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Label VerticalAlignment="Center" x:Name="Doc2StatAuthorLabel0" Content="Original author:" Foreground="White" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" x:Name="Doc2StatLastEditorLabel0" Content="Last modified by:" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" x:Name="Doc2StatCreatedLabel0" Content="Created on:" Foreground="White" Grid.Row="4" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" Content="Last modified on:" Foreground="White" Grid.Row="6"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc2StatAuthorLabel0" Content="Original author:" Foreground="White" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc2StatLastEditorLabel0" Content="Last modified by:" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc2StatCreatedLabel0" Content="Created on:" Foreground="White" Grid.Row="4" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" Content="Last modified on:" Foreground="White" Grid.Row="6"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc2StatAuthorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc2StatLastEditorLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc2StatCreatedLabel" Text="" Foreground="White" Grid.Row="5" Grid.Column="0" Visibility="Collapsed"/>
-                                <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc2StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
+                                <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15" TextWrapping="WrapWithOverflow" x:Name="Doc2StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
                             </Grid>
                             <Label x:Name="Doc3NameLabel" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,30,0"></Label>
                             <!--Label Grid.Column="2" x:Name="Doc3PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></-->
@@ -1071,14 +1071,14 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Label VerticalAlignment="Center" x:Name="Doc3StatAuthorLabel0" Content="Original author:" Foreground="White" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" x:Name="Doc3StatLastEditorLabel0" Content="Last modified by:" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" x:Name="Doc3StatCreatedLabel0" Content="Created on:" Foreground="White" Grid.Row="4" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" Content="Last modified on:" Foreground="White" Grid.Row="6"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc3StatAuthorLabel0" Content="Original author:" Foreground="White" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc3StatLastEditorLabel0" Content="Last modified by:" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc3StatCreatedLabel0" Content="Created on:" Foreground="White" Grid.Row="4" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" Content="Last modified on:" Foreground="White" Grid.Row="6"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc3StatAuthorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc3StatLastEditorLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc3StatCreatedLabel" Text="" Foreground="White" Grid.Row="5" Grid.Column="0" Visibility="Collapsed"/>
-                                <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc3StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
+                                <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15" TextWrapping="WrapWithOverflow" x:Name="Doc3StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
                             </Grid>
                             <Label x:Name="Doc4NameLabel" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,30,0"></Label>
                             <!--Label Grid.Column="3" x:Name="Doc4PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></-->
@@ -1096,14 +1096,14 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Label VerticalAlignment="Center" x:Name="Doc4StatAuthorLabel0" Content="Original author:" Foreground="White" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" x:Name="Doc4StatLastEditorLabel0" Content="Last modified by:" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" x:Name="Doc4StatCreatedLabel0" Content="Created on:" Foreground="White" Grid.Row="4" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" Content="Last modified on:" Foreground="White" Grid.Row="6"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc4StatAuthorLabel0" Content="Original author:" Foreground="White" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc4StatLastEditorLabel0" Content="Last modified by:" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc4StatCreatedLabel0" Content="Created on:" Foreground="White" Grid.Row="4" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" Content="Last modified on:" Foreground="White" Grid.Row="6"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc4StatAuthorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc4StatLastEditorLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc4StatCreatedLabel" Text="" Foreground="White" Grid.Row="5" Grid.Column="0" Visibility="Collapsed"/>
-                                <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc4StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
+                                <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15" TextWrapping="WrapWithOverflow" x:Name="Doc4StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
                             </Grid>
                             <Label x:Name="Doc5NameLabel" Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,60,0"></Label>
                             <!--Label Grid.Column="4" x:Name="Doc5PageNumberLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"></-->
@@ -1121,14 +1121,14 @@
                                     <RowDefinition/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Label VerticalAlignment="Center" x:Name="Doc5StatAuthorLabel0" Content="Original author:" Foreground="White" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" x:Name="Doc5StatLastEditorLabel0" Content="Last modified by:" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" x:Name="Doc5StatCreatedLabel0" Content="Created on:" Foreground="White" Grid.Row="4" Visibility="Collapsed"/>
-                                <Label VerticalAlignment="Center" Content="Last modified on:" Foreground="White" Grid.Row="6"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc5StatAuthorLabel0" Content="Original author:" Foreground="White" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc5StatLastEditorLabel0" Content="Last modified by:" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="Doc5StatCreatedLabel0" Content="Created on:" Foreground="White" Grid.Row="4" Visibility="Collapsed"/>
+                                <Label VerticalAlignment="Center" FontWeight="SemiBold" Content="Last modified on:" Foreground="White" Grid.Row="6"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc5StatAuthorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc5StatLastEditorLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc5StatCreatedLabel" Text="" Foreground="White" Grid.Row="5" Grid.Column="0" Visibility="Collapsed"/>
-                                <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc5StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
+                                <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15" TextWrapping="WrapWithOverflow" x:Name="Doc5StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
                             </Grid>
                             <Button Grid.ColumnSpan="5" x:Name="LinkScrollButton" Visibility="Hidden" Margin="0,0,35,0" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="LinkScrollButton_Click" IsEnabled="True" ToolTip="Enable parallel scrolling">
                                 <Rectangle Width="20" Height="20" Fill="{StaticResource linkscrollDrawingImage}"></Rectangle>
@@ -1251,7 +1251,7 @@
                                         <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                     </-->
                                     <Button x:Name="RemoveAllForceAlignButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Center" Click="RemoveAllForceAlignButton_Click" Margin="0,0,00,0" ToolTip="Remove all links">
+                                            HorizontalAlignment="Center" Click="RemoveAllForceAlignButton_Click" Margin="0,0,20,0" ToolTip="Remove all links">
                                         <iconPacks:PackIconFontAwesome Kind="UnlinkSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                     </Button>
                                 </Grid>
@@ -1317,7 +1317,7 @@
                                                                     </Border.Effect>
                                                                 </Border>
                                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHiddenLeft}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
 
                                                                     </Rectangle>
                                                                 </Grid>
@@ -1391,7 +1391,7 @@
                                                                     </Image>
                                                                 </Border>
                                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHiddenRight}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.5">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
 
                                                                     </Rectangle>
                                                                 </Grid>
@@ -1488,6 +1488,11 @@
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
                                                                     </Image.Effect>
                                                                 </-->
+                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHidden}" Margin="{Binding Margin}">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
+
+                                                                    </Rectangle>
+                                                                </Grid>
                                                                 <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding ShowHidden}" HorizontalAlignment="Right" Margin="0,10,10,0">
                                                                     <Path.Data>
                                                                         <PathGeometry>
@@ -1560,6 +1565,11 @@
                                                                 <Image Tag="{Binding ImgMaskName}" Source="{Binding PathToMask, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Stretch="Uniform" Visibility="{Binding ShowMask}">
                                                                 </Image>
+                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHidden}" Margin="{Binding Margin}">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
+
+                                                                    </Rectangle>
+                                                                </Grid>
                                                                 <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding ShowHidden}" HorizontalAlignment="Right" Margin="0,10,10,0">
                                                                     <Path.Data>
                                                                         <PathGeometry>
@@ -1578,7 +1588,7 @@
                                                                     <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
                                                                 </Button>
                                                                 <Button Tag="{Binding RemoveForceAlignButtonName}" Height="25" Width="25" Padding="0" Margin="0" Foreground="Black" Background="White" IsHitTestVisible="true" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Unlink pages"
-                                                                    Click="RemoveForceAlignClicked" Visibility="{Binding ForceAlignButtonVisi}">
+                                                                    Click="RemoveForceAlignClicked" Visibility="{Binding ForceAlignButtonVisi}" BorderThickness="2">
                                                                     <iconPacks:PackIconFontAwesome Kind="UnlinkSolid" Width="15" Height="15" />
                                                                 </Button>
                                                                 <Button Tag="{Binding ForceAlignInvalidButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="This link would cross a previously set link. Please remove that link before aligning these pages." Visibility="{Binding ForceAlignButtonInvalidVisi}" IsHitTestVisible="true">
@@ -1612,35 +1622,41 @@
                                     <Button x:Name="ShowDocCompareFileInfoButton" Grid.Column="2" Padding="0" HorizontalAlignment="Right" Margin="0,0,10,0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" Click="ShowDocCompareFileInfoButton_Click" IsEnabled="False">
                                         <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
                                     </Button>
+                                    <Grid Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                                        <Label x:Name="ManuallyAlignedLabel" Background="{StaticResource WarningBackgroundBrush}" HorizontalContentAlignment="Center" Visibility="Hidden">Manually Aligned</Label>
+                                        <Label x:Name="AutoAlignedLabel" Background="{StaticResource RefDocumentBackGroundBrush}" HorizontalContentAlignment="Center">Auto Aligned</Label>
+                                    </Grid>
                                     <Grid Grid.Row="1" Grid.ColumnSpan="2" x:Name="DocCompareLeftStatsGrid" Visibility="Visible" Background="{StaticResource PrimaryHueDarkBrush}">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="1*"/>
                                             <RowDefinition Height="1*"/>
                                             <RowDefinition Height="1*"/>
                                             <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
+                                            <RowDefinition Height="1*"/>
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="3*"/>
-                                            <ColumnDefinition Width="2*"/>
-                                            <ColumnDefinition Width="3*"/>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
-                                        <Label VerticalAlignment="Center" x:Name="DocCompareLeftStatAuthorLabel0" Content="Original author" Foreground="White" Visibility="Collapsed"/>
-                                        <Label VerticalAlignment="Center" x:Name="DocCompareLeftStatLastEditorLabel0" Content="Last modified by" Foreground="White" Grid.Row="1" Visibility="Collapsed"/>
-                                        <Label VerticalAlignment="Center" x:Name="DocCompareLeftStatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
-                                        <Label VerticalAlignment="Center" Content="Last modified on" Foreground="White" Grid.Row="3"/>
-                                        <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareLeftStatAuthorLabel" Text="" Foreground="White" Grid.Row="0" Grid.Column="1" Visibility="Collapsed"/>
-                                        <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareLeftStatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="1" Visibility="Collapsed"/>
-                                        <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareLeftStatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="1" Visibility="Collapsed"/>
-                                        <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareLeftStatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="1"/>
-                                        <Label VerticalAlignment="Center" x:Name="DocCompareRightStatAuthorLabel0" Content="Original author" Foreground="White" Visibility="Collapsed" Grid.Column="2"/>
-                                        <Label VerticalAlignment="Center" x:Name="DocCompareRightStatLastEditorLabel0" Content="Last modified by" Foreground="White" Grid.Row="1" Grid.Column="2" Visibility="Collapsed"/>
-                                        <Label VerticalAlignment="Center" x:Name="DocCompareRightStatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="2" Visibility="Collapsed" Grid.Column="2"/>
-                                        <Label VerticalAlignment="Center" Content="Last modified on" Foreground="White" Grid.Row="3"  Grid.Column="2"/>
-                                        <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatAuthorLabel" Text="" Foreground="White" Grid.Row="0" Grid.Column="3" Visibility="Collapsed"/>
-                                        <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatLastEditorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="3" Visibility="Collapsed"/>
-                                        <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatCreatedLabel" Text="" Foreground="White" Grid.Row="2" Grid.Column="3" Visibility="Collapsed"/>
-                                        <TextBlock VerticalAlignment="Center" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatModifiedLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="3"/>
+                                        <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="DocCompareLeftStatAuthorLabel0" Content="Original author" Foreground="White" Visibility="Collapsed"/>
+                                        <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="DocCompareLeftStatLastEditorLabel0" Content="Last modified by" Foreground="White" Grid.Row="2" Visibility="Collapsed"/>
+                                        <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="DocCompareLeftStatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="4" Visibility="Collapsed"/>
+                                        <Label VerticalAlignment="Center" FontWeight="SemiBold" Content="Last modified on" Foreground="White" Grid.Row="6"/>
+                                        <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="DocCompareLeftStatAuthorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="0" Visibility="Collapsed"/>
+                                        <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="DocCompareLeftStatLastEditorLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="0" Visibility="Collapsed"/>
+                                        <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="DocCompareLeftStatCreatedLabel" Text="" Foreground="White" Grid.Row="5" Grid.Column="0" Visibility="Collapsed"/>
+                                        <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15" TextWrapping="WrapWithOverflow" x:Name="DocCompareLeftStatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
+                                        <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="DocCompareRightStatAuthorLabel0" Content="Original author" Foreground="White" Visibility="Collapsed" Grid.Column="2"/>
+                                        <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="DocCompareRightStatLastEditorLabel0" Content="Last modified by" Foreground="White" Grid.Row="2" Grid.Column="2" Visibility="Collapsed"/>
+                                        <Label VerticalAlignment="Center" FontWeight="SemiBold" x:Name="DocCompareRightStatCreatedLabel0" Content="Created on" Foreground="White" Grid.Row="4" Visibility="Collapsed" Grid.Column="2"/>
+                                        <Label VerticalAlignment="Center" FontWeight="SemiBold" Content="Last modified on" Foreground="White" Grid.Row="6"  Grid.Column="2"/>
+                                        <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatAuthorLabel" Text="" Foreground="White" Grid.Row="1" Grid.Column="3" Visibility="Collapsed"/>
+                                        <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatLastEditorLabel" Text="" Foreground="White" Grid.Row="3" Grid.Column="3" Visibility="Collapsed"/>
+                                        <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatCreatedLabel" Text="" Foreground="White" Grid.Row="5" Grid.Column="3" Visibility="Collapsed"/>
+                                        <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="3"/>
                                     </Grid>
                                     <Grid Grid.Row="1" Grid.Column="2" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>
                                     <Grid Grid.Row="1" Grid.Column="3" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>

@@ -6,15 +6,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
@@ -3119,7 +3116,7 @@ namespace DocCompareWPF
                 {
                     DocCompareDragDropZone3.IsEnabled = false;
                     BrowseFileButton3.IsEnabled = false;
-                    HideDragDropZone3();
+                    //HideDragDropZone3();
                 }
             }
 
@@ -3182,13 +3179,7 @@ namespace DocCompareWPF
                 ProcessingDocProgressCard.Visibility = Visibility.Visible;
                 ProcessingDocProgressbar.Value = 0;
                 ProcessingDocLabel.Text = "Processing: " + Path.GetFileName(docs.documents[0].filePath);
-                /*
-                BrowseFileTopButton1.IsEnabled = false;
-                BrowseFileTopButton2.IsEnabled = false;
-                BrowseFileTopButton3.IsEnabled = false;
-                BrowseFileTopButton4.IsEnabled = false;
-                BrowseFileTopButton5.IsEnabled = false;
-                */
+                
                 ReloadDoc1Button.IsEnabled = false;
                 ReloadDoc2Button.IsEnabled = false;
                 ReloadDoc3Button.IsEnabled = false;
@@ -3307,7 +3298,7 @@ namespace DocCompareWPF
                         }
                         else
                         {
-                            if(docs.globalAlignment != null)
+                            if(docs.globalAlignment != null && docs.globalAlignment.Count != 0)
                                 DisplayPreviewWithAligment(1, docs.documentsToShow[0], docs.globalAlignment);
                             else
                                 DisplayPreview(1, docs.documentsToShow[0]);
@@ -3329,7 +3320,7 @@ namespace DocCompareWPF
                     if (docs.documents[docs.documentsToShow[1]].processed == true)
                     {
                         ProgressBarDoc2.Visibility = Visibility.Visible;
-                        if (docs.globalAlignment != null)
+                        if (docs.globalAlignment != null && docs.globalAlignment.Count != 0)
                             DisplayPreviewWithAligment(2, docs.documentsToShow[1], docs.globalAlignment);
                         else
                             DisplayPreview(2, docs.documentsToShow[1]);
@@ -3353,7 +3344,7 @@ namespace DocCompareWPF
                         if (docs.documents[docs.documentsToShow[2]].processed == true)
                         {
                             ProgressBarDoc3.Visibility = Visibility.Visible;
-                            if (docs.globalAlignment != null)
+                            if (docs.globalAlignment != null && docs.globalAlignment.Count != 0)
                                 DisplayPreviewWithAligment(3, docs.documentsToShow[2], docs.globalAlignment);
                             else
                                 DisplayPreview(3, docs.documentsToShow[2]);
@@ -3377,7 +3368,7 @@ namespace DocCompareWPF
                         if (docs.documents[docs.documentsToShow[3]].processed == true)
                         {
                             ProgressBarDoc4.Visibility = Visibility.Visible;
-                            if (docs.globalAlignment != null)
+                            if (docs.globalAlignment != null && docs.globalAlignment.Count != 0)
                                 DisplayPreviewWithAligment(4, docs.documentsToShow[3], docs.globalAlignment);
                             else
                                 DisplayPreview(4, docs.documentsToShow[3]);
@@ -3401,7 +3392,7 @@ namespace DocCompareWPF
                         if (docs.documents[docs.documentsToShow[4]].processed == true)
                         {
                             ProgressBarDoc5.Visibility = Visibility.Visible;
-                            if (docs.globalAlignment != null)
+                            if (docs.globalAlignment != null && docs.globalAlignment.Count != 0)
                                 DisplayPreviewWithAligment(5, docs.documentsToShow[4], docs.globalAlignment);
                             else
                                 DisplayPreview(5, docs.documentsToShow[4]);
@@ -5625,6 +5616,7 @@ namespace DocCompareWPF
                 }
                 else
                 {
+                    /*
                     Grid item = sender as Grid;
                     if ((item.Children[3] as System.Windows.Shapes.Path).Visibility == Visibility.Visible)
                     {
@@ -5637,6 +5629,7 @@ namespace DocCompareWPF
                         floatingTip.HorizontalOffset = currentPos.X + 20;
                         floatingTip.VerticalOffset = currentPos.Y;
                     }
+                    */
                 }
 
             }
@@ -6668,41 +6661,57 @@ namespace DocCompareWPF
         private void Doc2Grid_MouseEnter(object sender, MouseEventArgs e)
         {
             CompareDoc2Button.Visibility = Visibility.Visible;
+            Border parentBorder = CompareDoc2Button.Parent as Border;
+            parentBorder.Visibility = Visibility.Visible;
         }
 
         private void Doc2Grid_MouseLeave(object sender, MouseEventArgs e)
         {
             CompareDoc2Button.Visibility = Visibility.Hidden;
+            Border parentBorder = CompareDoc2Button.Parent as Border;
+            parentBorder.Visibility = Visibility.Hidden;
         }
 
         private void Doc3Grid_MouseEnter(object sender, MouseEventArgs e)
         {
-            CompareDoc3Button.Visibility = Visibility.Visible;
+            CompareDoc3Button.Visibility = Visibility.Visible; 
+            Border parentBorder = CompareDoc2Button.Parent as Border;
+            parentBorder.Visibility = Visibility.Visible;
         }
 
         private void Doc3Grid_MouseLeave(object sender, MouseEventArgs e)
         {
             CompareDoc3Button.Visibility = Visibility.Hidden;
+            Border parentBorder = CompareDoc2Button.Parent as Border;
+            parentBorder.Visibility = Visibility.Hidden;
         }
 
         private void Doc4Grid_MouseEnter(object sender, MouseEventArgs e)
         {
             CompareDoc4Button.Visibility = Visibility.Visible;
+            Border parentBorder = CompareDoc2Button.Parent as Border;
+            parentBorder.Visibility = Visibility.Visible;
         }
 
         private void Doc4Grid_MouseLeave(object sender, MouseEventArgs e)
         {
             CompareDoc4Button.Visibility = Visibility.Hidden;
+            Border parentBorder = CompareDoc2Button.Parent as Border;
+            parentBorder.Visibility = Visibility.Hidden;
         }
 
         private void Doc5Grid_MouseEnter(object sender, MouseEventArgs e)
         {
             CompareDoc5Button.Visibility = Visibility.Visible;
+            Border parentBorder = CompareDoc2Button.Parent as Border;
+            parentBorder.Visibility = Visibility.Visible;
         }
 
         private void Doc5Grid_MouseLeave(object sender, MouseEventArgs e)
         {
             CompareDoc5Button.Visibility = Visibility.Hidden;
+            Border parentBorder = CompareDoc2Button.Parent as Border;
+            parentBorder.Visibility = Visibility.Hidden;
         }
 
         private void WindowGetProButton_Click(object sender, RoutedEventArgs e)

@@ -312,8 +312,10 @@
                                             HorizontalAlignment="Left" Click="ReloadDoc2Button_Click" Margin="35,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-                                            <Button x:Name="CompareDoc2Button" Grid.Column="1" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource DocumentBackGroundBrush}" HorizontalAlignment="Center"
-                                                    Width="100" Foreground="Black" Margin="5,2,5,2" Visibility="Hidden" Click="CompareDoc2Button_Click">Compare Now</Button>
+                                            <Border Grid.Column="1" CornerRadius="5" Visibility="Hidden" Background="{StaticResource WarningBackgroundBrush}" Margin="2" Padding="0" BorderBrush="White" BorderThickness="1" Width="120" HorizontalAlignment="Center">
+                                                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" x:Name="CompareDoc2Button" Padding="0" Background="Transparent" HorizontalAlignment="Center"
+                                                        Width="100" Foreground="White" Margin="0" Visibility="Visible" Click="CompareDoc2Button_Click" VerticalAlignment="Center" VerticalContentAlignment="Center">Compare Now</Button>
+                                            </Border>
                                             <Button x:Name="CloseDoc2Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc2Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
@@ -457,9 +459,10 @@
                                             HorizontalAlignment="Left" Click="ReloadDoc3Button_Click" Margin="35,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-                                            <Button x:Name="CompareDoc3Button" Grid.Column="1" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource DocumentBackGroundBrush}" HorizontalAlignment="Center"
-                                                    Width="100" Foreground="Black" Margin="5,2,5,2" Visibility="Hidden" Click="CompareDoc3Button_Click">Compare Now</Button>
-                                            <Button x:Name="CloseDoc3Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc3Button_Click">
+                                            <Border Grid.Column="1" CornerRadius="5" Visibility="Hidden" Background="{StaticResource WarningBackgroundBrush}" Margin="2" Padding="0" BorderBrush="White" BorderThickness="1" Width="120" HorizontalAlignment="Center">
+                                                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" x:Name="CompareDoc3Button" Padding="0" Background="Transparent" HorizontalAlignment="Center"
+                                                        Width="100" Foreground="White" Margin="0" Visibility="Visible" Click="CompareDoc3Button_Click" VerticalAlignment="Center" VerticalContentAlignment="Center">Compare Now</Button>
+                                            </Border><Button x:Name="CloseDoc3Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc3Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
                                         </Grid>
@@ -603,9 +606,10 @@
                                             HorizontalAlignment="Left" Click="ReloadDoc4Button_Click" Margin="35,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-                                            <Button x:Name="CompareDoc4Button" Grid.Column="1" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource DocumentBackGroundBrush}" HorizontalAlignment="Center"
-                                                    Width="100" Foreground="Black" Margin="5,2,5,2" Visibility="Hidden" Click="CompareDoc4Button_Click">Compare Now</Button>
-                                            <Button x:Name="CloseDoc4Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc4Button_Click">
+                                            <Border Grid.Column="1" CornerRadius="5" Visibility="Hidden" Background="{StaticResource WarningBackgroundBrush}" Margin="2" Padding="0" BorderBrush="White" BorderThickness="1" Width="120" HorizontalAlignment="Center">
+                                                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" x:Name="CompareDoc4Button" Padding="0" Background="Transparent" HorizontalAlignment="Center"
+                                                        Width="100" Foreground="White" Margin="0" Visibility="Visible" Click="CompareDoc4Button_Click" VerticalAlignment="Center" VerticalContentAlignment="Center">Compare Now</Button>
+                                            </Border><Button x:Name="CloseDoc4Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc4Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
                                         </Grid>
@@ -749,9 +753,10 @@
                                             HorizontalAlignment="Left" Click="ReloadDoc5Button_Click" Margin="35,0,0,0" ToolTip="Reload document">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-                                            <Button x:Name="CompareDoc5Button" Grid.Column="1" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="{StaticResource DocumentBackGroundBrush}" HorizontalAlignment="Center"
-                                                    Width="100" Foreground="Black" Margin="5,2,5,2" Visibility="Hidden" Click="CompareDoc5Button_Click">Compare Now</Button>
-                                            <Button x:Name="CloseDoc5Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc5Button_Click">
+                                            <Border Grid.Column="1" CornerRadius="5" Visibility="Hidden" Background="{StaticResource WarningBackgroundBrush}" Margin="2" Padding="0" BorderBrush="White" BorderThickness="1" Width="120" HorizontalAlignment="Center">
+                                                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" x:Name="CompareDoc5Button" Padding="0" Background="Transparent" HorizontalAlignment="Center"
+                                                        Width="100" Foreground="White" Margin="0" Visibility="Visible" Click="CompareDoc5Button_Click" VerticalAlignment="Center" VerticalContentAlignment="Center">Compare Now</Button>
+                                            </Border><Button x:Name="CloseDoc5Button" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc5Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
                                         </Grid>

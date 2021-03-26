@@ -1156,12 +1156,12 @@ namespace DocCompareWPF
 
                         if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0)
                         {
-                            thisItem.Document1 = "<?xml version=\"1.0\"?> \n<text>" + docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] + "</text>";
+                            thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] + "</text>";
                             showSpeakerNotesLeft = true;
                         }
                         else
                         {
-                            thisItem.Document1 = "<?xml version=\"1.0\"?> \n" + "<text></text>";
+                            thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" + "<text></text>";
                             if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
                             {
                                 if (docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes != null)
@@ -1226,7 +1226,7 @@ namespace DocCompareWPF
 
                             if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
                             {
-                                doc = "<?xml version =\"1.0\"?> \n<text>";
+                                doc = "<?xml version =\"1.0\" encoding=\"UTF-8\"?> \n<text>";
 
                                 foreach (DocCompareDLL.Diff diff in docs.pptSpeakerNotesDiff[i])
                                 {
@@ -1252,7 +1252,7 @@ namespace DocCompareWPF
                             }
                             else
                             {
-                                doc = "<?xml version=\"1.0\"?> \n<text>" + docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]] + "</text>";
+                                doc = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]] + "</text>";
                             }
 
                             thisItem.Document2 = doc;

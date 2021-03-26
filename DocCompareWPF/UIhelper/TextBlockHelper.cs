@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -44,6 +45,12 @@ namespace DocCompareWPF.UIhelper
             typeof(TextBlockHelper),
             new UIPropertyMetadata("", FormattedTextChanged));
 
+        public static string CleanInvalidXmlChars(string text)
+        {
+            string re = @"[^\x09\x0A\x0D\x20-\xD7FF\xE000-\xFFFD\x10000-x10FFFF]";
+            return Regex.Replace(text, re, "");
+        }
+
         private static void FormattedTextChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             string value = e.NewValue as string;
@@ -66,6 +73,7 @@ namespace DocCompareWPF.UIhelper
             if (value != null)
             {
                 string local = EscapeXMLValue(value);
+                local = CleanInvalidXmlChars(local);
                 doc.LoadXml(local);
             }
 

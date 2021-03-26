@@ -226,7 +226,11 @@ namespace DocCompareWPF.Classes
                 }
 
                 DirectoryInfo di = new DirectoryInfo(documents[ind].imageFolder);
-                di.Delete();
+
+                if (di.Exists)
+                {
+                    di.Delete(true);
+                }
 
                 documents.RemoveAt(ind);
 

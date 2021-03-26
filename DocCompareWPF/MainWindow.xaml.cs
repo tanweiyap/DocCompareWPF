@@ -3500,6 +3500,26 @@ namespace DocCompareWPF
                     }
                     catch
                     {
+                        Dispatcher.Invoke(() => {
+                            ProgressBarDoc1.Visibility = Visibility.Hidden;
+                            ProgressBarDoc2.Visibility = Visibility.Hidden;
+                            ProgressBarDoc3.Visibility = Visibility.Hidden;
+                            ProgressBarDoc4.Visibility = Visibility.Hidden;
+                            ProgressBarDoc5.Visibility = Visibility.Hidden;
+
+                            DocCompareColorZone1.Visibility = Visibility.Visible;
+                            DocCompareColorZone2.Visibility = Visibility.Visible;
+                            DocCompareColorZone3.Visibility = Visibility.Visible;
+                            DocCompareColorZone4.Visibility = Visibility.Visible;
+                            DocCompareColorZone5.Visibility = Visibility.Visible;
+
+                            BrowseFileButton1.IsEnabled = true;
+                            BrowseFileButton2.IsEnabled = true;
+                            BrowseFileButton3.IsEnabled = true;
+                            BrowseFileButton4.IsEnabled = true;
+                            BrowseFileButton5.IsEnabled = true;
+
+                        });                        
                     }
 
                     Thread.Sleep(10);

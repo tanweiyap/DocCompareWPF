@@ -139,7 +139,14 @@ namespace DocConvert
                                 isHidden.Add(false);
                             }
 
-                            speakerNotes.Add(pptPresentation.Slides[i].NotesPage.Shapes.Placeholders[2].TextFrame.TextRange.Text);
+                            try
+                            {
+                                speakerNotes.Add(pptPresentation.Slides[i].NotesPage.Shapes.Placeholders[2].TextFrame.TextRange.Text);
+                            }
+                            catch // error reading speaker notes
+                            {
+                                speakerNotes.Add("");
+                            }
 
                         }
 
@@ -148,24 +155,7 @@ namespace DocConvert
                         pptPresentation.Close();
                         if (pptApplication.Visible != MsoTriState.msoTrue)
                             pptApplication.Quit();
-                        //old code by WYT...
-                        //pptPresentation.Export(outputPath, "jpg", Int32.Parse(pptPresentation.SlideMaster.Width.ToString()), Int32.Parse(pptPresentation.SlideMaster.Height.ToString()));
-
-                        //DirectoryInfo di = new DirectoryInfo(outputPath);
-                        //FileInfo[] fi = di.GetFiles();
-                        //for (int i = 0; i < fi.Length; i++)
-                        //{
-                        //    string[] filename;
-                        //    if (fi[i].Name.Contains("Folie"))
-                        //        filename = fi[i].Name.Split("Folie");
-                        //    else
-                        //        filename = fi[i].Name.Split("Slide");
-
-                        //    string name = Path.GetFileNameWithoutExtension(filename[1]);
-                        //    int pageName = int.Parse(name);
-                        //    File.Move(fi[i].FullName, Path.Join(outputPath, (pageName - 1).ToString() + ".jpg"));
-                        //}
-
+                        
                         ret = 0;
                     }
                     else
@@ -176,7 +166,7 @@ namespace DocConvert
 
                 return ret;
             }
-            catch
+            catch (Exception ex)
             {
                 return -1; // propably no office installation
             }

@@ -6660,9 +6660,12 @@ namespace DocCompareWPF
 
         private void Doc2Grid_MouseEnter(object sender, MouseEventArgs e)
         {
-            CompareDoc2Button.Visibility = Visibility.Visible;
-            Border parentBorder = CompareDoc2Button.Parent as Border;
-            parentBorder.Visibility = Visibility.Visible;
+            if (docCompareRunning == false && docProcessRunning == false)
+            {
+                CompareDoc2Button.Visibility = Visibility.Visible;
+                Border parentBorder = CompareDoc2Button.Parent as Border;
+                parentBorder.Visibility = Visibility.Visible;
+            }
         }
 
         private void Doc2Grid_MouseLeave(object sender, MouseEventArgs e)
@@ -6674,43 +6677,52 @@ namespace DocCompareWPF
 
         private void Doc3Grid_MouseEnter(object sender, MouseEventArgs e)
         {
-            CompareDoc3Button.Visibility = Visibility.Visible; 
-            Border parentBorder = CompareDoc2Button.Parent as Border;
-            parentBorder.Visibility = Visibility.Visible;
+            if (docCompareRunning == false && docProcessRunning == false)
+            {
+                CompareDoc3Button.Visibility = Visibility.Visible;
+                Border parentBorder = CompareDoc3Button.Parent as Border;
+                parentBorder.Visibility = Visibility.Visible;
+            }
         }
 
         private void Doc3Grid_MouseLeave(object sender, MouseEventArgs e)
         {
             CompareDoc3Button.Visibility = Visibility.Hidden;
-            Border parentBorder = CompareDoc2Button.Parent as Border;
+            Border parentBorder = CompareDoc3Button.Parent as Border;
             parentBorder.Visibility = Visibility.Hidden;
         }
 
         private void Doc4Grid_MouseEnter(object sender, MouseEventArgs e)
         {
-            CompareDoc4Button.Visibility = Visibility.Visible;
-            Border parentBorder = CompareDoc2Button.Parent as Border;
-            parentBorder.Visibility = Visibility.Visible;
+            if (docCompareRunning == false && docProcessRunning == false)
+            {
+                CompareDoc4Button.Visibility = Visibility.Visible;
+                Border parentBorder = CompareDoc4Button.Parent as Border;
+                parentBorder.Visibility = Visibility.Visible;
+            }
         }
 
         private void Doc4Grid_MouseLeave(object sender, MouseEventArgs e)
         {
             CompareDoc4Button.Visibility = Visibility.Hidden;
-            Border parentBorder = CompareDoc2Button.Parent as Border;
+            Border parentBorder = CompareDoc4Button.Parent as Border;
             parentBorder.Visibility = Visibility.Hidden;
         }
 
         private void Doc5Grid_MouseEnter(object sender, MouseEventArgs e)
         {
-            CompareDoc5Button.Visibility = Visibility.Visible;
-            Border parentBorder = CompareDoc2Button.Parent as Border;
-            parentBorder.Visibility = Visibility.Visible;
+            if (docCompareRunning == false && docProcessRunning == false)
+            {
+                CompareDoc5Button.Visibility = Visibility.Visible;
+                Border parentBorder = CompareDoc5Button.Parent as Border;
+                parentBorder.Visibility = Visibility.Visible;
+            }
         }
 
         private void Doc5Grid_MouseLeave(object sender, MouseEventArgs e)
         {
             CompareDoc5Button.Visibility = Visibility.Hidden;
-            Border parentBorder = CompareDoc2Button.Parent as Border;
+            Border parentBorder = CompareDoc5Button.Parent as Border;
             parentBorder.Visibility = Visibility.Hidden;
         }
 

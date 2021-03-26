@@ -128,7 +128,7 @@
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
                                             <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50" />
-                                            <Label x:Name="DocCompareDropZone1Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop files here or</Label>
+                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="DocCompareDropZone1Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center">Drag and drop files here or</TextBlock>
                                             <Button x:Name="BrowseFileButton1" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderThickness="0.5" BorderBrush="Gray" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
                                                 Click="BrowseFileButton1_Click">
                                                 <Grid>
@@ -276,7 +276,7 @@
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
                                             <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50" />
-                                            <Label x:Name="DocCompareDropZone2Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop files here</Label>
+                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="DocCompareDropZone2Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center">Drag and drop files here or</TextBlock>
                                             <Button x:Name="BrowseFileButton2" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderThickness="0.5" BorderBrush="Gray" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
                                                 Click="BrowseFileButton2_Click">
                                                 <Grid>
@@ -424,7 +424,7 @@
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
                                             <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50" />
-                                            <Label x:Name="DocCompareDropZone3Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop files here</Label>
+                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="DocCompareDropZone3Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center">Drag and drop files here or</TextBlock>
                                             <Button x:Name="BrowseFileButton3" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderThickness="0.5" BorderBrush="Gray" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
                                                 Click="BrowseFileButton3_Click">
                                                 <Grid>
@@ -570,7 +570,7 @@
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
                                             <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50" />
-                                            <Label x:Name="DocCompareDropZone4Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop files here</Label>
+                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="DocCompareDropZone4Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center">Drag and drop files here or</TextBlock>
                                             <Button x:Name="BrowseFileButton4" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderThickness="0.5" BorderBrush="Gray" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
                                                 Click="BrowseFileButton4_Click">
                                                 <Grid>
@@ -717,7 +717,7 @@
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
                                             <iconPacks:PackIconZondicons Kind="InboxDownload" HorizontalAlignment="Center" Width="50" Height="50" />
-                                            <Label x:Name="DocCompareDropZone5Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">Drag and drop files here</Label>
+                                            <TextBlock TextWrapping="WrapWithOverflow" x:Name="DocCompareDropZone5Label" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center">Drag and drop files here or</TextBlock>
                                             <Button x:Name="BrowseFileButton5" Grid.Row="2" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" BorderThickness="0.5" BorderBrush="Gray" HorizontalAlignment="Center" Margin="0,10,0,0" Padding="10,0,10,0"
                                                 Click="BrowseFileButton5_Click">
                                                 <Grid>

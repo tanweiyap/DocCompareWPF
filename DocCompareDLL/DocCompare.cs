@@ -383,7 +383,7 @@ namespace DocCompareDLL
             fnb.CopyTo(fn2, 0);
             fnbu.CopyTo(fn2, fnb.Length);
 
-            Size work_size = new Size(512, 512);
+            Size work_size = new Size(300, 300);
 
             if (fn1.Length == 0 || fn2.Length == 0)
             {
@@ -443,8 +443,8 @@ namespace DocCompareDLL
                     {
                         Mat c = new Mat();
                         Mat d = new Mat();
-                        Cv2.Resize((Mat)doc1[ii], c, work_size);
-                        Cv2.Resize((Mat)doc2[jj], d, work_size);
+                        Cv2.Resize((Mat)doc1[ii], c, work_size, interpolation: 0);
+                        Cv2.Resize((Mat)doc2[jj], d, work_size, interpolation: 0);
                         //Match_score_jpg((Mat)doc1[ii], (Mat)doc2[jj], ref distanceMatrix[ii, jj]);
                         Match_score_jpg(c, d, ref distanceMatrix[ii, jj]);
                     }
@@ -693,7 +693,8 @@ namespace DocCompareDLL
                                 lastseen = -1;
                             }
                             //shift everything in new alignment after that index by 1
-                            newcompared.Insert(insertindex + 1, -1);
+                            //newcompared.Insert(insertindex + 1, -1);
+                            newcompared.Insert(insertindex, -1);
                         }
 
                     }

@@ -27,7 +27,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.1.2";
+        private readonly string versionString = "1.1.3";
         private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
@@ -1082,6 +1082,8 @@ namespace DocCompareWPF
 
             List<CompareMainItem> mainItemList = new List<CompareMainItem>();
 
+            bool firstDiffFound = false;
+
             for (int i = 0; i < docs.totalLen; i++)
             {
                 CompareMainItem thisItem = new CompareMainItem()
@@ -1119,12 +1121,35 @@ namespace DocCompareWPF
                 {
                     thisItem.PathToImgLeft = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".png");
 
+                    /*
                     if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
                     {
                         thisItem.PathToAniImgLeft = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
-                        thisItem.AniDiffButtonEnable = true;
+
+                        if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                            lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                            lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                        {
+                            if(firstDiffFound == false)
+                            {
+                                firstDiffFound = true;
+                                thisItem.AniDiffButtonEnable = true;
+                                thisItem.AniDiffButtonTooltip = "Click and hold to animate the difference";
+                            }
+                            else
+                            {
+                                thisItem.AniDiffButtonEnable = false;
+                                thisItem.AniDiffButtonTooltip = "Animating difference is limited to only one page in the free version";
+                            }
+                        }
+                        else
+                        {
+                            thisItem.AniDiffButtonEnable = true;
+                            thisItem.AniDiffButtonTooltip = "Click and hold to animate the difference";
+                        }                        
                     }
 
+                    */
                     if (docs.documents[docs.documentsToCompare[0]].fileType == Document.FileTypes.PPT)
                     {
                         if (docs.documents[docs.documentsToCompare[0]].pptIsHidden[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] == true)
@@ -1181,12 +1206,37 @@ namespace DocCompareWPF
                         if (File.Exists(Path.Join(compareResultFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png")))
                         {
                             thisItem.PathToMaskImgRight = Path.Join(compareResultFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
-                            thisItem.AniDiffButtonEnable = true;
+
+                            if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                            lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                            lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                            {
+                                if (firstDiffFound == false)
+                                {
+                                    firstDiffFound = true;
+                                    thisItem.AniDiffButtonEnable = true;
+                                    thisItem.AniDiffButtonTooltip = "Click and hold to animate the difference";
+                                }
+                                else
+                                {
+                                    thisItem.AniDiffButtonEnable = false;
+                                    thisItem.AniDiffButtonTooltip = "Animating difference is limited to only one page in the free version";
+                                }
+                            }
+                            else
+                            {
+                                thisItem.AniDiffButtonEnable = true;
+                                thisItem.AniDiffButtonTooltip = "Click and hold to animate the difference";
+                            }
 
                             if (showMask == true)
                                 thisItem.ShowMask = Visibility.Visible;
                             else
                                 thisItem.ShowMask = Visibility.Hidden;
+                        }
+                        else
+                        {
+                            thisItem.AniDiffButtonTooltip = "The pages are identical";
                         }
                     }
 
@@ -1331,12 +1381,14 @@ namespace DocCompareWPF
                     lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
                 {
                     thisItem.ShowSpeakerNoteEnable = false;
-                    thisItem.ShowSpeakerNotesTooltip = "Viewing speaker notes is only available in the pro version";
+                    thisItem.ShowSpeakerNotesTooltip = "Viewing of speaker notes is only available in the pro version";
+                    thisItem.ShowHiddenEnable = Visibility.Visible;
                 }
                 else
                 {
                     thisItem.ShowSpeakerNoteEnable = true;
                     thisItem.ShowSpeakerNotesTooltip = "Click to show speaker notes";
+                    thisItem.ShowHiddenEnable = Visibility.Hidden;
                 }
 
                 mainItemList.Add(thisItem);
@@ -1739,12 +1791,14 @@ namespace DocCompareWPF
                                 lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
                             {
                                 thisImage.ShowSpeakerNoteEnable = false;
-                                thisImage.ShowSpeakerNotesTooltip = "Viewing speaker notes is only available in the pro version";
+                                thisImage.ShowSpeakerNotesTooltip = "Viewing of speaker notes is only available in the pro version";
+                                thisImage.ShowHiddenEnable = Visibility.Visible;
                             }
                             else
                             {
                                 thisImage.ShowSpeakerNoteEnable = true;
                                 thisImage.ShowSpeakerNotesTooltip = "Click to show speaker notes";
+                                thisImage.ShowHiddenEnable = Visibility.Hidden;
                             }
 
                             imageList.Add(thisImage);
@@ -1840,6 +1894,10 @@ namespace DocCompareWPF
                     LicenseStatusLabel.Visibility = Visibility.Visible;
                     WindowGetProButton.Visibility = Visibility.Hidden;
                     settings.maxDocCount = 5;
+                    DocCompareDragDropZone3.IsEnabled = true;
+                    BrowseFileButton3.IsEnabled = true;
+                    DragDrop3ShowProVersion.Visibility = Visibility.Hidden;
+                    DocCompareColorZone3.Visibility = Visibility.Visible;
                     EnableOpenOriginal();
                     EnableReload();
                     SaveSettings();
@@ -1862,7 +1920,11 @@ namespace DocCompareWPF
                     LicenseStatusTypeLabel.Visibility = Visibility.Collapsed;
                     LicenseStatusLabel.Visibility = Visibility.Collapsed;
                     WindowGetProButton.Visibility = Visibility.Visible;
-                    settings.maxDocCount = 2;
+                    settings.maxDocCount = 2; 
+                    DocCompareDragDropZone3.IsEnabled = false;
+                    BrowseFileButton3.IsEnabled = false;
+                    DragDrop3ShowProVersion.Visibility = Visibility.Visible;
+                    DocCompareColorZone3.Visibility = Visibility.Hidden;
                     EnableOpenOriginal();
                     EnableReload();
                     SaveSettings();
@@ -1882,6 +1944,10 @@ namespace DocCompareWPF
                     LicenseStatusLabel.Visibility = Visibility.Collapsed;
                     WindowGetProButton.Visibility = Visibility.Hidden;
                     settings.maxDocCount = 5;
+                    DocCompareDragDropZone3.IsEnabled = true;
+                    BrowseFileButton3.IsEnabled = true;
+                    DragDrop3ShowProVersion.Visibility = Visibility.Hidden;
+                    DocCompareColorZone3.Visibility = Visibility.Visible;
                     SaveSettings();
                     break;
 
@@ -1897,6 +1963,10 @@ namespace DocCompareWPF
                     LicenseStatusLabel.Visibility = Visibility.Collapsed;
                     WindowGetProButton.Visibility = Visibility.Visible;
                     settings.maxDocCount = 2;
+                    DocCompareDragDropZone3.IsEnabled = false;
+                    BrowseFileButton3.IsEnabled = false;
+                    DragDrop3ShowProVersion.Visibility = Visibility.Visible;
+                    DocCompareColorZone3.Visibility = Visibility.Hidden;
                     SaveSettings();
                     break;
             }
@@ -1910,6 +1980,10 @@ namespace DocCompareWPF
                     DocCompareFirstDocZone.AllowDrop = true;
                     DocCompareDragDropZone1.AllowDrop = true;
                     DocCompareColorZone1.AllowDrop = true;
+                    DocCompareDragDropZone3.IsEnabled = true;
+                    BrowseFileButton3.IsEnabled = true;
+                    DragDrop3ShowProVersion.Visibility = Visibility.Hidden;
+                    DocCompareColorZone3.Visibility = Visibility.Visible;
                     EnableOpenOriginal();
                     EnableReload();
                     break;
@@ -1917,6 +1991,10 @@ namespace DocCompareWPF
                 case LicenseManagement.LicenseStatus.INACTIVE:
                     LicenseStatusTypeLabel.Content = "License status";
                     LicenseStatusLabel.Content = "Inactive";
+                    DocCompareDragDropZone3.IsEnabled = false;
+                    BrowseFileButton3.IsEnabled = false;
+                    DragDrop3ShowProVersion.Visibility = Visibility.Visible;
+                    DocCompareColorZone3.Visibility = Visibility.Hidden;
                     EnableOpenOriginal();
                     EnableReload();
                     break;
@@ -3161,8 +3239,10 @@ namespace DocCompareWPF
                         Doc3Grid.Visibility = Visibility.Hidden;
                         DocCompareDragDropZone3.Visibility = Visibility.Visible;
                         ShowDragDropZone3();
-                        DragDropPanel.ColumnDefinitions[2].Width = new GridLength(0.7, GridUnitType.Star);
-                        DocPreviewStatGrid.ColumnDefinitions[2].Width = new GridLength(0.7, GridUnitType.Star);
+                        DragDropPanel.ColumnDefinitions[2].Width = new GridLength(0.5, GridUnitType.Star);
+                        DocPreviewStatGrid.ColumnDefinitions[2].Width = new GridLength(0.5, GridUnitType.Star);
+                        DragDrop3ShowProVersion.Visibility = Visibility.Hidden;
+                        DocCompareColorZone3.Visibility = Visibility.Visible;
                     });
                 }
 
@@ -3172,6 +3252,8 @@ namespace DocCompareWPF
                 {
                     DocCompareDragDropZone3.IsEnabled = false;
                     BrowseFileButton3.IsEnabled = false;
+                    DragDrop3ShowProVersion.Visibility = Visibility.Visible;
+                    DocCompareColorZone3.Visibility = Visibility.Hidden;
                     //HideDragDropZone3();
                 }
             }
@@ -3188,9 +3270,9 @@ namespace DocCompareWPF
                         DocCompareDragDropZone4.Visibility = Visibility.Visible;
                         ShowDragDropZone4();
                         DragDropPanel.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
-                        DragDropPanel.ColumnDefinitions[3].Width = new GridLength(0.7, GridUnitType.Star);
+                        DragDropPanel.ColumnDefinitions[3].Width = new GridLength(0.5, GridUnitType.Star);
                         DocPreviewStatGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
-                        DocPreviewStatGrid.ColumnDefinitions[3].Width = new GridLength(0.7, GridUnitType.Star);
+                        DocPreviewStatGrid.ColumnDefinitions[3].Width = new GridLength(0.5, GridUnitType.Star);
                     });
                 }
             }
@@ -3207,9 +3289,9 @@ namespace DocCompareWPF
                         DocCompareDragDropZone5.Visibility = Visibility.Visible;
                         ShowDragDropZone5();
                         DragDropPanel.ColumnDefinitions[3].Width = new GridLength(1, GridUnitType.Star);
-                        DragDropPanel.ColumnDefinitions[4].Width = new GridLength(0.7, GridUnitType.Star);
+                        DragDropPanel.ColumnDefinitions[4].Width = new GridLength(0.5, GridUnitType.Star);
                         DocPreviewStatGrid.ColumnDefinitions[3].Width = new GridLength(1, GridUnitType.Star);
-                        DocPreviewStatGrid.ColumnDefinitions[4].Width = new GridLength(0.7, GridUnitType.Star);
+                        DocPreviewStatGrid.ColumnDefinitions[4].Width = new GridLength(0.5, GridUnitType.Star);
                     });
                 }
             }
@@ -5676,7 +5758,7 @@ namespace DocCompareWPF
                 }
                 else
                 {
-                    (sender as Button).ToolTip = "Viewing speaker notes is onyla available in the pro version.";
+                    (sender as Button).ToolTip = "Viewing of speaker notes is only available in the pro version.";
                 }
             }
             catch

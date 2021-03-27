@@ -26,7 +26,20 @@ namespace DocCompareWPF.UIhelper
         public string ShowSpeakerNotesTooltip { get; set; }
         public bool ShowSpeakerNoteEnable { get; set; }
 
+        private Visibility _showHiddenEnable;
+        public Visibility ShowHiddenEnable
+        {
+            get
+            {
+                return _showHiddenEnable;
+            }
 
+            set
+            {
+                _showHiddenEnable = value;
+                OnPropertyChanged();
+            }
+        }
         public string PathToFile
         {
             get

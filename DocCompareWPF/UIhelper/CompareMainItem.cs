@@ -51,6 +51,22 @@ namespace DocCompareWPF.UIhelper
         private Visibility _pptNoteGridLeftVisi;
         private Visibility _pptNoteGridRightVisi;
 
+        private Visibility _showHiddenEnable;
+        public Visibility ShowHiddenEnable
+        {
+            get
+            {
+                return _showHiddenEnable;
+            }
+
+            set
+            {
+                _showHiddenEnable = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string AniDiffButtonTooltip { get; set; }
         public string PPTSpeakerNoteGridNameLeft { get; set; }
         public string PPTSpeakerNoteGridNameRight { get; set; }
         public string ClosePPTSpeakerNotesButtonNameLeft { get; set; }

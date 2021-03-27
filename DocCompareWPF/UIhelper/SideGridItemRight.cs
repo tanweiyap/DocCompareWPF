@@ -20,6 +20,8 @@ namespace DocCompareWPF.UIhelper
 
         private Visibility _diffVisi;
         private Visibility _noDiffVisi;
+        public bool ForceAlignEnable { get; set; }
+        public string LinkPagesToolTip { get; set; }
 
         public Visibility ShowHidden
         {

@@ -23,6 +23,9 @@ namespace DocCompareWPF.UIhelper
         public string ClosePPTSpeakerNotesButtonName { get; set; }
         public string PPTSpeakerNotes { get; set; }
 
+        public string ShowSpeakerNotesTooltip { get; set; }
+        public bool ShowSpeakerNoteEnable { get; set; }
+
 
         public string PathToFile
         {

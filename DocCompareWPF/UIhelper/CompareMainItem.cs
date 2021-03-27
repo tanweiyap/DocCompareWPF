@@ -43,6 +43,8 @@ namespace DocCompareWPF.UIhelper
 
         private double _blurRadiusLeft;
         private double _blurRadiusRight;
+        public string ShowSpeakerNotesTooltip { get; set; }
+        public bool ShowSpeakerNoteEnable { get; set; }
 
         private Visibility _showHiddenLeft;
         private Visibility _showHiddenRight;

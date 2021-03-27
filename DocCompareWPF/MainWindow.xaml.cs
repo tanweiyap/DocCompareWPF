@@ -60,7 +60,7 @@ namespace DocCompareWPF
         private GridSelection sideGridSelectedLeftOrRight, mainGridSelectedLeftOrRight;
         private Thread threadLoadDocs;
         private Thread threadLoadDocsProgress;
-        private Thread threadCompare;
+        private Thread threadCompare, threadCompare2;
         private Thread threadAnimateDiff;
         private Thread threadDisplayResult;
         private Thread threadCheckTrial;
@@ -128,6 +128,8 @@ namespace DocCompareWPF
                 if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL)
                 {
                     lic.ConvertTrialToFree();
+                    settings.maxDocCount = 2;
+                    SaveSettings();
                     SaveLicense();
                     WindowGetProButton.Visibility = Visibility.Visible;
                 }
@@ -135,6 +137,8 @@ namespace DocCompareWPF
                          lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.DEVELOPMENT)
                 {
                     WindowGetProButton.Visibility = Visibility.Hidden;
+                    settings.maxDocCount = 5;
+                    SaveSettings();
                 }
 
                 ErrorHandling.ReportStatus("App Launch", "App version: " + versionString + " successfully launched with license: " + lic.GetLicenseTypesString() + ", expires/renewal on " + lic.GetExpiryDateString() + " on " + lic.GetUUID());
@@ -144,6 +148,9 @@ namespace DocCompareWPF
                 lic = new LicenseManagement();
                 lic.Init(); // init 7 days trial
                 DisplayLicense();
+
+                settings.maxDocCount = 5;
+                SaveSettings();
                 SaveLicense();
 
                 CustomMessageBox msgBox = new CustomMessageBox();
@@ -748,12 +755,7 @@ namespace DocCompareWPF
         private void CloseDocumentCommonPart()
         {
             //TODO: Premium
-            CloseDoc1Button.IsEnabled = false;
-            CloseDoc2Button.IsEnabled = false;
-            CloseDoc3Button.IsEnabled = false;
-            CloseDoc4Button.IsEnabled = false;
-            CloseDoc5Button.IsEnabled = false;
-
+            DisableCloseDocument();
 
             // hide all then show them individually
             HideDragDropZone2();
@@ -980,7 +982,8 @@ namespace DocCompareWPF
         private void ComparePreviewThread()
         {
             docs.globalAlignment = null;
-            Dispatcher.Invoke(() => {
+            Dispatcher.Invoke(() =>
+            {
                 ProgressBarGlobalAlignment.Visibility = Visibility.Visible;
             });
 
@@ -1020,16 +1023,8 @@ namespace DocCompareWPF
                 BrowseFileTopButton4.IsEnabled = true;
                 BrowseFileTopButton5.IsEnabled = true;
                 */
-                ReloadDoc1Button.IsEnabled = true;
-                ReloadDoc2Button.IsEnabled = true;
-                ReloadDoc3Button.IsEnabled = true;
-                ReloadDoc4Button.IsEnabled = true;
-                ReloadDoc5Button.IsEnabled = true;
-                BrowseFileButton1.IsEnabled = true;
-                BrowseFileButton2.IsEnabled = true;
-                BrowseFileButton3.IsEnabled = true;
-                BrowseFileButton4.IsEnabled = true;
-                BrowseFileButton5.IsEnabled = true;
+                EnableReload();
+                EnableBrowseFile();
 
                 DocCompareFirstDocZone.AllowDrop = true;
                 DocCompareDragDropZone1.AllowDrop = true;
@@ -1047,23 +1042,15 @@ namespace DocCompareWPF
                 DocCompareDragDropZone5.AllowDrop = true;
                 DocCompareColorZone5.AllowDrop = true;
 
-                CloseDoc1Button.IsEnabled = true;
-                CloseDoc2Button.IsEnabled = true;
-                CloseDoc3Button.IsEnabled = true;
-                CloseDoc4Button.IsEnabled = true;
-                CloseDoc5Button.IsEnabled = true;
-
-                OpenDoc1OriginalButton1.IsEnabled = true;
-                OpenDoc2OriginalButton2.IsEnabled = true;
-                OpenDoc3OriginalButton3.IsEnabled = true;
-                OpenDoc4OriginalButton4.IsEnabled = true;
-                OpenDoc5OriginalButton5.IsEnabled = true;
+                EnableCloseDocument();
+                EnableOpenOriginal();
             });
 
 
             docCompareRunning = false;
             docs.doneGlobalAlignment = true;
-            Dispatcher.Invoke(() => {
+            Dispatcher.Invoke(() =>
+            {
                 ProgressBarGlobalAlignment.Visibility = Visibility.Hidden;
             });
         }
@@ -1338,6 +1325,20 @@ namespace DocCompareWPF
                     }
                 }
 
+                // license
+                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                    lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                    lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                {
+                    thisItem.ShowSpeakerNoteEnable = false;
+                    thisItem.ShowSpeakerNotesTooltip = "Viewing speaker notes is only available in the pro version";
+                }
+                else
+                {
+                    thisItem.ShowSpeakerNoteEnable = true;
+                    thisItem.ShowSpeakerNotesTooltip = "Click to show speaker notes";
+                }
+
                 mainItemList.Add(thisItem);
             }
 
@@ -1471,6 +1472,23 @@ namespace DocCompareWPF
                 {
                     rightItem.NoDiffVisi = Visibility.Hidden;
                     rightItem.DiffVisi = Visibility.Hidden;
+                }
+
+                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                    lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                    lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                {
+                    leftItem.LinkPagesToolTip = "Manual alignment is only available in the pro version";
+                    rightItem.LinkPagesToolTip = "Manual alignment is only available in the pro version";
+                    leftItem.ForceAlignEnable = false;
+                    rightItem.ForceAlignEnable = false;
+                }
+                else
+                {
+                    leftItem.LinkPagesToolTip = "Link pages";
+                    rightItem.LinkPagesToolTip = "Link pages";
+                    leftItem.ForceAlignEnable = true;
+                    rightItem.ForceAlignEnable = true;
                 }
 
                 leftItemList.Add(leftItem);
@@ -1714,6 +1732,21 @@ namespace DocCompareWPF
                                 thisImage.Margin = new Thickness(10, 0, 10, 10);
                             }
 
+
+                            // license
+                            if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                                lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                                lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                            {
+                                thisImage.ShowSpeakerNoteEnable = false;
+                                thisImage.ShowSpeakerNotesTooltip = "Viewing speaker notes is only available in the pro version";
+                            }
+                            else
+                            {
+                                thisImage.ShowSpeakerNoteEnable = true;
+                                thisImage.ShowSpeakerNotesTooltip = "Click to show speaker notes";
+                            }
+
                             imageList.Add(thisImage);
                             pageCounter++;
 
@@ -1806,6 +1839,10 @@ namespace DocCompareWPF
                     LicenseStatusTypeLabel.Visibility = Visibility.Visible;
                     LicenseStatusLabel.Visibility = Visibility.Visible;
                     WindowGetProButton.Visibility = Visibility.Hidden;
+                    settings.maxDocCount = 5;
+                    EnableOpenOriginal();
+                    EnableReload();
+                    SaveSettings();
                     break;
 
                 case LicenseManagement.LicenseTypes.TRIAL:
@@ -1825,6 +1862,11 @@ namespace DocCompareWPF
                     LicenseStatusTypeLabel.Visibility = Visibility.Collapsed;
                     LicenseStatusLabel.Visibility = Visibility.Collapsed;
                     WindowGetProButton.Visibility = Visibility.Visible;
+                    settings.maxDocCount = 2;
+                    EnableOpenOriginal();
+                    EnableReload();
+                    SaveSettings();
+
                     break;
 
                 case LicenseManagement.LicenseTypes.DEVELOPMENT:
@@ -1839,6 +1881,8 @@ namespace DocCompareWPF
                     LicenseStatusTypeLabel.Visibility = Visibility.Collapsed;
                     LicenseStatusLabel.Visibility = Visibility.Collapsed;
                     WindowGetProButton.Visibility = Visibility.Hidden;
+                    settings.maxDocCount = 5;
+                    SaveSettings();
                     break;
 
                 default:
@@ -1852,6 +1896,8 @@ namespace DocCompareWPF
                     LicenseStatusTypeLabel.Visibility = Visibility.Collapsed;
                     LicenseStatusLabel.Visibility = Visibility.Collapsed;
                     WindowGetProButton.Visibility = Visibility.Visible;
+                    settings.maxDocCount = 2;
+                    SaveSettings();
                     break;
             }
 
@@ -1864,17 +1910,15 @@ namespace DocCompareWPF
                     DocCompareFirstDocZone.AllowDrop = true;
                     DocCompareDragDropZone1.AllowDrop = true;
                     DocCompareColorZone1.AllowDrop = true;
+                    EnableOpenOriginal();
+                    EnableReload();
                     break;
 
                 case LicenseManagement.LicenseStatus.INACTIVE:
                     LicenseStatusTypeLabel.Content = "License status";
                     LicenseStatusLabel.Content = "Inactive";
-                    /*
-                    BrowseFileButton1.IsEnabled = false;
-                    DocCompareFirstDocZone.AllowDrop = false;
-                    DocCompareDragDropZone1.AllowDrop = false;
-                    DocCompareColorZone1.AllowDrop = false;
-                    */
+                    EnableOpenOriginal();
+                    EnableReload();
                     break;
             }
         }
@@ -2792,25 +2836,31 @@ namespace DocCompareWPF
                 hiddenPPTEffect = img.Effect;
                 img.Effect = null;
 
-                if (parentGrid.Tag.ToString().Contains("Left"))
+
+                if (lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.TRIAL &&
+                    lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.FREE &&
+                    lic.GetLicenseStatus() != LicenseManagement.LicenseStatus.INACTIVE)
                 {
-                    hiddenPPTVisi = (item.Children[4] as Label).Visibility;
-                    System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
-                    //path.Visibility = Visibility.Hidden;
-                    Label label = item.Children[4] as Label;
-                    //label.Visibility = Visibility.Hidden;
-                    Grid grid = item.Children[2] as Grid;
-                    grid.Visibility = Visibility.Hidden;
-                }
-                else
-                {
-                    hiddenPPTVisi = (item.Children[5] as Label).Visibility;
-                    System.Windows.Shapes.Path path = item.Children[4] as System.Windows.Shapes.Path;
-                    //path.Visibility = Visibility.Hidden;
-                    Label label = item.Children[5] as Label;
-                    //label.Visibility = Visibility.Hidden;
-                    Grid grid = item.Children[3] as Grid;
-                    grid.Visibility = Visibility.Hidden;
+                    if (parentGrid.Tag.ToString().Contains("Left"))
+                    {
+                        hiddenPPTVisi = (item.Children[4] as Label).Visibility;
+                        System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
+                        //path.Visibility = Visibility.Hidden;
+                        Label label = item.Children[4] as Label;
+                        //label.Visibility = Visibility.Hidden;
+                        Grid grid = item.Children[2] as Grid;
+                        grid.Visibility = Visibility.Hidden;
+                    }
+                    else
+                    {
+                        hiddenPPTVisi = (item.Children[5] as Label).Visibility;
+                        System.Windows.Shapes.Path path = item.Children[4] as System.Windows.Shapes.Path;
+                        //path.Visibility = Visibility.Hidden;
+                        Label label = item.Children[5] as Label;
+                        //label.Visibility = Visibility.Hidden;
+                        Grid grid = item.Children[3] as Grid;
+                        grid.Visibility = Visibility.Hidden;
+                    }
                 }
             }
         }
@@ -2856,23 +2906,29 @@ namespace DocCompareWPF
                 Image img = childBorder.Child as Image;
                 img.Effect = hiddenPPTEffect;
 
-                if (parentGrid.Tag.ToString().Contains("Left"))
+                if (lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.TRIAL &&
+                    lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.FREE &&
+                    lic.GetLicenseStatus() != LicenseManagement.LicenseStatus.INACTIVE)
                 {
-                    System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
-                    path.Visibility = hiddenPPTVisi;
-                    Label label = item.Children[4] as Label;
-                    label.Visibility = hiddenPPTVisi;
-                    Grid grid = item.Children[2] as Grid;
-                    grid.Visibility = hiddenPPTVisi;
-                }
-                else
-                {
-                    System.Windows.Shapes.Path path = item.Children[4] as System.Windows.Shapes.Path;
-                    path.Visibility = hiddenPPTVisi;
-                    Label label = item.Children[5] as Label;
-                    label.Visibility = hiddenPPTVisi;
-                    Grid grid = item.Children[3] as Grid;
-                    grid.Visibility = hiddenPPTVisi;
+
+                    if (parentGrid.Tag.ToString().Contains("Left"))
+                    {
+                        System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
+                        path.Visibility = hiddenPPTVisi;
+                        Label label = item.Children[4] as Label;
+                        label.Visibility = hiddenPPTVisi;
+                        Grid grid = item.Children[2] as Grid;
+                        grid.Visibility = hiddenPPTVisi;
+                    }
+                    else
+                    {
+                        System.Windows.Shapes.Path path = item.Children[4] as System.Windows.Shapes.Path;
+                        path.Visibility = hiddenPPTVisi;
+                        Label label = item.Children[5] as Label;
+                        label.Visibility = hiddenPPTVisi;
+                        Grid grid = item.Children[3] as Grid;
+                        grid.Visibility = hiddenPPTVisi;
+                    }
                 }
             }
         }
@@ -3110,7 +3166,7 @@ namespace DocCompareWPF
                     });
                 }
 
-                if(lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE || 
+                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
                    lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
                    lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
                 {
@@ -3179,30 +3235,11 @@ namespace DocCompareWPF
                 ProcessingDocProgressCard.Visibility = Visibility.Visible;
                 ProcessingDocProgressbar.Value = 0;
                 ProcessingDocLabel.Text = "Processing: " + Path.GetFileName(docs.documents[0].filePath);
-                
-                ReloadDoc1Button.IsEnabled = false;
-                ReloadDoc2Button.IsEnabled = false;
-                ReloadDoc3Button.IsEnabled = false;
-                ReloadDoc4Button.IsEnabled = false;
-                ReloadDoc5Button.IsEnabled = false;
 
-                CloseDoc1Button.IsEnabled = false;
-                CloseDoc2Button.IsEnabled = false;
-                CloseDoc3Button.IsEnabled = false;
-                CloseDoc4Button.IsEnabled = false;
-                CloseDoc5Button.IsEnabled = false;
-
-                OpenDoc1OriginalButton1.IsEnabled = false;
-                OpenDoc2OriginalButton2.IsEnabled = false;
-                OpenDoc3OriginalButton3.IsEnabled = false;
-                OpenDoc4OriginalButton4.IsEnabled = false;
-                OpenDoc5OriginalButton5.IsEnabled = false;
-
-                ShowDoc1FileInfoButton.IsEnabled = false;
-                ShowDoc2FileInfoButton.IsEnabled = false;
-                ShowDoc3FileInfoButton.IsEnabled = false;
-                ShowDoc4FileInfoButton.IsEnabled = false;
-                ShowDoc5FileInfoButton.IsEnabled = false;
+                DisableReload();
+                DisableCloseDocument();
+                DisableOpenOriginal();
+                DisableShowDocInfo();
             });
         }
 
@@ -3298,7 +3335,7 @@ namespace DocCompareWPF
                         }
                         else
                         {
-                            if(docs.globalAlignment != null && docs.globalAlignment.Count != 0)
+                            if (docs.globalAlignment != null && docs.globalAlignment.Count != 0)
                                 DisplayPreviewWithAligment(1, docs.documentsToShow[0], docs.globalAlignment);
                             else
                                 DisplayPreview(1, docs.documentsToShow[0]);
@@ -3427,11 +3464,7 @@ namespace DocCompareWPF
         {
             Dispatcher.Invoke(() =>
             {
-                BrowseFileButton1.IsEnabled = false;
-                BrowseFileButton2.IsEnabled = false;
-                BrowseFileButton3.IsEnabled = false;
-                BrowseFileButton4.IsEnabled = false;
-                BrowseFileButton5.IsEnabled = false;
+                DisableBrowseFile();
 
                 DocCompareFirstDocZone.AllowDrop = false;
                 DocCompareDragDropZone1.AllowDrop = false;
@@ -3455,7 +3488,7 @@ namespace DocCompareWPF
                 Doc4StatsGrid.Visibility = Visibility.Collapsed;
                 Doc5StatsGrid.Visibility = Visibility.Collapsed;
 
-                if(docs.documents.Count >= 1)
+                if (docs.documents.Count >= 1)
                     DocCompareColorZone1.Visibility = Visibility.Hidden;
 
                 if (docs.documents.Count >= 2)
@@ -3469,7 +3502,7 @@ namespace DocCompareWPF
 
                 if (docs.documents.Count >= 5)
                     DocCompareColorZone5.Visibility = Visibility.Hidden;
-                                
+
             });
 
             try
@@ -3478,7 +3511,8 @@ namespace DocCompareWPF
                 {
                     try
                     {
-                        Dispatcher.Invoke(() => {
+                        Dispatcher.Invoke(() =>
+                        {
                             if (docs.documents.Count == 1)
                                 ProcessingDocProgressbar.Value = 1;
                             else
@@ -3487,11 +3521,12 @@ namespace DocCompareWPF
                             ProcessingDocLabel.Text = "Processing: " + Path.GetFileName(docs.documents[docProcessingCounter].filePath);
 
                             UpdateAllPreview();
-                        });                        
+                        });
                     }
                     catch
                     {
-                        Dispatcher.Invoke(() => {
+                        Dispatcher.Invoke(() =>
+                        {
                             ProgressBarDoc1.Visibility = Visibility.Hidden;
                             ProgressBarDoc2.Visibility = Visibility.Hidden;
                             ProgressBarDoc3.Visibility = Visibility.Hidden;
@@ -3504,13 +3539,9 @@ namespace DocCompareWPF
                             DocCompareColorZone4.Visibility = Visibility.Visible;
                             DocCompareColorZone5.Visibility = Visibility.Visible;
 
-                            BrowseFileButton1.IsEnabled = true;
-                            BrowseFileButton2.IsEnabled = true;
-                            BrowseFileButton3.IsEnabled = true;
-                            BrowseFileButton4.IsEnabled = true;
-                            BrowseFileButton5.IsEnabled = true;
+                            EnableBrowseFile();
 
-                        });                        
+                        });
                     }
 
                     Thread.Sleep(10);
@@ -3801,11 +3832,7 @@ namespace DocCompareWPF
         {
             Dispatcher.Invoke(() =>
             {
-                ReloadDoc1Button.IsEnabled = false;
-                ReloadDoc2Button.IsEnabled = false;
-                ReloadDoc3Button.IsEnabled = false;
-                ReloadDocCompare1Button.IsEnabled = false;
-                ReloadDocCompare2Button.IsEnabled = false;
+                DisableReload();
             });
 
             if (docs.documents[docs.docToReload].ReloadDocument(workingDir) == 0)
@@ -3817,34 +3844,14 @@ namespace DocCompareWPF
                     switch (docs.displayToReload)
                     {
                         case 0:
-                            DisplayPreview(1, docs.documentsToShow[0]);
-                            //DisplayImageLeft(docs.documentsToShow[0]);
-                            UpdateDocSelectionComboBox();
-                            UpdateFileStat(0);
-                            break;
-
                         case 1:
-                            DisplayPreview(2, docs.documentsToShow[1]);
-                            UpdateDocSelectionComboBox();
-                            UpdateFileStat(1);
-                            break;
-
                         case 2:
-                            DisplayPreview(3, docs.documentsToShow[2]);
-                            UpdateDocSelectionComboBox();
-                            UpdateFileStat(2);
-                            break;
-
                         case 3:
-                            DisplayPreview(4, docs.documentsToShow[3]);
-                            UpdateDocSelectionComboBox();
-                            UpdateFileStat(3);
-                            break;
-
                         case 4:
-                            DisplayPreview(5, docs.documentsToShow[4]);
-                            UpdateDocSelectionComboBox();
-                            UpdateFileStat(4);
+                            docCompareRunning = true;
+                            //ProgressBarDoc1.Visibility = Visibility.Visible;
+                            threadCompare = new Thread(new ThreadStart(ComparePreviewThread));
+                            threadCompare.Start();
                             break;
 
                         case 5:
@@ -3855,32 +3862,14 @@ namespace DocCompareWPF
                                     switch (i)
                                     {
                                         case 0:
-                                            DisplayPreview(1, docs.documentsToShow[0]);
-                                            //DisplayImageLeft(docs.documentsToShow[0]);
-                                            UpdateDocSelectionComboBox();
-                                            UpdateFileStat(1);
-                                            break;
-
                                         case 1:
-                                            DisplayPreview(2, docs.documentsToShow[1]);
-                                            UpdateDocSelectionComboBox();
-                                            UpdateFileStat(2);
-                                            break;
-
                                         case 2:
-                                            DisplayPreview(3, docs.documentsToShow[2]);
-                                            break;
-
                                         case 3:
-                                            DisplayPreview(4, docs.documentsToShow[3]);
-                                            UpdateDocSelectionComboBox();
-                                            UpdateFileStat(3);
-                                            break;
-
                                         case 4:
-                                            DisplayPreview(5, docs.documentsToShow[4]);
-                                            UpdateDocSelectionComboBox();
-                                            UpdateFileStat(4);
+                                            docCompareRunning = true;
+                                            //ProgressBarDoc1.Visibility = Visibility.Visible;
+                                            threadCompare = new Thread(new ThreadStart(ComparePreviewThread));
+                                            threadCompare.Start();
                                             break;
                                     }
                                 }
@@ -3894,8 +3883,8 @@ namespace DocCompareWPF
                             DocCompareSideListViewRight.ScrollIntoView(DocCompareSideListViewRight.Items[0]);
                             SetVisiblePanel(SidePanels.DOCCOMPARE);
                             ProgressBarDocCompare.Visibility = Visibility.Visible;
-                            threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                            threadCompare.Start();
+                            threadCompare2 = new Thread(new ThreadStart(CompareDocsThread));
+                            threadCompare2.Start();
                             break;
 
                         case 6:
@@ -3906,34 +3895,14 @@ namespace DocCompareWPF
                                     switch (i)
                                     {
                                         case 0:
-                                            DisplayPreview(1, docs.documentsToShow[0]);
-                                            //DisplayImageLeft(docs.documentsToShow[0]);
-                                            UpdateDocSelectionComboBox();
-                                            UpdateFileStat(0);
-                                            break;
-
                                         case 1:
-                                            DisplayPreview(2, docs.documentsToShow[1]);
-                                            UpdateDocSelectionComboBox();
-                                            UpdateFileStat(1);
-                                            break;
-
                                         case 2:
-                                            DisplayPreview(3, docs.documentsToShow[2]);
-                                            UpdateDocSelectionComboBox();
-                                            UpdateFileStat(2);
-                                            break;
-
                                         case 3:
-                                            DisplayPreview(4, docs.documentsToShow[3]);
-                                            UpdateDocSelectionComboBox();
-                                            UpdateFileStat(3);
-                                            break;
-
                                         case 4:
-                                            DisplayPreview(5, docs.documentsToShow[4]);
-                                            UpdateDocSelectionComboBox();
-                                            UpdateFileStat(4);
+                                            docCompareRunning = true;
+                                            //ProgressBarDoc1.Visibility = Visibility.Visible;
+                                            threadCompare = new Thread(new ThreadStart(ComparePreviewThread));
+                                            threadCompare.Start();
                                             break;
                                     }
                                 }
@@ -3947,16 +3916,19 @@ namespace DocCompareWPF
                             DocCompareSideListViewRight.ScrollIntoView(DocCompareSideListViewRight.Items[0]);
                             SetVisiblePanel(SidePanels.DOCCOMPARE);
                             ProgressBarDocCompare.Visibility = Visibility.Visible;
-                            threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                            threadCompare.Start();
+                            threadCompare2 = new Thread(new ThreadStart(CompareDocsThread));
+                            threadCompare2.Start();
                             break;
                     }
 
-                    ReloadDoc1Button.IsEnabled = true;
-                    ReloadDoc2Button.IsEnabled = true;
-                    ReloadDoc3Button.IsEnabled = true;
-                    ReloadDocCompare1Button.IsEnabled = true;
-                    ReloadDocCompare2Button.IsEnabled = true;
+                    if (lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.TRIAL &&
+                    lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.FREE)
+                    {
+                        ReloadDoc1Button.IsEnabled = false;
+                        ReloadDoc2Button.IsEnabled = false;
+                    }
+
+                    EnableReload();
                 });
             }
             else
@@ -4684,16 +4656,7 @@ namespace DocCompareWPF
         private void ShowMaskButton_Click(object sender, RoutedEventArgs e)
         {
             showMask = true;
-            /*
-            DisplayComparisonResult();
-            Border border = (Border)VisualTreeHelper.GetChild(DocCompareMainListView, 0);
-            ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
 
-            double currOffset = scrollViewer.VerticalOffset;
-            scrollViewer.ScrollToVerticalOffset(0);
-            scrollViewer.ScrollToVerticalOffset(currOffset);
-            //HighlightSideGrid();
-            */
             foreach (CompareMainItem item in DocCompareMainListView.Items)
             {
                 item.ShowMask = Visibility.Visible;
@@ -4712,7 +4675,16 @@ namespace DocCompareWPF
         private void ShowMaxDocCountWarningBox()
         {
             CustomMessageBox msgBox = new CustomMessageBox();
-            msgBox.Setup("Maximum documents loaded", "You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded.", "Okay");
+
+            if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL)
+            {
+                msgBox.Setup("Maximum documents loaded", "You have selected more than " + settings.maxDocCount.ToString() + " documents. Please consider subscribing the pro version on https://hopie.tech to load up to 5 documents.", "Okay");
+            }
+            else
+            {
+                msgBox.Setup("Maximum documents loaded", "You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded.", "Okay");
+            }
             msgBox.ShowDialog();
         }
 
@@ -5223,16 +5195,12 @@ namespace DocCompareWPF
                     docs.documentsToCompare[1] = docs.documentsToShow[1];
                 }
 
-                //ReleaseDocPreview();
                 UpdateDocCompareComboBox();
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
                 docs.forceAlignmentIndices = new List<List<int>>();
                 ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
-                //DocCompareMainListView.ScrollIntoView(DocCompareMainListView.Items[0]);
-                //DocCompareSideListViewLeft.ScrollIntoView(DocCompareSideListViewLeft.Items[0]);
-                //DocCompareSideListViewRight.ScrollIntoView(DocCompareSideListViewRight.Items[0]);
                 ProgressBarDocCompare.Visibility = Visibility.Visible;
                 threadCompare = new Thread(new ThreadStart(CompareDocsThread));
                 threadCompare.Start();
@@ -5597,7 +5565,8 @@ namespace DocCompareWPF
             try
             {
                 if (lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.TRIAL &&
-                    lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.FREE)
+                    lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.FREE &&
+                    lic.GetLicenseStatus() != LicenseManagement.LicenseStatus.INACTIVE)
                 {
                     Grid item = sender as Grid;
                     Border child = item.Children[0] as Border;
@@ -5659,7 +5628,7 @@ namespace DocCompareWPF
                     Grid grid = item.Children[1] as Grid;
                     grid.Visibility = hiddenPPTVisi;
 
-                    
+
                 }
                 else
                 {
@@ -5677,24 +5646,37 @@ namespace DocCompareWPF
         {
             try
             {
-                Grid parentGrid = (sender as Button).Parent as Grid;
-                foreach (object obj in parentGrid.Children)
+                if (lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.TRIAL &&
+                    lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.FREE &&
+                    lic.GetLicenseStatus() != LicenseManagement.LicenseStatus.INACTIVE)
                 {
-                    if (obj is Button && (obj as Button).Tag != null)
+
+                    Grid parentGrid = (sender as Button).Parent as Grid;
+                    foreach (object obj in parentGrid.Children)
                     {
-                        if ((obj as Button).Tag.ToString().Contains("ShowPPTNoteButton"))
+                        if (obj is Button && (obj as Button).Tag != null)
                         {
-                            (obj as Button).Visibility = Visibility.Hidden;
+                            if ((obj as Button).Tag.ToString().Contains("ShowPPTNoteButton"))
+                            {
+                                (obj as Button).Visibility = Visibility.Hidden;
+                            }
+                        }
+
+                        if (obj is Grid && (obj as Grid).Tag != null)
+                        {
+                            if ((obj as Grid).Tag.ToString().Contains("PPTSpeakerNoteGrid"))
+                            {
+                                (obj as Grid).Visibility = Visibility.Visible;
+                            }
                         }
                     }
 
-                    if (obj is Grid && (obj as Grid).Tag != null)
-                    {
-                        if ((obj as Grid).Tag.ToString().Contains("PPTSpeakerNoteGrid"))
-                        {
-                            (obj as Grid).Visibility = Visibility.Visible;
-                        }
-                    }
+                    (sender as Button).ToolTip = "Click to show speaker notes";
+
+                }
+                else
+                {
+                    (sender as Button).ToolTip = "Viewing speaker notes is onyla available in the pro version.";
                 }
             }
             catch
@@ -5803,48 +5785,59 @@ namespace DocCompareWPF
         {
             try
             {
-                bool isChanged = false;
-                string senderName = (sender as Button).Tag.ToString();
-                string[] splitedName;
-                bool leftRight = false;
-
-                if (senderName.Contains("Left"))
-                    splitedName = senderName.Split("Left");
-                else
+                if (lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.TRIAL &&
+                    lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.FREE &&
+                    lic.GetLicenseStatus() != LicenseManagement.LicenseStatus.INACTIVE)
                 {
+                    bool isChanged = false;
+                    string senderName = (sender as Button).Tag.ToString();
+                    string[] splitedName;
+                    bool leftRight = false;
 
-                    splitedName = senderName.Split("Right");
-                    try
-                    {
-                        int i = int.Parse(splitedName[^1]);
-                    }
-                    catch
-                    {
-                        splitedName = senderName.Split("RightChanged");
-                        isChanged = true;
-                    }
-
-                    leftRight = true;
-                }
-
-                if (splitedName != null)
-                {
-                    CompareMainItem item = (CompareMainItem)DocCompareMainListView.Items[int.Parse(splitedName[^1])];
-                    if (leftRight == false)
-                    {
-                        item.PPTNoteGridLeftVisi = Visibility.Visible;
-                        item.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
-                    }
+                    if (senderName.Contains("Left"))
+                        splitedName = senderName.Split("Left");
                     else
                     {
-                        if (item.PathToImgLeft != null)
-                            item.PPTNoteGridLeftVisi = Visibility.Visible;
-                        if (isChanged == false)
-                            item.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
-                        else
-                            item.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
-                        item.PPTNoteGridRightVisi = Visibility.Visible;
+
+                        splitedName = senderName.Split("Right");
+                        try
+                        {
+                            int i = int.Parse(splitedName[^1]);
+                        }
+                        catch
+                        {
+                            splitedName = senderName.Split("RightChanged");
+                            isChanged = true;
+                        }
+
+                        leftRight = true;
                     }
+
+                    if (splitedName != null)
+                    {
+                        CompareMainItem item = (CompareMainItem)DocCompareMainListView.Items[int.Parse(splitedName[^1])];
+                        if (leftRight == false)
+                        {
+                            item.PPTNoteGridLeftVisi = Visibility.Visible;
+                            item.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
+                        }
+                        else
+                        {
+                            if (item.PathToImgLeft != null)
+                                item.PPTNoteGridLeftVisi = Visibility.Visible;
+                            if (isChanged == false)
+                                item.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
+                            else
+                                item.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
+                            item.PPTNoteGridRightVisi = Visibility.Visible;
+                        }
+                    }
+
+                    (sender as Button).ToolTip = "Click to show speaker notes.";
+                }
+                else
+                {
+                    (sender as Button).ToolTip = "Comparing speaker notes is only available in pro version";
                 }
             }
             catch
@@ -6126,25 +6119,6 @@ namespace DocCompareWPF
                 }
             }
         }
-        /*
-        private void Doc4NameLabelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                string fileName = Doc4NameLabelComboBox.SelectedItem.ToString();
-                docs.documentsToShow[3] = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
-                DisplayPreview(4, docs.documentsToShow[3]);
-                UpdateDocSelectionComboBox();
-                UpdateFileStat(3);
-            }
-            catch
-            {
-                Doc4NameLabelComboBox.SelectedIndex = 0;
-                UpdateDocSelectionComboBox();
-                UpdateFileStat(3);
-            }
-        }
-        */
 
         private void OpenDoc4OriginalButton_Click(object sender, RoutedEventArgs e)
         {
@@ -6370,25 +6344,6 @@ namespace DocCompareWPF
                 }
             }
         }
-        /*
-        private void Doc5NameLabelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {
-                string fileName = Doc4NameLabelComboBox.SelectedItem.ToString();
-                docs.documentsToShow[4] = docs.documents.FindIndex(x => Path.GetFileName(x.filePath) == fileName);
-                DisplayPreview(5, docs.documentsToShow[4]);
-                UpdateDocSelectionComboBox();
-                UpdateFileStat(4);
-            }
-            catch
-            {
-                Doc4NameLabelComboBox.SelectedIndex = 0;
-                UpdateDocSelectionComboBox();
-                UpdateFileStat(4);
-            }
-        }
-        */
         private void OpenDoc5OriginalButton_Click(object sender, RoutedEventArgs e)
         {
             Process fileopener = new Process();
@@ -6823,6 +6778,192 @@ namespace DocCompareWPF
             WindowRestoreButton.Visibility = Visibility.Hidden;
             WindowState = WindowState.Normal;
             outerBorder.Margin = new Thickness(0);
+        }
+
+        private void EnableBrowseFile()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                BrowseFileButton1.IsEnabled = true;
+                BrowseFileButton2.IsEnabled = true;
+
+                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                    lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                   lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                {
+                    BrowseFileButton3.IsEnabled = false;
+                    BrowseFileButton4.IsEnabled = false;
+                    BrowseFileButton5.IsEnabled = false;
+                }
+                else
+                {
+                    BrowseFileButton3.IsEnabled = true;
+                    BrowseFileButton4.IsEnabled = true;
+                    BrowseFileButton5.IsEnabled = true;
+                }
+            });
+        }
+
+        private void DisableBrowseFile()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                BrowseFileButton1.IsEnabled = false;
+                BrowseFileButton2.IsEnabled = false;
+                BrowseFileButton3.IsEnabled = false;
+                BrowseFileButton4.IsEnabled = false;
+                BrowseFileButton5.IsEnabled = false;
+            });
+        }
+
+
+        private void EnableReload()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                    lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                   lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                {
+                    ReloadDoc1Button.IsEnabled = false;
+                    ReloadDoc2Button.IsEnabled = false;
+                    ReloadDocCompare1Button.IsEnabled = false;
+                    ReloadDocCompare2Button.IsEnabled = false;
+                    ReloadDoc1Button.ToolTip = "Reloading document is available only in the pro version";
+                    ReloadDoc2Button.ToolTip = "Reloading document is available only in the pro version";
+                    ReloadDocCompare1Button.ToolTip = "Reloading document is available only in the pro version";
+                    ReloadDocCompare2Button.ToolTip = "Reloading document is available only in the pro version";
+                }
+                else
+                {
+                    ReloadDoc1Button.IsEnabled = true;
+                    ReloadDoc2Button.IsEnabled = true;
+                    ReloadDocCompare1Button.IsEnabled = true;
+                    ReloadDocCompare2Button.IsEnabled = true;
+                    ReloadDoc1Button.ToolTip = "Reload document";
+                    ReloadDoc2Button.ToolTip = "Reload document.";
+                    ReloadDocCompare1Button.ToolTip = "Reload document.";
+                    ReloadDocCompare2Button.ToolTip = "Reload document";
+                }
+
+                ReloadDoc3Button.IsEnabled = true;
+                ReloadDoc4Button.IsEnabled = true;
+                ReloadDoc5Button.IsEnabled = true;
+            });
+
+        }
+
+        private void DisableReload()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                ReloadDoc1Button.IsEnabled = false;
+                ReloadDoc2Button.IsEnabled = false;
+                ReloadDocCompare1Button.IsEnabled = false;
+                ReloadDocCompare2Button.IsEnabled = false;
+
+                ReloadDoc3Button.IsEnabled = false;
+                ReloadDoc4Button.IsEnabled = false;
+                ReloadDoc5Button.IsEnabled = false;
+            });
+        }
+
+        private void EnableOpenOriginal()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                   lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                {
+                    OpenDoc1OriginalButton.IsEnabled = false;
+                    OpenDoc2OriginalButton.IsEnabled = false;
+                    OpenDoc1OriginalButton1.IsEnabled = false;
+                    OpenDoc2OriginalButton2.IsEnabled = false;
+                    OpenDoc1OriginalButton.ToolTip = "Opening document in external editor is available only in the pro version";
+                    OpenDoc2OriginalButton.ToolTip = "Opening document in external editor is available only in the pro version";
+                    OpenDoc1OriginalButton1.ToolTip = "Opening document in external editor is available only in the pro version";
+                    OpenDoc2OriginalButton2.ToolTip = "Opening document in external editor is available only in the pro version";
+                }
+                else
+                {
+                    OpenDoc1OriginalButton.IsEnabled = true;
+                    OpenDoc2OriginalButton.IsEnabled = true;
+                    OpenDoc1OriginalButton1.IsEnabled = true;
+                    OpenDoc2OriginalButton2.IsEnabled = true;
+                    OpenDoc1OriginalButton.ToolTip = "Open original";
+                    OpenDoc2OriginalButton.ToolTip = "Open original";
+                    OpenDoc1OriginalButton1.ToolTip = "Open original";
+                    OpenDoc2OriginalButton2.ToolTip = "Open original";
+                }
+
+                OpenDoc3OriginalButton3.IsEnabled = true;
+                OpenDoc4OriginalButton4.IsEnabled = true;
+                OpenDoc5OriginalButton5.IsEnabled = true;
+            });
+        }
+
+        private void DisableOpenOriginal()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                OpenDoc1OriginalButton.IsEnabled = false;
+                OpenDoc2OriginalButton.IsEnabled = false;
+                OpenDoc1OriginalButton1.IsEnabled = false;
+                OpenDoc2OriginalButton2.IsEnabled = false;
+
+                OpenDoc3OriginalButton3.IsEnabled = false;
+                OpenDoc4OriginalButton4.IsEnabled = false;
+                OpenDoc5OriginalButton5.IsEnabled = false;
+            });
+        }
+
+        private void EnableCloseDocument()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                CloseDoc1Button.IsEnabled = true;
+                CloseDoc2Button.IsEnabled = true;
+                CloseDoc3Button.IsEnabled = true;
+                CloseDoc4Button.IsEnabled = true;
+                CloseDoc5Button.IsEnabled = true;
+            });
+        }
+        private void DisableCloseDocument()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                CloseDoc1Button.IsEnabled = false;
+                CloseDoc2Button.IsEnabled = false;
+                CloseDoc3Button.IsEnabled = false;
+                CloseDoc4Button.IsEnabled = false;
+                CloseDoc5Button.IsEnabled = false;
+            });
+        }
+
+        private void EnableShowDocInfo()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                ShowDoc1FileInfoButton.IsEnabled = true;
+                ShowDoc2FileInfoButton.IsEnabled = true;
+                ShowDoc3FileInfoButton.IsEnabled = true;
+                ShowDoc4FileInfoButton.IsEnabled = true;
+                ShowDoc5FileInfoButton.IsEnabled = true;
+                ShowDocCompareFileInfoButton.IsEnabled = true;
+            });
+        }
+        private void DisableShowDocInfo()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                ShowDoc1FileInfoButton.IsEnabled = false;
+                ShowDoc2FileInfoButton.IsEnabled = false;
+                ShowDoc3FileInfoButton.IsEnabled = false;
+                ShowDoc4FileInfoButton.IsEnabled = false;
+                ShowDoc5FileInfoButton.IsEnabled = false;
+                ShowDocCompareFileInfoButton.IsEnabled = false;
+            });
         }
     }
 }

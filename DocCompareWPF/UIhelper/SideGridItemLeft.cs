@@ -17,6 +17,9 @@ namespace DocCompareWPF.UIhelper
         private Visibility _forceAlignButtonInvalidVisi;
 
         private Visibility _showHidden;
+        public bool ForceAlignEnable { get; set; }
+        public string LinkPagesToolTip { get; set; }
+
 
         public Visibility ShowHidden
         {

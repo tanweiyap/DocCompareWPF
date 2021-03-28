@@ -1893,6 +1893,7 @@ namespace DocCompareWPF
                     LicenseStatusTypeLabel.Visibility = Visibility.Visible;
                     LicenseStatusLabel.Visibility = Visibility.Visible;
                     WindowGetProButton.Visibility = Visibility.Hidden;
+                    (WindowGetProButton.Parent as Border).Visibility = Visibility.Hidden;
                     settings.maxDocCount = 5;
                     DocCompareDragDropZone3.IsEnabled = true;
                     BrowseFileButton3.IsEnabled = true;
@@ -1920,6 +1921,7 @@ namespace DocCompareWPF
                     LicenseStatusTypeLabel.Visibility = Visibility.Collapsed;
                     LicenseStatusLabel.Visibility = Visibility.Collapsed;
                     WindowGetProButton.Visibility = Visibility.Visible;
+                    (WindowGetProButton.Parent as Border).Visibility = Visibility.Visible;
                     settings.maxDocCount = 2; 
                     DocCompareDragDropZone3.IsEnabled = false;
                     BrowseFileButton3.IsEnabled = false;
@@ -1943,6 +1945,7 @@ namespace DocCompareWPF
                     LicenseStatusTypeLabel.Visibility = Visibility.Collapsed;
                     LicenseStatusLabel.Visibility = Visibility.Collapsed;
                     WindowGetProButton.Visibility = Visibility.Hidden;
+                    (WindowGetProButton.Parent as Border).Visibility = Visibility.Hidden;
                     settings.maxDocCount = 5;
                     DocCompareDragDropZone3.IsEnabled = true;
                     BrowseFileButton3.IsEnabled = true;
@@ -1962,6 +1965,7 @@ namespace DocCompareWPF
                     LicenseStatusTypeLabel.Visibility = Visibility.Collapsed;
                     LicenseStatusLabel.Visibility = Visibility.Collapsed;
                     WindowGetProButton.Visibility = Visibility.Visible;
+                    (WindowGetProButton.Parent as Border).Visibility = Visibility.Visible;
                     settings.maxDocCount = 2;
                     DocCompareDragDropZone3.IsEnabled = false;
                     BrowseFileButton3.IsEnabled = false;
@@ -1995,6 +1999,8 @@ namespace DocCompareWPF
                     BrowseFileButton3.IsEnabled = false;
                     DragDrop3ShowProVersion.Visibility = Visibility.Visible;
                     DocCompareColorZone3.Visibility = Visibility.Hidden;
+                    WindowGetProButton.Visibility = Visibility.Visible;
+                    (WindowGetProButton.Parent as Border).Visibility = Visibility.Hidden;
                     EnableOpenOriginal();
                     EnableReload();
                     break;
@@ -5479,10 +5485,19 @@ namespace DocCompareWPF
             }
 
             HideDragDropZone2();
+            HideDragDropZone3();
+            HideDragDropZone4();
+            HideDragDropZone5();
             Doc1Grid.Visibility = Visibility.Hidden;
             Doc2Grid.Visibility = Visibility.Hidden;
+            Doc3Grid.Visibility = Visibility.Hidden;
+            Doc4Grid.Visibility = Visibility.Hidden;
+            Doc5Grid.Visibility = Visibility.Hidden;
             //Doc1PageNumberLabel.Content = "";
-            //Doc2PageNumberLabel.Content = "";
+            Doc2NameLabel.Content = "";
+            Doc3NameLabel.Content = "";
+            Doc4NameLabel.Content = "";
+            Doc5NameLabel.Content = "";
 
             DocPreviewStatGrid.Visibility = Visibility.Collapsed;
 

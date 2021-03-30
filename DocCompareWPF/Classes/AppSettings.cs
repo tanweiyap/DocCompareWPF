@@ -40,5 +40,8 @@ namespace DocCompareWPF.Classes
 
         [ProtoMember(12)]
         public string skipVersionString = "";
+
+        [ProtoMember(13)]
+        public int FreeStartCount = 0;
     }
 }

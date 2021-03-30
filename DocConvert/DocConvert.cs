@@ -152,6 +152,9 @@ namespace DocConvert
 
                         object fileAttribute = pptPresentation.BuiltInDocumentProperties;
 
+                        if (pptPresentation.Slides.Count == 0)
+                            ret = -3;
+
                         pptPresentation.Close();
                         if (pptApplication.Visible != MsoTriState.msoTrue)
                             pptApplication.Quit();

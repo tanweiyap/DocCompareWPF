@@ -27,8 +27,8 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.1.3";
-        private readonly string localetype = "DE";
+        private readonly string versionString = "1.1.4";
+        private readonly string localetype = "EN";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -72,6 +72,8 @@ namespace DocCompareWPF
         private bool linkscroll = true;
 
         private WalkthroughSteps walkthroughStep = 0;
+
+        public double HiddenPPTOpacity = 0.7;
 
         // mouse over hidden ppt slides effect buffer
         Effect hiddenPPTEffect;
@@ -154,7 +156,7 @@ namespace DocCompareWPF
                 SaveLicense();
 
                 CustomMessageBox msgBox = new CustomMessageBox();
-                msgBox.Setup("2|Compare free", "You are using a free version of 2|Compare. If you like the functions, please consider making a subscription on https://hopie.tech", "Okay");
+                msgBox.Setup("2|Compare free", "You are using the free version of 2|Compare. If you like the functions, please consider making a subscription on https://hopie.tech", "Okay");
                 msgBox.ShowDialog();
 
                 threadCheckTrial = new Thread(new ThreadStart(CheckTrial));
@@ -192,6 +194,21 @@ namespace DocCompareWPF
             // Check update if needed
             threadCheckUpdate = new Thread(new ThreadStart(CheckUpdate));
             threadCheckUpdate.Start();
+
+            settings.FreeStartCount++;
+            SaveSettings();
+
+            if(settings.FreeStartCount == 5)
+            {
+                CustomMessageBox msgBox = new CustomMessageBox();
+                msgBox.Setup("2|Compare free", "You are using the free version of 2|Compare. If you like the functions, please consider making a subscription on https://hopie.tech", "Okay");
+                msgBox.ShowDialog();
+                settings.FreeStartCount = 0;
+                SaveSettings();
+            }
+
+            EnableOpenOriginal();
+
         }
 
         private enum GridSelection
@@ -1236,7 +1253,25 @@ namespace DocCompareWPF
                         }
                         else
                         {
-                            thisItem.AniDiffButtonTooltip = "The pages are identical";
+                            if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                            lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                            lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                            {
+                                thisItem.AniDiffButtonTooltip = "Comparison with hidden pages is only available in the pro version";
+                            }
+                            else
+                            {
+                                thisItem.AniDiffButtonTooltip = "The pages are identical";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                            lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                            lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                        {
+                            thisItem.AniDiffButtonTooltip = "Animating difference is limited to only one page in the free version";
                         }
                     }
 
@@ -1312,6 +1347,24 @@ namespace DocCompareWPF
                     thisItem.BlurRadiusRight = 0;
                 }
 
+                
+                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                            lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                            lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                {
+                    if(didChange == true)
+                        thisItem.ShowSpeakerNotesTooltip = "The speaker notes was edited. Get the pro version to view the difference.";
+                    else
+                        thisItem.ShowSpeakerNotesTooltip = "Viewing of speaker notes is only available in the pro version.";
+                }
+                else
+                {
+                    if(didChange == true)
+                        thisItem.ShowSpeakerNotesTooltip = "The speaker notes was edited. Click to view the difference.";
+                    else
+                        thisItem.ShowSpeakerNotesTooltip = "Click to show speaker notes";
+                }
+                
                 if (showSpeakerNotesLeft == false)
                 {
                     if (showSpeakerNotesRight == true)
@@ -1320,7 +1373,6 @@ namespace DocCompareWPF
                         {
                             thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Visible;
                             thisItem.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
-
                         }
                         else
                         {
@@ -1376,21 +1428,22 @@ namespace DocCompareWPF
                 }
 
                 // license
+                
                 if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
                     lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
                     lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
                 {
                     thisItem.ShowSpeakerNoteEnable = false;
-                    thisItem.ShowSpeakerNotesTooltip = "Viewing of speaker notes is only available in the pro version";
+                    //thisItem.ShowSpeakerNotesTooltip = "Viewing of speaker notes is only available in the pro version";
                     thisItem.ShowHiddenEnable = Visibility.Visible;
                 }
                 else
                 {
                     thisItem.ShowSpeakerNoteEnable = true;
-                    thisItem.ShowSpeakerNotesTooltip = "Click to show speaker notes";
+                    //thisItem.ShowSpeakerNotesTooltip = "Click to show speaker notes";
                     thisItem.ShowHiddenEnable = Visibility.Hidden;
                 }
-
+                
                 mainItemList.Add(thisItem);
             }
 
@@ -1488,6 +1541,8 @@ namespace DocCompareWPF
                         {
                             leftItem.BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
                             rightItem.BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
+
+                            
                             rightItem.DiffVisi = Visibility.Visible;
                             rightItem.NoDiffVisi = Visibility.Hidden;
                         }
@@ -1526,6 +1581,8 @@ namespace DocCompareWPF
                     rightItem.DiffVisi = Visibility.Hidden;
                 }
 
+                
+
                 if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
                     lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
                     lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
@@ -1534,6 +1591,12 @@ namespace DocCompareWPF
                     rightItem.LinkPagesToolTip = "Manual alignment is only available in the pro version";
                     leftItem.ForceAlignEnable = false;
                     rightItem.ForceAlignEnable = false;
+
+                    if(leftItem.ShowHidden == Visibility.Visible || rightItem.ShowHidden == Visibility.Visible)
+                    {
+                        rightItem.NoDiffVisi = Visibility.Hidden;
+                        rightItem.DiffVisi = Visibility.Hidden;
+                    }
                 }
                 else
                 {
@@ -1899,6 +1962,7 @@ namespace DocCompareWPF
                     BrowseFileButton3.IsEnabled = true;
                     DragDrop3ShowProVersion.Visibility = Visibility.Hidden;
                     DocCompareColorZone3.Visibility = Visibility.Visible;
+                    HiddenPPTOpacity = 0.7;
                     EnableOpenOriginal();
                     EnableReload();
                     SaveSettings();
@@ -1922,11 +1986,12 @@ namespace DocCompareWPF
                     LicenseStatusLabel.Visibility = Visibility.Collapsed;
                     WindowGetProButton.Visibility = Visibility.Visible;
                     (WindowGetProButton.Parent as Border).Visibility = Visibility.Visible;
-                    settings.maxDocCount = 2; 
+                    settings.maxDocCount = 2;
                     DocCompareDragDropZone3.IsEnabled = false;
                     BrowseFileButton3.IsEnabled = false;
                     DragDrop3ShowProVersion.Visibility = Visibility.Visible;
                     DocCompareColorZone3.Visibility = Visibility.Hidden;
+                    HiddenPPTOpacity = 1.0;
                     EnableOpenOriginal();
                     EnableReload();
                     SaveSettings();
@@ -1951,6 +2016,7 @@ namespace DocCompareWPF
                     BrowseFileButton3.IsEnabled = true;
                     DragDrop3ShowProVersion.Visibility = Visibility.Hidden;
                     DocCompareColorZone3.Visibility = Visibility.Visible;
+                    HiddenPPTOpacity = 0.7;
                     SaveSettings();
                     break;
 
@@ -1971,6 +2037,7 @@ namespace DocCompareWPF
                     BrowseFileButton3.IsEnabled = false;
                     DragDrop3ShowProVersion.Visibility = Visibility.Visible;
                     DocCompareColorZone3.Visibility = Visibility.Hidden;
+                    HiddenPPTOpacity = 1.0;
                     SaveSettings();
                     break;
             }
@@ -2321,49 +2388,55 @@ namespace DocCompareWPF
 
         private void DocCompareDragDropZone3_Drop(object sender, DragEventArgs e)
         {
-            if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                            lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                            lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
             {
-                var data = e.Data.GetData(DataFormats.FileDrop) as string[];
-                string ext;
 
-                foreach (string file in data)
+                if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
-                    ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+                    var data = e.Data.GetData(DataFormats.FileDrop) as string[];
+                    string ext;
+
+                    foreach (string file in data)
                     {
-                        ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
-                    }
-                    else
-                    {
-                        if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                        ext = Path.GetExtension(file);
+                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
+                            && ext != ".bmp" && ext != ".BMP")
                         {
-                            docs.AddDocument(file);
-                        }
-                        else if (docs.documents.Count >= settings.maxDocCount)
-                        {
-                            ShowMaxDocCountWarningBox();
-                            break;
+                            ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                         }
                         else
                         {
-                            ShowExistingDocCountWarningBox(file);
+                            if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                            {
+                                docs.AddDocument(file);
+                            }
+                            else if (docs.documents.Count >= settings.maxDocCount)
+                            {
+                                ShowMaxDocCountWarningBox();
+                                break;
+                            }
+                            else
+                            {
+                                ShowExistingDocCountWarningBox(file);
+                            }
                         }
                     }
-                }
 
-                if (docs.documents.Count != 0)
-                {
-                    LoadFilesCommonPart();
+                    if (docs.documents.Count != 0)
+                    {
+                        LoadFilesCommonPart();
 
-                    //docs.documentsToShow[2] = docs.documents.Count - 1;
+                        //docs.documentsToShow[2] = docs.documents.Count - 1;
 
-                    threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
-                    threadLoadDocs.Start();
+                        threadLoadDocs = new Thread(new ThreadStart(ProcessDocThread));
+                        threadLoadDocs.Start();
 
-                    threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
-                    threadLoadDocsProgress.Start();
+                        threadLoadDocsProgress = new Thread(new ThreadStart(ProcessDocProgressThread));
+                        threadLoadDocsProgress.Start();
+                    }
                 }
             }
         }
@@ -3256,7 +3329,7 @@ namespace DocCompareWPF
                    lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
                    lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
                 {
-                    DocCompareDragDropZone3.IsEnabled = false;
+                    //DocCompareDragDropZone3.IsEnabled = false;
                     BrowseFileButton3.IsEnabled = false;
                     DragDrop3ShowProVersion.Visibility = Visibility.Visible;
                     DocCompareColorZone3.Visibility = Visibility.Hidden;
@@ -3431,7 +3504,7 @@ namespace DocCompareWPF
 
                         ShowDoc1FileInfoButton.IsEnabled = true;
                         ShowDoc2FileInfoButton.IsEnabled = true;
-                        OpenDoc1OriginalButton1.IsEnabled = true;
+                        //OpenDoc1OriginalButton1.IsEnabled = true;
                         DocPreviewStatGrid.Visibility = Visibility.Visible;
                         Doc1StatsGrid.Visibility = Visibility.Visible;
                         UpdateFileStat(0);
@@ -3450,7 +3523,7 @@ namespace DocCompareWPF
                         else
                             DisplayPreview(2, docs.documentsToShow[1]);
                         //DisplayPreview(2, docs.documentsToShow[1]);
-                        OpenDoc2OriginalButton2.IsEnabled = true;
+                        //OpenDoc2OriginalButton2.IsEnabled = true;
                         ShowDoc2FileInfoButton.IsEnabled = true;
                         Doc2StatsGrid.Visibility = Visibility.Visible;
                         Doc2NameLabel.Content = Path.GetFileName(docs.documents[docs.documentsToShow[1]].filePath);
@@ -3474,7 +3547,7 @@ namespace DocCompareWPF
                             else
                                 DisplayPreview(3, docs.documentsToShow[2]);
                             //DisplayPreview(3, docs.documentsToShow[2]);
-                            OpenDoc3OriginalButton3.IsEnabled = true;
+                            //OpenDoc3OriginalButton3.IsEnabled = true;
                             ShowDoc3FileInfoButton.IsEnabled = true;
                             Doc3StatsGrid.Visibility = Visibility.Visible;
                             Doc3NameLabel.Content = Path.GetFileName(docs.documents[docs.documentsToShow[2]].filePath);
@@ -3498,7 +3571,7 @@ namespace DocCompareWPF
                             else
                                 DisplayPreview(4, docs.documentsToShow[3]);
                             //DisplayPreview(4, docs.documentsToShow[3]);
-                            OpenDoc4OriginalButton4.IsEnabled = true;
+                            //OpenDoc4OriginalButton4.IsEnabled = true;
                             ShowDoc4FileInfoButton.IsEnabled = true;
                             Doc4StatsGrid.Visibility = Visibility.Visible;
                             Doc4NameLabel.Content = Path.GetFileName(docs.documents[docs.documentsToShow[3]].filePath);
@@ -3522,7 +3595,7 @@ namespace DocCompareWPF
                             else
                                 DisplayPreview(5, docs.documentsToShow[4]);
                             //DisplayPreview(5, docs.documentsToShow[4]);
-                            OpenDoc5OriginalButton5.IsEnabled = true;
+                            //OpenDoc5OriginalButton5.IsEnabled = true;
                             ShowDoc5FileInfoButton.IsEnabled = true;
                             Doc5StatsGrid.Visibility = Visibility.Visible;
                             Doc5NameLabel.Content = Path.GetFileName(docs.documents[docs.documentsToShow[4]].filePath);
@@ -3794,6 +3867,15 @@ namespace DocCompareWPF
                             {
                                 CustomMessageBox msgBox = new CustomMessageBox();
                                 msgBox.Setup("Microsoft PowerPoint not found", "There was an error converting " + Path.GetFileName(docs.documents[i].filePath) + ". No Microsoft PowerPoint installation found.", "Okay");
+                                msgBox.ShowDialog();
+                            });
+                        }
+                        else if (ret == -3)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                CustomMessageBox msgBox = new CustomMessageBox();
+                                msgBox.Setup("Empty PowerPoint file", "The selected file " + Path.GetFileName(docs.documents[i].filePath) + " is an empty PowerPoint file.", "Okay");
                                 msgBox.ShowDialog();
                             });
                         }

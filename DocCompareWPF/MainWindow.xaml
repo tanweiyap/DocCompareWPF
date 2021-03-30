@@ -46,7 +46,7 @@
                         </Grid.ColumnDefinitions>
                         <Label x:Name="WindowTitle" FontSize="15" VerticalAlignment="Center" Foreground="White">2|Compare</Label>
                         <Border Grid.Column="1" HorizontalAlignment="Right" Margin="20,3,20,3" VerticalAlignment="Stretch" Width="100"
-                                Background="{StaticResource RefDocumentBackGroundBrush}"
+                                Background="Yellow"
                                 CornerRadius="15">
                             <Button x:Name="WindowGetProButton" Style="{StaticResource MahApps.Styles.Button.Hamburger}" Background="Transparent" Foreground="Black"
                                     Padding="0" BorderThickness="0" Click="WindowGetProButton_Click" WindowChrome.IsHitTestVisibleInChrome="True" ToolTip="Get the pro version"
@@ -158,28 +158,38 @@
                                         <RowDefinition />
                                         <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
-                                    <Grid Grid.Row="0" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid Grid.Row="0" Background="{StaticResource RefDocumentBackGroundBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
-                                            <Label Foreground="Black" Margin="65, 0,0,0" Background="{StaticResource RefDocumentBackGroundBrush}">Reference</Label>
+                                            <Label Foreground="Black" Margin="65, 0,0,0" Background="{StaticResource RefDocumentBackGroundBrush}" FontWeight="SemiBold">Reference</Label>
                                             <!--Button x:Name="BrowseFileTopButton1" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"
                                             HorizontalAlignment="Left" Click="BrowseFileButton1_Click" Margin="10,0,0,0" ToolTip="Browse document">
                                                 <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </-->
                                             <Button x:Name="OpenDoc1OriginalButton1" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"
-                                            HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" ToolTipService.ShowOnDisabled="True">
-                                                <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                            HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
+                                                <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" />
                                             </Button>
                                             <Button x:Name="ReloadDoc1Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="ReloadDoc1Button_Click" Margin="35,0,0,0" ToolTip="Reload document" ToolTipService.ShowOnDisabled="True">
-                                                <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                            HorizontalAlignment="Left" Click="ReloadDoc1Button_Click" Margin="35,0,0,0" ToolTip="Reload document" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
+                                                <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" />
                                             </Button>
+                                            <Grid Grid.Column="1" Background="{StaticResource RefDocumentBackGroundBrush}">
+                                                <ComboBox x:Name="Doc1NameLabelComboBox" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="Black" Style="{StaticResource MahApps.Styles.ComboBox}" Background="{StaticResource RefDocumentBackGroundBrush}" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
+                                                          IsEditable="False" FontSize="14" DropDownOpened="Doc1NameLabelComboBox_DropDownOpened" DropDownClosed="Doc1NameLabelComboBox_DropDownClosed">
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
+                                                </ComboBox>
+                                            </Grid>
                                             <Button x:Name="CloseDoc1Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc1Button_Click">
-                                                <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center"  Foreground="White" />
+                                                <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center"  Foreground="black" />
                                             </Button>
                                         </Grid>
                                     </Grid>
@@ -209,11 +219,11 @@
                                                                     </Border.Effect>
                                                                 </Border>
                                                                 <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
                                                                     </Rectangle>
                                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="20">
-                                                                        Viewing of hidden slide is only available in the pro version
+                                                                        Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink> for more information.
                                                                     </TextBlock>                                                                    
                                                                 </Grid>
                                                                 <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
@@ -240,7 +250,7 @@
                                                                 </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
-                                                                        Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true">
+                                                                        Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true" ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
@@ -316,18 +326,14 @@
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
                                             <Button x:Name="OpenDoc2OriginalButton2" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" ToolTipService.ShowOnDisabled="True">
+                                            HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
                                                 <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-
+                                            <Label x:Name="Doc2NameLabel" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,30,0"></Label>
                                             <Button x:Name="ReloadDoc2Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="ReloadDoc2Button_Click" Margin="35,0,0,0" ToolTip="Reload document" ToolTipService.ShowOnDisabled="True">
+                                            HorizontalAlignment="Left" Click="ReloadDoc2Button_Click" Margin="35,0,0,0" ToolTip="Reload document" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-                                            <Border Grid.Column="1" CornerRadius="12" Visibility="Hidden" Background="{StaticResource WarningBackgroundBrush}" Margin="2" Padding="0" Width="110" HorizontalAlignment="Center">
-                                                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" x:Name="CompareDoc2Button" Padding="0" Background="Transparent" HorizontalAlignment="Center"
-                                                        Width="100" Foreground="White" Margin="0" Visibility="Visible" Click="CompareDoc2Button_Click" VerticalAlignment="Center" VerticalContentAlignment="Center">Compare Now</Button>
-                                            </Border>
                                             <Button x:Name="CloseDoc2Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc2Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
@@ -359,12 +365,12 @@
                                                                     </Border.Effect>
                                                                 </Border>
                                                                 <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
                                                                     </Rectangle>
 
                                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="20">
-                                                                        Viewing of hidden slide is only available in the pro version
+                                                                        Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink> for more information.
                                                                     </TextBlock>
                                                                 </Grid>
                                                                 <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
@@ -391,7 +397,7 @@
                                                                 </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
-                                                                        Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true">
+                                                                        Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true" ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
@@ -455,7 +461,7 @@
                                         </Grid>
                                     </Grid>
                                 </Border>
-                                <TextBlock x:Name="DragDrop3ShowProVersion" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Margin="30" TextAlignment="Center">Loading of up to 5 documents is only supported in the pro version</TextBlock>
+                                <TextBlock x:Name="DragDrop3ShowProVersion" VerticalAlignment="Center" IsHitTestVisible="True" TextWrapping="WrapWithOverflow" Margin="30" TextAlignment="Center">Loading more than 2 documents is supported in 2|Compare pro. Visit <Hyperlink IsEnabled="True" NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate" >https://hopie.tech</Hyperlink> for more information</TextBlock>
                                 <Grid x:Name="Doc3Grid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Visibility="Hidden" MouseEnter="Doc3Grid_MouseEnter" MouseLeave="Doc3Grid_MouseLeave">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="{StaticResource TopBarHeight}" />
@@ -469,17 +475,15 @@
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
                                             <Button x:Name="OpenDoc3OriginalButton3" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="OpenDoc3OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" ToolTipService.ShowOnDisabled="True">
+                                            HorizontalAlignment="Left" Click="OpenDoc3OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
                                                 <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
                                             <Button x:Name="ReloadDoc3Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="ReloadDoc3Button_Click" Margin="35,0,0,0" ToolTip="Reload document" ToolTipService.ShowOnDisabled="True">
+                                            HorizontalAlignment="Left" Click="ReloadDoc3Button_Click" Margin="35,0,0,0" ToolTip="Reload document" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-                                            <Border Grid.Column="1" CornerRadius="12" Visibility="Hidden" Background="{StaticResource WarningBackgroundBrush}" Margin="2" Padding="0" Width="110" HorizontalAlignment="Center">
-                                                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" x:Name="CompareDoc3Button" Padding="0" Background="Transparent" HorizontalAlignment="Center"
-                                                        Width="100" Foreground="White" Margin="0" Visibility="Visible" Click="CompareDoc3Button_Click" VerticalAlignment="Center" VerticalContentAlignment="Center">Compare Now</Button>
-                                            </Border><Button x:Name="CloseDoc3Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc3Button_Click">
+                                            <Label x:Name="Doc3NameLabel" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,30,0"></Label>
+                                            <Button x:Name="CloseDoc3Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc3Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
                                         </Grid>
@@ -510,11 +514,11 @@
                                                                     </Border.Effect>
                                                                 </Border>
                                                                 <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
                                                                     </Rectangle>
                                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="20">
-                                                                        Viewing of hidden slide is only available in the pro version
+                                                                       Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink> for more information.
                                                                     </TextBlock>
                                                                 </Grid>
                                                                 <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
@@ -541,7 +545,7 @@
                                                                 </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
-                                                                        Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true">
+                                                                        Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true" ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
@@ -618,18 +622,15 @@
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
                                             <Button x:Name="OpenDoc4OriginalButton4" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="OpenDoc4OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" ToolTipService.ShowOnDisabled="True">
+                                            HorizontalAlignment="Left" Click="OpenDoc4OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
                                                 <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-
+                                            <Label x:Name="Doc4NameLabel" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,30,0"></Label>
                                             <Button x:Name="ReloadDoc4Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="ReloadDoc4Button_Click" Margin="35,0,0,0" ToolTip="Reload document" ToolTipService.ShowOnDisabled="True">
+                                            HorizontalAlignment="Left" Click="ReloadDoc4Button_Click" Margin="35,0,0,0" ToolTip="Reload document" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-                                            <Border Grid.Column="1" CornerRadius="12" Visibility="Hidden" Background="{StaticResource WarningBackgroundBrush}" Margin="2" Padding="0" Width="110" HorizontalAlignment="Center">
-                                                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" x:Name="CompareDoc4Button" Padding="0" Background="Transparent" HorizontalAlignment="Center"
-                                                        Width="100" Foreground="White" Margin="0" Visibility="Visible" Click="CompareDoc4Button_Click" VerticalAlignment="Center" VerticalContentAlignment="Center">Compare Now</Button>
-                                            </Border><Button x:Name="CloseDoc4Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc4Button_Click">
+                                            <Button x:Name="CloseDoc4Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc4Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
                                         </Grid>
@@ -660,11 +661,11 @@
                                                                     </Border.Effect>
                                                                 </Border>
                                                                 <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
                                                                     </Rectangle>
                                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="20">
-                                                                        Viewing of hidden slide is only available in the pro version
+                                                                        Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink> for more information.
                                                                     </TextBlock>
                                                                 </Grid>
                                                                 <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
@@ -691,7 +692,7 @@
                                                                 </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
-                                                                        Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true">
+                                                                        Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true" ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
@@ -768,18 +769,15 @@
                                                 <ColumnDefinition Width="30" />
                                             </Grid.ColumnDefinitions>
                                             <Button x:Name="OpenDoc5OriginalButton5" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="OpenDoc5OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" ToolTipService.ShowOnDisabled="True">
+                                            HorizontalAlignment="Left" Click="OpenDoc5OriginalButton_Click" Margin="10,0,0,0" ToolTip="Open original" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
                                                 <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-
+                                            <Label x:Name="Doc5NameLabel" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,30,0"></Label>
                                             <Button x:Name="ReloadDoc5Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="ReloadDoc5Button_Click" Margin="35,0,0,0" ToolTip="Reload document" ToolTipService.ShowOnDisabled="True">
+                                            HorizontalAlignment="Left" Click="ReloadDoc5Button_Click" Margin="35,0,0,0" ToolTip="Reload document" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
-                                            <Border Grid.Column="1" CornerRadius="12" Visibility="Hidden" Background="{StaticResource WarningBackgroundBrush}" Margin="2" Padding="0" Width="110" HorizontalAlignment="Center">
-                                                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" x:Name="CompareDoc5Button" Padding="0" Background="Transparent" HorizontalAlignment="Center"
-                                                        Width="100" Foreground="White" Margin="0" Visibility="Visible" Click="CompareDoc5Button_Click" VerticalAlignment="Center" VerticalContentAlignment="Center">Compare Now</Button>
-                                            </Border><Button x:Name="CloseDoc5Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc5Button_Click">
+                                            <Button x:Name="CloseDoc5Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Grid.Column="2" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25" Click="CloseDoc5Button_Click">
                                                 <iconPacks:PackIconMaterial Kind="WindowClose" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                             </Button>
                                         </Grid>
@@ -810,11 +808,11 @@
                                                                     </Border.Effect>
                                                                 </Border>
                                                                 <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
                                                                     </Rectangle>
                                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="20">
-                                                                        Viewing of hidden slide is only available in the pro version
+                                                                        Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink> for more information.
                                                                     </TextBlock>
                                                                 </Grid>
                                                                 <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
@@ -841,7 +839,7 @@
                                                                 </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
-                                                                        Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true">
+                                                                        Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true" ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
@@ -890,21 +888,11 @@
                                 <RowDefinition Height="{StaticResource BottomBarHeight}"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <Grid Background="{StaticResource RefDocumentBackGroundBrush}">
-                                <ComboBox x:Name="Doc1NameLabelComboBox" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="Black" Style="{StaticResource MahApps.Styles.ComboBox}" Background="{StaticResource RefDocumentBackGroundBrush}" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
-                                                          IsEditable="False" FontSize="14" DropDownOpened="Doc1NameLabelComboBox_DropDownOpened" DropDownClosed="Doc1NameLabelComboBox_DropDownClosed">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis" />
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
-                                <Button x:Name="ShowDoc1FileInfoButton" Visibility="Visible" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" 
-                                        Background="Transparent" Foreground="White" Click="ShowDoc1FileInfoButton_Click" IsEnabled="False"
-                                        Margin="0,0,5,0" Cursor="Hand">
-                                    <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
-                                </Button>
-                            </Grid>
+                            <Button x:Name="ShowDoc1FileInfoButton" Visibility="Visible" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" 
+                                                        Background="Transparent" Foreground="White" Click="ShowDoc1FileInfoButton_Click" IsEnabled="False"
+                                                        Margin="0,0,5,0" Cursor="Hand">
+                                <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
+                            </Button>
                             <Grid Grid.Row="1" x:Name="Doc1StatsGrid" Visibility="Visible" Background="{StaticResource PrimaryHueDarkBrush}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
@@ -925,7 +913,10 @@
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc1StatCreatedLabel" Text="" Foreground="White" Grid.Row="5" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15"  TextWrapping="WrapWithOverflow" x:Name="Doc1StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
                             </Grid>
-                            <Label x:Name="Doc2NameLabel" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,30,0"></Label>
+                            <Border Grid.Column="1" CornerRadius="12" Visibility="Hidden" Background="{StaticResource WarningBackgroundBrush}" Margin="2" Padding="0" Width="110" HorizontalAlignment="Center">
+                                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" x:Name="CompareDoc2Button" Padding="0" Background="Transparent" HorizontalAlignment="Center"
+                                                        Width="100" Foreground="White" Margin="0" Visibility="Visible" Click="CompareDoc2Button_Click" VerticalAlignment="Center" VerticalContentAlignment="Center">Compare Now</Button>
+                            </Border>
                             <Button Grid.Column="1" x:Name="ShowDoc2FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" 
                                     Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" 
                                     Click="ShowDoc2FileInfoButton_Click" IsEnabled="True" Cursor="Hand">
@@ -951,7 +942,10 @@
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc2StatCreatedLabel" Text="" Foreground="White" Grid.Row="5" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15" TextWrapping="WrapWithOverflow" x:Name="Doc2StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
                             </Grid>
-                            <Label x:Name="Doc3NameLabel" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,30,0"></Label>
+                            <Border Grid.Column="2" CornerRadius="12" Visibility="Hidden" Background="{StaticResource WarningBackgroundBrush}" Margin="2" Padding="0" Width="110" HorizontalAlignment="Center">
+                                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" x:Name="CompareDoc3Button" Padding="0" Background="Transparent" HorizontalAlignment="Center"
+                                                        Width="100" Foreground="White" Margin="0" Visibility="Visible" Click="CompareDoc3Button_Click" VerticalAlignment="Center" VerticalContentAlignment="Center">Compare Now</Button>
+                            </Border>
                             <Button Grid.Column="2" x:Name="ShowDoc3FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" 
                                     Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" 
                                     Click="ShowDoc3FileInfoButton_Click" IsEnabled="True" Cursor="Hand">
@@ -977,7 +971,10 @@
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc3StatCreatedLabel" Text="" Foreground="White" Grid.Row="5" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15" TextWrapping="WrapWithOverflow" x:Name="Doc3StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
                             </Grid>
-                            <Label x:Name="Doc4NameLabel" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,30,0"></Label>
+                            <Border Grid.Column="3" CornerRadius="12" Visibility="Hidden" Background="{StaticResource WarningBackgroundBrush}" Margin="2" Padding="0" Width="110" HorizontalAlignment="Center">
+                                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" x:Name="CompareDoc4Button" Padding="0" Background="Transparent" HorizontalAlignment="Center"
+                                                        Width="100" Foreground="White" Margin="0" Visibility="Visible" Click="CompareDoc4Button_Click" VerticalAlignment="Center" VerticalContentAlignment="Center">Compare Now</Button>
+                            </Border>
                             <Button Grid.Column="3" x:Name="ShowDoc4FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" 
                                     Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" 
                                     Click="ShowDoc4FileInfoButton_Click" IsEnabled="True" Cursor="Hand">
@@ -1003,7 +1000,10 @@
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" TextWrapping="WrapWithOverflow" x:Name="Doc4StatCreatedLabel" Text="" Foreground="White" Grid.Row="5" Grid.Column="0" Visibility="Collapsed"/>
                                 <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15" TextWrapping="WrapWithOverflow" x:Name="Doc4StatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="0"/>
                             </Grid>
-                            <Label x:Name="Doc5NameLabel" Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Foreground="White" FontSize="14" Margin="10,0,60,0"></Label>
+                            <Border Grid.Column="4" CornerRadius="12" Visibility="Hidden" Background="{StaticResource WarningBackgroundBrush}" Margin="2,2,20,2" Padding="0" Width="110" HorizontalAlignment="Center">
+                                <Button Style="{StaticResource MahApps.Styles.Button.Flat}" x:Name="CompareDoc5Button" Padding="0" Background="Transparent" HorizontalAlignment="Center"
+                                                        Width="100" Foreground="White" Margin="0" Visibility="Visible" Click="CompareDoc5Button_Click" VerticalAlignment="Center" VerticalContentAlignment="Center">Compare Now</Button>
+                            </Border>
                             <Button Grid.Column="4" x:Name="ShowDoc5FileInfoButton" Margin="0,0,10,0" HorizontalAlignment="Right" Padding="0" 
                                     Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Foreground="White" 
                                     Click="ShowDoc5FileInfoButton_Click" IsEnabled="True" Cursor="Hand">
@@ -1113,11 +1113,11 @@
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
                                         <Button x:Name="OpenDoc1OriginalButton" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Grid.Column="0" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click_1" Margin="10,0,0,0" ToolTip="Open original" Cursor="Hand" ToolTipService.ShowOnDisabled="True">
+                                            HorizontalAlignment="Left" Click="OpenDoc1OriginalButton_Click_1" Margin="10,0,0,0" ToolTip="Open original" Cursor="Hand" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
                                             <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                         </Button>
                                         <Button x:Name="ReloadDocCompare1Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="ReloadDocCompare1Button_Click" Margin="10,0,10,0" ToolTip="Reload document" Grid.Column="1" ToolTipService.ShowOnDisabled="True">
+                                            HorizontalAlignment="Left" Click="ReloadDocCompare1Button_Click" Margin="10,0,10,0" ToolTip="Reload document" Grid.Column="1" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
                                             <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                         </Button>
                                         <Label Grid.Column="2" Background="{StaticResource RefDocumentBackGroundBrush}">Reference</Label>
@@ -1131,11 +1131,11 @@
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
                                         <Button x:Name="OpenDoc2OriginalButton" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Grid.Column="0" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click_1" Margin="10,0,0,0" ToolTip="Open original" ToolTipService.ShowOnDisabled="True">
+                                            HorizontalAlignment="Left" Click="OpenDoc2OriginalButton_Click_1" Margin="10,0,0,0" ToolTip="Open original" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
                                             <iconPacks:PackIconFontAwesome Kind="ExternalLinkAltSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                         </Button>
                                         <Button x:Name="ReloadDocCompare2Button" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Left" Click="ReloadDocCompare2Button_Click" Margin="10,0,10,0" ToolTip="Reload document" ToolTipService.ShowOnDisabled="True">
+                                            HorizontalAlignment="Left" Click="ReloadDocCompare2Button_Click" Margin="10,0,10,0" ToolTip="Reload document" ToolTipService.ShowOnDisabled="True" ToolTipService.InitialShowDelay="0">
                                             <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                         </Button>
                                         <Label Grid.Column="2" Background="{StaticResource DocumentBackGroundBrush}">Compared</Label>
@@ -1223,11 +1223,11 @@
                                                                     </Border.Effect>
                                                                 </Border>
                                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHiddenLeft}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
                                                                     </Rectangle>
                                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="20">
-                                                                        Viewing of hidden slide is only available in the pro version
+                                                                        Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink> for more information.
                                                                     </TextBlock>
                                                                 </Grid>
                                                                 <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding ShowHiddenLeft}" HorizontalAlignment="Right" Margin="0,10,10,0">
@@ -1251,9 +1251,9 @@
                                                                         </TransformGroup>
                                                                     </Label.RenderTransform>
                                                                 </Label>
-                                                                <Button Tag="{Binding ShowPPTSpeakerNotesButtonNameLeft}" Visibility="{Binding showPPTSpeakerNotesButtonLeft}" Foreground="Black" Width="30" Height="30"
+                                                                <Button Tag="{Binding ShowPPTSpeakerNotesButtonNameLeft}" Style="{StaticResource MahApps.Styles.Button.Flat}" Visibility="{Binding showPPTSpeakerNotesButtonLeft}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
-                                                                        Click="HandleShowPPTNoteButtonCompareMode" ToolTipService.ShowOnDisabled="true">
+                                                                        Click="HandleShowPPTNoteButtonCompareMode" ToolTipService.ShowOnDisabled="true" Padding="0" ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridNameLeft}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
@@ -1300,11 +1300,11 @@
                                                                     </Image>
                                                                 </Border>
                                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHiddenRight}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
                                                                     </Rectangle>
                                                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}" Margin="20">
-                                                                        Viewing of hidden slide is only available in the pro version
+                                                                        Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink> for more information.
                                                                     </TextBlock>
                                                                 </Grid>
                                                                 <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding ShowHiddenRight}" HorizontalAlignment="Right" Margin="0,10,10,0">
@@ -1329,17 +1329,18 @@
                                                                     </Label.RenderTransform>
                                                                 </Label>
                                                                 <Button Tag="{Binding AnimateDiffRightButtonName}" Height="30" Width="30" Padding="0" Margin="15,15,0,0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Hidden"
-                                                                    PreviewMouseDown="HandleMainDocCompareAnimateMouseDown" PreviewMouseUp="HandleMainDocCompareAnimateMouseRelease" IsEnabled="{Binding AniDiffButtonEnable}" ToolTip="{Binding AniDiffButtonTooltip}" ToolTipService.ShowOnDisabled="True">
+                                                                    PreviewMouseDown="HandleMainDocCompareAnimateMouseDown" PreviewMouseUp="HandleMainDocCompareAnimateMouseRelease" IsEnabled="{Binding AniDiffButtonEnable}" ToolTip="{Binding AniDiffButtonTooltip}" ToolTipService.ShowOnDisabled="True"
+                                                                        ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconMaterial Kind="VectorDifference" Width="15" Height="15" />
                                                                 </Button>
-                                                                <Button Tag="{Binding ShowPPTSpeakerNotesButtonNameRight}" Visibility="{Binding showPPTSpeakerNotesButtonRight}" Foreground="Black" Width="30" Height="30"
+                                                                <Button Tag="{Binding ShowPPTSpeakerNotesButtonNameRight}" Style="{StaticResource MahApps.Styles.Button.Flat}" Visibility="{Binding showPPTSpeakerNotesButtonRight}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
-                                                                        Click="HandleShowPPTNoteButtonCompareMode" Background="White" ToolTipService.ShowOnDisabled="true">
+                                                                        Click="HandleShowPPTNoteButtonCompareMode" Background="White" ToolTipService.ShowOnDisabled="true" Padding="0" ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
-                                                                <Button Tag="{Binding ShowPPTSpeakerNotesButtonNameRightChanged}" Visibility="{Binding showPPTSpeakerNotesButtonRightChanged}" Foreground="Black" Width="30" Height="30"
+                                                                <Button Tag="{Binding ShowPPTSpeakerNotesButtonNameRightChanged}" Style="{StaticResource MahApps.Styles.Button.Flat}" Visibility="{Binding showPPTSpeakerNotesButtonRightChanged}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
-                                                                        Click="HandleShowPPTNoteButtonCompareMode" Background="{StaticResource WarningBackgroundBrush}" ToolTipService.ShowOnDisabled="true">
+                                                                        Click="HandleShowPPTNoteButtonCompareMode" Background="{StaticResource WarningBackgroundBrush}" ToolTipService.ShowOnDisabled="true" Padding="0" ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridNameRight}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
@@ -1395,7 +1396,7 @@
                                                                     VerticalAlignment="Center" Stretch="Uniform" Visibility="Hidden">
                                                                 </Image>
                                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
                                                                     </Rectangle>
                                                                 </Grid>
@@ -1413,7 +1414,8 @@
                                                                     </Path.Effect>
                                                                 </Path>
                                                                 <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                                                    Click="SideGridButtonMouseClick" IsHitTestVisible="true" Visibility="Hidden" IsEnabled="{Binding ForceAlignEnable}" ToolTip="{Binding LinkPagesToolTip}"  ToolTipService.ShowOnDisabled="true">
+                                                                    Click="SideGridButtonMouseClick" IsHitTestVisible="true" Visibility="Hidden" IsEnabled="{Binding ForceAlignEnable}" ToolTip="{Binding LinkPagesToolTip}"  ToolTipService.ShowOnDisabled="true"
+                                                                        ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
                                                                 </Button>
                                                                 <Button Tag="{Binding RemoveForceAlignButtonName}" Height="25" Width="25" Padding="0" Margin="0" Foreground="Black" Background="White" IsHitTestVisible="true" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Unlink pages"
@@ -1472,7 +1474,7 @@
                                                                     VerticalAlignment="Center" Stretch="Uniform" Visibility="{Binding ShowMask}">
                                                                 </Image>
                                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="0.7">
+                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
                                                                     </Rectangle>
                                                                 </Grid>
@@ -1490,7 +1492,8 @@
                                                                     </Path.Effect>
                                                                 </Path>
                                                                 <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                                    Click="SideGridButtonMouseClick" IsHitTestVisible="true" Visibility="Hidden" IsEnabled="{Binding ForceAlignEnable}" ToolTip="{Binding LinkPagesToolTip}" ToolTipService.ShowOnDisabled="true">
+                                                                    Click="SideGridButtonMouseClick" IsHitTestVisible="true" Visibility="Hidden" IsEnabled="{Binding ForceAlignEnable}" ToolTip="{Binding LinkPagesToolTip}" ToolTipService.ShowOnDisabled="true"
+                                                                        ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
                                                                 </Button>
                                                                 <Button Tag="{Binding RemoveForceAlignButtonName}" Height="25" Width="25" Padding="0" Margin="0" Foreground="Black" Background="White" IsHitTestVisible="true" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Unlink pages"

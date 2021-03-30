@@ -876,7 +876,8 @@
                                 </mah:Tile>
                             </Grid>
                         </Grid>
-                        <Grid Grid.Row="1" x:Name="DocPreviewStatGrid" Visibility="Collapsed" Grid.ColumnSpan="5" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid Grid.Row="1" x:Name="DocPreviewStatGrid" Visibility="Collapsed" Grid.ColumnSpan="5" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                              MouseEnter="DocPreviewStatGrid_MouseEnter" MouseLeave="DocPreviewStatGrid_MouseLeave" MouseMove="DocPreviewStatGrid_MouseEnter">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>

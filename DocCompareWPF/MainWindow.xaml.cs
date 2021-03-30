@@ -7032,6 +7032,97 @@ namespace DocCompareWPF
 
         }
 
+        private void DocPreviewStatGrid_MouseEnter(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Grid element = (Grid)e.Source;
+                double total = 0;
+                int i;
+                for(i = 0; i < element.ColumnDefinitions.Count; i++)
+                {
+                    if(e.GetPosition(element).X < total)
+                    {
+                        break;
+                    }
+
+                    total += element.ColumnDefinitions[i].ActualWidth;
+                }
+
+
+
+                switch(i-1)
+                {
+                    case 1:
+                        CompareDoc2Button.Visibility = Visibility.Visible;
+                        (CompareDoc2Button.Parent as Border).Visibility = Visibility.Visible;
+                        CompareDoc3Button.Visibility = Visibility.Hidden;
+                        (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
+                        CompareDoc4Button.Visibility = Visibility.Hidden;
+                        (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
+                        CompareDoc5Button.Visibility = Visibility.Hidden;
+                        (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
+                        break;
+                    case 2:
+                        CompareDoc2Button.Visibility = Visibility.Hidden;
+                        (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
+                        CompareDoc3Button.Visibility = Visibility.Visible;
+                        (CompareDoc3Button.Parent as Border).Visibility = Visibility.Visible;
+                        CompareDoc4Button.Visibility = Visibility.Hidden;
+                        (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
+                        CompareDoc5Button.Visibility = Visibility.Hidden;
+                        (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
+                        break;
+                    case 3:
+                        CompareDoc2Button.Visibility = Visibility.Hidden;
+                        (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
+                        CompareDoc3Button.Visibility = Visibility.Hidden;
+                        (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
+                        CompareDoc4Button.Visibility = Visibility.Visible;
+                        (CompareDoc4Button.Parent as Border).Visibility = Visibility.Visible;
+                        CompareDoc5Button.Visibility = Visibility.Hidden;
+                        (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
+                        break;
+                    case 4:
+                        CompareDoc2Button.Visibility = Visibility.Hidden;
+                        (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
+                        CompareDoc3Button.Visibility = Visibility.Hidden;
+                        (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
+                        CompareDoc4Button.Visibility = Visibility.Hidden;
+                        (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
+                        CompareDoc5Button.Visibility = Visibility.Visible;
+                        (CompareDoc5Button.Parent as Border).Visibility = Visibility.Visible;
+                        break;
+                    default:
+                        CompareDoc2Button.Visibility = Visibility.Hidden;
+                        (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
+                        CompareDoc3Button.Visibility = Visibility.Hidden;
+                        (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
+                        CompareDoc4Button.Visibility = Visibility.Hidden;
+                        (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
+                        CompareDoc5Button.Visibility = Visibility.Hidden;
+                        (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
+                        break;
+
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void DocPreviewStatGrid_MouseLeave(object sender, MouseEventArgs e)
+        {
+            CompareDoc2Button.Visibility = Visibility.Hidden;
+            (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
+            CompareDoc3Button.Visibility = Visibility.Hidden;
+            (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
+            CompareDoc4Button.Visibility = Visibility.Hidden;
+            (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
+            CompareDoc5Button.Visibility = Visibility.Hidden;
+            (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
+        }
         private void DisableReload()
         {
             Dispatcher.Invoke(() =>

@@ -1418,16 +1418,16 @@
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
                                                                     </Path.Effect>
                                                                 </Path>
-                                                                <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                                                <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Right" VerticalAlignment="Bottom"  Margin="{Binding Margin}"
                                                                     Click="SideGridButtonMouseClick" IsHitTestVisible="true" Visibility="Hidden" IsEnabled="{Binding ForceAlignEnable}" ToolTip="{Binding LinkPagesToolTip}"  ToolTipService.ShowOnDisabled="true"
                                                                         ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
                                                                 </Button>
-                                                                <Button Tag="{Binding RemoveForceAlignButtonName}" Height="25" Width="25" Padding="0" Margin="0" Foreground="Black" Background="White" IsHitTestVisible="true" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Unlink pages"
+                                                                <Button Tag="{Binding RemoveForceAlignButtonName}" Height="25" Width="25" Padding="0" Margin="{Binding Margin}" Foreground="Black" Background="White" IsHitTestVisible="true" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="Unlink pages"
                                                                     Click="RemoveForceAlignClicked" Visibility="{Binding ForceAlignButtonVisi}">
                                                                     <iconPacks:PackIconFontAwesome Kind="UnlinkSolid" Width="15" Height="15" />
                                                                 </Button>
-                                                                <Button Tag="{Binding ForceAlignInvalidButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="This link would cross a previously set link. Please remove that link before aligning these pages." Visibility="{Binding ForceAlignButtonInvalidVisi}" IsHitTestVisible="true">
+                                                                <Button Tag="{Binding ForceAlignInvalidButtonName}" Height="25" Width="25" Margin="{Binding Margin}" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="This link would cross a previously set link. Please remove that link before aligning these pages." Visibility="{Binding ForceAlignButtonInvalidVisi}" IsHitTestVisible="true">
                                                                     <iconPacks:PackIconFontAwesome Kind="BanSolid" Width="15" Height="15" />
                                                                 </Button>
                                                             </Grid>
@@ -1496,16 +1496,16 @@
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
                                                                     </Path.Effect>
                                                                 </Path>
-                                                                <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                <Button Tag="{Binding ForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="{Binding Margin}"
                                                                     Click="SideGridButtonMouseClick" IsHitTestVisible="true" Visibility="Hidden" IsEnabled="{Binding ForceAlignEnable}" ToolTip="{Binding LinkPagesToolTip}" ToolTipService.ShowOnDisabled="true"
                                                                         ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconFontAwesome Kind="LinkSolid" Width="15" Height="15" />
                                                                 </Button>
-                                                                <Button Tag="{Binding RemoveForceAlignButtonName}" Height="25" Width="25" Padding="0" Margin="0" Foreground="Black" Background="White" IsHitTestVisible="true" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="Unlink pages"
-                                                                    Click="RemoveForceAlignClicked" Visibility="{Binding ForceAlignButtonVisi}" BorderThickness="2">
+                                                                <Button Tag="{Binding RemoveForceAlignButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" IsHitTestVisible="true" HorizontalAlignment="Left" VerticalAlignment="Bottom" ToolTip="Unlink pages"
+                                                                    Click="RemoveForceAlignClicked" Visibility="{Binding ForceAlignButtonVisi}" BorderThickness="2" Margin="{Binding Margin}">
                                                                     <iconPacks:PackIconFontAwesome Kind="UnlinkSolid" Width="15" Height="15" />
                                                                 </Button>
-                                                                <Button Tag="{Binding ForceAlignInvalidButtonName}" Height="25" Width="25" Padding="0" Foreground="Black" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center" ToolTip="This link would cross a previously set link. Please remove that link before aligning these pages." Visibility="{Binding ForceAlignButtonInvalidVisi}" IsHitTestVisible="true">
+                                                                <Button Tag="{Binding ForceAlignInvalidButtonName}" Height="25" Width="25" Padding="0" Margin="{Binding Margin}" Foreground="Black" Background="White" HorizontalAlignment="Left" VerticalAlignment="Bottom" ToolTip="This link would cross a previously set link. Please remove that link before aligning these pages." Visibility="{Binding ForceAlignButtonInvalidVisi}" IsHitTestVisible="true">
                                                                     <iconPacks:PackIconFontAwesome Kind="BanSolid" Width="15" Height="15" />
                                                                 </Button>
                                                             </Grid>

@@ -51,6 +51,7 @@ namespace DocCompareWPF.UIhelper
         private Visibility _pptNoteGridLeftVisi;
         private Visibility _pptNoteGridRightVisi;
 
+        public double HiddenPPTOpacity { get; set; }
         private Visibility _showHiddenEnable;
         public Visibility ShowHiddenEnable
         {

@@ -16,6 +16,7 @@ namespace DocCompareWPF.UIhelper
         private double _blurRadius;
         private Visibility _showHidden;
         private Visibility _showPPTNoteButton;
+        public double HiddenPPTOpacity { get; set; }
 
         public string ShowPPTSpeakerNotesButtonName { get; set; }
         public string HiddenPPTGridName { get; set; }

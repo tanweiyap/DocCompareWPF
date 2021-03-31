@@ -53,7 +53,7 @@
                                     VerticalAlignment="Stretch" Width="100" HorizontalAlignment="Stretch"  Cursor="Hand">
                                 Get Pro!
                             </Button>
-                        </Border>                        
+                        </Border>
                         <Grid Grid.Column="2" MaxWidth="128"  MinWidth="128" HorizontalAlignment="Right">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="32"/>
@@ -164,8 +164,7 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="30" />
-                                            </Grid.ColumnDefinitions>
-                                            <Label Foreground="Black" Margin="65, 0,0,0" Background="{StaticResource RefDocumentBackGroundBrush}" FontWeight="SemiBold">Reference</Label>
+                                            </Grid.ColumnDefinitions>                                            
                                             <!--Button x:Name="BrowseFileTopButton1" Style="{StaticResource MahApps.Styles.Button.MetroSquare}" Background="Transparent" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="{StaticResource BarButtonHeight}"
                                             HorizontalAlignment="Left" Click="BrowseFileButton1_Click" Margin="10,0,0,0" ToolTip="Browse document">
                                                 <iconPacks:PackIconFontAwesome Kind="FolderOpenSolid" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
@@ -179,7 +178,7 @@
                                                 <iconPacks:PackIconZondicons Kind="Reload" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" />
                                             </Button>
                                             <Grid Grid.Column="1" Background="{StaticResource RefDocumentBackGroundBrush}">
-                                                <ComboBox x:Name="Doc1NameLabelComboBox" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="Black" Style="{StaticResource MahApps.Styles.ComboBox}" Background="{StaticResource RefDocumentBackGroundBrush}" BorderThickness="0" Margin="10,0,30,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
+                                                <ComboBox x:Name="Doc1NameLabelComboBox" HorizontalAlignment="Stretch" VerticalAlignment="Center" Foreground="Black" Style="{StaticResource MahApps.Styles.ComboBox}" Background="{StaticResource RefDocumentBackGroundBrush}" BorderThickness="0" Margin="5,0,5,0" SelectedIndex="0" SelectionChanged="Doc1NameLabelComboBox_SelectionChanged"
                                                           IsEditable="False" FontSize="14" DropDownOpened="Doc1NameLabelComboBox_DropDownOpened" DropDownClosed="Doc1NameLabelComboBox_DropDownClosed">
                                                     <ComboBox.ItemTemplate>
                                                         <DataTemplate>
@@ -213,41 +212,42 @@
                                                                         </Image>
                                                                         <Image Source="{Binding PathToFileHidden, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform" Visibility="Hidden">
                                                                         </Image>
+                                                                        <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
+                                                                            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
+
+                                                                            </Rectangle>
+                                                                            <TextBlock HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="10,0,10,0">
+                                                                                Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink>.
+                                                                            </TextBlock>
+                                                                        </Grid>
+                                                                        <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
+                                                                        <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                                                            <Path.Data>
+                                                                                <PathGeometry>
+                                                                                    <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                        <LineSegment Point="95,0"></LineSegment>
+                                                                                        <LineSegment Point="95,95"></LineSegment>
+                                                                                    </PathFigure>
+                                                                                </PathGeometry>
+                                                                            </Path.Data>
+                                                                            <Path.Effect>
+                                                                                <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                            </Path.Effect>
+                                                                        </Path>
+                                                                        <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}" FontSize="18">
+                                                                            <Label.RenderTransform>
+                                                                                <TransformGroup>
+                                                                                    <RotateTransform Angle="45"></RotateTransform>
+                                                                                    <TranslateTransform X="5"></TranslateTransform>
+                                                                                </TransformGroup>
+                                                                            </Label.RenderTransform>
+                                                                        </Label>
                                                                     </Grid>
                                                                     <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
                                                                 </Border>
-                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
-                                                                    </Rectangle>
-                                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="20">
-                                                                        Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink> for more information.
-                                                                    </TextBlock>                                                                    
-                                                                </Grid>
-                                                                <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
-                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
-                                                                    <Path.Data>
-                                                                        <PathGeometry>
-                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
-                                                                                <LineSegment Point="95,0"></LineSegment>
-                                                                                <LineSegment Point="95,95"></LineSegment>
-                                                                            </PathFigure>
-                                                                        </PathGeometry>
-                                                                    </Path.Data>
-                                                                    <Path.Effect>
-                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
-                                                                    </Path.Effect>
-                                                                </Path>
-                                                                <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}" FontSize="18">
-                                                                    <Label.RenderTransform>
-                                                                        <TransformGroup>
-                                                                            <RotateTransform Angle="45"></RotateTransform>
-                                                                            <TranslateTransform X="5"></TranslateTransform>
-                                                                        </TransformGroup>
-                                                                    </Label.RenderTransform>
-                                                                </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
                                                                         Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true" ToolTipService.InitialShowDelay="0">
@@ -359,42 +359,42 @@
                                                                         </Image>
                                                                         <Image Source="{Binding PathToFileHidden, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform" Visibility="Hidden">
                                                                         </Image>
+                                                                        <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
+                                                                            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
+
+                                                                            </Rectangle>
+                                                                            <TextBlock HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="10,0,10,0">
+                                                                                Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink>.
+                                                                            </TextBlock>
+                                                                        </Grid>
+                                                                        <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
+                                                                        <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                                                            <Path.Data>
+                                                                                <PathGeometry>
+                                                                                    <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                        <LineSegment Point="95,0"></LineSegment>
+                                                                                        <LineSegment Point="95,95"></LineSegment>
+                                                                                    </PathFigure>
+                                                                                </PathGeometry>
+                                                                            </Path.Data>
+                                                                            <Path.Effect>
+                                                                                <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                            </Path.Effect>
+                                                                        </Path>
+                                                                        <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}" FontSize="18">
+                                                                            <Label.RenderTransform>
+                                                                                <TransformGroup>
+                                                                                    <RotateTransform Angle="45"></RotateTransform>
+                                                                                    <TranslateTransform X="5"></TranslateTransform>
+                                                                                </TransformGroup>
+                                                                            </Label.RenderTransform>
+                                                                        </Label>
                                                                     </Grid>
                                                                     <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
                                                                 </Border>
-                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
-                                                                    </Rectangle>
-
-                                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="20">
-                                                                        Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink> for more information.
-                                                                    </TextBlock>
-                                                                </Grid>
-                                                                <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
-                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
-                                                                    <Path.Data>
-                                                                        <PathGeometry>
-                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
-                                                                                <LineSegment Point="95,0"></LineSegment>
-                                                                                <LineSegment Point="95,95"></LineSegment>
-                                                                            </PathFigure>
-                                                                        </PathGeometry>
-                                                                    </Path.Data>
-                                                                    <Path.Effect>
-                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
-                                                                    </Path.Effect>
-                                                                </Path>
-                                                                <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}" FontSize="18">
-                                                                    <Label.RenderTransform>
-                                                                        <TransformGroup>
-                                                                            <RotateTransform Angle="45"></RotateTransform>
-                                                                            <TranslateTransform X="5"></TranslateTransform>
-                                                                        </TransformGroup>
-                                                                    </Label.RenderTransform>
-                                                                </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
                                                                         Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true" ToolTipService.InitialShowDelay="0">
@@ -508,41 +508,42 @@
                                                                         </Image>
                                                                         <Image Source="{Binding PathToFileHidden, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform" Visibility="Hidden">
                                                                         </Image>
+                                                                        <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
+                                                                            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
+
+                                                                            </Rectangle>
+                                                                            <TextBlock HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="10,0,10,0">
+                                                                                Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink>.
+                                                                            </TextBlock>
+                                                                        </Grid>
+                                                                        <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
+                                                                        <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                                                            <Path.Data>
+                                                                                <PathGeometry>
+                                                                                    <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                        <LineSegment Point="95,0"></LineSegment>
+                                                                                        <LineSegment Point="95,95"></LineSegment>
+                                                                                    </PathFigure>
+                                                                                </PathGeometry>
+                                                                            </Path.Data>
+                                                                            <Path.Effect>
+                                                                                <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                            </Path.Effect>
+                                                                        </Path>
+                                                                        <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}" FontSize="18">
+                                                                            <Label.RenderTransform>
+                                                                                <TransformGroup>
+                                                                                    <RotateTransform Angle="45"></RotateTransform>
+                                                                                    <TranslateTransform X="5"></TranslateTransform>
+                                                                                </TransformGroup>
+                                                                            </Label.RenderTransform>
+                                                                        </Label>
                                                                     </Grid>
                                                                     <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
                                                                 </Border>
-                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
-                                                                    </Rectangle>
-                                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="20">
-                                                                       Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink> for more information.
-                                                                    </TextBlock>
-                                                                </Grid>
-                                                                <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
-                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
-                                                                    <Path.Data>
-                                                                        <PathGeometry>
-                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
-                                                                                <LineSegment Point="95,0"></LineSegment>
-                                                                                <LineSegment Point="95,95"></LineSegment>
-                                                                            </PathFigure>
-                                                                        </PathGeometry>
-                                                                    </Path.Data>
-                                                                    <Path.Effect>
-                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
-                                                                    </Path.Effect>
-                                                                </Path>
-                                                                <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}" FontSize="18">
-                                                                    <Label.RenderTransform>
-                                                                        <TransformGroup>
-                                                                            <RotateTransform Angle="45"></RotateTransform>
-                                                                            <TranslateTransform X="5"></TranslateTransform>
-                                                                        </TransformGroup>
-                                                                    </Label.RenderTransform>
-                                                                </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
                                                                         Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true" ToolTipService.InitialShowDelay="0">
@@ -655,41 +656,42 @@
                                                                         </Image>
                                                                         <Image Source="{Binding PathToFileHidden, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform" Visibility="Hidden">
                                                                         </Image>
+                                                                        <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
+                                                                            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
+
+                                                                            </Rectangle>
+                                                                            <TextBlock HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="10,0,10,0">
+                                                                                Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink>.
+                                                                            </TextBlock>
+                                                                        </Grid>
+                                                                        <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
+                                                                        <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                                                            <Path.Data>
+                                                                                <PathGeometry>
+                                                                                    <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                        <LineSegment Point="95,0"></LineSegment>
+                                                                                        <LineSegment Point="95,95"></LineSegment>
+                                                                                    </PathFigure>
+                                                                                </PathGeometry>
+                                                                            </Path.Data>
+                                                                            <Path.Effect>
+                                                                                <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                            </Path.Effect>
+                                                                        </Path>
+                                                                        <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}" FontSize="18">
+                                                                            <Label.RenderTransform>
+                                                                                <TransformGroup>
+                                                                                    <RotateTransform Angle="45"></RotateTransform>
+                                                                                    <TranslateTransform X="5"></TranslateTransform>
+                                                                                </TransformGroup>
+                                                                            </Label.RenderTransform>
+                                                                        </Label>
                                                                     </Grid>
                                                                     <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
                                                                 </Border>
-                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
-                                                                    </Rectangle>
-                                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="20">
-                                                                        Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink> for more information.
-                                                                    </TextBlock>
-                                                                </Grid>
-                                                                <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
-                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
-                                                                    <Path.Data>
-                                                                        <PathGeometry>
-                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
-                                                                                <LineSegment Point="95,0"></LineSegment>
-                                                                                <LineSegment Point="95,95"></LineSegment>
-                                                                            </PathFigure>
-                                                                        </PathGeometry>
-                                                                    </Path.Data>
-                                                                    <Path.Effect>
-                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
-                                                                    </Path.Effect>
-                                                                </Path>
-                                                                <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}" FontSize="18">
-                                                                    <Label.RenderTransform>
-                                                                        <TransformGroup>
-                                                                            <RotateTransform Angle="45"></RotateTransform>
-                                                                            <TranslateTransform X="5"></TranslateTransform>
-                                                                        </TransformGroup>
-                                                                    </Label.RenderTransform>
-                                                                </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
                                                                         Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true" ToolTipService.InitialShowDelay="0">
@@ -802,41 +804,42 @@
                                                                         </Image>
                                                                         <Image Source="{Binding PathToFileHidden, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" Stretch="Uniform" Visibility="Hidden">
                                                                         </Image>
+                                                                        <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
+                                                                            <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
+
+                                                                            </Rectangle>
+                                                                            <TextBlock HorizontalAlignment="Stretch" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="10,0,10,0">
+                                                                                Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink>.
+                                                                            </TextBlock>
+                                                                        </Grid>
+                                                                        <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
+                                                                        <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                                                            <Path.Data>
+                                                                                <PathGeometry>
+                                                                                    <PathFigure IsClosed="True" StartPoint="0,0">
+                                                                                        <LineSegment Point="95,0"></LineSegment>
+                                                                                        <LineSegment Point="95,95"></LineSegment>
+                                                                                    </PathFigure>
+                                                                                </PathGeometry>
+                                                                            </Path.Data>
+                                                                            <Path.Effect>
+                                                                                <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
+                                                                            </Path.Effect>
+                                                                        </Path>
+                                                                        <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}" FontSize="18">
+                                                                            <Label.RenderTransform>
+                                                                                <TransformGroup>
+                                                                                    <RotateTransform Angle="45"></RotateTransform>
+                                                                                    <TranslateTransform X="5"></TranslateTransform>
+                                                                                </TransformGroup>
+                                                                            </Label.RenderTransform>
+                                                                        </Label>
                                                                     </Grid>
                                                                     <Border.Effect>
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
                                                                 </Border>
-                                                                <Grid Tag="{Binding HiddenPPTGridName}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding showHidden}" Margin="{Binding Margin}">
-                                                                    <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
-                                                                    </Rectangle>
-                                                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" Visibility="{Binding ShowHiddenEnable}"  Margin="20">
-                                                                        Hidden slides are displayed in 2|Compare pro. Visit <Hyperlink NavigateUri="https://hopie.tech" RequestNavigate="Hyperlink_RequestNavigate">https://hopie.tech</Hyperlink> for more information.
-                                                                    </TextBlock>
-                                                                </Grid>
-                                                                <TextBlock HorizontalAlignment="Center" Visibility="{Binding EoDVisi}" Margin="5">End of Document</TextBlock>
-                                                                <Path Fill="{StaticResource WarningBackgroundBrush}" Visibility="{Binding showHidden}" HorizontalAlignment="Right" Margin="0,0,10,0">
-                                                                    <Path.Data>
-                                                                        <PathGeometry>
-                                                                            <PathFigure IsClosed="True" StartPoint="0,0">
-                                                                                <LineSegment Point="95,0"></LineSegment>
-                                                                                <LineSegment Point="95,95"></LineSegment>
-                                                                            </PathFigure>
-                                                                        </PathGeometry>
-                                                                    </Path.Data>
-                                                                    <Path.Effect>
-                                                                        <DropShadowEffect ShadowDepth="0" BlurRadius="5"></DropShadowEffect>
-                                                                    </Path.Effect>
-                                                                </Path>
-                                                                <Label Foreground="White" Content="Hidden" HorizontalAlignment="Right" Visibility="{Binding showHidden}" FontSize="18">
-                                                                    <Label.RenderTransform>
-                                                                        <TransformGroup>
-                                                                            <RotateTransform Angle="45"></RotateTransform>
-                                                                            <TranslateTransform X="5"></TranslateTransform>
-                                                                        </TransformGroup>
-                                                                    </Label.RenderTransform>
-                                                                </Label>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonName}" Visibility="{Binding showPPTSpeakerNotesButton}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,15,15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
                                                                         Click="HandleShowPPTNoteButton" ToolTipService.ShowOnDisabled="true" ToolTipService.InitialShowDelay="0">
@@ -889,8 +892,9 @@
                                 <RowDefinition Height="{StaticResource BottomBarHeight}"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
+                            <Label x:Name="ReferenceTopLabel" Foreground="Black" Margin="0,0,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Background="{StaticResource RefDocumentBackGroundBrush}" FontWeight="SemiBold">Reference</Label>
                             <Button x:Name="ShowDoc1FileInfoButton" Visibility="Visible" HorizontalAlignment="Right" Padding="0" Style="{StaticResource MahApps.Styles.Button.Flat}" 
-                                                        Background="Transparent" Foreground="White" Click="ShowDoc1FileInfoButton_Click" IsEnabled="False"
+                                                        Background="Transparent" Foreground="Black" Click="ShowDoc1FileInfoButton_Click" IsEnabled="False"
                                                         Margin="0,0,5,0" Cursor="Hand">
                                 <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" />
                             </Button>

@@ -27,8 +27,8 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.1.5";
-        private readonly string localetype = "EN";
+        private readonly string versionString = "1.1.6";
+        private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -198,13 +198,18 @@ namespace DocCompareWPF
             settings.FreeStartCount++;
             SaveSettings();
 
-            if(settings.FreeStartCount == 5)
+            if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
             {
-                CustomMessageBox msgBox = new CustomMessageBox();
-                msgBox.Setup("2|Compare free", "You are using the free version of 2|Compare. If you like the functions, please consider making a subscription on https://hopie.tech", "Okay");
-                msgBox.ShowDialog();
-                settings.FreeStartCount = 0;
-                SaveSettings();
+                if (settings.FreeStartCount == 5)
+                {
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("2|Compare free", "You are using the free version of 2|Compare. If you like the functions, please consider making a subscription on https://hopie.tech", "Okay");
+                    msgBox.ShowDialog();
+                    settings.FreeStartCount = 0;
+                    SaveSettings();
+                }
             }
 
             EnableOpenOriginal();
@@ -1128,6 +1133,7 @@ namespace DocCompareWPF
                     PPTNoteGridRightVisi = Visibility.Hidden,
                     showPPTSpeakerNotesButtonRight = Visibility.Hidden,
                     showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden,
+                    HiddenPPTOpacity = HiddenPPTOpacity,
                 };
 
                 bool showSpeakerNotesLeft = false;
@@ -1466,7 +1472,8 @@ namespace DocCompareWPF
                     ShowHidden = Visibility.Hidden,
                     ForceAlignButtonVisi = Visibility.Hidden,
                     ForceAlignButtonInvalidVisi = Visibility.Hidden,
-                    RemoveForceAlignButtonName = "RemoveForceAlign" + i.ToString()
+                    RemoveForceAlignButtonName = "RemoveForceAlign" + i.ToString(),
+                    HiddenPPTOpacity = HiddenPPTOpacity,
                 };
 
                 SideGridItemRight rightItem = new SideGridItemRight()
@@ -1484,6 +1491,7 @@ namespace DocCompareWPF
                     ForceAlignButtonVisi = Visibility.Hidden,
                     ForceAlignButtonInvalidVisi = Visibility.Hidden,
                     RemoveForceAlignButtonName = "RemoveForceAlign" + i.ToString(),
+                    HiddenPPTOpacity = HiddenPPTOpacity,
                 };
 
                 if (i == 0)
@@ -1769,7 +1777,8 @@ namespace DocCompareWPF
                         {
                             SimpleImageItem thisImage = new SimpleImageItem()
                             {
-                                EoDVisi = Visibility.Hidden
+                                EoDVisi = Visibility.Hidden,
+                                HiddenPPTOpacity = HiddenPPTOpacity,
                             };
 
                             if ((int)(alignment[docIndexIntern] as ArrayList)[i] != -1)
@@ -5754,12 +5763,12 @@ namespace DocCompareWPF
                     hiddenPPTEffect = img.Effect;
                     img.Effect = null;
 
-                    hiddenPPTVisi = (item.Children[4] as Label).Visibility;
-                    System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
+                    hiddenPPTVisi = (childGrid.Children[5] as Label).Visibility;
+                    System.Windows.Shapes.Path path = childGrid.Children[4] as System.Windows.Shapes.Path;
                     //path.Visibility = Visibility.Hidden;
-                    Label label = item.Children[4] as Label;
+                    Label label = childGrid.Children[5] as Label;
                     //label.Visibility = Visibility.Hidden;
-                    Grid grid = item.Children[1] as Grid;
+                    Grid grid = childGrid.Children[2] as Grid;
                     grid.Visibility = Visibility.Hidden;
                 }
                 else
@@ -5800,18 +5809,16 @@ namespace DocCompareWPF
                     Image img = childGrid.Children[0] as Image;
                     img.Effect = hiddenPPTEffect;
 
-                    System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
+                    System.Windows.Shapes.Path path = childGrid.Children[4] as System.Windows.Shapes.Path;
                     path.Visibility = hiddenPPTVisi;
-                    Label label = item.Children[4] as Label;
+                    Label label = childGrid.Children[5] as Label;
                     label.Visibility = hiddenPPTVisi;
-                    Grid grid = item.Children[1] as Grid;
+                    Grid grid = childGrid.Children[2] as Grid;
                     grid.Visibility = hiddenPPTVisi;
-
-
                 }
                 else
                 {
-                    floatingTip.IsOpen = false;
+                    //floatingTip.IsOpen = false;
                 }
 
             }
@@ -6886,6 +6893,17 @@ namespace DocCompareWPF
             {
                 outerBorder.Margin = new Thickness(0);
             }
+
+            /*
+            if(Doc1Grid.ActualWidth < 300)
+            {
+                ReferenceTopLabel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ReferenceTopLabel.Visibility = Visibility.Visible;
+            }
+            */
         }
 
         private void Window_StateChanged(object sender, EventArgs e)
@@ -7050,60 +7068,74 @@ namespace DocCompareWPF
                 }
 
 
-
-                switch(i-1)
+                if (docs.documents.Count > (i - 1))
                 {
-                    case 1:
-                        CompareDoc2Button.Visibility = Visibility.Visible;
-                        (CompareDoc2Button.Parent as Border).Visibility = Visibility.Visible;
-                        CompareDoc3Button.Visibility = Visibility.Hidden;
-                        (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
-                        CompareDoc4Button.Visibility = Visibility.Hidden;
-                        (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
-                        CompareDoc5Button.Visibility = Visibility.Hidden;
-                        (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
-                        break;
-                    case 2:
-                        CompareDoc2Button.Visibility = Visibility.Hidden;
-                        (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
-                        CompareDoc3Button.Visibility = Visibility.Visible;
-                        (CompareDoc3Button.Parent as Border).Visibility = Visibility.Visible;
-                        CompareDoc4Button.Visibility = Visibility.Hidden;
-                        (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
-                        CompareDoc5Button.Visibility = Visibility.Hidden;
-                        (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
-                        break;
-                    case 3:
-                        CompareDoc2Button.Visibility = Visibility.Hidden;
-                        (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
-                        CompareDoc3Button.Visibility = Visibility.Hidden;
-                        (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
-                        CompareDoc4Button.Visibility = Visibility.Visible;
-                        (CompareDoc4Button.Parent as Border).Visibility = Visibility.Visible;
-                        CompareDoc5Button.Visibility = Visibility.Hidden;
-                        (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
-                        break;
-                    case 4:
-                        CompareDoc2Button.Visibility = Visibility.Hidden;
-                        (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
-                        CompareDoc3Button.Visibility = Visibility.Hidden;
-                        (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
-                        CompareDoc4Button.Visibility = Visibility.Hidden;
-                        (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
-                        CompareDoc5Button.Visibility = Visibility.Visible;
-                        (CompareDoc5Button.Parent as Border).Visibility = Visibility.Visible;
-                        break;
-                    default:
-                        CompareDoc2Button.Visibility = Visibility.Hidden;
-                        (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
-                        CompareDoc3Button.Visibility = Visibility.Hidden;
-                        (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
-                        CompareDoc4Button.Visibility = Visibility.Hidden;
-                        (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
-                        CompareDoc5Button.Visibility = Visibility.Hidden;
-                        (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
-                        break;
 
+                    switch (i - 1)
+                    {
+                        case 1:
+                            CompareDoc2Button.Visibility = Visibility.Visible;
+                            (CompareDoc2Button.Parent as Border).Visibility = Visibility.Visible;
+                            CompareDoc3Button.Visibility = Visibility.Hidden;
+                            (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
+                            CompareDoc4Button.Visibility = Visibility.Hidden;
+                            (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
+                            CompareDoc5Button.Visibility = Visibility.Hidden;
+                            (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
+                            break;
+                        case 2:
+                            CompareDoc2Button.Visibility = Visibility.Hidden;
+                            (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
+                            CompareDoc3Button.Visibility = Visibility.Visible;
+                            (CompareDoc3Button.Parent as Border).Visibility = Visibility.Visible;
+                            CompareDoc4Button.Visibility = Visibility.Hidden;
+                            (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
+                            CompareDoc5Button.Visibility = Visibility.Hidden;
+                            (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
+                            break;
+                        case 3:
+                            CompareDoc2Button.Visibility = Visibility.Hidden;
+                            (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
+                            CompareDoc3Button.Visibility = Visibility.Hidden;
+                            (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
+                            CompareDoc4Button.Visibility = Visibility.Visible;
+                            (CompareDoc4Button.Parent as Border).Visibility = Visibility.Visible;
+                            CompareDoc5Button.Visibility = Visibility.Hidden;
+                            (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
+                            break;
+                        case 4:
+                            CompareDoc2Button.Visibility = Visibility.Hidden;
+                            (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
+                            CompareDoc3Button.Visibility = Visibility.Hidden;
+                            (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
+                            CompareDoc4Button.Visibility = Visibility.Hidden;
+                            (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
+                            CompareDoc5Button.Visibility = Visibility.Visible;
+                            (CompareDoc5Button.Parent as Border).Visibility = Visibility.Visible;
+                            break;
+                        default:
+                            CompareDoc2Button.Visibility = Visibility.Hidden;
+                            (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
+                            CompareDoc3Button.Visibility = Visibility.Hidden;
+                            (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
+                            CompareDoc4Button.Visibility = Visibility.Hidden;
+                            (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
+                            CompareDoc5Button.Visibility = Visibility.Hidden;
+                            (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
+                            break;
+
+                    }
+                }
+                else
+                {
+                    CompareDoc2Button.Visibility = Visibility.Hidden;
+                    (CompareDoc2Button.Parent as Border).Visibility = Visibility.Hidden;
+                    CompareDoc3Button.Visibility = Visibility.Hidden;
+                    (CompareDoc3Button.Parent as Border).Visibility = Visibility.Hidden;
+                    CompareDoc4Button.Visibility = Visibility.Hidden;
+                    (CompareDoc4Button.Parent as Border).Visibility = Visibility.Hidden;
+                    CompareDoc5Button.Visibility = Visibility.Hidden;
+                    (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
                 }
             }
             catch

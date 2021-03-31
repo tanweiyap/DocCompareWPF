@@ -21,6 +21,7 @@ namespace DocCompareWPF.UIhelper
         public string LinkPagesToolTip { get; set; }
 
 
+        public double HiddenPPTOpacity { get; set; }
         public Visibility ShowHidden
         {
             get

@@ -23,6 +23,7 @@ namespace DocCompareWPF.UIhelper
         public bool ForceAlignEnable { get; set; }
         public string LinkPagesToolTip { get; set; }
 
+        public double HiddenPPTOpacity { get; set; }
         public Visibility ShowHidden
         {
             get

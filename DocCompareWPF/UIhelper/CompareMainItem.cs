@@ -50,6 +50,7 @@ namespace DocCompareWPF.UIhelper
         private Visibility _showHiddenRight;
         private Visibility _pptNoteGridLeftVisi;
         private Visibility _pptNoteGridRightVisi;
+        private Visibility _animateButtonVisibility;
 
         public double HiddenPPTOpacity { get; set; }
         private Visibility _showHiddenEnable;
@@ -66,6 +67,20 @@ namespace DocCompareWPF.UIhelper
                 OnPropertyChanged();
             }
         }
+        
+        public Visibility AnimateButtonVisibility
+        {
+            get
+            {
+                return _animateButtonVisibility;
+            }
+
+            set
+            {
+                _animateButtonVisibility = value;
+                OnPropertyChanged();
+            }
+        }
 
         public string AniDiffButtonTooltip { get; set; }
         public string PPTSpeakerNoteGridNameLeft { get; set; }
@@ -77,7 +92,9 @@ namespace DocCompareWPF.UIhelper
         public string ShowPPTSpeakerNotesButtonNameLeft { get; set; }
         public string ShowPPTSpeakerNotesButtonNameRight { get; set; }
         public string ShowPPTSpeakerNotesButtonNameRightChanged { get; set; }
+        public string ShowPPTSpeakerNotesButtonNameLeftChanged { get; set; }
         private Visibility _showPPTSpeakerNotesButtonLeft;
+        private Visibility _showPPTSpeakerNotesButtonLeftChanged;
         private Visibility _showPPTSpeakerNotesButtonRight;
         private Visibility _showPPTSpeakerNotesButtonRightChanged;
 
@@ -106,6 +123,20 @@ namespace DocCompareWPF.UIhelper
             set
             {
                 _showPPTSpeakerNotesButtonLeft = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Visibility showPPTSpeakerNotesButtonLeftChanged
+        {
+            get
+            {
+                return _showPPTSpeakerNotesButtonLeftChanged;
+            }
+
+            set
+            {
+                _showPPTSpeakerNotesButtonLeftChanged = value;
                 OnPropertyChanged();
             }
         }

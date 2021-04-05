@@ -27,7 +27,7 @@ namespace DocCompareWPF.UIhelper
         public string ShowSpeakerNotesTooltip { get; set; }
         public bool ShowSpeakerNoteEnable { get; set; }
 
-        private Visibility _showHiddenEnable;
+        private Visibility _showHiddenEnable = Visibility.Hidden;
         public Visibility ShowHiddenEnable
         {
             get

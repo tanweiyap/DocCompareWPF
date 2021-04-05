@@ -70,7 +70,6 @@
                             </DrawingGroup>
                         </DrawingBrush.Drawing>
                     </DrawingBrush>
-
                     <DrawingBrush x:Key="unlinkscrollDrawingImage">
                         <DrawingBrush.Drawing>
                             <DrawingGroup ClipGeometry="M0,0 V27.78125 H18.520834 V0 H0 Z">
@@ -78,6 +77,27 @@
                                     <GeometryDrawing Brush="White" Geometry="F1 M18.520834,27.78125z M0,0z M55.562499,71.437499L59.531249,66.145832 63.499999,71.437499 60.854166,71.437499 60.854166,88.635416 63.499999,88.635416 59.531249,93.927082 55.562499,88.635416 58.208333,88.635416 58.208333,71.437499z" />
                                     <GeometryDrawing Brush="White" Geometry="F1 M18.520834,27.78125z M0,0z M66.145833,71.4375L70.114583,66.145833 74.083333,71.4375 71.4375,71.4375 71.4375,88.635417 74.083333,88.635417 70.114583,93.927082 66.145833,88.635417 68.791667,88.635417 68.791667,71.4375z" />
                                     <GeometryDrawing Brush="White" Geometry="F1 M18.520834,27.78125z M0,0z M56.885415,87.3125L55.562498,85.989583 72.760414,72.760417 74.083331,74.083333z" />
+                                </DrawingGroup>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                    <DrawingBrush x:Key="linkscrollDrawingImageRef">
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup ClipGeometry="M0,0 V27.78125 H18.520834 V0 H0 Z">
+                                <DrawingGroup Opacity="1" Transform="1,0,0,1,-55.562499,-66.145832">
+                                    <GeometryDrawing Brush="Black" Geometry="F1 M18.520834,27.78125z M0,0z M55.562499,71.437499L59.531249,66.145832 63.499999,71.437499 60.854166,71.437499 60.854166,88.635416 63.499999,88.635416 59.531249,93.927082 55.562499,88.635416 58.208333,88.635416 58.208333,71.437499z" />
+                                    <GeometryDrawing Brush="Black" Geometry="F1 M18.520834,27.78125z M0,0z M66.145833,71.4375L70.114583,66.145833 74.083333,71.4375 71.4375,71.4375 71.4375,88.635417 74.083333,88.635417 70.114583,93.927082 66.145833,88.635417 68.791667,88.635417 68.791667,71.4375z" />
+                                </DrawingGroup>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                    <DrawingBrush x:Key="unlinkscrollDrawingImageRef">
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup ClipGeometry="M0,0 V27.78125 H18.520834 V0 H0 Z">
+                                <DrawingGroup Opacity="1" Transform="1,0,0,1,-55.562499,-66.145832">
+                                    <GeometryDrawing Brush="Black" Geometry="F1 M18.520834,27.78125z M0,0z M55.562499,71.437499L59.531249,66.145832 63.499999,71.437499 60.854166,71.437499 60.854166,88.635416 63.499999,88.635416 59.531249,93.927082 55.562499,88.635416 58.208333,88.635416 58.208333,71.437499z" />
+                                    <GeometryDrawing Brush="Black" Geometry="F1 M18.520834,27.78125z M0,0z M66.145833,71.4375L70.114583,66.145833 74.083333,71.4375 71.4375,71.4375 71.4375,88.635417 74.083333,88.635417 70.114583,93.927082 66.145833,88.635417 68.791667,88.635417 68.791667,71.4375z" />
+                                    <GeometryDrawing Brush="Black" Geometry="F1 M18.520834,27.78125z M0,0z M56.885415,87.3125L55.562498,85.989583 72.760414,72.760417 74.083331,74.083333z" />
                                 </DrawingGroup>
                             </DrawingGroup>
                         </DrawingBrush.Drawing>

@@ -27,7 +27,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.1.6";
+        private readonly string versionString = "1.2.1";
         private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
@@ -69,7 +69,7 @@ namespace DocCompareWPF
         private Thread threadStartWalkthrough;
 
         // link scroll
-        private bool linkscroll = true;
+        private bool[] linkScroll = { true, true, true, true, true };
 
         private WalkthroughSteps walkthroughStep = 0;
 
@@ -112,7 +112,8 @@ namespace DocCompareWPF
                 settings = new AppSettings
                 {
                     defaultFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                    numPanelsDragDrop = 2
+                    numPanelsDragDrop = 2,
+                    skipVersionString = versionString                    
                 };
 
                 SaveSettings();
@@ -133,12 +134,12 @@ namespace DocCompareWPF
                     settings.maxDocCount = 2;
                     SaveSettings();
                     SaveLicense();
-                    WindowGetProButton.Visibility = Visibility.Visible;
+                    DisplayLicense();
                 }
                 else if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.ANNUAL_SUBSCRIPTION ||
                          lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.DEVELOPMENT)
                 {
-                    WindowGetProButton.Visibility = Visibility.Hidden;
+                    DisplayLicense();
                     settings.maxDocCount = 5;
                     SaveSettings();
                 }
@@ -149,14 +150,13 @@ namespace DocCompareWPF
             {
                 lic = new LicenseManagement();
                 lic.Init(); // init 7 days trial
-                DisplayLicense();
 
                 settings.maxDocCount = 5;
                 SaveSettings();
                 SaveLicense();
 
                 CustomMessageBox msgBox = new CustomMessageBox();
-                msgBox.Setup("2|Compare free", "You are using the free version of 2|Compare. If you like the functions, please consider making a subscription on https://hopie.tech", "Okay");
+                msgBox.Setup("2|Compare free", "You are using the free version of 2|Compare. If you like the functions, please consider making a subscription on www.hopie.tech.", "Okay");
                 msgBox.ShowDialog();
 
                 threadCheckTrial = new Thread(new ThreadStart(CheckTrial));
@@ -164,7 +164,6 @@ namespace DocCompareWPF
 
                 ErrorHandling.ReportStatus("New free version", "on " + lic.GetUUID());
             }
-
 
             TimeSpan timeBuffer = lic.GetExpiryDate().Subtract(DateTime.Today);
             /*
@@ -193,7 +192,7 @@ namespace DocCompareWPF
 
             // Check update if needed
             threadCheckUpdate = new Thread(new ThreadStart(CheckUpdate));
-            threadCheckUpdate.Start();
+            //threadCheckUpdate.Start();
 
             settings.FreeStartCount++;
             SaveSettings();
@@ -642,6 +641,7 @@ namespace DocCompareWPF
             }
             */
 
+            Thread.Sleep(1000);
             Dispatcher.Invoke(() => { DisplayLicense(); });
         }
 
@@ -895,16 +895,14 @@ namespace DocCompareWPF
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        AutoAlignedLabel.Visibility = Visibility.Hidden;
-                        ManuallyAlignedLabel.Visibility = Visibility.Visible;
+                        ManualAlignmentTip.Visibility = Visibility.Visible;
                     });
                 }
                 else
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        AutoAlignedLabel.Visibility = Visibility.Visible;
-                        ManuallyAlignedLabel.Visibility = Visibility.Hidden;
+                        ManualAlignmentTip.Visibility = Visibility.Hidden;
                     });
                 }
 
@@ -1129,50 +1127,19 @@ namespace DocCompareWPF
                     ShowPPTSpeakerNotesButtonNameRight = "ShowPPTSpeakerNotesButtonNameRight" + i.ToString(),
                     ShowPPTSpeakerNotesButtonNameRightChanged = "ShowPPTSpeakerNotesButtonNameRightChanged" + i.ToString(),
                     ShowPPTSpeakerNotesButtonNameLeft = "ShowPPTSpeakerNotesButtonNameLeft" + i.ToString(),
+                    ShowPPTSpeakerNotesButtonNameLeftChanged = "ShowPPTSpeakerNotesButtonNameLeftChanged" + i.ToString(),
                     PPTNoteGridLeftVisi = Visibility.Hidden,
                     PPTNoteGridRightVisi = Visibility.Hidden,
                     showPPTSpeakerNotesButtonRight = Visibility.Hidden,
                     showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden,
                     HiddenPPTOpacity = HiddenPPTOpacity,
+                    AnimateButtonVisibility = Visibility.Hidden,
                 };
-
-                bool showSpeakerNotesLeft = false;
-                bool showSpeakerNotesRight = false;
-                bool didChange = false;
 
                 if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
                 {
                     thisItem.PathToImgLeft = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".png");
 
-                    /*
-                    if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
-                    {
-                        thisItem.PathToAniImgLeft = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
-
-                        if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
-                            lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
-                            lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
-                        {
-                            if(firstDiffFound == false)
-                            {
-                                firstDiffFound = true;
-                                thisItem.AniDiffButtonEnable = true;
-                                thisItem.AniDiffButtonTooltip = "Click and hold to animate the difference";
-                            }
-                            else
-                            {
-                                thisItem.AniDiffButtonEnable = false;
-                                thisItem.AniDiffButtonTooltip = "Animating difference is limited to only one page in the free version";
-                            }
-                        }
-                        else
-                        {
-                            thisItem.AniDiffButtonEnable = true;
-                            thisItem.AniDiffButtonTooltip = "Click and hold to animate the difference";
-                        }                        
-                    }
-
-                    */
                     if (docs.documents[docs.documentsToCompare[0]].fileType == Document.FileTypes.PPT)
                     {
                         if (docs.documents[docs.documentsToCompare[0]].pptIsHidden[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] == true)
@@ -1186,25 +1153,6 @@ namespace DocCompareWPF
                             thisItem.BlurRadiusLeft = 0;
                         }
 
-                        if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0)
-                        {
-                            thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] + "</text>";
-                            showSpeakerNotesLeft = true;
-                        }
-                        else
-                        {
-                            thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" + "<text></text>";
-                            if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
-                            {
-                                if (docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes != null)
-                                {
-                                    if (docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length != 0)
-                                    {
-                                        didChange |= true;
-                                    }
-                                }
-                            }
-                        }
                     }
                     else
                     {
@@ -1242,7 +1190,7 @@ namespace DocCompareWPF
                                 }
                                 else
                                 {
-                                    thisItem.AniDiffButtonEnable = false;
+                                    thisItem.AniDiffButtonEnable = true;
                                     thisItem.AniDiffButtonTooltip = "Animating difference is limited to only one page in the free version";
                                 }
                             }
@@ -1294,8 +1242,218 @@ namespace DocCompareWPF
                             thisItem.BlurRadiusRight = 0;
                         }
 
+                    }
+                    else
+                    {
+                        thisItem.ShowHiddenRight = Visibility.Hidden;
+                        thisItem.BlurRadiusRight = 0;
+                    }
+                }
+                else
+                {
+                    thisItem.ShowHiddenRight = Visibility.Hidden;
+                    thisItem.BlurRadiusRight = 0;
+                }
+
+
+                bool showSpeakerNotesLeft = false;
+                bool showSpeakerNotesLeftChanged = false;
+                bool showSpeakerNotesRight = false;
+                bool showSpeakerNotesRightChanged = false;
+                bool didChange = false;
+
+                if (docs.documents[docs.documentsToCompare[0]].fileType == Document.FileTypes.PPT && docs.documents[docs.documentsToCompare[1]].fileType == Document.FileTypes.PPT)
+                {
+                    if(docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] == -1)
+                    {
+                        if(docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0)
+                        {
+                            thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] + "</text>";
+                            showSpeakerNotesLeft = true;
+                            showSpeakerNotesLeftChanged = false;
+                        }
+                        else
+                        {
+                            thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" + "<text></text>";
+                            showSpeakerNotesLeft = false;
+                            showSpeakerNotesLeftChanged = false;
+                        }
+
+                    }
+                    else if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] == -1 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                    {
+                        if (docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length != 0)
+                        {
+                            thisItem.Document2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]] + "</text>";
+                            showSpeakerNotesRight = true;
+                            showSpeakerNotesRightChanged = false;
+                        }
+                        else
+                        {
+                            thisItem.Document2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" + "<text></text>";
+                            showSpeakerNotesRight = false;
+                            showSpeakerNotesRightChanged = false;
+                        }
+                    }
+                    else if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                    {
+                        string doc;
+                        
+
+                        if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0)
+                        {
+                            thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] + "</text>";
+                        }
+                        else
+                        {
+                            thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" + "<text></text>";                           
+                        }
 
                         if (docs.pptSpeakerNotesDiff[i].Count != 0)
+                        {
+                            doc = "<?xml version =\"1.0\" encoding=\"UTF-8\"?> \n<text>";
+
+                            foreach (DocCompareDLL.Diff diff in docs.pptSpeakerNotesDiff[i])
+                            {
+                                if (diff.operation == DocCompareDLL.Operation.INSERT)
+                                {
+                                    doc += "<INSERT>" + diff.text + "</INSERT>";
+                                    didChange |= true;
+                                }
+                                else if (diff.operation == DocCompareDLL.Operation.DELETE)
+                                {
+                                    doc += "<DELETE>" + diff.text + "</DELETE>";
+                                    didChange |= true;
+                                }
+                                else
+                                {
+                                    doc += diff.text;
+                                }
+                            }
+
+                            doc += "</text>";
+                            thisItem.Document2 = doc;
+                        }
+
+                        if(didChange == false)
+                        {
+                            if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length == 0
+                                && docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length == 0)
+                            {
+                                showSpeakerNotesLeft = false;
+                                showSpeakerNotesLeftChanged = false;
+                                showSpeakerNotesRight = false;
+                                showSpeakerNotesRightChanged = false;
+                            }
+                            else
+                            {
+                                showSpeakerNotesLeft = true;
+                                showSpeakerNotesLeftChanged = false;
+                                showSpeakerNotesRight = true;
+                                showSpeakerNotesRightChanged = false;
+                            }
+                        }
+                        else
+                        {
+                            if(docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0
+                                && docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length != 0)
+                            {
+                                showSpeakerNotesLeft = true;
+                                showSpeakerNotesLeftChanged = false;
+                                showSpeakerNotesRight = false;
+                                showSpeakerNotesRightChanged = true;
+                            }
+                            else if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length == 0
+                                && docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length == 0)
+                            {
+                                showSpeakerNotesLeft = false;
+                                showSpeakerNotesLeftChanged = false;
+                                showSpeakerNotesRight = false;
+                                showSpeakerNotesRightChanged = false;
+                            }
+                            else
+                            {
+                                showSpeakerNotesLeft = false;
+                                showSpeakerNotesLeftChanged = true;
+                                showSpeakerNotesRight = false;
+                                showSpeakerNotesRightChanged = true;
+                            }
+                        }
+
+                    }
+                }
+
+                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                            lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                            lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                {
+                    if (didChange == true)
+                        thisItem.ShowSpeakerNotesTooltip = "The speaker notes was edited. Get the pro version to view the difference.";
+                    else
+                        thisItem.ShowSpeakerNotesTooltip = "Viewing of speaker notes is only available in the pro version.";
+                }
+                else
+                {
+                    if (didChange == true)
+                        thisItem.ShowSpeakerNotesTooltip = "The speaker notes was edited. Click to view the difference.";
+                    else
+                        thisItem.ShowSpeakerNotesTooltip = "Click to show speaker notes";
+                }
+
+                if(showSpeakerNotesLeft)
+                {
+                    thisItem.showPPTSpeakerNotesButtonLeft = Visibility.Visible;
+                    thisItem.showPPTSpeakerNotesButtonLeftChanged = Visibility.Hidden;
+                }
+                else if (showSpeakerNotesLeftChanged)
+                {
+                    thisItem.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
+                    thisItem.showPPTSpeakerNotesButtonLeftChanged = Visibility.Visible;
+                }
+                else
+                {
+                    thisItem.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
+                    thisItem.showPPTSpeakerNotesButtonLeftChanged = Visibility.Hidden;
+                }
+
+                if (showSpeakerNotesRight)
+                {
+                    thisItem.showPPTSpeakerNotesButtonRight = Visibility.Visible;
+                    thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
+                }
+                else if (showSpeakerNotesRightChanged)
+                {
+                    thisItem.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
+                    thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Visible;
+                }
+                else
+                {
+                    thisItem.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
+                    thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
+                }
+
+                /*
+                if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0)
+                {
+                    thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] + "</text>";
+                    showSpeakerNotesLeft = true;
+                }
+                else
+                {
+                    thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" + "<text></text>";
+                    if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                    {
+                        if (docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes != null)
+                        {
+                            if (docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length != 0)
+                            {
+                                didChange |= true;
+                            }
+                        }
+                    }
+                }
+
+                if (docs.pptSpeakerNotesDiff[i].Count != 0)
                         {
                             string doc;
 
@@ -1340,37 +1498,10 @@ namespace DocCompareWPF
                             didChange = false;
                         }
 
-                    }
-                    else
-                    {
-                        thisItem.ShowHiddenRight = Visibility.Hidden;
-                        thisItem.BlurRadiusRight = 0;
-                    }
-                }
-                else
-                {
-                    thisItem.ShowHiddenRight = Visibility.Hidden;
-                    thisItem.BlurRadiusRight = 0;
-                }
+                */
 
-                
-                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
-                            lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
-                            lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
-                {
-                    if(didChange == true)
-                        thisItem.ShowSpeakerNotesTooltip = "The speaker notes was edited. Get the pro version to view the difference.";
-                    else
-                        thisItem.ShowSpeakerNotesTooltip = "Viewing of speaker notes is only available in the pro version.";
-                }
-                else
-                {
-                    if(didChange == true)
-                        thisItem.ShowSpeakerNotesTooltip = "The speaker notes was edited. Click to view the difference.";
-                    else
-                        thisItem.ShowSpeakerNotesTooltip = "Click to show speaker notes";
-                }
-                
+
+                /*
                 if (showSpeakerNotesLeft == false)
                 {
                     if (showSpeakerNotesRight == true)
@@ -1408,7 +1539,7 @@ namespace DocCompareWPF
                             thisItem.showPPTSpeakerNotesButtonRight = Visibility.Visible;
                             thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
                         }
-                        thisItem.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
+                        thisItem.showPPTSpeakerNotesButtonLeft = Visibility.Visible;
                     }
                     else
                     {
@@ -1432,14 +1563,15 @@ namespace DocCompareWPF
                         }
                     }
                 }
+                */
 
                 // license
-                
+
                 if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
                     lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
                     lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
                 {
-                    thisItem.ShowSpeakerNoteEnable = false;
+                    thisItem.ShowSpeakerNoteEnable = true;
                     //thisItem.ShowSpeakerNotesTooltip = "Viewing of speaker notes is only available in the pro version";
                     thisItem.ShowHiddenEnable = Visibility.Visible;
                 }
@@ -1449,7 +1581,7 @@ namespace DocCompareWPF
                     //thisItem.ShowSpeakerNotesTooltip = "Click to show speaker notes";
                     thisItem.ShowHiddenEnable = Visibility.Hidden;
                 }
-                
+
                 mainItemList.Add(thisItem);
             }
 
@@ -1550,7 +1682,7 @@ namespace DocCompareWPF
                             leftItem.BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
                             rightItem.BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
 
-                            
+
                             rightItem.DiffVisi = Visibility.Visible;
                             rightItem.NoDiffVisi = Visibility.Hidden;
                         }
@@ -1589,7 +1721,7 @@ namespace DocCompareWPF
                     rightItem.DiffVisi = Visibility.Hidden;
                 }
 
-                
+
 
                 if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
                     lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
@@ -1597,10 +1729,10 @@ namespace DocCompareWPF
                 {
                     leftItem.LinkPagesToolTip = "Manual alignment is only available in the pro version";
                     rightItem.LinkPagesToolTip = "Manual alignment is only available in the pro version";
-                    leftItem.ForceAlignEnable = false;
-                    rightItem.ForceAlignEnable = false;
+                    leftItem.ForceAlignEnable = true;
+                    rightItem.ForceAlignEnable = true;
 
-                    if(leftItem.ShowHidden == Visibility.Visible || rightItem.ShowHidden == Visibility.Visible)
+                    if (leftItem.ShowHidden == Visibility.Visible || rightItem.ShowHidden == Visibility.Visible)
                     {
                         rightItem.NoDiffVisi = Visibility.Hidden;
                         rightItem.DiffVisi = Visibility.Hidden;
@@ -1862,7 +1994,7 @@ namespace DocCompareWPF
                                 lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
                                 lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
                             {
-                                thisImage.ShowSpeakerNoteEnable = false;
+                                thisImage.ShowSpeakerNoteEnable = true;
                                 thisImage.ShowSpeakerNotesTooltip = "Viewing of speaker notes is only available in the pro version";
                                 thisImage.ShowHiddenEnable = Visibility.Visible;
                             }
@@ -2076,7 +2208,7 @@ namespace DocCompareWPF
                     DragDrop3ShowProVersion.Visibility = Visibility.Visible;
                     DocCompareColorZone3.Visibility = Visibility.Hidden;
                     WindowGetProButton.Visibility = Visibility.Visible;
-                    (WindowGetProButton.Parent as Border).Visibility = Visibility.Hidden;
+                    (WindowGetProButton.Parent as Border).Visibility = Visibility.Visible;
                     EnableOpenOriginal();
                     EnableReload();
                     break;
@@ -2550,57 +2682,74 @@ namespace DocCompareWPF
                     }
                 }
 
-                if (linkscroll == true)
+                if (linkScroll[0] == true)
                 {
-                    // try to scroll others
-                    Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
-                    ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    Border border2;
+                    if (linkScroll[1] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
-                    }
-
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView3, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
-
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
 
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView4, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    if (linkScroll[2] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView3, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
 
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView5, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    if (linkScroll[3] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView4, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
-                    else
+
+                    if (linkScroll[4] == true)
                     {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView5, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
                 }
+
             }
             catch
             {
@@ -2633,55 +2782,71 @@ namespace DocCompareWPF
                     }
                 }
 
-                if (linkscroll == true)
+                if (linkScroll[1] == true)
                 {
-                    // try to scroll others
-                    Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
-                    ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    Border border2;
+                    if (linkScroll[0] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
-                    }
-
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView3, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
-
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
 
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView4, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    if (linkScroll[2] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView3, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
 
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView5, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    if (linkScroll[3] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView4, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
-                    else
+
+                    if (linkScroll[4] == true)
                     {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView5, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
                 }
             }
@@ -2716,55 +2881,71 @@ namespace DocCompareWPF
                     }
                 }
 
-                if (linkscroll == true)
+                if (linkScroll[2] == true)
                 {
-                    // try to scroll others
-                    Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
-                    ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    Border border2;
+                    if (linkScroll[0] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
-                    }
-
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
-
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
 
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView4, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    if (linkScroll[1] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
 
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView5, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    if (linkScroll[3] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView4, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
-                    else
+
+                    if (linkScroll[4] == true)
                     {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView5, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
                 }
             }
@@ -2879,21 +3060,31 @@ namespace DocCompareWPF
                     splittedName = (sender as Button).Tag.ToString().Split("Right");
                 }
 
-                gridToAnimate = (sender as Button).Parent as Grid;
-                animateDiffRunning = true;
-
-                foreach (CompareMainItem item in DocCompareMainListView.Items)
+                if (!(DocCompareMainListView.Items[int.Parse(splittedName[^1])] as CompareMainItem).AniDiffButtonTooltip.Contains("limited"))
                 {
-                    if (item.AnimateDiffRightButtonName == (sender as Button).Tag.ToString())
-                    {
-                        item.ShowMask = Visibility.Hidden;
-                        item.BlurRadiusRight = 0;
-                        item.ShowHiddenRight = Visibility.Hidden;
-                    }
-                }
 
-                threadAnimateDiff = new Thread(new ThreadStart(AnimateDiffThread));
-                threadAnimateDiff.Start();
+                    gridToAnimate = (sender as Button).Parent as Grid;
+                    animateDiffRunning = true;
+
+                    foreach (CompareMainItem item in DocCompareMainListView.Items)
+                    {
+                        if (item.AnimateDiffRightButtonName == (sender as Button).Tag.ToString())
+                        {
+                            item.ShowMask = Visibility.Hidden;
+                            item.BlurRadiusRight = 0;
+                            item.ShowHiddenRight = Visibility.Hidden;
+                        }
+                    }
+
+                    threadAnimateDiff = new Thread(new ThreadStart(AnimateDiffThread));
+                    threadAnimateDiff.Start();
+                }
+                else
+                {
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("2|Compare Pro", "Animating the difference is only available in the \n2|Compare Pro version. Visit www.hopie.tech for more information.");
+                    msgBox.ShowDialog();
+                }
             }
         }
 
@@ -2963,37 +3154,47 @@ namespace DocCompareWPF
             if (sender is Grid)
             {
                 Grid parentGrid = sender as Grid;
-
+                string name = parentGrid.Tag.ToString();
+                string[] splitName;
                 if (parentGrid.Tag.ToString().Contains("Left"))
-                    mainGridSelectedLeftOrRight = GridSelection.LEFT;
-                else
-                    mainGridSelectedLeftOrRight = GridSelection.RIGHT;
-
-                foreach (object child in parentGrid.Children)
                 {
-                    if (child is Button)
+                    mainGridSelectedLeftOrRight = GridSelection.LEFT;
+                    splitName = name.Split("Left");
+                }
+                else
+                {
+                    mainGridSelectedLeftOrRight = GridSelection.RIGHT;
+                    splitName = name.Split("Right");
+                }
+
+                if ((DocCompareMainListView.Items[int.Parse(splitName[^1])] as CompareMainItem).AniDiffButtonEnable)
+                {
+                    foreach (object child in parentGrid.Children)
                     {
-                        Button thisButton = child as Button;
+                        if (child is Button)
+                        {
+                            Button thisButton = child as Button;
 
-                        if (mainGridSelectedLeftOrRight == GridSelection.LEFT)
-                        {
-                            if (thisButton.Tag != null)
+                            if (mainGridSelectedLeftOrRight == GridSelection.LEFT)
                             {
-                                if (thisButton.Tag.ToString().Contains("AnimateDiffLeft"))
-                                    thisButton.Visibility = Visibility.Hidden;
+                                if (thisButton.Tag != null)
+                                {
+                                    if (thisButton.Tag.ToString().Contains("AnimateDiffLeft"))
+                                        thisButton.Visibility = Visibility.Hidden;
+                                }
+                            }
+                            else
+                            {
+                                if (thisButton.Tag != null)
+                                {
+                                    if (thisButton.Tag.ToString().Contains("AnimateDiffRight"))
+                                        thisButton.Visibility = Visibility.Visible;
+                                }
                             }
                         }
-                        else
-                        {
-                            if (thisButton.Tag != null)
-                            {
-                                if (thisButton.Tag.ToString().Contains("AnimateDiffRight"))
-                                    thisButton.Visibility = Visibility.Visible;
-                            }
-                        }
+
+
                     }
-
-
                 }
 
                 Grid item = sender as Grid;
@@ -3775,6 +3976,11 @@ namespace DocCompareWPF
                         ShowDoc3FileInfoButton.Visibility = Visibility.Hidden;
                         ShowDoc4FileInfoButton.Visibility = Visibility.Hidden;
                         ShowDoc5FileInfoButton.Visibility = Visibility.Hidden;
+                        Doc1NameLabelComboBox.Margin = new Thickness(0, 0, 30, 0);
+                        Doc2NameLabel.Margin = new Thickness(0);
+                        Doc3NameLabel.Margin = new Thickness(0);
+                        Doc4NameLabel.Margin = new Thickness(0);
+                        Doc5NameLabel.Margin = new Thickness(0);
                         break;
                     case 2:
                         ShowDoc1FileInfoButton.Visibility = Visibility.Hidden;
@@ -3782,6 +3988,11 @@ namespace DocCompareWPF
                         ShowDoc3FileInfoButton.Visibility = Visibility.Hidden;
                         ShowDoc4FileInfoButton.Visibility = Visibility.Hidden;
                         ShowDoc5FileInfoButton.Visibility = Visibility.Hidden;
+                        Doc1NameLabelComboBox.Margin = new Thickness(0, 0, 0, 0);
+                        Doc2NameLabel.Margin = new Thickness(0, 0, 30, 0);
+                        Doc3NameLabel.Margin = new Thickness(0);
+                        Doc4NameLabel.Margin = new Thickness(0);
+                        Doc5NameLabel.Margin = new Thickness(0);
                         break;
                     case 3:
                         ShowDoc1FileInfoButton.Visibility = Visibility.Hidden;
@@ -3789,6 +4000,11 @@ namespace DocCompareWPF
                         ShowDoc3FileInfoButton.Visibility = Visibility.Visible;
                         ShowDoc4FileInfoButton.Visibility = Visibility.Hidden;
                         ShowDoc5FileInfoButton.Visibility = Visibility.Hidden;
+                        Doc1NameLabelComboBox.Margin = new Thickness(0, 0, 0, 0);
+                        Doc2NameLabel.Margin = new Thickness(0);
+                        Doc3NameLabel.Margin = new Thickness(0, 0, 30, 0);
+                        Doc4NameLabel.Margin = new Thickness(0);
+                        Doc5NameLabel.Margin = new Thickness(0);
                         break;
                     case 4:
                         ShowDoc1FileInfoButton.Visibility = Visibility.Hidden;
@@ -3796,6 +4012,11 @@ namespace DocCompareWPF
                         ShowDoc3FileInfoButton.Visibility = Visibility.Hidden;
                         ShowDoc4FileInfoButton.Visibility = Visibility.Visible;
                         ShowDoc5FileInfoButton.Visibility = Visibility.Hidden;
+                        Doc1NameLabelComboBox.Margin = new Thickness(0, 0, 0, 0);
+                        Doc2NameLabel.Margin = new Thickness(0);
+                        Doc3NameLabel.Margin = new Thickness(0);
+                        Doc4NameLabel.Margin = new Thickness(0, 0, 30, 0);
+                        Doc5NameLabel.Margin = new Thickness(0);
                         break;
                     case 5:
                         ShowDoc1FileInfoButton.Visibility = Visibility.Hidden;
@@ -3803,6 +4024,11 @@ namespace DocCompareWPF
                         ShowDoc3FileInfoButton.Visibility = Visibility.Hidden;
                         ShowDoc4FileInfoButton.Visibility = Visibility.Hidden;
                         ShowDoc5FileInfoButton.Visibility = Visibility.Visible;
+                        Doc1NameLabelComboBox.Margin = new Thickness(0, 0, 0, 0);
+                        Doc2NameLabel.Margin = new Thickness(0);
+                        Doc3NameLabel.Margin = new Thickness(0);
+                        Doc4NameLabel.Margin = new Thickness(0);
+                        Doc5NameLabel.Margin = new Thickness(0, 0, 30, 0);
                         break;
                     default:
                         ShowDoc1FileInfoButton.Visibility = Visibility.Hidden;
@@ -3810,10 +4036,13 @@ namespace DocCompareWPF
                         ShowDoc3FileInfoButton.Visibility = Visibility.Hidden;
                         ShowDoc4FileInfoButton.Visibility = Visibility.Hidden;
                         ShowDoc5FileInfoButton.Visibility = Visibility.Hidden;
+                        Doc1NameLabelComboBox.Margin = new Thickness(0, 0, 0, 0);
+                        Doc2NameLabel.Margin = new Thickness(0);
+                        Doc3NameLabel.Margin = new Thickness(0);
+                        Doc4NameLabel.Margin = new Thickness(0);
+                        Doc5NameLabel.Margin = new Thickness(0);
                         break;
-
                 }
-
             });
         }
 
@@ -4516,72 +4745,40 @@ namespace DocCompareWPF
         {
             UpdateFileStat(0);
 
-            if (Doc1StatAuthorLabel0.Visibility == Visibility.Collapsed)
-            {
-                Doc1StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc1StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc1StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc1StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc1StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc1StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc2StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc2StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc2StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc2StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc2StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc2StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc3StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc3StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc3StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc3StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc3StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc3StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc4StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc4StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc4StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc4StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc4StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc4StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc5StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc5StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc5StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc5StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc5StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc5StatLastEditorLabel0.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Doc1StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc1StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc1StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc1StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc1StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc1StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc2StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc2StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc2StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc3StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc3StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc3StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc4StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc4StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc4StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc5StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc5StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc5StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-            }
+            ShowDoc1FileInfoButton.Visibility = Visibility.Hidden;
+            HideDoc1FileInfoButton.Visibility = Visibility.Visible;
+
+            Doc1StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc1StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc1StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc1StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc1StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc1StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc2StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc2StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc2StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc2StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc2StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc2StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc3StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc3StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc3StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc3StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc3StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc3StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc4StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc4StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc4StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc4StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc4StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc4StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc5StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc5StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc5StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc5StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc5StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc5StatLastEditorLabel0.Visibility = Visibility.Visible;
+
 
             /*
             if(Doc1StatsGrid.ActualHeight > Doc2StatsGrid.ActualHeight)
@@ -4595,188 +4792,103 @@ namespace DocCompareWPF
         {
             UpdateFileStat(1);
 
-            if (Doc1StatAuthorLabel0.Visibility == Visibility.Collapsed)
-            {
-                Doc1StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc1StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc1StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc1StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc1StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc1StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc2StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc2StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc2StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc2StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc2StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc2StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc3StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc3StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc3StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc3StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc3StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc3StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc4StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc4StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc4StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc4StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc4StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc4StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc5StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc5StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc5StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc5StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc5StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc5StatLastEditorLabel0.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Doc1StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc1StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc1StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc1StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc1StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc1StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc2StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc2StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc2StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc3StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc3StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc3StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc4StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc4StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc4StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc5StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc5StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc5StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-            }
+            ShowDoc2FileInfoButton.Visibility = Visibility.Hidden;
+            HideDoc2FileInfoButton.Visibility = Visibility.Visible;
+
+            Doc1StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc1StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc1StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc1StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc1StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc1StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc2StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc2StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc2StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc2StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc2StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc2StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc3StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc3StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc3StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc3StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc3StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc3StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc4StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc4StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc4StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc4StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc4StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc4StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc5StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc5StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc5StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc5StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc5StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc5StatLastEditorLabel0.Visibility = Visibility.Visible;
+
         }
 
         private void ShowDoc3FileInfoButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateFileStat(2);
 
-            if (Doc1StatAuthorLabel0.Visibility == Visibility.Collapsed)
-            {
-                Doc1StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc1StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc1StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc1StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc1StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc1StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc2StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc2StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc2StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc2StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc2StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc2StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc3StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc3StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc3StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc3StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc3StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc3StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc4StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc4StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc4StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc4StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc4StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc4StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc5StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc5StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc5StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc5StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc5StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc5StatLastEditorLabel0.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Doc1StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc1StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc1StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc1StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc1StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc1StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc2StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc2StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc2StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc3StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc3StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc3StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc4StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc4StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc4StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc5StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc5StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc5StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-            }
+            ShowDoc3FileInfoButton.Visibility = Visibility.Hidden;
+            HideDoc3FileInfoButton.Visibility = Visibility.Visible;
+
+
+            Doc1StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc1StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc1StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc1StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc1StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc1StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc2StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc2StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc2StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc2StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc2StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc2StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc3StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc3StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc3StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc3StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc3StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc3StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc4StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc4StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc4StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc4StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc4StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc4StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc5StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc5StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc5StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc5StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc5StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc5StatLastEditorLabel0.Visibility = Visibility.Visible;
+
         }
 
         private void ShowDocCompareFileInfoButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateFileStat(5);
+            ShowDocCompareFileInfoButton.Visibility = Visibility.Hidden;
+            HideDocCompareFileInfoButton.Visibility = Visibility.Visible;
 
-            if (DocCompareLeftStatAuthorLabel.Visibility == Visibility.Collapsed)
-            {
-                DocCompareLeftStatAuthorLabel.Visibility = Visibility.Visible;
-                DocCompareLeftStatCreatedLabel.Visibility = Visibility.Visible;
-                DocCompareLeftStatAuthorLabel0.Visibility = Visibility.Visible;
-                DocCompareLeftStatCreatedLabel0.Visibility = Visibility.Visible;
-                DocCompareLeftStatLastEditorLabel0.Visibility = Visibility.Visible;
-                DocCompareLeftStatLastEditorLabel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                DocCompareLeftStatAuthorLabel.Visibility = Visibility.Collapsed;
-                DocCompareLeftStatCreatedLabel.Visibility = Visibility.Collapsed;
-                DocCompareLeftStatAuthorLabel0.Visibility = Visibility.Collapsed;
-                DocCompareLeftStatCreatedLabel0.Visibility = Visibility.Collapsed;
-                DocCompareLeftStatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                DocCompareLeftStatLastEditorLabel.Visibility = Visibility.Collapsed;
-            }
+            DocCompareLeftStatAuthorLabel.Visibility = Visibility.Visible;
+            DocCompareLeftStatCreatedLabel.Visibility = Visibility.Visible;
+            DocCompareLeftStatAuthorLabel0.Visibility = Visibility.Visible;
+            DocCompareLeftStatCreatedLabel0.Visibility = Visibility.Visible;
+            DocCompareLeftStatLastEditorLabel0.Visibility = Visibility.Visible;
+            DocCompareLeftStatLastEditorLabel.Visibility = Visibility.Visible;
 
-            if (DocCompareRightStatAuthorLabel.Visibility == Visibility.Collapsed)
-            {
-                DocCompareRightStatAuthorLabel.Visibility = Visibility.Visible;
-                DocCompareRightStatCreatedLabel.Visibility = Visibility.Visible;
-                DocCompareRightStatAuthorLabel0.Visibility = Visibility.Visible;
-                DocCompareRightStatCreatedLabel0.Visibility = Visibility.Visible;
-                DocCompareRightStatLastEditorLabel0.Visibility = Visibility.Visible;
-                DocCompareRightStatLastEditorLabel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                DocCompareRightStatAuthorLabel.Visibility = Visibility.Collapsed;
-                DocCompareRightStatCreatedLabel.Visibility = Visibility.Collapsed;
-                DocCompareRightStatCreatedLabel0.Visibility = Visibility.Collapsed;
-                DocCompareRightStatAuthorLabel0.Visibility = Visibility.Collapsed;
-                DocCompareRightStatAuthorLabel0.Visibility = Visibility.Collapsed;
-                DocCompareRightStatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                DocCompareRightStatLastEditorLabel.Visibility = Visibility.Collapsed;
-            }
+            DocCompareRightStatAuthorLabel.Visibility = Visibility.Visible;
+            DocCompareRightStatCreatedLabel.Visibility = Visibility.Visible;
+            DocCompareRightStatAuthorLabel0.Visibility = Visibility.Visible;
+            DocCompareRightStatCreatedLabel0.Visibility = Visibility.Visible;
+            DocCompareRightStatLastEditorLabel0.Visibility = Visibility.Visible;
+            DocCompareRightStatLastEditorLabel.Visibility = Visibility.Visible;
+
         }
 
         private void ShowDragDropZone2()
@@ -4858,11 +4970,11 @@ namespace DocCompareWPF
             if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
                 lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL)
             {
-                msgBox.Setup("Maximum documents loaded", "You have selected more than " + settings.maxDocCount.ToString() + " documents. Please consider subscribing the pro version on https://hopie.tech to load up to 5 documents.", "Okay");
+                msgBox.Setup("Maximum number of documents loaded", "You have selected more than " + settings.maxDocCount.ToString() + " documents. Please consider subscribing the pro version on www.hopie.tech to load up to 5 documents.", "Okay");
             }
             else
             {
-                msgBox.Setup("Maximum documents loaded", "You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded.", "Okay");
+                msgBox.Setup("Maximum number of documents loaded", "You have selected more than " + settings.maxDocCount.ToString() + " documents. Only the first " + settings.maxDocCount.ToString() + " documents are loaded.", "Okay");
             }
             msgBox.ShowDialog();
         }
@@ -4875,100 +4987,113 @@ namespace DocCompareWPF
             ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
 
             Button button = sender as Button;
-            if (inForceAlignMode == false)
+
+            if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
             {
-                scrollPosLeft = scrollViewer.VerticalOffset;
-                scrollPosRight = scrollViewer2.VerticalOffset;
-
-                selectedSideGridButtonName1 = button.Tag.ToString();
-                if (selectedSideGridButtonName1.Contains("Left"))
-                {
-                    sideGridSelectedLeftOrRight = GridSelection.LEFT;
-                    Dispatcher.Invoke(() => { DisableSideScrollLeft(); });
-                }
-                else
-                {
-                    sideGridSelectedLeftOrRight = GridSelection.RIGHT;
-                    Dispatcher.Invoke(() => { DisableSideScrollRight(); });
-                }
-
-                inForceAlignMode = true;
-                Dispatcher.Invoke(() =>
-                {
-                    MaskSideGridInForceAlignMode();
-                    DisableRemoveForceAlignButton();
-                });
+                CustomMessageBox msgBox = new CustomMessageBox();
+                msgBox.Setup("2|Compare Pro", "Manual alignment is only available in the \n2|Compare Pro version. Visit www.hopie.tech for more information.");
+                msgBox.ShowDialog();
             }
             else
             {
-                selectedSideGridButtonName2 = button.Tag.ToString();
 
-                if (selectedSideGridButtonName2 == selectedSideGridButtonName1) // click on original page again
+                if (inForceAlignMode == false)
                 {
-                    Dispatcher.Invoke(() =>
+                    scrollPosLeft = scrollViewer.VerticalOffset;
+                    scrollPosRight = scrollViewer2.VerticalOffset;
+
+                    selectedSideGridButtonName1 = button.Tag.ToString();
+                    if (selectedSideGridButtonName1.Contains("Left"))
                     {
-                        UnMaskSideGridFromForceAlignMode();
-                        EnableRemoveForceAlignButton();
-
-                        if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
-                        {
-                            //DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosLeft);
-                            scrollViewer2.ScrollToVerticalOffset(scrollPosLeft);
-                        }
-                        else
-                        {
-                            scrollViewer.ScrollToVerticalOffset(scrollPosRight);
-                            //DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosRight);
-                        }
-                    });
-                    inForceAlignMode = false;
-                    return;
-                }
-                else // another page selected
-                {
-                    inForceAlignMode = false;
-
-                    int source, target;
-                    string[] splittedNameTarget;
-                    string[] splittedNameRef;
-
-                    if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
-                    {
-                        splittedNameRef = selectedSideGridButtonName1.Split("Left");
-                        splittedNameTarget = selectedSideGridButtonName2.Split("Right");
-
-                        source = docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedNameRef[1])];
-                        target = docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedNameTarget[1])];
-                        docs.AddForceAligmentPairs(source, target);
+                        sideGridSelectedLeftOrRight = GridSelection.LEFT;
+                        Dispatcher.Invoke(() => { DisableSideScrollLeft(); });
                     }
                     else
                     {
-                        splittedNameRef = selectedSideGridButtonName2.Split("Left");
-                        splittedNameTarget = selectedSideGridButtonName1.Split("Right");
-
-                        source = docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedNameRef[1])];
-                        target = docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedNameTarget[1])];
-                        docs.AddForceAligmentPairs(source, target);
+                        sideGridSelectedLeftOrRight = GridSelection.RIGHT;
+                        Dispatcher.Invoke(() => { DisableSideScrollRight(); });
                     }
 
-                    ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
-                    docCompareGrid.Visibility = Visibility.Hidden;
-                    docCompareSideGridShown = 0;
-                    DocCompareMainListView.ScrollIntoView(DocCompareMainListView.Items[0]);
-                    DocCompareSideListViewLeft.ScrollIntoView(DocCompareSideListViewLeft.Items[0]);
-                    DocCompareSideListViewRight.ScrollIntoView(DocCompareSideListViewRight.Items[0]);
-                    SetVisiblePanel(SidePanels.DOCCOMPARE);
-                    ProgressBarDocCompareAlign.Visibility = Visibility.Visible;
-                    threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                    threadCompare.Start();
-
+                    inForceAlignMode = true;
                     Dispatcher.Invoke(() =>
                     {
-                        UnMaskSideGridFromForceAlignMode();
-                        EnableRemoveForceAlignButton();
-                        EnableSideScrollLeft();
-                        EnableSideScrollRight();
+                        MaskSideGridInForceAlignMode();
+                        DisableRemoveForceAlignButton();
                     });
+                }
+                else
+                {
+                    selectedSideGridButtonName2 = button.Tag.ToString();
+
+                    if (selectedSideGridButtonName2 == selectedSideGridButtonName1) // click on original page again
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            UnMaskSideGridFromForceAlignMode();
+                            EnableRemoveForceAlignButton();
+
+                            if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
+                            {
+                                //DocCompareSideScrollViewerLeft.ScrollToVerticalOffset(scrollPosLeft);
+                                scrollViewer2.ScrollToVerticalOffset(scrollPosLeft);
+                            }
+                            else
+                            {
+                                scrollViewer.ScrollToVerticalOffset(scrollPosRight);
+                                //DocCompareSideScrollViewerRight.ScrollToVerticalOffset(scrollPosRight);
+                            }
+                        });
+                        inForceAlignMode = false;
+                        return;
+                    }
+                    else // another page selected
+                    {
+                        inForceAlignMode = false;
+
+                        int source, target;
+                        string[] splittedNameTarget;
+                        string[] splittedNameRef;
+
+                        if (sideGridSelectedLeftOrRight == GridSelection.LEFT)
+                        {
+                            splittedNameRef = selectedSideGridButtonName1.Split("Left");
+                            splittedNameTarget = selectedSideGridButtonName2.Split("Right");
+
+                            source = docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedNameRef[1])];
+                            target = docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedNameTarget[1])];
+                            docs.AddForceAligmentPairs(source, target);
+                        }
+                        else
+                        {
+                            splittedNameRef = selectedSideGridButtonName2.Split("Left");
+                            splittedNameTarget = selectedSideGridButtonName1.Split("Right");
+
+                            source = docs.documents[docs.documentsToCompare[0]].docCompareIndices[int.Parse(splittedNameRef[1])];
+                            target = docs.documents[docs.documentsToCompare[1]].docCompareIndices[int.Parse(splittedNameTarget[1])];
+                            docs.AddForceAligmentPairs(source, target);
+                        }
+
+                        ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                        docCompareGrid.Visibility = Visibility.Hidden;
+                        docCompareSideGridShown = 0;
+                        DocCompareMainListView.ScrollIntoView(DocCompareMainListView.Items[0]);
+                        DocCompareSideListViewLeft.ScrollIntoView(DocCompareSideListViewLeft.Items[0]);
+                        DocCompareSideListViewRight.ScrollIntoView(DocCompareSideListViewRight.Items[0]);
+                        SetVisiblePanel(SidePanels.DOCCOMPARE);
+                        ProgressBarDocCompareAlign.Visibility = Visibility.Visible;
+                        threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                        threadCompare.Start();
+
+                        Dispatcher.Invoke(() =>
+                        {
+                            UnMaskSideGridFromForceAlignMode();
+                            EnableRemoveForceAlignButton();
+                            EnableSideScrollLeft();
+                            EnableSideScrollRight();
+                        });
+                    }
                 }
             }
         }
@@ -5718,34 +5843,106 @@ namespace DocCompareWPF
 
         private void LinkScrollButton_Click(object sender, RoutedEventArgs e)
         {
-            linkscroll = true;
-            UnlinkScrollButton.Visibility = Visibility.Visible;
-            LinkScrollButton.Visibility = Visibility.Hidden;
+
+            string name = (sender as Button).Name;
+            string[] splitName = name.Split("Button");
+
+            switch (int.Parse(splitName[^1]))
+            {
+                case 1:
+                    linkScroll[0] = true;
+                    UnlinkScrollButton1.Visibility = Visibility.Visible;
+                    LinkScrollButton1.Visibility = Visibility.Hidden;
+                    break;
+                case 2:
+                    linkScroll[1] = true;
+                    UnlinkScrollButton2.Visibility = Visibility.Visible;
+                    LinkScrollButton2.Visibility = Visibility.Hidden;
+                    break;
+                case 3:
+                    linkScroll[2] = true;
+                    UnlinkScrollButton3.Visibility = Visibility.Visible;
+                    LinkScrollButton3.Visibility = Visibility.Hidden;
+                    break;
+                case 4:
+                    linkScroll[3] = true;
+                    UnlinkScrollButton4.Visibility = Visibility.Visible;
+                    LinkScrollButton4.Visibility = Visibility.Hidden;
+                    break;
+                case 5:
+                    linkScroll[4] = true;
+                    UnlinkScrollButton5.Visibility = Visibility.Visible;
+                    LinkScrollButton5.Visibility = Visibility.Hidden;
+                    break;
+            }
 
             // trigger a scroll
             Border border = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
             ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
 
-            Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
-            ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+            for (int i = 1; i < 5; i++)
+            {
+                Border border2;
+                if (i == 1)
+                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
+                else if (i == 2)
+                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView3, 0);
+                else if (i == 3)
+                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView4, 0);
+                else
+                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView5, 0);
 
-            if (scrollViewer.ScrollableHeight > scrollViewer2.ScrollableHeight)
-            {
-                scrollViewer2.ScrollToVerticalOffset(scrollViewer2.VerticalOffset + 1);
-                scrollViewer2.ScrollToVerticalOffset(scrollViewer2.VerticalOffset - 1);
-            }
-            else
-            {
-                scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + 1);
-                scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 1);
+                if (linkScroll[i] == true)
+                {
+                    ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                    if (scrollViewer.ScrollableHeight > scrollViewer2.ScrollableHeight)
+                    {
+                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.VerticalOffset + 1);
+                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.VerticalOffset - 1);
+                    }
+                    else
+                    {
+                        scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + 1);
+                        scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 1);
+                    }
+                }
             }
         }
 
         private void UnlinkScrollButton_Click(object sender, RoutedEventArgs e)
         {
-            linkscroll = false;
-            UnlinkScrollButton.Visibility = Visibility.Hidden;
-            LinkScrollButton.Visibility = Visibility.Visible;
+            string name = (sender as Button).Name;
+            string[] splitName = name.Split("Button");
+
+            switch (int.Parse(splitName[^1]))
+            {
+                case 1:
+                    linkScroll[0] = false;
+                    UnlinkScrollButton1.Visibility = Visibility.Hidden;
+                    LinkScrollButton1.Visibility = Visibility.Visible;
+                    break;
+                case 2:
+                    linkScroll[1] = false;
+                    UnlinkScrollButton2.Visibility = Visibility.Hidden;
+                    LinkScrollButton2.Visibility = Visibility.Visible;
+                    break;
+                case 3:
+                    linkScroll[2] = false;
+                    UnlinkScrollButton3.Visibility = Visibility.Hidden;
+                    LinkScrollButton3.Visibility = Visibility.Visible;
+                    break;
+                case 4:
+                    linkScroll[3] = false;
+                    UnlinkScrollButton4.Visibility = Visibility.Hidden;
+                    LinkScrollButton4.Visibility = Visibility.Visible;
+                    break;
+                case 5:
+                    linkScroll[4] = false;
+                    UnlinkScrollButton5.Visibility = Visibility.Hidden;
+                    LinkScrollButton5.Visibility = Visibility.Visible;
+                    break;
+            }
         }
 
         private void HandleDocPreviewMouseEnter(object sender, MouseEventArgs e)
@@ -5862,7 +6059,10 @@ namespace DocCompareWPF
                 }
                 else
                 {
-                    (sender as Button).ToolTip = "Viewing of speaker notes is only available in the pro version.";
+                    (sender as Button).ToolTip = "Viewing of speaker notes is only available in the 2|Compare pro version.";
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("2|Compare Pro", "Viewing of speaker notes is only available in the \n2|Compare Pro version. Visit www.hopie.tech for more information.");
+                    msgBox.ShowDialog();
                 }
             }
             catch
@@ -5945,20 +6145,126 @@ namespace DocCompareWPF
 
                     item.PPTNoteGridLeftVisi = Visibility.Hidden;
                     item.PPTNoteGridRightVisi = Visibility.Hidden;
-                    item.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
+                    bool showSpeakerNotesLeft = false;
+                    bool showSpeakerNotesLeftChanged = false;
+                    bool showSpeakerNotesRight = false;
+                    bool showSpeakerNotesRightChanged = false;
+                    bool didChange = false;
 
-                    if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                    if (docs.documents[docs.documentsToCompare[0]].fileType == Document.FileTypes.PPT && docs.documents[docs.documentsToCompare[1]].fileType == Document.FileTypes.PPT)
                     {
-                        if (isChanged == false)
-                            item.showPPTSpeakerNotesButtonRight = Visibility.Visible;
-                        else
-                            item.showPPTSpeakerNotesButtonRightChanged = Visibility.Visible;
+                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] == -1)
+                        {
+                            if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0)
+                            {
+                                showSpeakerNotesLeft = true;
+                                showSpeakerNotesLeftChanged = false;
+                            }
+                            else
+                            {
+                                showSpeakerNotesLeft = false;
+                                showSpeakerNotesLeftChanged = false;
+                            }
+
+                        }
+                        else if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] == -1 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                        {
+                            if (docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length != 0)
+                            {
+                                showSpeakerNotesRight = true;
+                                showSpeakerNotesRightChanged = false;
+                            }
+                            else
+                            {
+                                showSpeakerNotesRight = false;
+                                showSpeakerNotesRightChanged = false;
+                            }
+                        }
+                        else if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                        {
+                            if (docs.pptSpeakerNotesDiff[i].Count != 0)
+                            {
+                                foreach (DocCompareDLL.Diff diff in docs.pptSpeakerNotesDiff[i])
+                                {
+                                    if (diff.operation == DocCompareDLL.Operation.INSERT)
+                                    {
+                                        didChange |= true;
+                                    }
+                                    else if (diff.operation == DocCompareDLL.Operation.DELETE)
+                                    {
+                                        didChange |= true;
+                                    }
+                                }                                                            
+                            }
+
+                            if (didChange == false)
+                            {
+                                showSpeakerNotesLeft = true;
+                                showSpeakerNotesLeftChanged = false;
+                                showSpeakerNotesRight = true;
+                                showSpeakerNotesRightChanged = false;
+                            }
+                            else
+                            {
+                                if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0
+                                    && docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length != 0)
+                                {
+                                    showSpeakerNotesLeft = true;
+                                    showSpeakerNotesLeftChanged = false;
+                                    showSpeakerNotesRight = false;
+                                    showSpeakerNotesRightChanged = true;
+                                }
+                                else if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length == 0
+                                    && docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length == 0)
+                                {
+                                    showSpeakerNotesLeft = false;
+                                    showSpeakerNotesLeftChanged = false;
+                                    showSpeakerNotesRight = false;
+                                    showSpeakerNotesRightChanged = false;
+                                }
+                                else
+                                {
+                                    showSpeakerNotesLeft = false;
+                                    showSpeakerNotesLeftChanged = true;
+                                    showSpeakerNotesRight = false;
+                                    showSpeakerNotesRightChanged = true;
+                                }
+                            }
+
+                        }
+                    }
+
+                    if (showSpeakerNotesLeft)
+                    {
+                        item.showPPTSpeakerNotesButtonLeft = Visibility.Visible;
+                        item.showPPTSpeakerNotesButtonLeftChanged = Visibility.Hidden;
+                    }
+                    else if (showSpeakerNotesLeftChanged)
+                    {
+                        item.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
+                        item.showPPTSpeakerNotesButtonLeftChanged = Visibility.Visible;
                     }
                     else
                     {
-                        item.showPPTSpeakerNotesButtonLeft = Visibility.Visible;
+                        item.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
+                        item.showPPTSpeakerNotesButtonLeftChanged = Visibility.Hidden;
                     }
 
+                    if (showSpeakerNotesRight)
+                    {
+                        item.showPPTSpeakerNotesButtonRight = Visibility.Visible;
+                        item.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
+                    }
+                    else if (showSpeakerNotesRightChanged)
+                    {
+                        item.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
+                        item.showPPTSpeakerNotesButtonRightChanged = Visibility.Visible;
+                    }
+                    else
+                    {
+                        item.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
+                        item.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
+                    }
                 }
             }
             catch
@@ -5975,16 +6281,24 @@ namespace DocCompareWPF
                     lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.FREE &&
                     lic.GetLicenseStatus() != LicenseManagement.LicenseStatus.INACTIVE)
                 {
-                    bool isChanged = false;
                     string senderName = (sender as Button).Tag.ToString();
                     string[] splitedName;
                     bool leftRight = false;
 
                     if (senderName.Contains("Left"))
+                    {
                         splitedName = senderName.Split("Left");
+                        try
+                        {
+                            int i = int.Parse(splitedName[^1]);
+                        }
+                        catch
+                        {
+                            splitedName = senderName.Split("LeftChanged");
+                        }
+                    }
                     else
                     {
-
                         splitedName = senderName.Split("Right");
                         try
                         {
@@ -5993,7 +6307,6 @@ namespace DocCompareWPF
                         catch
                         {
                             splitedName = senderName.Split("RightChanged");
-                            isChanged = true;
                         }
 
                         leftRight = true;
@@ -6004,17 +6317,20 @@ namespace DocCompareWPF
                         CompareMainItem item = (CompareMainItem)DocCompareMainListView.Items[int.Parse(splitedName[^1])];
                         if (leftRight == false)
                         {
+                            if (item.PathToImgRight != null)
+                                item.PPTNoteGridRightVisi = Visibility.Visible;
+                           
                             item.PPTNoteGridLeftVisi = Visibility.Visible;
                             item.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
+                            item.showPPTSpeakerNotesButtonLeftChanged = Visibility.Hidden;
                         }
                         else
                         {
                             if (item.PathToImgLeft != null)
                                 item.PPTNoteGridLeftVisi = Visibility.Visible;
-                            if (isChanged == false)
-                                item.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
-                            else
-                                item.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
+                            
+                            item.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
+                            item.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
                             item.PPTNoteGridRightVisi = Visibility.Visible;
                         }
                     }
@@ -6024,6 +6340,9 @@ namespace DocCompareWPF
                 else
                 {
                     (sender as Button).ToolTip = "Comparing speaker notes is only available in pro version";
+                    CustomMessageBox msgBox = new CustomMessageBox();
+                    msgBox.Setup("2|Compare Pro", "Viewing of speaker notes is only available in the \n2|Compare Pro version. Visit www.hopie.tech for more information.");
+                    msgBox.ShowDialog();
                 }
             }
             catch
@@ -6044,144 +6363,80 @@ namespace DocCompareWPF
         {
             UpdateFileStat(4);
 
-            if (Doc1StatAuthorLabel0.Visibility == Visibility.Collapsed)
-            {
-                Doc1StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc1StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc1StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc1StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc1StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc1StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc2StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc2StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc2StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc2StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc2StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc2StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc3StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc3StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc3StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc3StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc3StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc3StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc4StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc4StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc4StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc4StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc4StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc4StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc5StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc5StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc5StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc5StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc5StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc5StatLastEditorLabel0.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Doc1StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc1StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc1StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc1StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc1StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc1StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc2StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc2StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc2StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc3StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc3StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc3StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc4StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc4StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc4StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc5StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc5StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc5StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-            }
+            ShowDoc4FileInfoButton.Visibility = Visibility.Hidden;
+            HideDoc4FileInfoButton.Visibility = Visibility.Visible;
+
+
+            Doc1StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc1StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc1StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc1StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc1StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc1StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc2StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc2StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc2StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc2StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc2StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc2StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc3StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc3StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc3StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc3StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc3StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc3StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc4StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc4StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc4StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc4StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc4StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc4StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc5StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc5StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc5StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc5StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc5StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc5StatLastEditorLabel0.Visibility = Visibility.Visible;
+
         }
 
         private void ShowDoc5FileInfoButton_Click(object sender, RoutedEventArgs e)
         {
             UpdateFileStat(5);
+            ShowDoc5FileInfoButton.Visibility = Visibility.Hidden;
+            HideDoc5FileInfoButton.Visibility = Visibility.Visible;
 
-            if (Doc1StatAuthorLabel0.Visibility == Visibility.Collapsed)
-            {
-                Doc1StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc1StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc1StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc1StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc1StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc1StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc2StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc2StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc2StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc2StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc2StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc2StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc3StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc3StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc3StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc3StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc3StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc3StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc4StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc4StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc4StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc4StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc4StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc4StatLastEditorLabel0.Visibility = Visibility.Visible;
-                Doc5StatAuthorLabel0.Visibility = Visibility.Visible;
-                Doc5StatAuthorLabel.Visibility = Visibility.Visible;
-                Doc5StatCreatedLabel0.Visibility = Visibility.Visible;
-                Doc5StatCreatedLabel.Visibility = Visibility.Visible;
-                Doc5StatLastEditorLabel.Visibility = Visibility.Visible;
-                Doc5StatLastEditorLabel0.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Doc1StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc1StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc1StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc1StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc1StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc1StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc2StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc2StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc2StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc2StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc3StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc3StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc3StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc3StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc4StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc4StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc4StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc4StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatAuthorLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatAuthorLabel.Visibility = Visibility.Collapsed;
-                Doc5StatCreatedLabel0.Visibility = Visibility.Collapsed;
-                Doc5StatCreatedLabel.Visibility = Visibility.Collapsed;
-                Doc5StatLastEditorLabel.Visibility = Visibility.Collapsed;
-                Doc5StatLastEditorLabel0.Visibility = Visibility.Collapsed;
-            }
+            Doc1StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc1StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc1StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc1StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc1StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc1StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc2StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc2StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc2StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc2StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc2StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc2StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc3StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc3StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc3StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc3StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc3StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc3StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc4StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc4StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc4StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc4StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc4StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc4StatLastEditorLabel0.Visibility = Visibility.Visible;
+            Doc5StatAuthorLabel0.Visibility = Visibility.Visible;
+            Doc5StatAuthorLabel.Visibility = Visibility.Visible;
+            Doc5StatCreatedLabel0.Visibility = Visibility.Visible;
+            Doc5StatCreatedLabel.Visibility = Visibility.Visible;
+            Doc5StatLastEditorLabel.Visibility = Visibility.Visible;
+            Doc5StatLastEditorLabel0.Visibility = Visibility.Visible;
+
         }
 
         private void DocCompareDragDropZone4_DragOver(object sender, DragEventArgs e)
@@ -6352,55 +6607,71 @@ namespace DocCompareWPF
                     }
                 }
 
-                if (linkscroll == true)
+                if (linkScroll[3] == true)
                 {
-                    // try to scroll others
-                    Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
-                    ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    Border border2;
+                    if (linkScroll[0] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
-                    }
-
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
-
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
 
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView3, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    if (linkScroll[1] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
 
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView5, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    if (linkScroll[2] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView3, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
-                    else
+
+                    if (linkScroll[4] == true)
                     {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView5, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
                 }
             }
@@ -6598,55 +6869,71 @@ namespace DocCompareWPF
                     }
                 }
 
-                if (linkscroll == true)
+                if (linkScroll[4] == true)
                 {
-                    // try to scroll others
-                    Border border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
-                    ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    Border border2;
+                    if (linkScroll[0] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
-                    }
-
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
-
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
 
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView3, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    if (linkScroll[1] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-                    }
-                    else
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
 
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView4, 0);
-                    scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+                    if (linkScroll[2] == true)
+                    {
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView3, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
-                    {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
-                    else
+
+                    if (linkScroll[3] == true)
                     {
-                        scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        // try to scroll others
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView4, 0);
+                        ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
+
+                        if (scrollViewer.VerticalOffset <= scrollViewer2.ScrollableHeight)
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
+                        }
+                        else
+                        {
+                            scrollViewer2.ScrollToVerticalOffset(scrollViewer2.ScrollableHeight);
+                        }
                     }
                 }
             }
@@ -6871,7 +7158,7 @@ namespace DocCompareWPF
         {
             if (localetype == "DE")
             {
-                ProcessStartInfo info = new ProcessStartInfo("https://de.hopie.tech/")
+                ProcessStartInfo info = new ProcessStartInfo("https://de.hopie.tech/store")
                 {
                     UseShellExecute = true
                 };
@@ -6879,7 +7166,7 @@ namespace DocCompareWPF
             }
             else
             {
-                ProcessStartInfo info = new ProcessStartInfo("https://en.hopie.tech/")
+                ProcessStartInfo info = new ProcessStartInfo("https://en.hopie.tech/store")
                 {
                     UseShellExecute = true
                 };
@@ -7057,9 +7344,9 @@ namespace DocCompareWPF
                 Grid element = (Grid)e.Source;
                 double total = 0;
                 int i;
-                for(i = 0; i < element.ColumnDefinitions.Count; i++)
+                for (i = 0; i < element.ColumnDefinitions.Count; i++)
                 {
-                    if(e.GetPosition(element).X < total)
+                    if (e.GetPosition(element).X < total)
                     {
                         break;
                     }
@@ -7155,6 +7442,213 @@ namespace DocCompareWPF
             CompareDoc5Button.Visibility = Visibility.Hidden;
             (CompareDoc5Button.Parent as Border).Visibility = Visibility.Hidden;
         }
+
+        private void HideDoc1FileInfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            ShowDoc1FileInfoButton.Visibility = Visibility.Visible;
+            HideDoc1FileInfoButton.Visibility = Visibility.Hidden;
+
+            Doc1StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc1StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc1StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc1StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc1StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc1StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc2StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc2StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc2StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc3StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc3StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc3StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc4StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc4StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc4StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc5StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc5StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc5StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+        }
+
+        private void HideDoc2FileInfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            ShowDoc2FileInfoButton.Visibility = Visibility.Visible;
+            HideDoc2FileInfoButton.Visibility = Visibility.Hidden;
+
+            Doc1StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc1StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc1StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc1StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc1StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc1StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc2StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc2StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc2StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc3StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc3StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc3StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc4StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc4StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc4StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc5StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc5StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc5StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+        }
+
+        private void HideDoc3FileInfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            ShowDoc3FileInfoButton.Visibility = Visibility.Visible;
+            HideDoc3FileInfoButton.Visibility = Visibility.Hidden;
+
+            Doc1StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc1StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc1StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc1StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc1StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc1StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc2StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc2StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc2StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc3StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc3StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc3StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc4StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc4StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc4StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc5StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc5StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc5StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+        }
+
+        private void HideDoc4FileInfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            ShowDoc4FileInfoButton.Visibility = Visibility.Visible;
+            HideDoc4FileInfoButton.Visibility = Visibility.Hidden;
+
+            Doc1StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc1StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc1StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc1StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc1StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc1StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc2StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc2StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc2StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc3StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc3StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc3StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc4StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc4StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc4StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc5StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc5StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc5StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+        }
+
+        private void HideDoc5FileInfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            ShowDoc5FileInfoButton.Visibility = Visibility.Visible;
+            HideDoc5FileInfoButton.Visibility = Visibility.Hidden;
+
+            Doc1StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc1StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc1StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc1StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc1StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc1StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc2StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc2StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc2StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc2StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc3StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc3StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc3StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc3StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc4StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc4StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc4StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc4StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatAuthorLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatAuthorLabel.Visibility = Visibility.Collapsed;
+            Doc5StatCreatedLabel0.Visibility = Visibility.Collapsed;
+            Doc5StatCreatedLabel.Visibility = Visibility.Collapsed;
+            Doc5StatLastEditorLabel.Visibility = Visibility.Collapsed;
+            Doc5StatLastEditorLabel0.Visibility = Visibility.Collapsed;
+        }
+
+        private void HideDocCompareFileInfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            ShowDocCompareFileInfoButton.Visibility = Visibility.Visible;
+            HideDocCompareFileInfoButton.Visibility = Visibility.Hidden;
+
+            DocCompareLeftStatAuthorLabel.Visibility = Visibility.Collapsed;
+            DocCompareLeftStatCreatedLabel.Visibility = Visibility.Collapsed;
+            DocCompareLeftStatAuthorLabel0.Visibility = Visibility.Collapsed;
+            DocCompareLeftStatCreatedLabel0.Visibility = Visibility.Collapsed;
+            DocCompareLeftStatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            DocCompareLeftStatLastEditorLabel.Visibility = Visibility.Collapsed;
+
+            DocCompareRightStatAuthorLabel.Visibility = Visibility.Collapsed;
+            DocCompareRightStatCreatedLabel.Visibility = Visibility.Collapsed;
+            DocCompareRightStatCreatedLabel0.Visibility = Visibility.Collapsed;
+            DocCompareRightStatAuthorLabel0.Visibility = Visibility.Collapsed;
+            DocCompareRightStatAuthorLabel0.Visibility = Visibility.Collapsed;
+            DocCompareRightStatLastEditorLabel0.Visibility = Visibility.Collapsed;
+            DocCompareRightStatLastEditorLabel.Visibility = Visibility.Collapsed;
+        }
+
         private void DisableReload()
         {
             Dispatcher.Invoke(() =>

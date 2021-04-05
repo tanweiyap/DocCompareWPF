@@ -27,7 +27,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.2.1";
+        private readonly string versionString = "1.2.2";
         private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
@@ -6323,12 +6323,16 @@ namespace DocCompareWPF
                             item.PPTNoteGridLeftVisi = Visibility.Visible;
                             item.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
                             item.showPPTSpeakerNotesButtonLeftChanged = Visibility.Hidden;
+                            item.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
+                            item.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
                         }
                         else
                         {
                             if (item.PathToImgLeft != null)
                                 item.PPTNoteGridLeftVisi = Visibility.Visible;
-                            
+
+                            item.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
+                            item.showPPTSpeakerNotesButtonLeftChanged = Visibility.Hidden;
                             item.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
                             item.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
                             item.PPTNoteGridRightVisi = Visibility.Visible;

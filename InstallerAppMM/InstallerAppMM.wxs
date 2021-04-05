@@ -1637,6 +1637,12 @@
           <Component Id="owc9875B2FBADCE64E9CA55A49798342CCD" Guid="df82d46d-49e1-3560-9358-4c134e31797a" Win64="yes">
             <File Id="owf9875B2FBADCE64E9CA55A49798342CCD" Source="$(var.SourceDir)\WalkthroughImages\Page14.PNG" KeyPath="yes" />
           </Component>
+          <Component Id="owcA5C836035D9BBC84A2F8F89470654C4D" Guid="5b47614a-595f-4dd9-1f71-0b7ab800c160" Win64="yes">
+            <File Id="owfA5C836035D9BBC84A2F8F89470654C4D" Source="$(var.SourceDir)\WalkthroughImages\Page15.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owcA47B0D961B04E2E085D0D0D0BC8C0019" Guid="cf9b22ee-62e4-343d-ff98-0bdf20272215" Win64="yes">
+            <File Id="owfA47B0D961B04E2E085D0D0D0BC8C0019" Source="$(var.SourceDir)\WalkthroughImages\Page16.PNG" KeyPath="yes" />
+          </Component>
           <Component Id="owcDB19DD92D5FE8AFE15C88C3442D44637" Guid="b4e57f9d-2ff9-7c13-6b2a-3929a2bc3258" Win64="yes">
             <File Id="owfDB19DD92D5FE8AFE15C88C3442D44637" Source="$(var.SourceDir)\WalkthroughImages\Page2.PNG" KeyPath="yes" />
           </Component>

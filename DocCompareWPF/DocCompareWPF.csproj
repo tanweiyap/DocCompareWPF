@@ -168,6 +168,12 @@
     <None Update="WalkthroughImages\Page14.PNG">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="WalkthroughImages\Page15.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="WalkthroughImages\Page16.PNG">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="WalkthroughImages\Page2.PNG">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

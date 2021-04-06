@@ -1371,6 +1371,22 @@ namespace DocCompareWPF
                                 showSpeakerNotesRight = false;
                                 showSpeakerNotesRightChanged = false;
                             }
+                            else if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length == 0
+                                && docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length != 0)
+                            {
+                                showSpeakerNotesLeft = false;
+                                showSpeakerNotesLeftChanged = false;
+                                showSpeakerNotesRight = false;
+                                showSpeakerNotesRightChanged = true;
+                            }
+                            else if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0
+                                && docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length == 0)
+                            {
+                                showSpeakerNotesLeft = true;
+                                showSpeakerNotesLeftChanged = false;
+                                showSpeakerNotesRight = false;
+                                showSpeakerNotesRightChanged = true;
+                            }
                             else
                             {
                                 showSpeakerNotesLeft = false;
@@ -1431,139 +1447,6 @@ namespace DocCompareWPF
                     thisItem.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
                     thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
                 }
-
-                /*
-                if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0)
-                {
-                    thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] + "</text>";
-                    showSpeakerNotesLeft = true;
-                }
-                else
-                {
-                    thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n" + "<text></text>";
-                    if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
-                    {
-                        if (docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes != null)
-                        {
-                            if (docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length != 0)
-                            {
-                                didChange |= true;
-                            }
-                        }
-                    }
-                }
-
-                if (docs.pptSpeakerNotesDiff[i].Count != 0)
-                        {
-                            string doc;
-
-                            if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
-                            {
-                                doc = "<?xml version =\"1.0\" encoding=\"UTF-8\"?> \n<text>";
-
-                                foreach (DocCompareDLL.Diff diff in docs.pptSpeakerNotesDiff[i])
-                                {
-                                    if (diff.operation == DocCompareDLL.Operation.INSERT)
-                                    {
-                                        doc += "<INSERT>" + diff.text + "</INSERT>";
-                                        didChange |= true;
-                                    }
-                                    else if (diff.operation == DocCompareDLL.Operation.DELETE)
-                                    {
-                                        doc += "<DELETE>" + diff.text + "</DELETE>";
-                                        didChange |= true;
-                                    }
-                                    else
-                                    {
-                                        doc += diff.text;
-                                    }
-
-                                }
-
-                                doc += "</text>";
-
-                            }
-                            else
-                            {
-                                doc = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]] + "</text>";
-                            }
-
-                            thisItem.Document2 = doc;
-
-                            showSpeakerNotesRight = true;
-                        }
-                        else
-                        {
-                            showSpeakerNotesRight = false;
-                            didChange = false;
-                        }
-
-                */
-
-
-                /*
-                if (showSpeakerNotesLeft == false)
-                {
-                    if (showSpeakerNotesRight == true)
-                    {
-                        if (didChange == true)
-                        {
-                            thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Visible;
-                            thisItem.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
-                        }
-                        else
-                        {
-                            thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
-                            thisItem.showPPTSpeakerNotesButtonRight = Visibility.Visible;
-                        }
-                    }
-                    else
-                    {
-                        thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
-                        thisItem.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
-                    }
-
-                    thisItem.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
-                }
-                else
-                {
-                    if (showSpeakerNotesRight == true)
-                    {
-                        if (didChange == true)
-                        {
-                            thisItem.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
-                            thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Visible;
-                        }
-                        else
-                        {
-                            thisItem.showPPTSpeakerNotesButtonRight = Visibility.Visible;
-                            thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
-                        }
-                        thisItem.showPPTSpeakerNotesButtonLeft = Visibility.Visible;
-                    }
-                    else
-                    {
-                        if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
-                        {
-                            if (didChange == true)
-                            {
-                                thisItem.showPPTSpeakerNotesButtonRight = Visibility.Hidden;
-                                thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Visible;
-                            }
-                            else
-                            {
-                                thisItem.showPPTSpeakerNotesButtonRight = Visibility.Visible;
-                                thisItem.showPPTSpeakerNotesButtonRightChanged = Visibility.Hidden;
-                            }
-                            thisItem.showPPTSpeakerNotesButtonLeft = Visibility.Hidden;
-                        }
-                        else
-                        {
-                            thisItem.showPPTSpeakerNotesButtonLeft = Visibility.Visible;
-                        }
-                    }
-                }
-                */
 
                 // license
 
@@ -2529,9 +2412,9 @@ namespace DocCompareWPF
 
         private void DocCompareDragDropZone3_Drop(object sender, DragEventArgs e)
         {
-            if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
-                            lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
-                            lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+            if (lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.FREE &&
+                            lic.GetLicenseTypes() != LicenseManagement.LicenseTypes.TRIAL &&
+                            lic.GetLicenseStatus() != LicenseManagement.LicenseStatus.INACTIVE)
             {
 
                 if (null != e.Data && e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -3513,6 +3396,7 @@ namespace DocCompareWPF
                         Doc1Grid.Visibility = Visibility.Hidden;
                         ProgressBarDoc1.Visibility = Visibility.Visible;
                         ShowDragDropZone2();
+                        DocCompareDragDropZone2.IsEnabled = true;
                     });
                 }
             }
@@ -3532,6 +3416,7 @@ namespace DocCompareWPF
                         DocPreviewStatGrid.ColumnDefinitions[2].Width = new GridLength(0.5, GridUnitType.Star);
                         DragDrop3ShowProVersion.Visibility = Visibility.Hidden;
                         DocCompareColorZone3.Visibility = Visibility.Visible;
+                        DocCompareDragDropZone3.IsEnabled = true;
                     });
                 }
 
@@ -3543,6 +3428,7 @@ namespace DocCompareWPF
                     BrowseFileButton3.IsEnabled = false;
                     DragDrop3ShowProVersion.Visibility = Visibility.Visible;
                     DocCompareColorZone3.Visibility = Visibility.Hidden;
+                    DocCompareDragDropZone3.IsEnabled = false;
                     //HideDragDropZone3();
                 }
             }
@@ -3562,6 +3448,7 @@ namespace DocCompareWPF
                         DragDropPanel.ColumnDefinitions[3].Width = new GridLength(0.5, GridUnitType.Star);
                         DocPreviewStatGrid.ColumnDefinitions[2].Width = new GridLength(1, GridUnitType.Star);
                         DocPreviewStatGrid.ColumnDefinitions[3].Width = new GridLength(0.5, GridUnitType.Star);
+                        DocCompareDragDropZone4.IsEnabled = true;
                     });
                 }
             }
@@ -3581,6 +3468,7 @@ namespace DocCompareWPF
                         DragDropPanel.ColumnDefinitions[4].Width = new GridLength(0.5, GridUnitType.Star);
                         DocPreviewStatGrid.ColumnDefinitions[3].Width = new GridLength(1, GridUnitType.Star);
                         DocPreviewStatGrid.ColumnDefinitions[4].Width = new GridLength(0.5, GridUnitType.Star);
+                        DocCompareDragDropZone5.IsEnabled = true;
                     });
                 }
             }
@@ -6199,10 +6087,21 @@ namespace DocCompareWPF
 
                             if (didChange == false)
                             {
-                                showSpeakerNotesLeft = true;
-                                showSpeakerNotesLeftChanged = false;
-                                showSpeakerNotesRight = true;
-                                showSpeakerNotesRightChanged = false;
+                                if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length == 0
+                                    && docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length == 0)
+                                {
+                                    showSpeakerNotesLeft = false;
+                                    showSpeakerNotesLeftChanged = false;
+                                    showSpeakerNotesRight = false;
+                                    showSpeakerNotesRightChanged = false;
+                                }
+                                else
+                                {
+                                    showSpeakerNotesLeft = true;
+                                    showSpeakerNotesLeftChanged = false;
+                                    showSpeakerNotesRight = true;
+                                    showSpeakerNotesRightChanged = false;
+                                }
                             }
                             else
                             {
@@ -6221,6 +6120,22 @@ namespace DocCompareWPF
                                     showSpeakerNotesLeftChanged = false;
                                     showSpeakerNotesRight = false;
                                     showSpeakerNotesRightChanged = false;
+                                }
+                                else if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length == 0
+                                    && docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length != 0)
+                                {
+                                    showSpeakerNotesLeft = false;
+                                    showSpeakerNotesLeftChanged = false;
+                                    showSpeakerNotesRight = false;
+                                    showSpeakerNotesRightChanged = true;
+                                }
+                                else if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0
+                                    && docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length == 0)
+                                {
+                                    showSpeakerNotesLeft = true;
+                                    showSpeakerNotesLeftChanged = false;
+                                    showSpeakerNotesRight = false;
+                                    showSpeakerNotesRightChanged = true;
                                 }
                                 else
                                 {

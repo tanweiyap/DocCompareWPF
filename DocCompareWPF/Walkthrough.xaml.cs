@@ -65,22 +65,22 @@ namespace DocCompareWPF
                     item.Text = "Click this button to browse for files. Alternatively, you can drag and drop up to five files onto the white canvas for subsequent document comparison.";
                     break;
                 case 3:
-                    item.Text = "The dropdown menus allow you to select loaded documents as the reference. The loaded documents will be automatically aligned to the selected reference document.";
+                    item.Text = "This dropdown menu allows you to select one loaded document as reference. All other documents will automatically be aligned to this document.";
                     break;
                 case 4:
                     item.Text = "This button allows you to inspect document attributes, such as recent change dates or authors.";
                     break;
                 case 5:
-                    item.Text = "After document selection, click on this button to compare the selected document with the reference.";
+                    item.Text = "After reference selection, click this button at the top of any document to enter detailed comparison to the reference.";
                     break;
                 case 6:
                     item.Text = "Document differences are highlighted in magenta. The highlights can be toggled on or off using this button.";
                     break;
                 case 7:
-                    item.Text = "Our algorithm aligns the pages of your documents automatically. If you would like to change the alignment manually, mouse over and click the link-icon on any page in the miniature preview. Then, select any page in the second document preview. The software automatically calculates a new optimal document alignment that incorporates your manual choice.";
+                    item.Text = "Our algorithm aligns the pages of your documents automatically. If you would like to change the alignment manually, mouse over and click the link-icon on any page in the miniature preview. Then, select any page in the second document preview to which you want to align the previously selected page. The software calculates a new alignment with respect to your manual choice.";
                     break;
                 case 8:
-                    item.Text = "Click here to remove all manually set alignments. Click on the link icon between pages to remove individual links.";
+                    item.Text = "Click here to remove all manually set alignments. Click on an individual pages’ link icon to remove only that link.";
                     break;
                 case 9:
                     item.Text = "If you wish to amend files quickly, click this button to open the file in your external editor.";
@@ -95,10 +95,10 @@ namespace DocCompareWPF
                     item.Text = "When differences are difficult to spot, mouse over the page, then click and hold down this icon. It will overlay the aligned pages for better visual comparison.";
                     break;
                 case 13:
-                    item.Text = "If the loaded Powerpoint slide contains a speaker note, click on this icon to inspect the changes.";
+                    item.Text = "If a PowerPoint slide contains speaker notes, you can access them through this icon. If notes contain differences, the Icon will be highlighted in Magenta.";
                     break;
                 case 14:
-                    item.Text = "The changes in speaker notes are highlighted in magenta.";
+                    item.Text = "Differences in speaker notes are highlighted as well. ";
                     break;
                 case 15:
                     item.Text = "If you have obtained a license key from www.hopie.tech, please activate your software under the settings tab.";

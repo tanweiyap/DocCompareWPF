@@ -92,13 +92,16 @@ namespace DocCompareWPF.UIhelper
         public string ShowPPTSpeakerNotesButtonNameLeft { get; set; }
         public string ShowPPTSpeakerNotesButtonNameRight { get; set; }
         public string ShowPPTSpeakerNotesButtonNameRightChanged { get; set; }
+        public string ShowPPTSpeakerNotesButtonNameRightChangedTrans { get; set; }
         public string ShowPPTSpeakerNotesButtonNameLeftChanged { get; set; }
         private Visibility _showPPTSpeakerNotesButtonLeft;
         private Visibility _showPPTSpeakerNotesButtonLeftChanged;
         private Visibility _showPPTSpeakerNotesButtonRight;
         private Visibility _showPPTSpeakerNotesButtonRightChanged;
+        private Visibility _showPPTSpeakerNotesButtonRightChangedTrans;
 
         private SolidColorBrush _showPPTButtonBackground;
+        
         public SolidColorBrush ShowPPTNoteButtonBackground
         {
             get
@@ -164,6 +167,19 @@ namespace DocCompareWPF.UIhelper
             set
             {
                 _showPPTSpeakerNotesButtonRightChanged = value;
+                OnPropertyChanged();
+            }
+        }
+        public Visibility showPPTSpeakerNotesButtonRightChangedTrans
+        {
+            get
+            {
+                return _showPPTSpeakerNotesButtonRightChangedTrans;
+            }
+
+            set
+            {
+                _showPPTSpeakerNotesButtonRightChangedTrans = value;
                 OnPropertyChanged();
             }
         }

@@ -1347,7 +1347,7 @@
                                                                 </Button>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonNameLeftChanged}" Style="{StaticResource MahApps.Styles.Button.Flat}" Visibility="{Binding showPPTSpeakerNotesButtonLeftChanged}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
-                                                                        Click="HandleShowPPTNoteButtonCompareMode" Background="White" BorderBrush="{StaticResource WarningBackgroundBrush}" BorderThickness="2" ToolTipService.ShowOnDisabled="true" Padding="0" ToolTipService.InitialShowDelay="0">
+                                                                        Click="HandleShowPPTNoteButtonCompareMode" Background="White" BorderBrush="{StaticResource WarningBackgroundBrush}" BorderThickness="4" ToolTipService.ShowOnDisabled="true" Padding="0" ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridNameLeft}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"
@@ -1434,7 +1434,12 @@
                                                                 </Button>
                                                                 <Button Tag="{Binding ShowPPTSpeakerNotesButtonNameRightChanged}" Style="{StaticResource MahApps.Styles.Button.Flat}" Visibility="{Binding showPPTSpeakerNotesButtonRightChanged}" Foreground="Black" Width="30" Height="30"
                                                                         HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
-                                                                        Click="HandleShowPPTNoteButtonCompareMode" Background="White" BorderBrush="{StaticResource WarningBackgroundBrush}" BorderThickness="2" ToolTipService.ShowOnDisabled="true" Padding="0" ToolTipService.InitialShowDelay="0">
+                                                                        Click="HandleShowPPTNoteButtonCompareMode" Background="White" BorderBrush="{StaticResource WarningBackgroundBrush}" BorderThickness="4" ToolTipService.ShowOnDisabled="true" Padding="0" ToolTipService.InitialShowDelay="0">
+                                                                    <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
+                                                                </Button>
+                                                                <Button Tag="{Binding ShowPPTSpeakerNotesButtonNameRightChangedTrans}" Style="{StaticResource MahApps.Styles.Button.Flat}" Visibility="{Binding showPPTSpeakerNotesButtonRightChangedTrans}" Foreground="LightGray" Width="30" Height="30"
+                                                                        HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="15" ToolTip="{Binding ShowSpeakerNotesTooltip}" IsEnabled="{Binding ShowSpeakerNoteEnable}"
+                                                                        Click="HandleShowPPTNoteButtonCompareMode" Background="Transparent" BorderBrush="{StaticResource WarningBackgroundBrush}" BorderThickness="4" ToolTipService.ShowOnDisabled="true" Padding="0" ToolTipService.InitialShowDelay="0">
                                                                     <iconPacks:PackIconUnicons Kind="CommentAltNotes" />
                                                                 </Button>
                                                                 <Grid Tag="{Binding PPTSpeakerNoteGridNameRight}" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="{Binding Margin}"

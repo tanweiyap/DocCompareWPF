@@ -27,7 +27,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.2.4";
+        private readonly string versionString = "1.2.5";
         private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
@@ -192,7 +192,7 @@ namespace DocCompareWPF
 
             // Check update if needed
             threadCheckUpdate = new Thread(new ThreadStart(CheckUpdate));
-            //threadCheckUpdate.Start();
+            threadCheckUpdate.Start();
 
             settings.FreeStartCount++;
             SaveSettings();

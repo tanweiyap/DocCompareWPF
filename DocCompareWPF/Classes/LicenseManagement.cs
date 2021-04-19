@@ -16,7 +16,7 @@ namespace DocCompareWPF.Classes
         private static readonly HttpClient client = new HttpClient() { Timeout = new TimeSpan(0, 0, 20) };
 
         //private static readonly string LocalDirectory = Directory.GetCurrentDirectory();
-        private static readonly string serverAddress = "http://18.157.228.39:3501/";
+        private static readonly string serverAddress = "https://hopie.tech:3501/";
 
         [ProtoMember(1)]
         private LicenseTypes licenseType;
@@ -432,6 +432,7 @@ namespace DocCompareWPF.Classes
                 LicenseTypes.ANNUAL_SUBSCRIPTION => "Annual subscription",
                 LicenseTypes.DEVELOPMENT => "Developer license",
                 LicenseTypes.TRIAL => "Trial license",
+                LicenseTypes.FREE => "Free",
                 LicenseTypes.UNKNOWN => "Unknown license type",
                 _ => "",
             };
@@ -478,6 +479,7 @@ namespace DocCompareWPF.Classes
             {
                 "Annual subscription" => LicenseTypes.ANNUAL_SUBSCRIPTION,
                 "Trial" => LicenseTypes.TRIAL,
+                "Free" => LicenseTypes.FREE,
                 "Development" => LicenseTypes.DEVELOPMENT,
                 _ => LicenseTypes.UNKNOWN,
             };

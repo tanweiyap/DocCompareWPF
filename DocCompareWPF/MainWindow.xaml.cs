@@ -27,8 +27,8 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.2.5";
-        private readonly string localetype = "DE";
+        private readonly string versionString = "1.2.6";
+        private readonly string localetype = "EN";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -5780,36 +5780,62 @@ namespace DocCompareWPF
                     break;
             }
 
+            int count = 0;
+            for (int i = 0; i < docs.documents.Count; i++)
+            {
+                if (linkScroll[i] == true)
+                    count++;
+            }
+
+            if (count == 1) // if only one non ref is linked
+            {
+                if (linkScroll[0] == false) // set ref to linked
+                {
+                    linkScroll[0] = true;
+                    UnlinkScrollButton1.Visibility = Visibility.Visible;
+                    LinkScrollButton1.Visibility = Visibility.Hidden;
+                }
+                else // we make the next document linked?
+                {
+                    //if(settings.maxDocCount == 2)
+                    {
+                        linkScroll[1] = true;
+                        UnlinkScrollButton2.Visibility = Visibility.Visible;
+                        LinkScrollButton2.Visibility = Visibility.Hidden;
+                    }
+                }
+            }
+
             // trigger a scroll
             Border border = (Border)VisualTreeHelper.GetChild(DocCompareListView1, 0);
             ScrollViewer scrollViewer = VisualTreeHelper.GetChild(border, 0) as ScrollViewer;
 
-            for (int i = 1; i < 5; i++)
+            for (int i = 1; i < docs.documents.Count; i++)
             {
-                Border border2;
-                if (i == 1)
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
-                else if (i == 2)
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView3, 0);
-                else if (i == 3)
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView4, 0);
-                else
-                    border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView5, 0);
-
                 if (linkScroll[i] == true)
                 {
+                    Border border2;
+                    if (i == 1)
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView2, 0);
+                    else if (i == 2)
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView3, 0);
+                    else if (i == 3)
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView4, 0);
+                    else
+                        border2 = (Border)VisualTreeHelper.GetChild(DocCompareListView5, 0);
+
                     ScrollViewer scrollViewer2 = VisualTreeHelper.GetChild(border2, 0) as ScrollViewer;
 
-                    if (scrollViewer.ScrollableHeight > scrollViewer2.ScrollableHeight)
-                    {
+                    //if (scrollViewer.ScrollableHeight > scrollViewer2.ScrollableHeight)
+                    //{
                         scrollViewer2.ScrollToVerticalOffset(scrollViewer2.VerticalOffset + 1);
                         scrollViewer2.ScrollToVerticalOffset(scrollViewer2.VerticalOffset - 1);
-                    }
-                    else
-                    {
+                    //}
+                    //else
+                    //{
                         scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + 1);
                         scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 1);
-                    }
+                    //}
                 }
             }
         }
@@ -5846,6 +5872,52 @@ namespace DocCompareWPF
                     UnlinkScrollButton5.Visibility = Visibility.Hidden;
                     LinkScrollButton5.Visibility = Visibility.Visible;
                     break;
+            }
+
+            int count = 0;
+            for(int i= 0; i < docs.documents.Count; i++)
+            {
+                if (linkScroll[i] == true)
+                    count++;
+            }
+
+            if(count == 1) // set all to unlink
+            {
+                for(int i = 0; i < docs.documents.Count; i++)
+                {
+                    if(linkScroll[i] == true)
+                    {
+                        switch (i)
+                        {
+                            case 0:
+                                linkScroll[0] = false;
+                                UnlinkScrollButton1.Visibility = Visibility.Hidden;
+                                LinkScrollButton1.Visibility = Visibility.Visible;
+                                break;
+                            case 1:
+                                linkScroll[1] = false;
+                                UnlinkScrollButton2.Visibility = Visibility.Hidden;
+                                LinkScrollButton2.Visibility = Visibility.Visible;
+                                break;
+                            case 2:
+                                linkScroll[2] = false;
+                                UnlinkScrollButton3.Visibility = Visibility.Hidden;
+                                LinkScrollButton3.Visibility = Visibility.Visible;
+                                break;
+                            case 3:
+                                linkScroll[3] = false;
+                                UnlinkScrollButton4.Visibility = Visibility.Hidden;
+                                LinkScrollButton4.Visibility = Visibility.Visible;
+                                break;
+                            case 4:
+                                linkScroll[4] = false;
+                                UnlinkScrollButton5.Visibility = Visibility.Hidden;
+                                LinkScrollButton5.Visibility = Visibility.Visible;
+                                break;
+                        }
+
+                    }
+                }
             }
         }
 

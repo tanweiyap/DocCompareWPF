@@ -27,7 +27,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.2.6";
+        private readonly string versionString = "1.2.7";
         private readonly string localetype = "EN";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
@@ -1707,7 +1707,7 @@ namespace DocCompareWPF
 
                                 if (docs.documents[docIndex].fileType == Document.FileTypes.PPT && docs.documents[docIndex].pptSpeakerNotes[i].Length != 0)
                                 {
-                                    thisImage.showPPTSpeakerNotesButton = Visibility.Visible;
+                                    thisImage.showPPTSpeakerNotesButton = Visibility.Visible;                                   
                                     thisImage.ShowPPTSpeakerNotesButtonName = "ShowPPTNoteButton" + i.ToString();
                                     thisImage.PPTSpeakerNoteGridName = "PPTSpeakerNoteGrid" + i.ToString();
                                     thisImage.ClosePPTSpeakerNotesButtonName = "ClosePPTSpeakerNoteButton" + i.ToString();
@@ -1716,6 +1716,21 @@ namespace DocCompareWPF
                                 else
                                 {
                                     thisImage.showPPTSpeakerNotesButton = Visibility.Hidden;
+                                }
+
+                                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                                lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                                lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                                {
+                                    thisImage.ShowSpeakerNoteEnable = true;
+                                    thisImage.ShowSpeakerNotesTooltip = "Viewing of speaker notes is only available in the pro version";
+                                    thisImage.ShowHiddenEnable = Visibility.Visible;
+                                }
+                                else
+                                {
+                                    thisImage.ShowSpeakerNoteEnable = true;
+                                    thisImage.ShowSpeakerNotesTooltip = "Click to show speaker notes";
+                                    thisImage.ShowHiddenEnable = Visibility.Hidden;
                                 }
 
                                 imageList.Add(thisImage);

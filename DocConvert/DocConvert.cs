@@ -141,7 +141,14 @@ namespace DocConvert
 
                             try
                             {
-                                speakerNotes.Add(pptPresentation.Slides[i].NotesPage.Shapes.Placeholders[2].TextFrame.TextRange.Text);
+                                string readOut = pptPresentation.Slides[i].NotesPage.Shapes.Placeholders[2].TextFrame.TextRange.Text;
+
+                                while(readOut.StartsWith('\r') == true)
+                                {
+                                    readOut = readOut.TrimStart('\r');
+                                }
+
+                                speakerNotes.Add(readOut);
                             }
                             catch // error reading speaker notes
                             {

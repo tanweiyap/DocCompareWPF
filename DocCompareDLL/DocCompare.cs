@@ -309,7 +309,7 @@ namespace DocCompareDLL
                     if ((int)seqi[i] != -1 && (int)seqj[i] != -1)
                     {
                         //only if they differ...
-                        if (distanceMatrix[(int)seqi[i], (int)seqj[i]] != 1)
+                        if (distanceMatrix[(int)seqi[i], (int)seqj[i]] <= 0.9999)
                         {
                             Mat difference = new Mat();
                             Image_compare((Mat)doc1[(int)seqi[i]], (Mat)doc2[(int)seqj[i]], (Size)sizes[(int)seqj[i]], ref difference);

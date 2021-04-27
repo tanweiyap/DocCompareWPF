@@ -27,8 +27,8 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.2.7";
-        private readonly string localetype = "EN";
+        private readonly string versionString = "1.2.8";
+        private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -80,6 +80,7 @@ namespace DocCompareWPF
         Visibility hiddenPPTVisi;
 
         SidePanels currentVisiblePanel;
+        bool enableZoom;
 
         public MainWindow()
         {
@@ -93,6 +94,9 @@ namespace DocCompareWPF
             SetVisiblePanel(SidePanels.DRAGDROP);
             SidePanelDocCompareButton.IsEnabled = false;
             ActivateLicenseButton.IsEnabled = false;
+            magnifier.Freeze(true);
+            magnifier.ZoomFactor = 1.0;
+            magnifier.Visibility = Visibility.Hidden;
 
             HideDragDropZone2();
             HideDragDropZone3();
@@ -4598,6 +4602,17 @@ namespace DocCompareWPF
                     DocComparePanel.Visibility = Visibility.Hidden;
                     SettingsPanel.Visibility = Visibility.Visible;
                     SelectReferenceDocPanel.Visibility = Visibility.Hidden;
+
+                    if (enableZoom == true)
+                    {
+                        magnifier.Visibility = Visibility.Hidden;
+                        magnifier.ZoomFactor = 1.0;
+                        magnifier.Freeze(true);
+                        enableZoom = false;
+                        EnableZoomButton.Visibility = Visibility.Visible;
+                        DisableZoomButton.Visibility = Visibility.Hidden;
+                        ZoomButtonBackground2.Visibility = Visibility.Hidden;
+                    }
                     break;
 
                 case SidePanels.REFDOC:
@@ -4618,6 +4633,13 @@ namespace DocCompareWPF
                     DocComparePanel.Visibility = Visibility.Hidden;
                     SettingsPanel.Visibility = Visibility.Hidden;
                     SelectReferenceDocPanel.Visibility = Visibility.Hidden;
+                    if (enableZoom == true)
+                    {
+                        enableZoom = false;
+                        EnableZoomButton.Visibility = Visibility.Visible;
+                        DisableZoomButton.Visibility = Visibility.Hidden;
+                        ZoomButtonBackground2.Visibility = Visibility.Hidden;
+                    }
                     break;
             }
         }
@@ -7724,6 +7746,62 @@ namespace DocCompareWPF
             DocCompareRightStatAuthorLabel0.Visibility = Visibility.Collapsed;
             DocCompareRightStatLastEditorLabel0.Visibility = Visibility.Collapsed;
             DocCompareRightStatLastEditorLabel.Visibility = Visibility.Collapsed;
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (currentVisiblePanel != SidePanels.SETTINGS)
+            {
+                if (e.Key == Key.LeftCtrl)
+                {
+                    magnifier.Visibility = Visibility.Visible;
+                    magnifier.Freeze(false);
+                    magnifier.ZoomFactor = 0.5;
+                }
+            }
+        }
+
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.LeftCtrl)
+            {
+                magnifier.ZoomFactor = 1.0;
+                magnifier.Freeze(true);
+                magnifier.Visibility = Visibility.Hidden;
+
+                if (enableZoom == true)
+                {
+                    enableZoom = false;
+                    EnableZoomButton.Visibility = Visibility.Visible;
+                    DisableZoomButton.Visibility = Visibility.Hidden;
+                    ZoomButtonBackground2.Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
+        private void EnableZoomButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (currentVisiblePanel != SidePanels.SETTINGS)
+            {
+                enableZoom = true;
+                EnableZoomButton.Visibility = Visibility.Hidden;
+                DisableZoomButton.Visibility = Visibility.Visible;
+                ZoomButtonBackground2.Visibility = Visibility.Visible;
+                magnifier.Visibility = Visibility.Visible;
+                magnifier.Freeze(false);
+                magnifier.ZoomFactor = 0.5;
+            }
+        }
+
+        private void DisableZoomButton_Click(object sender, RoutedEventArgs e)
+        {
+            enableZoom = false;
+            EnableZoomButton.Visibility = Visibility.Visible;
+            DisableZoomButton.Visibility = Visibility.Hidden;
+            ZoomButtonBackground2.Visibility = Visibility.Hidden;
+            magnifier.Visibility = Visibility.Hidden;
+            magnifier.Freeze(true);
+            magnifier.ZoomFactor = 1.0;
         }
 
         private void DisableReload()

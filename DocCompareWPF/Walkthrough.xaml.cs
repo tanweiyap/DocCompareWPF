@@ -71,39 +71,42 @@ namespace DocCompareWPF
                     item.Text = "This button allows you to inspect document attributes, such as recent change dates or authors.";
                     break;
                 case 5:
-                    item.Text = "After reference selection, click this button at the top of any document to enter detailed comparison to the reference.";
+                    item.Text = "Click this button to enable the magnifying glass for inspecting small details of the document. The magnify function can also be activated by holding down the LEFT-CTRL key.";
                     break;
                 case 6:
-                    item.Text = "Document differences are highlighted in magenta. The highlights can be toggled on or off using this button.";
+                    item.Text = "After reference selection, click this button at the top of any document to enter detailed comparison to the reference.";
                     break;
                 case 7:
-                    item.Text = "Our algorithm aligns the pages of your documents automatically. If you would like to change the alignment manually, mouse over and click the link-icon on any page in the miniature preview. Then, select any page in the second document preview to which you want to align the previously selected page. The software calculates a new alignment with respect to your manual choice.";
+                    item.Text = "Document differences are highlighted in magenta. The highlights can be toggled on or off using this button.";
                     break;
                 case 8:
-                    item.Text = "Click here to remove all manually set alignments. Click on an individual pages’ link icon to remove only that link.";
+                    item.Text = "Our algorithm aligns the pages of your documents automatically. If you would like to change the alignment manually, mouse over and click the link-icon on any page in the miniature preview. Then, select any page in the second document preview to which you want to align the previously selected page. The software calculates a new alignment with respect to your manual choice.";
                     break;
                 case 9:
-                    item.Text = "If you wish to amend files quickly, click this button to open the file in your external editor.";
+                    item.Text = "Click here to remove all manually set alignments. Click on an individual pages’ link icon to remove only that link.";
                     break;
                 case 10:
-                    item.Text = "After changing a document externally, please reload the file using this button.";
+                    item.Text = "If you wish to amend files quickly, click this button to open the file in your external editor.";
                     break;
                 case 11:
-                    item.Text = "Use the dropdown menu to easily select other loaded document versions.";
+                    item.Text = "After changing a document externally, please reload the file using this button.";
                     break;
                 case 12:
-                    item.Text = "When differences are difficult to spot, mouse over the page, then click and hold down this icon. It will overlay the aligned pages for better visual comparison.";
+                    item.Text = "Use the dropdown menu to easily select other loaded document versions.";
                     break;
                 case 13:
-                    item.Text = "If a PowerPoint slide contains speaker notes, you can access them through this icon. If notes contain differences, the Icon will be highlighted in Magenta.";
+                    item.Text = "When differences are difficult to spot, mouse over the page, then click and hold down this icon. It will overlay the aligned pages for better visual comparison.";
                     break;
                 case 14:
-                    item.Text = "Differences in speaker notes are highlighted as well. ";
+                    item.Text = "If a PowerPoint slide contains speaker notes, you can access them through this icon. If notes contain differences, the Icon will be highlighted in Magenta.";
                     break;
                 case 15:
-                    item.Text = "If you have obtained a license key from www.hopie.tech, please activate your software under the settings tab.";
+                    item.Text = "Differences in speaker notes are highlighted as well. ";
                     break;
                 case 16:
+                    item.Text = "If you have obtained a license key from www.hopie.tech, please activate your software under the settings tab.";
+                    break;
+                case 17:
                     item.Text = "Thanks for taking the time to complete the walkthrough. You can restart it any time under the settings tab. Enjoy 2|Compare!";
                     NextStepButton.Content = "Close";
                     break;
@@ -132,11 +135,11 @@ namespace DocCompareWPF
 
         private void NextStepButton_Click(object sender, RoutedEventArgs e)
         {
-            if (stepCounter <= 16)
+            if (stepCounter <= 17)
             {
                 stepCounter++;
 
-                if (stepCounter == 17)
+                if (stepCounter == 18)
                 {
                     DialogResult = true;
                 }

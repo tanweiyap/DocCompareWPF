@@ -404,6 +404,7 @@ namespace DocCompareWPF.Classes
                         List<string> res = new List<string>();
                         res.Add((string)resp["Version"]);
                         res.Add((string)resp["Link"]);
+                        res.Add((string)resp["Info"]);
                         return res;
                     }
                     else

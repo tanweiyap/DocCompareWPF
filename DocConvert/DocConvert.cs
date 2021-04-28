@@ -88,7 +88,7 @@ namespace DocConvert
         {
         }
 
-        public int ConvertPPTToImages(string filePath, string outputPath, out List<bool> isHidden, out List<string> speakerNotes)
+        public int ConvertPPTToImages(string filePath, string outputPath, out List<bool> isHidden, out List<string> speakerNotes, ref bool readyToShow, ref int currIndex, ref int totalCount)
         {
             int ret = -1;
             isHidden = new List<bool>();
@@ -155,6 +155,12 @@ namespace DocConvert
                                 speakerNotes.Add("");
                             }
 
+                            if (i > 5)
+                                readyToShow = true;
+
+                            currIndex = i;
+                            totalCount = pptPresentation.Slides.Count + 1;
+
                         }
 
                         object fileAttribute = pptPresentation.BuiltInDocumentProperties;
@@ -165,7 +171,8 @@ namespace DocConvert
                         pptPresentation.Close();
                         if (pptApplication.Visible != MsoTriState.msoTrue)
                             pptApplication.Quit();
-                        
+
+                        readyToShow = true;
                         ret = 0;
                     }
                     else

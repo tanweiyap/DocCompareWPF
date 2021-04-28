@@ -27,7 +27,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.2.8";
+        private readonly string versionString = "1.2.9";
         private readonly string localetype = "EN";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
@@ -95,7 +95,7 @@ namespace DocCompareWPF
             SidePanelDocCompareButton.IsEnabled = false;
             ActivateLicenseButton.IsEnabled = false;
             magnifier.Freeze(true);
-            magnifier.ZoomFactor = 1.0;
+            magnifier.ZoomFactor = 0.5;
             magnifier.Visibility = Visibility.Hidden;
 
             HideDragDropZone2();
@@ -665,7 +665,7 @@ namespace DocCompareWPF
                         if (res[0] != settings.skipVersionString)
                         {
                             CustomMessageBox msgBox = new CustomMessageBox();
-                            msgBox.Setup("Update available", "A newer version of 2|Compare is available. Click OKAY to proceed with downloading the installer.", "Okay", "Skip");
+                            msgBox.Setup("Update available", "A newer version of 2|Compare is available. Click OKAY to proceed with downloading the installer.\n\n" + res[2], "Okay", "Skip");
 
                             if (msgBox.ShowDialog() == true)
                             {
@@ -1105,6 +1105,8 @@ namespace DocCompareWPF
             });
 
             List<CompareMainItem> mainItemList = new List<CompareMainItem>();
+            List<SideGridItemLeft> leftItemList = new List<SideGridItemLeft>();
+            List<SideGridItemRight> rightItemList = new List<SideGridItemRight>();
 
             bool firstDiffFound = false;
 
@@ -1483,15 +1485,11 @@ namespace DocCompareWPF
                 }
 
                 mainItemList.Add(thisItem);
-            }
+            //}
 
-            Dispatcher.Invoke(() => { DocCompareMainListView.ItemsSource = mainItemList; });
-
-            List<SideGridItemLeft> leftItemList = new List<SideGridItemLeft>();
-            List<SideGridItemRight> rightItemList = new List<SideGridItemRight>();
-
-            for (int i = 0; i < docs.totalLen; i++)
-            {
+            
+            //for (int i = 0; i < docs.totalLen; i++)
+            //{
                 SideGridItemLeft leftItem = new SideGridItemLeft()
                 {
                     GridName = "LeftSideGrid" + i.ToString(),
@@ -1594,8 +1592,18 @@ namespace DocCompareWPF
                     }
                     else
                     {
-                        rightItem.DiffVisi = Visibility.Hidden;
-                        rightItem.NoDiffVisi = Visibility.Visible;
+                        if (didChange == false)
+                        {
+                            rightItem.DiffVisi = Visibility.Hidden;
+                            rightItem.NoDiffVisi = Visibility.Visible;
+                        }
+                        else
+                        {
+                            leftItem.BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
+                            rightItem.BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
+                            rightItem.DiffVisi = Visibility.Visible;
+                            rightItem.NoDiffVisi = Visibility.Hidden;
+                        }
                     }
 
                     if (docs.documents[docs.documentsToCompare[1]].fileType == Document.FileTypes.PPT)
@@ -1652,6 +1660,7 @@ namespace DocCompareWPF
 
             Dispatcher.Invoke(() =>
             {
+                DocCompareMainListView.ItemsSource = mainItemList;
                 DocCompareSideListViewLeft.ItemsSource = leftItemList;
                 DocCompareSideListViewRight.ItemsSource = rightItemList;
                 //DocCompareSideScrollViewerLeft.Content = docCompareChildPanelLeft;
@@ -1671,6 +1680,32 @@ namespace DocCompareWPF
                 if (docs.documents.Count >= 1)
                 {
                     List<SimpleImageItem> imageList = new List<SimpleImageItem>();
+
+                    switch (viewerID)
+                    {
+                        case 1:
+                            if(DocCompareListView1.Items.Count != 0)
+                                imageList = DocCompareListView1.ItemsSource as List<SimpleImageItem>;
+                            break;
+                        case 2:
+                            if (DocCompareListView2.Items.Count != 0)
+                                imageList = DocCompareListView2.ItemsSource as List<SimpleImageItem>;
+                            break;
+                        case 3:
+                            if (DocCompareListView3.Items.Count != 0)
+                                imageList = DocCompareListView3.ItemsSource as List<SimpleImageItem>;
+                            break;
+                        case 4:
+                            if (DocCompareListView4.Items.Count != 0)
+                                imageList = DocCompareListView4.ItemsSource as List<SimpleImageItem>;
+                            break;
+                        case 5:
+                            if (DocCompareListView5.Items.Count != 0)
+                                imageList = DocCompareListView5.ItemsSource as List<SimpleImageItem>;
+                            break;
+
+                    }
+
                     if (docs.documents[docIndex].filePath != null)
                     {
                         int pageCounter = 0;
@@ -1680,76 +1715,85 @@ namespace DocCompareWPF
 
                         if (fi.Length != 0)
                         {
-                            for (int i = 0; i < fi.Length; i++)
+                            for (int i = imageList.Count; i < fi.Length; i++)
                             {
-                                SimpleImageItem thisImage = new SimpleImageItem()
+                                try
                                 {
-                                    PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".png"),
-                                    EoDVisi = Visibility.Hidden
-                                };
+                                    SimpleImageItem thisImage = new SimpleImageItem()
+                                    {
+                                        PathToFile = Path.Join(docs.documents[docIndex].imageFolder, i.ToString() + ".png"),
+                                        EoDVisi = Visibility.Hidden
+                                    };
 
-                                if (docs.documents[docIndex].fileType == Document.FileTypes.PPT && docs.documents[docIndex].pptIsHidden[i] == true)
-                                {
-                                    thisImage.BlurRadius = 5;
-                                    thisImage.showHidden = Visibility.Visible;
-                                    thisImage.HiddenPPTGridName = "HiddenPPTGrid" + i.ToString();
-                                }
-                                else
-                                {
-                                    thisImage.BlurRadius = 0;
-                                    thisImage.showHidden = Visibility.Hidden;
-                                }
+                                    if (docs.documents[docIndex].fileType == Document.FileTypes.PPT && docs.documents[docIndex].pptIsHidden[i] == true)
+                                    {
+                                        thisImage.BlurRadius = 5;
+                                        thisImage.showHidden = Visibility.Visible;
+                                        thisImage.HiddenPPTGridName = "HiddenPPTGrid" + i.ToString();
+                                    }
+                                    else
+                                    {
+                                        thisImage.BlurRadius = 0;
+                                        thisImage.showHidden = Visibility.Hidden;
+                                    }
 
-                                if (pageCounter == 0)
-                                {
-                                    thisImage.Margin = new Thickness(10, 10, 10, 10);
-                                }
-                                else
-                                {
-                                    thisImage.Margin = new Thickness(10, 0, 10, 10);
-                                }
+                                    if (pageCounter == 0)
+                                    {
+                                        thisImage.Margin = new Thickness(10, 10, 10, 10);
+                                    }
+                                    else
+                                    {
+                                        thisImage.Margin = new Thickness(10, 0, 10, 10);
+                                    }
 
-                                if (docs.documents[docIndex].fileType == Document.FileTypes.PPT && docs.documents[docIndex].pptSpeakerNotes[i].Length != 0)
-                                {
-                                    thisImage.showPPTSpeakerNotesButton = Visibility.Visible;                                   
-                                    thisImage.ShowPPTSpeakerNotesButtonName = "ShowPPTNoteButton" + i.ToString();
-                                    thisImage.PPTSpeakerNoteGridName = "PPTSpeakerNoteGrid" + i.ToString();
-                                    thisImage.ClosePPTSpeakerNotesButtonName = "ClosePPTSpeakerNoteButton" + i.ToString();
-                                    thisImage.PPTSpeakerNotes = docs.documents[docIndex].pptSpeakerNotes[i];
-                                }
-                                else
-                                {
-                                    thisImage.showPPTSpeakerNotesButton = Visibility.Hidden;
-                                }
+                                    if (docs.documents[docIndex].fileType == Document.FileTypes.PPT && docs.documents[docIndex].pptSpeakerNotes[i].Length != 0)
+                                    {
+                                        thisImage.showPPTSpeakerNotesButton = Visibility.Visible;
+                                        thisImage.ShowPPTSpeakerNotesButtonName = "ShowPPTNoteButton" + i.ToString();
+                                        thisImage.PPTSpeakerNoteGridName = "PPTSpeakerNoteGrid" + i.ToString();
+                                        thisImage.ClosePPTSpeakerNotesButtonName = "ClosePPTSpeakerNoteButton" + i.ToString();
+                                        thisImage.PPTSpeakerNotes = docs.documents[docIndex].pptSpeakerNotes[i];
+                                    }
+                                    else
+                                    {
+                                        thisImage.showPPTSpeakerNotesButton = Visibility.Hidden;
+                                    }
 
-                                if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
-                                lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
-                                lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
-                                {
-                                    thisImage.ShowSpeakerNoteEnable = true;
-                                    thisImage.ShowSpeakerNotesTooltip = "Viewing of speaker notes is only available in the pro version";
-                                    thisImage.ShowHiddenEnable = Visibility.Visible;
-                                }
-                                else
-                                {
-                                    thisImage.ShowSpeakerNoteEnable = true;
-                                    thisImage.ShowSpeakerNotesTooltip = "Click to show speaker notes";
-                                    thisImage.ShowHiddenEnable = Visibility.Hidden;
-                                }
+                                    if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
+                                    lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
+                                    lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
+                                    {
+                                        thisImage.ShowSpeakerNoteEnable = true;
+                                        thisImage.ShowSpeakerNotesTooltip = "Viewing of speaker notes is only available in the pro version";
+                                        thisImage.ShowHiddenEnable = Visibility.Visible;
+                                    }
+                                    else
+                                    {
+                                        thisImage.ShowSpeakerNoteEnable = true;
+                                        thisImage.ShowSpeakerNotesTooltip = "Click to show speaker notes";
+                                        thisImage.ShowHiddenEnable = Visibility.Hidden;
+                                    }
 
-                                imageList.Add(thisImage);
-                                pageCounter++;
+                                    imageList.Add(thisImage);
+                                    pageCounter++;
+                                }catch
+                                {
+                                    // convert not yet complete
+                                }
                             }
                         }
 
                         // add End of Document
-                        SimpleImageItem item = new SimpleImageItem
+                        if (imageList.Count == docs.documents[docIndex].totalCount - 1)
                         {
-                            EoDVisi = Visibility.Visible,
-                            showHidden = Visibility.Hidden,
-                            showPPTSpeakerNotesButton = Visibility.Hidden,
-                        };
-                        imageList.Add(item);
+                            SimpleImageItem item = new SimpleImageItem
+                            {
+                                EoDVisi = Visibility.Visible,
+                                showHidden = Visibility.Hidden,
+                                showPPTSpeakerNotesButton = Visibility.Hidden,
+                            };
+                            imageList.Add(item);
+                        }
                     }
 
                     if (imageList.Count != 0)
@@ -1759,7 +1803,7 @@ namespace DocCompareWPF
                             case 1:
                                 DocCompareListView1.ItemsSource = imageList;
                                 DocCompareListView1.Items.Refresh();
-                                DocCompareListView1.ScrollIntoView(DocCompareListView1.Items[0]);
+                                //DocCompareListView1.ScrollIntoView(DocCompareListView1.Items[0]);
                                 Doc1Grid.Visibility = Visibility.Visible;
                                 ProgressBarDoc1.Visibility = Visibility.Hidden;
                                 //Doc1PageNumberLabel.Content = "1 / " + DocCompareListView1.Items.Count.ToString();
@@ -1767,7 +1811,7 @@ namespace DocCompareWPF
                             case 2:
                                 DocCompareListView2.ItemsSource = imageList;
                                 DocCompareListView2.Items.Refresh();
-                                DocCompareListView2.ScrollIntoView(DocCompareListView2.Items[0]);
+                                //DocCompareListView2.ScrollIntoView(DocCompareListView2.Items[0]);
                                 Doc2Grid.Visibility = Visibility.Visible;
                                 ProgressBarDoc2.Visibility = Visibility.Hidden;
                                 Doc2NameLabel.Content = Path.GetFileName(docs.documents[docs.documentsToShow[1]].filePath);
@@ -1776,7 +1820,7 @@ namespace DocCompareWPF
                             case 3:
                                 DocCompareListView3.ItemsSource = imageList;
                                 DocCompareListView3.Items.Refresh();
-                                DocCompareListView3.ScrollIntoView(DocCompareListView3.Items[0]);
+                                //DocCompareListView3.ScrollIntoView(DocCompareListView3.Items[0]);
                                 Doc3Grid.Visibility = Visibility.Visible;
                                 ProgressBarDoc3.Visibility = Visibility.Hidden;
                                 Doc3NameLabel.Content = Path.GetFileName(docs.documents[docs.documentsToShow[2]].filePath);
@@ -1785,7 +1829,7 @@ namespace DocCompareWPF
                             case 4:
                                 DocCompareListView4.ItemsSource = imageList;
                                 DocCompareListView4.Items.Refresh();
-                                DocCompareListView4.ScrollIntoView(DocCompareListView4.Items[0]);
+                                //DocCompareListView4.ScrollIntoView(DocCompareListView4.Items[0]);
                                 Doc4Grid.Visibility = Visibility.Visible;
                                 ProgressBarDoc4.Visibility = Visibility.Hidden;
                                 Doc4NameLabel.Content = Path.GetFileName(docs.documents[docs.documentsToShow[3]].filePath);
@@ -1794,7 +1838,7 @@ namespace DocCompareWPF
                             case 5:
                                 DocCompareListView5.ItemsSource = imageList;
                                 DocCompareListView5.Items.Refresh();
-                                DocCompareListView5.ScrollIntoView(DocCompareListView5.Items[0]);
+                                //DocCompareListView5.ScrollIntoView(DocCompareListView5.Items[0]);
                                 Doc5Grid.Visibility = Visibility.Visible;
                                 ProgressBarDoc5.Visibility = Visibility.Hidden;
                                 Doc5NameLabel.Content = Path.GetFileName(docs.documents[docs.documentsToShow[4]].filePath);
@@ -3326,11 +3370,36 @@ namespace DocCompareWPF
                         {
                             (DocCompareSideListViewLeft.Items[i] as SideGridItemLeft).BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
                             (DocCompareSideListViewRight.Items[i] as SideGridItemRight).BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
-                        }
+                        }                        
                         else
                         {
                             (DocCompareSideListViewLeft.Items[i] as SideGridItemLeft).BackgroundBrush = Color.FromArgb(0, 255, 255, 255);
                             (DocCompareSideListViewRight.Items[i] as SideGridItemRight).BackgroundBrush = Color.FromArgb(0, 255, 255, 255);
+                        }
+
+                        if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1 && docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
+                        {
+                            bool didChange = false;  
+                            if (docs.pptSpeakerNotesDiff[i].Count != 0)
+                            {
+                                foreach (DocCompareDLL.Diff diff in docs.pptSpeakerNotesDiff[i])
+                                {
+                                    if (diff.operation == DocCompareDLL.Operation.INSERT)
+                                    {
+                                       didChange |= true;
+                                    }
+                                    else if (diff.operation == DocCompareDLL.Operation.DELETE)
+                                    {
+                                        didChange |= true;
+                                    }
+                                }
+                            }
+
+                            if(didChange == true)
+                            {
+                                (DocCompareSideListViewLeft.Items[i] as SideGridItemLeft).BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
+                                (DocCompareSideListViewRight.Items[i] as SideGridItemRight).BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
+                            }
                         }
                     }
 
@@ -3531,6 +3600,19 @@ namespace DocCompareWPF
                 DisableCloseDocument();
                 DisableOpenOriginal();
                 DisableShowDocInfo();
+
+                // clear all view
+                DocCompareListView1.ItemsSource = new List<SimpleImageItem>();
+                DocCompareListView2.ItemsSource = new List<SimpleImageItem>();
+                DocCompareListView3.ItemsSource = new List<SimpleImageItem>();
+                DocCompareListView4.ItemsSource = new List<SimpleImageItem>();
+                DocCompareListView5.ItemsSource = new List<SimpleImageItem>();
+                DocCompareListView1.Items.Refresh();
+                DocCompareListView2.Items.Refresh();
+                DocCompareListView3.Items.Refresh();
+                DocCompareListView4.Items.Refresh();
+                DocCompareListView5.Items.Refresh();
+                
             });
         }
 
@@ -3616,7 +3698,7 @@ namespace DocCompareWPF
             {
                 if (docs.documents.Count > 0)
                 {
-                    if (docs.documents[docs.documentsToShow[0]].processed == true)
+                    if (docs.documents[docs.documentsToShow[0]].readyToShow == true)
                     {
                         ProgressBarDoc1.Visibility = Visibility.Visible;
 
@@ -3645,7 +3727,7 @@ namespace DocCompareWPF
 
                 if (docs.documents.Count > 1)
                 {
-                    if (docs.documents[docs.documentsToShow[1]].processed == true)
+                    if (docs.documents[docs.documentsToShow[1]].readyToShow == true)
                     {
                         ProgressBarDoc2.Visibility = Visibility.Visible;
                         if (docs.globalAlignment != null && docs.globalAlignment.Count != 0)
@@ -3669,7 +3751,7 @@ namespace DocCompareWPF
                     // TODO: Premium
                     //if (settings.numPanelsDragDrop == 3)
                     {
-                        if (docs.documents[docs.documentsToShow[2]].processed == true)
+                        if (docs.documents[docs.documentsToShow[2]].readyToShow == true)
                         {
                             ProgressBarDoc3.Visibility = Visibility.Visible;
                             if (docs.globalAlignment != null && docs.globalAlignment.Count != 0)
@@ -3693,7 +3775,7 @@ namespace DocCompareWPF
                     // TODO: Premium
                     //if (settings.numPanelsDragDrop == 3)
                     {
-                        if (docs.documents[docs.documentsToShow[3]].processed == true)
+                        if (docs.documents[docs.documentsToShow[3]].readyToShow == true)
                         {
                             ProgressBarDoc4.Visibility = Visibility.Visible;
                             if (docs.globalAlignment != null && docs.globalAlignment.Count != 0)
@@ -3717,7 +3799,7 @@ namespace DocCompareWPF
                     // TODO: Premium
                     //if (settings.numPanelsDragDrop == 3)
                     {
-                        if (docs.documents[docs.documentsToShow[4]].processed == true)
+                        if (docs.documents[docs.documentsToShow[4]].readyToShow == true)
                         {
                             ProgressBarDoc5.Visibility = Visibility.Visible;
                             if (docs.globalAlignment != null && docs.globalAlignment.Count != 0)
@@ -3794,6 +3876,8 @@ namespace DocCompareWPF
                 if (docs.documents.Count >= 5)
                     DocCompareColorZone5.Visibility = Visibility.Hidden;
 
+                ProcessingDocProgressbar.Value = 0.0;
+
             });
 
             try
@@ -3804,14 +3888,17 @@ namespace DocCompareWPF
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            if (docs.documents.Count == 1)
-                                ProcessingDocProgressbar.Value = 1;
-                            else
-                                ProcessingDocProgressbar.Value = ((double)docProcessingCounter / (double)(docs.documents.Count - 1)) * 100.0;
+                            if (docProcessingCounter < docs.documents.Count)
+                            {
+                                ProcessingDocProgressbar.Value = (((double)docs.documents[docProcessingCounter].currIndex / (double)docs.documents[docProcessingCounter].totalCount) * (1.0 / (double)docs.documents.Count)  + ((double)docProcessingCounter) / (double)docs.documents.Count ) * 100.0;
 
-                            ProcessingDocLabel.Text = "Processing: " + Path.GetFileName(docs.documents[docProcessingCounter].filePath);
+                                ProcessingDocLabel.Text = "Processing: " + Path.GetFileName(docs.documents[docProcessingCounter].filePath) + " (" + docs.documents[docProcessingCounter].currIndex.ToString() + "/" + (docs.documents[docProcessingCounter].totalCount - 1).ToString() + ")";
+                                if (docs.documents[docProcessingCounter].currIndex % 10 == 0 || docs.documents[docProcessingCounter].currIndex == docs.documents[docProcessingCounter].totalCount - 1)
+                                {
+                                    UpdateAllPreview();
+                                }
+                            }
 
-                            UpdateAllPreview();
                         });
                     }
                     catch
@@ -7756,7 +7843,7 @@ namespace DocCompareWPF
                 {
                     magnifier.Visibility = Visibility.Visible;
                     magnifier.Freeze(false);
-                    magnifier.ZoomFactor = 0.5;
+                    //magnifier.ZoomFactor = 0.5;
                 }
             }
         }
@@ -7765,7 +7852,7 @@ namespace DocCompareWPF
         {
             if (e.Key == Key.LeftCtrl)
             {
-                magnifier.ZoomFactor = 1.0;
+                //magnifier.ZoomFactor = 1.0;
                 magnifier.Freeze(true);
                 magnifier.Visibility = Visibility.Hidden;
 
@@ -7801,7 +7888,30 @@ namespace DocCompareWPF
             ZoomButtonBackground2.Visibility = Visibility.Hidden;
             magnifier.Visibility = Visibility.Hidden;
             magnifier.Freeze(true);
-            magnifier.ZoomFactor = 1.0;
+            //magnifier.ZoomFactor = 1.0;
+        }
+
+        private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if(magnifier.Visibility == Visibility.Visible)
+            {
+                if(e.Delta > 0)
+                {
+                    if (magnifier.ZoomFactor > 0.3)
+                        magnifier.ZoomFactor = magnifier.ZoomFactor - 0.1;
+                    else
+                        magnifier.ZoomFactor = 0.3;
+                }
+                else
+                {
+                    if (magnifier.ZoomFactor < 0.6)
+                        magnifier.ZoomFactor = magnifier.ZoomFactor + 0.1;
+                    else
+                        magnifier.ZoomFactor = 0.7;
+                }
+
+                e.Handled = true;
+            }
         }
 
         private void DisableReload()

@@ -1069,6 +1069,11 @@
             <File Id="owfAF2B0A972FD63659AE0E271D05A93EC5" Source="$(var.SourceDir)\cs\WindowsFormsIntegration.resources.dll" KeyPath="yes" />
           </Component>
         </Directory>
+        <Directory Id="owd9D08CF3F1A28B2A94FAD2F3C1B2E5803" Name="cs-CZ">
+          <Component Id="owcCCE40998879096E74A38B1E0130CCF00" Guid="515c894e-fd1d-cf9c-6c25-80718067d88a" Win64="yes">
+            <File Id="owfCCE40998879096E74A38B1E0130CCF00" Source="$(var.SourceDir)\cs-CZ\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="yes" />
+          </Component>
+        </Directory>
         <Directory Id="owd17C6A2D314297F8FF3C608803909F7BE" Name="de">
           <Component Id="owc3E52C2E562B0CBD5889ABA59CB624D06" Guid="48efb165-bfea-18b9-7e15-d914f62a2d20" Win64="yes">
             <File Id="owf3E52C2E562B0CBD5889ABA59CB624D06" Source="$(var.SourceDir)\de\PresentationCore.resources.dll" KeyPath="yes" />
@@ -1117,6 +1122,9 @@
           </Component>
           <Component Id="owc20B96FA39E2B218784007700F96D4609" Guid="27f809d2-cb03-7cca-b4cb-27fd8ec6f9cd" Win64="yes">
             <File Id="owf20B96FA39E2B218784007700F96D4609" Source="$(var.SourceDir)\de\WindowsFormsIntegration.resources.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc6C718B3343D8127B437C96DA19A5E794" Guid="a5c9aa60-b7dc-076d-042b-1616264f3077" Win64="yes">
+            <File Id="owf6C718B3343D8127B437C96DA19A5E794" Source="$(var.SourceDir)\de\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="yes" />
           </Component>
         </Directory>
         <Directory Id="owdF542F1E9B1CF46F5EC5BF0998941ED93" Name="es">
@@ -1168,6 +1176,9 @@
           <Component Id="owcBF1463865BD6A957A48EA3C5086DF240" Guid="c95f2fd7-549f-066a-f2cf-8cdee52b3652" Win64="yes">
             <File Id="owfBF1463865BD6A957A48EA3C5086DF240" Source="$(var.SourceDir)\es\WindowsFormsIntegration.resources.dll" KeyPath="yes" />
           </Component>
+          <Component Id="owcDA1A65BC6FA210F9537EA7098E3C360F" Guid="bdb8a31c-e243-67c8-d883-2ae609a609cf" Win64="yes">
+            <File Id="owfDA1A65BC6FA210F9537EA7098E3C360F" Source="$(var.SourceDir)\es\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="yes" />
+          </Component>
         </Directory>
         <Directory Id="owdA426C3729D5D59516430C8F667ED8DE8" Name="fr">
           <Component Id="owc533C4FCFBCDB742AF18EFAB75EF2EA90" Guid="e5c91b2d-609c-614b-7739-18a2640ebd64" Win64="yes">
@@ -1217,6 +1228,14 @@
           </Component>
           <Component Id="owc792CCA12F158ED04980C63AC7D667A92" Guid="43af5489-81c2-36cf-492d-d5584ca00019" Win64="yes">
             <File Id="owf792CCA12F158ED04980C63AC7D667A92" Source="$(var.SourceDir)\fr\WindowsFormsIntegration.resources.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc9B73BCDFA311351CBC0A14B525027A1E" Guid="dc2a00b9-0569-b024-afbd-f460d96000db" Win64="yes">
+            <File Id="owf9B73BCDFA311351CBC0A14B525027A1E" Source="$(var.SourceDir)\fr\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="yes" />
+          </Component>
+        </Directory>
+        <Directory Id="owdA7283E8D598BDEB0C729D99375556528" Name="hu">
+          <Component Id="owcC49D3EE050BD7B9DED802491EB6B59B1" Guid="63217423-013d-74df-781a-076a09021b7c" Win64="yes">
+            <File Id="owfC49D3EE050BD7B9DED802491EB6B59B1" Source="$(var.SourceDir)\hu\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="yes" />
           </Component>
         </Directory>
         <Directory Id="owd74DAE01CDA8C981B3918AC92ED360AA1" Name="it">
@@ -1268,6 +1287,9 @@
           <Component Id="owc94240B43AA491090564BE58A44A4FF54" Guid="5f7d9531-9ec0-6171-d31d-4c679ce3db0d" Win64="yes">
             <File Id="owf94240B43AA491090564BE58A44A4FF54" Source="$(var.SourceDir)\it\WindowsFormsIntegration.resources.dll" KeyPath="yes" />
           </Component>
+          <Component Id="owc770B1FF72C986CDC4CDA356E70DBA133" Guid="66ad6385-5270-c7df-e15b-d60efb679ca0" Win64="yes">
+            <File Id="owf770B1FF72C986CDC4CDA356E70DBA133" Source="$(var.SourceDir)\it\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="yes" />
+          </Component>
         </Directory>
         <Directory Id="owd939A7C952EF97FFE1E5F44BC8281E343" Name="ja">
           <Component Id="owc9114C562D18E3A19A849530FE398CCB0" Guid="05e23b27-6849-e2b8-c740-154f5d44c764" Win64="yes">
@@ -1317,6 +1339,11 @@
           </Component>
           <Component Id="owc950F54F19393CAFE50CF69371EF67869" Guid="1757814d-c62a-97d6-3a69-84cab9d11825" Win64="yes">
             <File Id="owf950F54F19393CAFE50CF69371EF67869" Source="$(var.SourceDir)\ja\WindowsFormsIntegration.resources.dll" KeyPath="yes" />
+          </Component>
+        </Directory>
+        <Directory Id="owd24CC8C75508DB48969F95F713DE5421E" Name="ja-JP">
+          <Component Id="owcFF3B036FC3D11C300D01FA2DD10ACE72" Guid="a994e856-ab8b-ab97-8d93-b9d5d959cd95" Win64="yes">
+            <File Id="owfFF3B036FC3D11C300D01FA2DD10ACE72" Source="$(var.SourceDir)\ja-JP\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="yes" />
           </Component>
         </Directory>
         <Directory Id="owd26824DD7BA688994CEC324C96033C66B" Name="ko">
@@ -1518,6 +1545,14 @@
           <Component Id="owc4323874C58F469AD60A18D79FD0C23D4" Guid="54fb64e7-c1ed-7efb-c6ec-6a686e76afee" Win64="yes">
             <File Id="owf4323874C58F469AD60A18D79FD0C23D4" Source="$(var.SourceDir)\pt-BR\WindowsFormsIntegration.resources.dll" KeyPath="yes" />
           </Component>
+          <Component Id="owc0C67D52691AA761BD9E1A50F5020081E" Guid="d019acbe-c663-9cdd-a4bf-5cd5033a6880" Win64="yes">
+            <File Id="owf0C67D52691AA761BD9E1A50F5020081E" Source="$(var.SourceDir)\pt-BR\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="yes" />
+          </Component>
+        </Directory>
+        <Directory Id="owd79E4402FF4A4FAA2892D6FE6EE42A971" Name="ro">
+          <Component Id="owcFB627AAF97B6BD9F20A25AE1F19BEFBB" Guid="320f98fc-5751-1547-b5e5-11fa64fadbb6" Win64="yes">
+            <File Id="owfFB627AAF97B6BD9F20A25AE1F19BEFBB" Source="$(var.SourceDir)\ro\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="yes" />
+          </Component>
         </Directory>
         <Directory Id="owdEAE4E7B6D44EEB507A9E5B7539B1C34A" Name="ru">
           <Component Id="owc7439384B972A3103C44DBA1FCEE01628" Guid="38c39cac-adcd-c29e-5f56-aeca2d2c800b" Win64="yes">
@@ -1567,6 +1602,14 @@
           </Component>
           <Component Id="owc9122FD22EAB0D46BF94CC469FCD3BBF2" Guid="9468c84c-d50d-87cd-1ecb-e34c79159c51" Win64="yes">
             <File Id="owf9122FD22EAB0D46BF94CC469FCD3BBF2" Source="$(var.SourceDir)\ru\WindowsFormsIntegration.resources.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc5CBC4BD993B33EA6991322209B6968F8" Guid="09907f5a-cc5a-8ed3-e2ba-32409516ec3e" Win64="yes">
+            <File Id="owf5CBC4BD993B33EA6991322209B6968F8" Source="$(var.SourceDir)\ru\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="yes" />
+          </Component>
+        </Directory>
+        <Directory Id="owd445A6D00B1093099CC8B581A87A29FA1" Name="sv">
+          <Component Id="owc927AB3C2B7372BC303B6953BA9228173" Guid="e83f5c97-b62b-5391-1648-67f57a2f8b07" Win64="yes">
+            <File Id="owf927AB3C2B7372BC303B6953BA9228173" Source="$(var.SourceDir)\sv\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="yes" />
           </Component>
         </Directory>
         <Directory Id="owdFCC3FD9F99A4D5BEDEAC61F3322D2D93" Name="tr">
@@ -1723,6 +1766,9 @@
           </Component>
           <Component Id="owc8A0F05C73802E586E566BAEC85FECCA2" Guid="91214f07-04c7-3baa-103a-10c1c7ad3ce0" Win64="yes">
             <File Id="owf8A0F05C73802E586E566BAEC85FECCA2" Source="$(var.SourceDir)\zh-Hans\WindowsFormsIntegration.resources.dll" KeyPath="yes" />
+          </Component>
+          <Component Id="owc5B5FF617E171EFBB1F41ACCD5857DA20" Guid="595f1271-1f0a-9884-f683-b70ea44b8152" Win64="yes">
+            <File Id="owf5B5FF617E171EFBB1F41ACCD5857DA20" Source="$(var.SourceDir)\zh-Hans\Xceed.Wpf.AvalonDock.resources.dll" KeyPath="yes" />
           </Component>
         </Directory>
         <Directory Id="owdA86DB5E08AB73906A10F69BC4AA81DE2" Name="zh-Hant">

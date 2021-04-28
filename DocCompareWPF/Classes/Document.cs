@@ -22,6 +22,9 @@ namespace DocCompareWPF.Classes
         public string ModifiedDate;
         public List<bool> pptIsHidden;
         public List<string> pptSpeakerNotes;
+        public bool readyToShow;
+        public int currIndex = 0;
+        public int totalCount = 1;
 
         public Document()
         {
@@ -119,9 +122,10 @@ namespace DocCompareWPF.Classes
         {
             PPTConvertClass pptConvertClass = new PPTConvertClass();
             int ret = -1;
+            readyToShow = false;
             try
             {
-                ret = pptConvertClass.ConvertPPTToImages(filePath, imageFolder, out pptIsHidden, out pptSpeakerNotes);
+                ret = pptConvertClass.ConvertPPTToImages(filePath, imageFolder, out pptIsHidden, out pptSpeakerNotes, ref readyToShow, ref currIndex, ref totalCount);
                 if (ret == 0)
                     processed = true;
             }

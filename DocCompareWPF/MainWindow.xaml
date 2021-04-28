@@ -11,7 +11,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="DocCompare" Height="600" Width="1024" MinWidth="1024" MinHeight="600" WindowStyle="None" AllowsTransparency="True" StateChanged="Window_StateChanged"
-        FontSize="15" SizeChanged="Window_SizeChanged" LocationChanged="Window_LocationChanged" Keyboard.KeyDown="Window_KeyDown" Keyboard.KeyUp="Window_KeyUp">
+        FontSize="15" SizeChanged="Window_SizeChanged" LocationChanged="Window_LocationChanged" Keyboard.KeyDown="Window_KeyDown" Keyboard.KeyUp="Window_KeyUp" MouseWheel="Window_MouseWheel">
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
             <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -27,9 +27,6 @@
                 <RowDefinition />
                 <!--RowDefinition Height="32"/-->
             </Grid.RowDefinitions>
-            <Popup Name="floatingTip" AllowsTransparency="True" Placement="Relative" PlacementTarget="{Binding ElementName=outerBorder}">
-                <TextBlock>This is a hidden slide. Get the pro version to view and compare this slide.</TextBlock>
-            </Popup>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30" />
@@ -129,7 +126,7 @@
                 </Grid>
                 <Grid x:Name="MainPanel" Grid.Row="1">
                     <xtk:MagnifierManager.Magnifier>
-                        <xtk:Magnifier x:Name="magnifier" BorderBrush="Black" BorderThickness="1" Radius="100" ZoomFactor="1.0"></xtk:Magnifier>
+                        <xtk:Magnifier x:Name="magnifier" BorderBrush="Black" BorderThickness="1" Radius="125" ZoomFactor="0.5"></xtk:Magnifier>
                     </xtk:MagnifierManager.Magnifier>                    
                     <Grid x:Name="DragDropPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
@@ -212,7 +209,7 @@
                                         </Grid>
                                     </Grid>
                                     <ListView x:Name="DocCompareListView1" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareScrollViewer1_ScrollChanged" Background="{StaticResource RefDocumentBackGroundBrush2}"
-                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling" PreviewMouseWheel="Window_MouseWheel"
                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
                                         <ListView.ItemContainerStyle>
                                             <Style TargetType="ListViewItem">
@@ -374,7 +371,7 @@
                                         </Grid>
                                     </Grid>
                                     <ListView x:Name="DocCompareListView2" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareScrollViewer2_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
-                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling" PreviewMouseWheel="Window_MouseWheel"
                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
                                         <ListView.ItemContainerStyle>
                                             <Style TargetType="ListViewItem">
@@ -538,7 +535,7 @@
                                         </Grid>
                                     </Grid>
                                     <ListView x:Name="DocCompareListView3" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareScrollViewer3_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
-                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling" PreviewMouseWheel="Window_MouseWheel"
                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
                                         <ListView.ItemContainerStyle>
                                             <Style TargetType="ListViewItem">
@@ -701,7 +698,7 @@
                                         </Grid>
                                     </Grid>
                                     <ListView x:Name="DocCompareListView4" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareScrollViewer4_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
-                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling" PreviewMouseWheel="Window_MouseWheel"
                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
                                         <ListView.ItemContainerStyle>
                                             <Style TargetType="ListViewItem">
@@ -863,7 +860,7 @@
                                         </Grid>
                                     </Grid>
                                     <ListView x:Name="DocCompareListView5" Grid.Row="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareScrollViewer5_ScrollChanged" Background="{StaticResource DocumentBackGroundBrush}"
-                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                        VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling" PreviewMouseWheel="Window_MouseWheel"
                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Visible">
                                         <ListView.ItemContainerStyle>
                                             <Style TargetType="ListViewItem">
@@ -1290,7 +1287,7 @@
                                     <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource DocumentBackGroundBrush}"/>
                                 </Grid>
                                 <ListView x:Name="DocCompareMainListView" Grid.Column="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareMainScrollViewer_ScrollChanged" Background="Transparent"
-                                    VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                    VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling" PreviewMouseWheel="Window_MouseWheel"
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="ListViewItem">
@@ -1482,7 +1479,7 @@
                                     </ListView.ItemContainerStyle>
                                 </ListView>
                                 <ListView x:Name="DocCompareSideListViewLeft" Grid.Column="1" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareSideScrollViewerLeft_ScrollChanged" Background="Transparent"
-                                    VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                    VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling" PreviewMouseWheel="Window_MouseWheel"
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Hidden">
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="ListViewItem">
@@ -1550,7 +1547,7 @@
                                     </ListView.ItemContainerStyle>
                                 </ListView>
                                 <ListView x:Name="DocCompareSideListViewRight" Grid.Column="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.ScrollChanged="DocCompareSideScrollViewerRight_ScrollChanged" Background="Transparent"
-                                    VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                    VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True" VirtualizingPanel.VirtualizationMode="Recycling" PreviewMouseWheel="Window_MouseWheel"
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="ListViewItem">

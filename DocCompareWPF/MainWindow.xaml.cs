@@ -28,7 +28,7 @@ namespace DocCompareWPF
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
         private readonly string versionString = "1.2.8";
-        private readonly string localetype = "DE";
+        private readonly string localetype = "EN";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -1197,7 +1197,7 @@ namespace DocCompareWPF
                                 else
                                 {
                                     thisItem.AniDiffButtonEnable = true;
-                                    thisItem.AniDiffButtonTooltip = "Animating difference is limited to only one page in the free version";
+                                    thisItem.AniDiffButtonTooltip = "Animating difference is limited to the first page in the free version";
                                 }
                             }
                             else
@@ -1231,7 +1231,7 @@ namespace DocCompareWPF
                             lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
                             lic.GetLicenseStatus() == LicenseManagement.LicenseStatus.INACTIVE)
                         {
-                            thisItem.AniDiffButtonTooltip = "Animating difference is limited to only one page in the free version";
+                            thisItem.AniDiffButtonTooltip = "Animating difference is limited to the first page in the free version";
                         }
                     }
 

@@ -1004,6 +1004,21 @@
         <Component Id="owc693D66F39A6EF282B6636183125F426E" Guid="478e5d88-3f1c-3775-431e-a15548e032c5" Win64="yes">
           <File Id="owf693D66F39A6EF282B6636183125F426E" Source="$(var.SourceDir)\wpfgfx_cor3.dll" KeyPath="yes" />
         </Component>
+        <Component Id="owc5DF5A02435B886620F61D1475E1EE506" Guid="0b8d6853-9bf2-1497-d28c-8fc631878086" Win64="yes">
+          <File Id="owf5DF5A02435B886620F61D1475E1EE506" Source="$(var.SourceDir)\Xceed.Wpf.AvalonDock.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcE50E0EA961399A5C58E851C2509C2841" Guid="ebd0d707-f355-97c1-28f7-c6c55ccfbb1c" Win64="yes">
+          <File Id="owfE50E0EA961399A5C58E851C2509C2841" Source="$(var.SourceDir)\Xceed.Wpf.AvalonDock.Themes.Aero.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc173B688D4A2873439CC8AAA15C62C194" Guid="c2f3249d-b135-4061-a322-c755be18c1c1" Win64="yes">
+          <File Id="owf173B688D4A2873439CC8AAA15C62C194" Source="$(var.SourceDir)\Xceed.Wpf.AvalonDock.Themes.Metro.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcA9CE4BE1CA2F111A2B97C15818DACE69" Guid="3ea611c2-a8b5-77aa-6db5-29ecc6742c2e" Win64="yes">
+          <File Id="owfA9CE4BE1CA2F111A2B97C15818DACE69" Source="$(var.SourceDir)\Xceed.Wpf.AvalonDock.Themes.VS2010.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc3C1C0346C36005991ED6F7FADAF49AF5" Guid="0fcabbf1-293d-508f-e3da-4b212a65fd8d" Win64="yes">
+          <File Id="owf3C1C0346C36005991ED6F7FADAF49AF5" Source="$(var.SourceDir)\Xceed.Wpf.Toolkit.dll" KeyPath="yes" />
+        </Component>
         <Directory Id="owd799F60633DE3314CD962556CD118A45D" Name="cs">
           <Component Id="owcAEB64EECE85DF22130D284D0D56A33A5" Guid="eb10bad8-2aed-0278-6b75-ef6b6f96ccdf" Win64="yes">
             <File Id="owfAEB64EECE85DF22130D284D0D56A33A5" Source="$(var.SourceDir)\cs\PresentationCore.resources.dll" KeyPath="yes" />
@@ -1152,17 +1167,6 @@
           </Component>
           <Component Id="owcBF1463865BD6A957A48EA3C5086DF240" Guid="c95f2fd7-549f-066a-f2cf-8cdee52b3652" Win64="yes">
             <File Id="owfBF1463865BD6A957A48EA3C5086DF240" Source="$(var.SourceDir)\es\WindowsFormsIntegration.resources.dll" KeyPath="yes" />
-          </Component>
-        </Directory>
-        <Directory Id="owd1537608D766BDF04B5BB621FDCB9B92C" Name="examples">
-          <Component Id="owcCA56D65E26DB46C13DA9A283B020CBDF" Guid="e0c9aba8-79e3-c196-be33-c964f9f57313" Win64="yes">
-            <File Id="owfCA56D65E26DB46C13DA9A283B020CBDF" Source="$(var.SourceDir)\examples\Document_A.pptx" KeyPath="yes" />
-          </Component>
-          <Component Id="owc294D03DBB01CD5A76C04FD4B8A13971A" Guid="c7f50cb4-5f9c-bbc1-0e5a-a2689d6187f7" Win64="yes">
-            <File Id="owf294D03DBB01CD5A76C04FD4B8A13971A" Source="$(var.SourceDir)\examples\Document_B.pptx" KeyPath="yes" />
-          </Component>
-          <Component Id="owc9B434484DB3FF939A95A6D1AA8CAF2A2" Guid="8324a20d-7cf8-b0f2-6669-6adc892dd6f0" Win64="yes">
-            <File Id="owf9B434484DB3FF939A95A6D1AA8CAF2A2" Source="$(var.SourceDir)\examples\Document_C.pptx" KeyPath="yes" />
           </Component>
         </Directory>
         <Directory Id="owdA426C3729D5D59516430C8F667ED8DE8" Name="fr">
@@ -1642,6 +1646,9 @@
           </Component>
           <Component Id="owcA47B0D961B04E2E085D0D0D0BC8C0019" Guid="cf9b22ee-62e4-343d-ff98-0bdf20272215" Win64="yes">
             <File Id="owfA47B0D961B04E2E085D0D0D0BC8C0019" Source="$(var.SourceDir)\WalkthroughImages\Page16.PNG" KeyPath="yes" />
+          </Component>
+          <Component Id="owc12502DCFB1E00EAFE7268D2AF36C3EE9" Guid="303b55cc-ceba-366a-2f30-1d446ea8d278" Win64="yes">
+            <File Id="owf12502DCFB1E00EAFE7268D2AF36C3EE9" Source="$(var.SourceDir)\WalkthroughImages\Page17.PNG" KeyPath="yes" />
           </Component>
           <Component Id="owcDB19DD92D5FE8AFE15C88C3442D44637" Guid="b4e57f9d-2ff9-7c13-6b2a-3929a2bc3258" Win64="yes">
             <File Id="owfDB19DD92D5FE8AFE15C88C3442D44637" Source="$(var.SourceDir)\WalkthroughImages\Page2.PNG" KeyPath="yes" />

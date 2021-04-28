@@ -45,7 +45,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <iconPacks:PackIconFontAwesome Kind="InfoCircleSolid" VerticalAlignment="Center" HorizontalAlignment="Center" Width="50" Height="50" />
-                    <TextBlock x:Name="MessageTextBlock" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0" TextWrapping="Wrap">Message</TextBlock>
+                    <TextBlock x:Name="MessageTextBlock" Grid.Column="1" VerticalAlignment="Center" Margin="0,0,10,0" TextWrapping="Wrap"></TextBlock>
                 </Grid>
                 <Grid Grid.Row="1" Background="{StaticResource StatusBarBackground}">
                     <Grid.ColumnDefinitions>

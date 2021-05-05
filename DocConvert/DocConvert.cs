@@ -128,7 +128,7 @@ namespace DocConvert
 
                         for (int i = 1; i < (pptPresentation.Slides.Count + 1); i++)
                         {
-                            pptPresentation.Slides[i].Export(outputPath + "\\" + (i - 1).ToString() + ".png", "png", 1024);
+                            pptPresentation.Slides[i].Export(outputPath + "\\" + (i - 1).ToString() + ".png", "png");
 
                             if (pptPresentation.Slides[i].SlideShowTransition.Hidden == MsoTriState.msoTrue)
                             {

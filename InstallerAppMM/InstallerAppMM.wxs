@@ -419,6 +419,12 @@
         <Component Id="owcAAEB7F29D4057856ED38D9F98F909A6B" Guid="ec6f73d3-e61e-208d-17a5-ae324c43c9f2" Win64="yes">
           <File Id="owfAAEB7F29D4057856ED38D9F98F909A6B" Source="$(var.SourceDir)\ReachFramework.dll" KeyPath="yes" />
         </Component>
+        <Component Id="owc8E274872151E79793D31F81EE36EB669" Guid="f95339c8-76dd-60ad-f540-0ed45db1365f" Win64="yes">
+          <File Id="owf8E274872151E79793D31F81EE36EB669" Source="$(var.SourceDir)\securifybv.PropertyStore.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owcB73F166A551001CC5EAE21A65DCF9D2A" Guid="5a6a1791-995d-8b18-dcd9-f7bac4a20cb3" Win64="yes">
+          <File Id="owfB73F166A551001CC5EAE21A65DCF9D2A" Source="$(var.SourceDir)\securifybv.ShellLink.dll" KeyPath="yes" />
+        </Component>
         <Component Id="owc07DD36861474DFA8A7BE8029239D0262" Guid="9c40efa6-5a9a-cfc7-7bc2-05ad801e798f" Win64="yes">
           <File Id="owf07DD36861474DFA8A7BE8029239D0262" Source="$(var.SourceDir)\SOS_README.md" KeyPath="yes" />
         </Component>

@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
+using ShellLink;
 
 namespace DocCompareWPF
 {
@@ -27,7 +28,7 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.2.9";
+        private readonly string versionString = "1.3.0";
         private readonly string localetype = "EN";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
@@ -122,6 +123,16 @@ namespace DocCompareWPF
 
                 SaveSettings();
             }
+
+            if( localetype == "DE")
+            {
+                settings.cultureInfo = "de-de";
+            }else
+            {
+                settings.cultureInfo = "en-us";
+            }
+
+            SaveSettings();
 
             docs = new DocumentManagement(settings.maxDocCount, workingDir, settings);
 
@@ -2344,26 +2355,59 @@ namespace DocCompareWPF
                 foreach (string file in data)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+
+                    if (ext == ".lnk")
                     {
-                        ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
-                    }
-                    else
-                    {
-                        if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                        Shortcut thisShortCut = Shortcut.ReadFromFile(file);
+                        string linkedFile = thisShortCut.LinkTargetIDList.Path;
+                        ext = Path.GetExtension(linkedFile);
+
+                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
+                            && ext != ".bmp" && ext != ".BMP")
                         {
-                            docs.AddDocument(file);
-                        }
-                        else if (docs.documents.Count >= settings.maxDocCount)
-                        {
-                            ShowMaxDocCountWarningBox();
-                            break;
+                            ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(linkedFile));
                         }
                         else
                         {
-                            ShowExistingDocCountWarningBox(file);
+                            if (docs.documents.Find(x => x.filePath == linkedFile) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                            {
+                                docs.AddDocument(linkedFile);
+                            }
+                            else if (docs.documents.Count >= settings.maxDocCount)
+                            {
+                                ShowMaxDocCountWarningBox();
+                                break;
+                            }
+                            else
+                            {
+                                ShowExistingDocCountWarningBox(linkedFile);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
+                            && ext != ".bmp" && ext != ".BMP")
+                        {
+                            ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
+                        }
+                        else
+                        {
+                            if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                            {
+                                docs.AddDocument(file);
+                            }
+                            else if (docs.documents.Count >= settings.maxDocCount)
+                            {
+                                ShowMaxDocCountWarningBox();
+                                break;
+                            }
+                            else
+                            {
+                                ShowExistingDocCountWarningBox(file);
+                            }
                         }
                     }
                 }
@@ -2435,26 +2479,59 @@ namespace DocCompareWPF
                 foreach (string file in data)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+
+                    if (ext == ".lnk")
                     {
-                        ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
-                    }
-                    else
-                    {
-                        if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                        Shortcut thisShortCut = Shortcut.ReadFromFile(file);
+                        string linkedFile = thisShortCut.LinkTargetIDList.Path;
+                        ext = Path.GetExtension(linkedFile);
+
+                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
+                            && ext != ".bmp" && ext != ".BMP")
                         {
-                            docs.AddDocument(file);
-                        }
-                        else if (docs.documents.Count >= settings.maxDocCount)
-                        {
-                            ShowMaxDocCountWarningBox();
-                            break;
+                            ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(linkedFile));
                         }
                         else
                         {
-                            ShowExistingDocCountWarningBox(file);
+                            if (docs.documents.Find(x => x.filePath == linkedFile) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                            {
+                                docs.AddDocument(linkedFile);
+                            }
+                            else if (docs.documents.Count >= settings.maxDocCount)
+                            {
+                                ShowMaxDocCountWarningBox();
+                                break;
+                            }
+                            else
+                            {
+                                ShowExistingDocCountWarningBox(linkedFile);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
+                            && ext != ".bmp" && ext != ".BMP")
+                        {
+                            ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
+                        }
+                        else
+                        {
+                            if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                            {
+                                docs.AddDocument(file);
+                            }
+                            else if (docs.documents.Count >= settings.maxDocCount)
+                            {
+                                ShowMaxDocCountWarningBox();
+                                break;
+                            }
+                            else
+                            {
+                                ShowExistingDocCountWarningBox(file);
+                            }
                         }
                     }
                 }
@@ -2501,26 +2578,59 @@ namespace DocCompareWPF
                     foreach (string file in data)
                     {
                         ext = Path.GetExtension(file);
-                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                            && ext != ".bmp" && ext != ".BMP")
+
+                        if (ext == ".lnk")
                         {
-                            ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
-                        }
-                        else
-                        {
-                            if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                            Shortcut thisShortCut = Shortcut.ReadFromFile(file);
+                            string linkedFile = thisShortCut.LinkTargetIDList.Path;
+                            ext = Path.GetExtension(linkedFile);
+
+                            if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                                && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
+                                && ext != ".bmp" && ext != ".BMP")
                             {
-                                docs.AddDocument(file);
-                            }
-                            else if (docs.documents.Count >= settings.maxDocCount)
-                            {
-                                ShowMaxDocCountWarningBox();
-                                break;
+                                ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(linkedFile));
                             }
                             else
                             {
-                                ShowExistingDocCountWarningBox(file);
+                                if (docs.documents.Find(x => x.filePath == linkedFile) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                                {
+                                    docs.AddDocument(linkedFile);
+                                }
+                                else if (docs.documents.Count >= settings.maxDocCount)
+                                {
+                                    ShowMaxDocCountWarningBox();
+                                    break;
+                                }
+                                else
+                                {
+                                    ShowExistingDocCountWarningBox(linkedFile);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                                && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
+                                && ext != ".bmp" && ext != ".BMP")
+                            {
+                                ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
+                            }
+                            else
+                            {
+                                if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                                {
+                                    docs.AddDocument(file);
+                                }
+                                else if (docs.documents.Count >= settings.maxDocCount)
+                                {
+                                    ShowMaxDocCountWarningBox();
+                                    break;
+                                }
+                                else
+                                {
+                                    ShowExistingDocCountWarningBox(file);
+                                }
                             }
                         }
                     }
@@ -6650,26 +6760,59 @@ namespace DocCompareWPF
                 foreach (string file in data)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+
+                    if (ext == ".lnk")
                     {
-                        ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
-                    }
-                    else
-                    {
-                        if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                        Shortcut thisShortCut = Shortcut.ReadFromFile(file);
+                        string linkedFile = thisShortCut.LinkTargetIDList.Path;
+                        ext = Path.GetExtension(linkedFile);
+
+                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
+                            && ext != ".bmp" && ext != ".BMP")
                         {
-                            docs.AddDocument(file);
-                        }
-                        else if (docs.documents.Count >= settings.maxDocCount)
-                        {
-                            ShowMaxDocCountWarningBox();
-                            break;
+                            ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(linkedFile));
                         }
                         else
                         {
-                            ShowExistingDocCountWarningBox(file);
+                            if (docs.documents.Find(x => x.filePath == linkedFile) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                            {
+                                docs.AddDocument(linkedFile);
+                            }
+                            else if (docs.documents.Count >= settings.maxDocCount)
+                            {
+                                ShowMaxDocCountWarningBox();
+                                break;
+                            }
+                            else
+                            {
+                                ShowExistingDocCountWarningBox(linkedFile);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
+                            && ext != ".bmp" && ext != ".BMP")
+                        {
+                            ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
+                        }
+                        else
+                        {
+                            if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                            {
+                                docs.AddDocument(file);
+                            }
+                            else if (docs.documents.Count >= settings.maxDocCount)
+                            {
+                                ShowMaxDocCountWarningBox();
+                                break;
+                            }
+                            else
+                            {
+                                ShowExistingDocCountWarningBox(file);
+                            }
                         }
                     }
                 }
@@ -6891,26 +7034,59 @@ namespace DocCompareWPF
                 foreach (string file in data)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+
+                    if (ext == ".lnk")
                     {
-                        ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
-                    }
-                    else
-                    {
-                        if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                        Shortcut thisShortCut = Shortcut.ReadFromFile(file);
+                        string linkedFile = thisShortCut.LinkTargetIDList.Path;
+                        ext = Path.GetExtension(linkedFile);
+
+                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
+                            && ext != ".bmp" && ext != ".BMP")
                         {
-                            docs.AddDocument(file);
-                        }
-                        else if (docs.documents.Count >= settings.maxDocCount)
-                        {
-                            ShowMaxDocCountWarningBox();
-                            break;
+                            ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(linkedFile));
                         }
                         else
                         {
-                            ShowExistingDocCountWarningBox(file);
+                            if (docs.documents.Find(x => x.filePath == linkedFile) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                            {
+                                docs.AddDocument(linkedFile);
+                            }
+                            else if (docs.documents.Count >= settings.maxDocCount)
+                            {
+                                ShowMaxDocCountWarningBox();
+                                break;
+                            }
+                            else
+                            {
+                                ShowExistingDocCountWarningBox(linkedFile);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
+                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
+                            && ext != ".bmp" && ext != ".BMP")
+                        {
+                            ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
+                        }
+                        else
+                        {
+                            if (docs.documents.Find(x => x.filePath == file) == null && docs.documents.Count < settings.maxDocCount) // doc does not exist
+                            {
+                                docs.AddDocument(file);
+                            }
+                            else if (docs.documents.Count >= settings.maxDocCount)
+                            {
+                                ShowMaxDocCountWarningBox();
+                                break;
+                            }
+                            else
+                            {
+                                ShowExistingDocCountWarningBox(file);
+                            }
                         }
                     }
                 }

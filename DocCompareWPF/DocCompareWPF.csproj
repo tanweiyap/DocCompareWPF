@@ -50,6 +50,7 @@
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.5.0.20201013" />
     <PackageReference Include="OpenCvSharp4.Windows" Version="4.5.0.20201013" />
     <PackageReference Include="protobuf-net" Version="3.0.52" />
+    <PackageReference Include="securifybv.ShellLink" Version="0.1.0" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
     <PackageReference Include="System.Management" Version="4.7.0" />
   </ItemGroup>

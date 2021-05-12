@@ -28,8 +28,8 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.3.0";
-        private readonly string localetype = "EN";
+        private readonly string versionString = "1.3.1";
+        private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
@@ -75,6 +75,9 @@ namespace DocCompareWPF
         private WalkthroughSteps walkthroughStep = 0;
 
         public double HiddenPPTOpacity = 0.7;
+
+        //private string FileFilter = FileFilter;
+        private string FileFilter = "PDF and PPT files (*.pdf, *.ppt)|*.pdf;*.ppt;*.pptx;|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|All files|*.*";
 
         // mouse over hidden ppt slides effect buffer
         Effect hiddenPPTEffect;
@@ -418,6 +421,36 @@ namespace DocCompareWPF
             }
         }
 
+        private bool IsSupportedFile(string ext)
+        {
+            List<string> supportedFileExtensions = new List<string>
+            {
+                ".ppt",
+                ".pptx",
+                ".PPT",
+                ".PPTX",
+                ".pdf",
+                ".PDF"
+            };
+            /*
+            supportedFileExtensions.Add(".jpg");
+            supportedFileExtensions.Add(".jpeg");
+            supportedFileExtensions.Add(".JPG");
+            supportedFileExtensions.Add(".JPEG");
+            supportedFileExtensions.Add(".gif");
+            supportedFileExtensions.Add(".GIF");
+            supportedFileExtensions.Add(".png");
+            supportedFileExtensions.Add(".PNG");
+            supportedFileExtensions.Add(".bmp");
+            supportedFileExtensions.Add(".BMP");
+            */
+
+            if (supportedFileExtensions.Contains(ext))
+                return true;
+            else
+                return false;
+        }
+
         private void BrowseFileButton1_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(lastUsedDirectory) == false)
@@ -425,7 +458,7 @@ namespace DocCompareWPF
 
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "PDF, PPT and image files (*.pdf, *.ppt, *jpg, *jpeg, *png, *gif, *bmp)|*.pdf;*.ppt;*.pptx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF;*.bmp;*.BMP|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF,*.bmp,*.BMP |All files|*.*",
+                Filter = FileFilter,
                 InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };
@@ -444,9 +477,7 @@ namespace DocCompareWPF
                 foreach (string file in filenames)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+                    if (IsSupportedFile(ext) == false)
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -517,7 +548,7 @@ namespace DocCompareWPF
 
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "PDF, PPT and image files (*.pdf, *.ppt, *jpg, *jpeg, *png, *gif, *bmp)|*.pdf;*.ppt;*.pptx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF;*.bmp;*.BMP|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF,*.bmp,*.BMP |All files|*.*",
+                Filter = FileFilter,
                 InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };
@@ -531,9 +562,7 @@ namespace DocCompareWPF
                 foreach (string file in filenames)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+                    if (IsSupportedFile(ext) == false)
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -585,7 +614,7 @@ namespace DocCompareWPF
 
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "PDF, PPT and image files (*.pdf, *.ppt, *jpg, *jpeg, *png, *gif, *bmp)|*.pdf;*.ppt;*.pptx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF;*.bmp;*.BMP|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF,*.bmp,*.BMP |All files|*.*",
+                Filter = FileFilter,
                 InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };
@@ -599,9 +628,7 @@ namespace DocCompareWPF
                 foreach (string file in filenames)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+                    if (IsSupportedFile(ext) == false)
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -656,13 +683,13 @@ namespace DocCompareWPF
             }
             */
 
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
             Dispatcher.Invoke(() => { DisplayLicense(); });
         }
 
         private async void CheckUpdate()
         {
-            Thread.Sleep(7000);
+            Thread.Sleep(1000);
             try
             {
                 List<string> res = await lic.CheckUpdate(versionString, localetype);
@@ -2362,9 +2389,7 @@ namespace DocCompareWPF
                         string linkedFile = thisShortCut.LinkTargetIDList.Path;
                         ext = Path.GetExtension(linkedFile);
 
-                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                            && ext != ".bmp" && ext != ".BMP")
+                        if (IsSupportedFile(ext) == false)
                         {
                             ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(linkedFile));
                         }
@@ -2387,9 +2412,7 @@ namespace DocCompareWPF
                     }
                     else
                     {
-                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                            && ext != ".bmp" && ext != ".BMP")
+                        if (IsSupportedFile(ext) == false)
                         {
                             ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                         }
@@ -2486,9 +2509,7 @@ namespace DocCompareWPF
                         string linkedFile = thisShortCut.LinkTargetIDList.Path;
                         ext = Path.GetExtension(linkedFile);
 
-                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                            && ext != ".bmp" && ext != ".BMP")
+                        if (IsSupportedFile(ext) == false)
                         {
                             ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(linkedFile));
                         }
@@ -2511,9 +2532,7 @@ namespace DocCompareWPF
                     }
                     else
                     {
-                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                            && ext != ".bmp" && ext != ".BMP")
+                        if (IsSupportedFile(ext) == false)
                         {
                             ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                         }
@@ -2585,9 +2604,7 @@ namespace DocCompareWPF
                             string linkedFile = thisShortCut.LinkTargetIDList.Path;
                             ext = Path.GetExtension(linkedFile);
 
-                            if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                                && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                                && ext != ".bmp" && ext != ".BMP")
+                            if (IsSupportedFile(ext) == false)
                             {
                                 ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(linkedFile));
                             }
@@ -2610,9 +2627,7 @@ namespace DocCompareWPF
                         }
                         else
                         {
-                            if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                                && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                                && ext != ".bmp" && ext != ".BMP")
+                            if (IsSupportedFile(ext) == false)
                             {
                                 ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                             }
@@ -3971,19 +3986,19 @@ namespace DocCompareWPF
                 Doc4StatsGrid.Visibility = Visibility.Collapsed;
                 Doc5StatsGrid.Visibility = Visibility.Collapsed;
 
-                if (docs.documents.Count >= 1)
+                //if (docs.documents.Count >= 1)
                     DocCompareColorZone1.Visibility = Visibility.Hidden;
 
-                if (docs.documents.Count >= 2)
+                //if (docs.documents.Count >= 2)
                     DocCompareColorZone2.Visibility = Visibility.Hidden;
 
-                if (docs.documents.Count >= 3)
+                //if (docs.documents.Count >= 3)
                     DocCompareColorZone3.Visibility = Visibility.Hidden;
 
-                if (docs.documents.Count >= 4)
+                //if (docs.documents.Count >= 4)
                     DocCompareColorZone4.Visibility = Visibility.Hidden;
 
-                if (docs.documents.Count >= 5)
+                //if (docs.documents.Count >= 5)
                     DocCompareColorZone5.Visibility = Visibility.Hidden;
 
                 ProcessingDocProgressbar.Value = 0.0;
@@ -4054,13 +4069,17 @@ namespace DocCompareWPF
 
                     UpdateDocSelectionComboBox();
 
-                    if (docs.documents.Count != 0)
+                    if (docs.documents.Count > 1)
                     {
                         if (docs.doneGlobalAlignment == false)
                         {
                             threadCompare = new Thread(new ThreadStart(ComparePreviewThread));
                             threadCompare.Start();
                         }
+                    }
+                    else
+                    {
+                        UpdateAllPreview();
                     }
 
                     ShowInfoButtonSetVisi();
@@ -4070,7 +4089,28 @@ namespace DocCompareWPF
 
                     ProcessingDocProgressCard.Visibility = Visibility.Hidden;
 
-
+                    if (docs.documents.Count >= 1)
+                    {
+                        DocCompareColorZone2.Visibility = Visibility.Visible;
+                        DocCompareColorZone3.Visibility = Visibility.Visible;
+                        DocCompareColorZone4.Visibility = Visibility.Visible;
+                        DocCompareColorZone5.Visibility = Visibility.Visible;                        
+                    }
+                    else if (docs.documents.Count >= 2)
+                    {
+                        DocCompareColorZone3.Visibility = Visibility.Visible;
+                        DocCompareColorZone4.Visibility = Visibility.Visible;
+                        DocCompareColorZone5.Visibility = Visibility.Visible;
+                    }
+                    else if (docs.documents.Count >= 3)
+                    {
+                        DocCompareColorZone4.Visibility = Visibility.Visible;
+                        DocCompareColorZone5.Visibility = Visibility.Visible;
+                    }
+                    else if (docs.documents.Count >= 4)
+                    {
+                        DocCompareColorZone5.Visibility = Visibility.Visible;
+                    }
                 });
             }
             catch (Exception ex)
@@ -4184,6 +4224,7 @@ namespace DocCompareWPF
                         {
                             case Document.FileTypes.PDF:
                                 ret = docs.documents[i].ReadPDF();
+                                docs.documents[i].readyToShow = true;
                                 break;
 
                             case Document.FileTypes.PPT:
@@ -4192,6 +4233,7 @@ namespace DocCompareWPF
 
                             case Document.FileTypes.PIC:
                                 ret = docs.documents[i].ReadPic();
+                                docs.documents[i].readyToShow = true;
                                 break;
                         }
 
@@ -6767,9 +6809,7 @@ namespace DocCompareWPF
                         string linkedFile = thisShortCut.LinkTargetIDList.Path;
                         ext = Path.GetExtension(linkedFile);
 
-                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                            && ext != ".bmp" && ext != ".BMP")
+                        if (IsSupportedFile(ext) == false)
                         {
                             ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(linkedFile));
                         }
@@ -6792,9 +6832,7 @@ namespace DocCompareWPF
                     }
                     else
                     {
-                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                            && ext != ".bmp" && ext != ".BMP")
+                        if (IsSupportedFile(ext) == false)
                         {
                             ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                         }
@@ -6839,7 +6877,7 @@ namespace DocCompareWPF
 
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "PDF, PPT and image files (*.pdf, *.ppt, *jpg, *jpeg, *png, *gif, *bmp)|*.pdf;*.ppt;*.pptx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF;*.bmp;*.BMP|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF,*.bmp,*.BMP |All files|*.*",
+                Filter = FileFilter,
                 InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };
@@ -6853,9 +6891,7 @@ namespace DocCompareWPF
                 foreach (string file in filenames)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+                    if (IsSupportedFile(ext) == false)
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -7041,9 +7077,7 @@ namespace DocCompareWPF
                         string linkedFile = thisShortCut.LinkTargetIDList.Path;
                         ext = Path.GetExtension(linkedFile);
 
-                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                            && ext != ".bmp" && ext != ".BMP")
+                        if (IsSupportedFile(ext) == false)
                         {
                             ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(linkedFile));
                         }
@@ -7066,9 +7100,7 @@ namespace DocCompareWPF
                     }
                     else
                     {
-                        if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                            && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                            && ext != ".bmp" && ext != ".BMP")
+                        if (IsSupportedFile(ext) == false)
                         {
                             ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                         }
@@ -7113,7 +7145,7 @@ namespace DocCompareWPF
 
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "PDF, PPT and image files (*.pdf, *.ppt, *jpg, *jpeg, *png, *gif, *bmp)|*.pdf;*.ppt;*.pptx;*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF;*.bmp;*.BMP|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|Image files|*.jpg;*.jpeg;*.JPG;*.JPEG,*.png;*.PNG;*.gif;*.GIF,*.bmp,*.BMP |All files|*.*",
+                Filter = FileFilter,
                 InitialDirectory = lastUsedDirectory,
                 Multiselect = true
             };
@@ -7127,9 +7159,7 @@ namespace DocCompareWPF
                 foreach (string file in filenames)
                 {
                     ext = Path.GetExtension(file);
-                    if (ext != ".ppt" && ext != ".pptx" && ext != ".PPT" && ext != ".PPTX" && ext != ".pdf" && ext != ".PDF" && ext != ".jpg"
-                        && ext != ".jpeg" && ext != ".JPG" && ext != ".JPEG" && ext != ".gif" && ext != ".GIF" && ext != ".png" && ext != ".PNG"
-                        && ext != ".bmp" && ext != ".BMP")
+                    if (IsSupportedFile(ext) == false)
                     {
                         ShowInvalidDocTypeWarningBox(ext, Path.GetFileName(file));
                     }
@@ -7576,28 +7606,40 @@ namespace DocCompareWPF
         {
             DirectoryInfo di;
 
-            foreach (Document doc in docs.documents)
+            try
             {
-                if (Directory.Exists(doc.imageFolder))
+                foreach (Document doc in docs.documents)
                 {
-                    di = new DirectoryInfo(doc.imageFolder);
+                    if (Directory.Exists(doc.imageFolder))
+                    {
+                        di = new DirectoryInfo(doc.imageFolder);
+                        di.Delete(true);
+                    }
+                }
+
+                if (Directory.Exists(compareResultFolder))
+                {
+                    di = new DirectoryInfo(compareResultFolder);
                     di.Delete(true);
                 }
-            }
 
-            if (Directory.Exists(compareResultFolder))
-            {
-                di = new DirectoryInfo(compareResultFolder);
-                di.Delete(true);
-            }
-
-            di = new DirectoryInfo(appDataDir);
-            foreach (DirectoryInfo di2 in di.EnumerateDirectories())
-            {
-                if (di2.Name != "lic")
+                di = new DirectoryInfo(appDataDir);
+                foreach (DirectoryInfo di2 in di.EnumerateDirectories())
                 {
-                    di2.Delete(true);
+                    if (di2.Name != "lic")
+                    {
+                        di2.Delete(true);
+                    }
                 }
+                #pragma warning disable SYSLIB0006
+                threadCheckUpdate.Abort();
+                threadCheckTrial.Abort();
+                #pragma warning restore SYSLIB0006
+
+            }
+            catch
+            {
+
             }
 
             Close();

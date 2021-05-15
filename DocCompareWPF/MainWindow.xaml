@@ -1247,12 +1247,16 @@
                                         <Label x:Name="DocComparePageNumberLabel2" HorizontalAlignment="Center" Grid.ColumnSpan="3" VerticalAlignment="Center" Foreground="White"></Label>
                                         
                                     </Grid>
-                                    <Button x:Name="ShowMaskButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
+                                    <Button x:Name="ShowMaskButtonMagenta" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
                                             HorizontalAlignment="Right" Click="ShowMaskButton_Click" Margin="0,0,10,0" Visibility="Hidden" ToolTip="Show difference mask"  Cursor="Hand">
-                                        <iconPacks:PackIconMicrons Kind="Show" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                        <iconPacks:PackIconMicrons Kind="Show" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{StaticResource WarningBackgroundBrush}" />
+                                    </Button>
+                                    <Button x:Name="ShowMaskButtonGreen" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
+                                            HorizontalAlignment="Right" Click="ShowMaskButtonGreen_Click" Margin="0,0,10,0" Visibility="Visible" ToolTip="Show difference mask"  Cursor="Hand">
+                                        <iconPacks:PackIconMicrons Kind="Show" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{StaticResource NoWarningBackgroundBrush}" />
                                     </Button>
                                     <Button x:Name="HideMaskButton" Style="{StaticResource MahApps.Styles.Button.Flat}" Background="Transparent" Grid.Column="1" Padding="0" BorderThickness="0" VerticalAlignment="Center" Height="25"
-                                            HorizontalAlignment="Right" Click="HideMaskButton_Click" Margin="0,0,10,0" ToolTip="Hide difference mask"  Cursor="Hand">
+                                            HorizontalAlignment="Right" Click="HideMaskButton_Click" Margin="0,0,10,0" ToolTip="Hide difference mask"  Cursor="Hand" Visibility="Hidden">
                                         <iconPacks:PackIconMicrons Kind="Hide" Width="{StaticResource SmallIconSize}" Height="{StaticResource SmallIconSize}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                                     </Button>
                                     <Border Grid.Column="1" BorderBrush="LightGray" BorderThickness="0,0,1,0"></Border>
@@ -1404,7 +1408,12 @@
                                                                 </Border>
                                                                 <Border>
                                                                     <Image Tag="{Binding ImgMaskRightName}" Source="{Binding PathToMaskImgRight, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
-                                                                    VerticalAlignment="Center" Visibility="{Binding ShowMask}" Stretch="Uniform">
+                                                                    VerticalAlignment="Center" Visibility="{Binding ShowMaskMagenta}" Stretch="Uniform">
+                                                                    </Image>
+                                                                </Border>
+                                                                <Border>
+                                                                    <Image Tag="{Binding ImgMaskRightName2}" Source="{Binding PathToMaskImgRight2, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Visibility="{Binding ShowMaskGreen}" Stretch="Uniform">
                                                                     </Image>
                                                                 </Border>
                                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHiddenRight}" Margin="{Binding Margin}">
@@ -1584,7 +1593,10 @@
                                                                     </Image.Effect>
                                                                 </Image>
                                                                 <Image Tag="{Binding ImgMaskName}" Source="{Binding PathToMask, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
-                                                                    VerticalAlignment="Center" Stretch="Uniform" Visibility="{Binding ShowMask}">
+                                                                    VerticalAlignment="Center" Stretch="Uniform" Visibility="{Binding ShowMaskMagenta}">
+                                                                </Image>
+                                                                <Image Tag="{Binding ImgMaskName2}" Source="{Binding PathToMask2, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Stretch="Uniform" Visibility="{Binding ShowMaskGreen}">
                                                                 </Image>
                                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHidden}" Margin="{Binding Margin}">
                                                                     <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">

@@ -10,7 +10,8 @@ namespace DocCompareWPF.UIhelper
     {
         private Color _color;
         private Effect _effect;
-        private Visibility _showMask;
+        private Visibility _showMaskMagenta;
+        private Visibility _showMaskGreen;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -127,6 +128,7 @@ namespace DocCompareWPF.UIhelper
         public string ImgDummyName { get; set; }
         public string ImgGridName { get; set; }
         public string ImgMaskName { get; set; }
+        public string ImgMaskName2 { get; set; }
         public string ImgName { get; set; }
         public Thickness Margin { get; set; }
 
@@ -137,22 +139,38 @@ namespace DocCompareWPF.UIhelper
         public string PathToImgDummy { get { return _pathToImgDummy; } set { _pathToImgDummy = value; OnPropertyChanged(); } }
 
         private string _pathToMask;
+        private string _pathToMask2;
         public string PathToMask { get { return _pathToMask; } set { _pathToMask = value; OnPropertyChanged(); } }
+        public string PathToMask2 { get { return _pathToMask2; } set { _pathToMask2 = value; OnPropertyChanged(); } }
         public bool RemoveForceAlignButtonEnable { get; set; }
         public string RemoveForceAlignButtonName { get; set; }
 
         public Visibility RemoveForceAlignButtonVisibility { get; set; }
 
-        public Visibility ShowMask
+        public Visibility ShowMaskMagenta
         {
             get
             {
-                return _showMask;
+                return _showMaskMagenta;
             }
 
             set
             {
-                _showMask = value;
+                _showMaskMagenta = value;
+                OnPropertyChanged();
+            }
+        }
+        
+        public Visibility ShowMaskGreen
+        {
+            get
+            {
+                return _showMaskGreen;
+            }
+
+            set
+            {
+                _showMaskGreen = value;
                 OnPropertyChanged();
             }
         }

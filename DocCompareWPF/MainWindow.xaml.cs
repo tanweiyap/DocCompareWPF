@@ -28,11 +28,13 @@ namespace DocCompareWPF
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
-        private readonly string versionString = "1.3.1";
+        private readonly string versionString = "1.3.2";
         private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
-        private bool docCompareRunning, docProcessRunning, animateDiffRunning, showMask;
+        private string compareResultFolder2;
+        private bool docCompareRunning, docProcessRunning, animateDiffRunning;
+        private MaskType showMask = 0;
         private int docCompareSideGridShown, docProcessingCounter;
         private Grid gridToAnimate;
         private bool inForceAlignMode;
@@ -91,9 +93,10 @@ namespace DocCompareWPF
             InitializeComponent();
             Directory.CreateDirectory(appDataDir);
             compareResultFolder = Path.Join(workingDir, Guid.NewGuid().ToString());
+            compareResultFolder2 = Path.Join(workingDir, Guid.NewGuid().ToString());
 
             // GUI stuff
-            showMask = true;
+            showMask = MaskType.Magenta;
             AppVersionLabel.Content = "Version " + versionString;
             SetVisiblePanel(SidePanels.DRAGDROP);
             SidePanelDocCompareButton.IsEnabled = false;
@@ -232,6 +235,13 @@ namespace DocCompareWPF
             EnableOpenOriginal();
 
         }
+
+        private enum MaskType
+        {
+            Magenta,
+            Green,
+            Off,
+        };
 
         private enum GridSelection
         {
@@ -918,11 +928,12 @@ namespace DocCompareWPF
                 docCompareRunning = true;
 
                 // show mask should always be enabled
-                showMask = true;
+                showMask = MaskType.Magenta;
                 Dispatcher.Invoke(() =>
                 {
-                    ShowMaskButton.Visibility = Visibility.Hidden;
-                    HideMaskButton.Visibility = Visibility.Visible;
+                    ShowMaskButtonMagenta.Visibility = Visibility.Hidden;
+                    ShowMaskButtonGreen.Visibility = Visibility.Visible;
+                    HideMaskButton.Visibility = Visibility.Hidden;
                     HighlightingDisableTip.Visibility = Visibility.Hidden;
                 });
 
@@ -957,7 +968,16 @@ namespace DocCompareWPF
                 compareResultFolder = Path.Join(workingDir, Guid.NewGuid().ToString());
                 Directory.CreateDirectory(compareResultFolder);
 
-                Document.CompareDocs(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[1]].imageFolder, compareResultFolder, out docs.pageCompareIndices, out docs.totalLen, forceIndices);
+                if (Directory.Exists(compareResultFolder2))
+                {
+                    DirectoryInfo di = new DirectoryInfo(compareResultFolder2);
+                    di.Delete(true);
+                }
+
+                compareResultFolder2 = Path.Join(workingDir, Guid.NewGuid().ToString());
+                Directory.CreateDirectory(compareResultFolder2);
+
+                Document.CompareDocs(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[1]].imageFolder, compareResultFolder, compareResultFolder2, out docs.pageCompareIndices, out docs.totalLen, forceIndices);
                 docs.documents[docs.documentsToCompare[0]].docCompareIndices = new List<int>();
                 docs.documents[docs.documentsToCompare[1]].docCompareIndices = new List<int>();
 
@@ -1173,6 +1193,7 @@ namespace DocCompareWPF
                     ImgAniLeftName = "MainImgAniLeft" + i.ToString(),
                     ImgAniRightName = "MainImgAniRight" + i.ToString(),
                     ImgMaskRightName = "MainMaskImgRight" + i.ToString(),
+                    ImgMaskRightName2 = "MainMaskImgRight2" + i.ToString(),
                     AnimateDiffLeftButtonName = "AnimateDiffLeft" + i.ToString(),
                     AnimateDiffRightButtonName = "AnimateDiffRight" + i.ToString(),
                     AniDiffButtonEnable = false,
@@ -1236,6 +1257,7 @@ namespace DocCompareWPF
                         if (File.Exists(Path.Join(compareResultFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png")))
                         {
                             thisItem.PathToMaskImgRight = Path.Join(compareResultFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
+                            thisItem.PathToMaskImgRight2 = Path.Join(compareResultFolder2, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
 
                             if (lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.FREE ||
                             lic.GetLicenseTypes() == LicenseManagement.LicenseTypes.TRIAL ||
@@ -1259,10 +1281,21 @@ namespace DocCompareWPF
                                 thisItem.AniDiffButtonTooltip = "Click and hold to animate the difference";
                             }
 
-                            if (showMask == true)
-                                thisItem.ShowMask = Visibility.Visible;
-                            else
-                                thisItem.ShowMask = Visibility.Hidden;
+                            switch(showMask)
+                            {
+                                case MaskType.Magenta:
+                                    thisItem.ShowMaskMagenta = Visibility.Visible;
+                                    thisItem.ShowMaskGreen = Visibility.Hidden;
+                                    break;
+                                case MaskType.Green:
+                                    thisItem.ShowMaskMagenta = Visibility.Hidden;
+                                    thisItem.ShowMaskGreen = Visibility.Visible;
+                                    break;
+                                case MaskType.Off:
+                                    thisItem.ShowMaskMagenta = Visibility.Hidden;
+                                    thisItem.ShowMaskGreen = Visibility.Hidden;
+                                    break;
+                            }
                         }
                         else
                         {
@@ -1561,6 +1594,7 @@ namespace DocCompareWPF
                     GridName = "RightSideGrid" + i.ToString(),
                     ImgGridName = "SideImageRight" + i.ToString(),
                     ImgMaskName = "SideImageRightMask" + i.ToString(),
+                    ImgMaskName2 = "SideImageRightMask2" + i.ToString(),
                     ForceAlignButtonName = "SideButtonRight" + i.ToString(),
                     ForceAlignInvalidButtonName = "SideButtonInvalidRight" + i.ToString(),
                     Margin = new Thickness(10),
@@ -1625,6 +1659,7 @@ namespace DocCompareWPF
                     if (File.Exists(Path.Join(compareResultFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png")))
                     {
                         rightItem.PathToMask = Path.Join(compareResultFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
+                        rightItem.PathToMask2 = Path.Join(compareResultFolder2, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + "_" + docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
                         if (i != 0)
                         {
                             leftItem.BackgroundBrush = Color.FromArgb(128, 255, 44, 108);
@@ -1635,10 +1670,21 @@ namespace DocCompareWPF
                             rightItem.NoDiffVisi = Visibility.Hidden;
                         }
 
-                        if (showMask == true)
-                            rightItem.ShowMask = Visibility.Visible;
-                        else
-                            rightItem.ShowMask = Visibility.Hidden;
+                        switch (showMask)
+                        {
+                            case MaskType.Magenta:
+                                rightItem.ShowMaskMagenta = Visibility.Visible;
+                                rightItem.ShowMaskGreen = Visibility.Hidden;
+                                break;
+                            case MaskType.Green:
+                                rightItem.ShowMaskMagenta = Visibility.Hidden;
+                                rightItem.ShowMaskGreen = Visibility.Visible;
+                                break;
+                            case MaskType.Off:
+                                rightItem.ShowMaskMagenta = Visibility.Hidden;
+                                rightItem.ShowMaskGreen = Visibility.Hidden;
+                                break;
+                        }
                     }
                     else
                     {
@@ -3166,7 +3212,22 @@ namespace DocCompareWPF
                     {
                         if (item.AnimateDiffRightButtonName == (sender as Button).Tag.ToString())
                         {
-                            item.ShowMask = Visibility.Hidden;
+                            switch (showMask)
+                            {
+                                case MaskType.Magenta:
+                                    item.ShowMaskMagenta = Visibility.Visible;
+                                    item.ShowMaskGreen = Visibility.Hidden;
+                                    break;
+                                case MaskType.Green:
+                                    item.ShowMaskMagenta = Visibility.Hidden;
+                                    item.ShowMaskGreen = Visibility.Visible;
+                                    break;
+                                case MaskType.Off:
+                                    item.ShowMaskMagenta = Visibility.Hidden;
+                                    item.ShowMaskGreen = Visibility.Hidden;
+                                    break;
+                            }
+                            
                             item.BlurRadiusRight = 0;
                             item.ShowHiddenRight = Visibility.Hidden;
                         }
@@ -3210,13 +3271,20 @@ namespace DocCompareWPF
             {
                 CompareMainItem item = (CompareMainItem)DocCompareMainListView.Items[i];
 
-                if (showMask == true)
+                switch (showMask)
                 {
-                    item.ShowMask = Visibility.Visible;
-                }
-                else
-                {
-                    item.ShowMask = Visibility.Hidden;
+                    case MaskType.Magenta:
+                        item.ShowMaskMagenta = Visibility.Visible;
+                        item.ShowMaskGreen = Visibility.Hidden;
+                        break;
+                    case MaskType.Green:
+                        item.ShowMaskMagenta = Visibility.Hidden;
+                        item.ShowMaskGreen = Visibility.Visible;
+                        break;
+                    case MaskType.Off:
+                        item.ShowMaskMagenta = Visibility.Hidden;
+                        item.ShowMaskGreen = Visibility.Hidden;
+                        break;
                 }
 
                 if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
@@ -3316,12 +3384,12 @@ namespace DocCompareWPF
                     }
                     else
                     {
-                        hiddenPPTVisi = (item.Children[5] as Label).Visibility;
-                        System.Windows.Shapes.Path path = item.Children[4] as System.Windows.Shapes.Path;
+                        hiddenPPTVisi = (item.Children[6] as Label).Visibility;
+                        System.Windows.Shapes.Path path = item.Children[5] as System.Windows.Shapes.Path;
                         //path.Visibility = Visibility.Hidden;
-                        Label label = item.Children[5] as Label;
+                        Label label = item.Children[6] as Label;
                         //label.Visibility = Visibility.Hidden;
-                        Grid grid = item.Children[3] as Grid;
+                        Grid grid = item.Children[4] as Grid;
                         grid.Visibility = Visibility.Hidden;
                     }
                 }
@@ -3385,11 +3453,11 @@ namespace DocCompareWPF
                     }
                     else
                     {
-                        System.Windows.Shapes.Path path = item.Children[4] as System.Windows.Shapes.Path;
+                        System.Windows.Shapes.Path path = item.Children[5] as System.Windows.Shapes.Path;
                         path.Visibility = hiddenPPTVisi;
-                        Label label = item.Children[5] as Label;
+                        Label label = item.Children[6] as Label;
                         label.Visibility = hiddenPPTVisi;
-                        Grid grid = item.Children[3] as Grid;
+                        Grid grid = item.Children[4] as Grid;
                         grid.Visibility = hiddenPPTVisi;
                     }
                 }
@@ -3462,19 +3530,22 @@ namespace DocCompareWPF
 
         private void HideMaskButton_Click(object sender, RoutedEventArgs e)
         {
-            showMask = false;
+            showMask = MaskType.Off;
 
             foreach (CompareMainItem item in DocCompareMainListView.Items)
             {
-                item.ShowMask = Visibility.Hidden;
+                item.ShowMaskMagenta = Visibility.Hidden;
+                item.ShowMaskGreen = Visibility.Hidden;
             }
 
             foreach (SideGridItemRight item in DocCompareSideListViewRight.Items)
             {
-                item.ShowMask = Visibility.Hidden;
+                item.ShowMaskMagenta = Visibility.Hidden;
+                item.ShowMaskGreen = Visibility.Hidden;
             }
 
-            ShowMaskButton.Visibility = Visibility.Visible;
+            ShowMaskButtonMagenta.Visibility = Visibility.Visible;
+            ShowMaskButtonGreen.Visibility = Visibility.Hidden;
             HideMaskButton.Visibility = Visibility.Hidden;
             HighlightingDisableTip.Visibility = Visibility.Visible;
         }
@@ -5137,21 +5208,24 @@ namespace DocCompareWPF
         }
 
         private void ShowMaskButton_Click(object sender, RoutedEventArgs e)
-        {
-            showMask = true;
+        {            
+            showMask = MaskType.Magenta;
 
             foreach (CompareMainItem item in DocCompareMainListView.Items)
             {
-                item.ShowMask = Visibility.Visible;
+                item.ShowMaskMagenta = Visibility.Visible;
+                item.ShowMaskGreen = Visibility.Hidden;
             }
 
             foreach (SideGridItemRight item in DocCompareSideListViewRight.Items)
             {
-                item.ShowMask = Visibility.Visible;
-            }
+                item.ShowMaskMagenta = Visibility.Visible;
+                item.ShowMaskGreen = Visibility.Hidden;
+            }            
 
-            ShowMaskButton.Visibility = Visibility.Hidden;
-            HideMaskButton.Visibility = Visibility.Visible;
+            ShowMaskButtonMagenta.Visibility = Visibility.Hidden;
+            ShowMaskButtonGreen.Visibility = Visibility.Visible;
+            HideMaskButton.Visibility = Visibility.Hidden;
             HighlightingDisableTip.Visibility = Visibility.Hidden;
         }
 
@@ -7644,17 +7718,23 @@ namespace DocCompareWPF
                     }
                 }
                 #pragma warning disable SYSLIB0006
-                threadCheckUpdate.Abort();
-                threadCheckTrial.Abort();
+                //threadCheckUpdate.Abort();
+                //threadCheckTrial.Abort();
                 #pragma warning restore SYSLIB0006
 
             }
-            catch
+            catch (Exception ex)
             {
 
             }
 
             Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            Application.Current.Shutdown();
         }
 
         private void WindowMaximizeButton_Click(object sender, RoutedEventArgs e)
@@ -8157,6 +8237,28 @@ namespace DocCompareWPF
                 ReloadDoc4Button.IsEnabled = false;
                 ReloadDoc5Button.IsEnabled = false;
             });
+        }
+
+        private void ShowMaskButtonGreen_Click(object sender, RoutedEventArgs e)
+        {
+            showMask = MaskType.Green;
+
+            foreach (CompareMainItem item in DocCompareMainListView.Items)
+            {
+                item.ShowMaskMagenta = Visibility.Hidden;
+                item.ShowMaskGreen = Visibility.Visible;
+            }
+
+            foreach (SideGridItemRight item in DocCompareSideListViewRight.Items)
+            {
+                item.ShowMaskMagenta = Visibility.Hidden;
+                item.ShowMaskGreen = Visibility.Visible;
+            }
+
+            ShowMaskButtonMagenta.Visibility = Visibility.Hidden;
+            ShowMaskButtonGreen.Visibility = Visibility.Hidden;
+            HideMaskButton.Visibility = Visibility.Visible;
+            HighlightingDisableTip.Visibility = Visibility.Hidden;
         }
 
         private void EnableOpenOriginal()

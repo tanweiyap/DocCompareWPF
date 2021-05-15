@@ -7,7 +7,7 @@ namespace DocCompareDLL
 {
     public class DocCompareClass
     {
-        public static ArrayList DocCompare(ref string folder1, ref string folder2, ref string outfolder, ref int seqlen, int[,] force_pairs = null)
+        public static ArrayList DocCompare(ref string folder1, ref string folder2, ref string outfolder, ref string outfolder2, ref int seqlen, int[,] force_pairs = null)
         {
             force_pairs ??= new int[0, 0]; //{ { 5, 5 }, { 6, 6 }, { 7, 7 }, { 8, 8 } };
 
@@ -315,7 +315,7 @@ namespace DocCompareDLL
                             Mat differencegreen = new Mat();
                             Image_compare((Mat)doc1[(int)seqi[i]], (Mat)doc2[(int)seqj[i]], (Size)sizes[(int)seqj[i]], ref differencered, ref differencegreen);
                             Cv2.ImWrite(Path.Join(outfolder, (seqi[i]).ToString() + "_" + (seqj[i]).ToString() + ".png"), differencered);
-                            //Cv2.ImWrite(Path.Join(outfolder2, (seqi[i]).ToString() + "_" + (seqj[i]).ToString() + ".png"), differencegreen);
+                            Cv2.ImWrite(Path.Join(outfolder2, (seqi[i]).ToString() + "_" + (seqj[i]).ToString() + ".png"), differencegreen);
                             
                         }
                     }

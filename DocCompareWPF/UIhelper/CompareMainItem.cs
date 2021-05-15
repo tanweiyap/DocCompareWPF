@@ -10,7 +10,8 @@ namespace DocCompareWPF.UIhelper
 {
     public class CompareMainItem : INotifyPropertyChanged
     {
-        private Visibility _showMask;
+        private Visibility _showMaskMagenta;
+        private Visibility _showMaskGreen;
 
         public string Document1 { get; set; }
         public string Document2 { get; set; }
@@ -27,6 +28,7 @@ namespace DocCompareWPF.UIhelper
         public string ImgGridRightName { get; set; }
         public string ImgLeftName { get; set; }
         public string ImgMaskRightName { get; set; }
+        public string ImgMaskRightName2 { get; set; }
         public string ImgRightName { get; set; }
         public Thickness Margin { get; set; }
 
@@ -35,11 +37,13 @@ namespace DocCompareWPF.UIhelper
         private string _pathToImgLeft;
         private string _pathToImgRight;
         private string _pathToMaskImgRight;
+        private string _pathToMaskImgRight2;
         public string PathToAniImgLeft { get { return _pathToAniImgLeft; } set { _pathToAniImgLeft = value; OnPropertyChanged(); } }
         public string PathToAniImgRight { get { return _pathToAniImgRight; } set { _pathToAniImgRight = value; OnPropertyChanged(); } }
         public string PathToImgLeft { get { return _pathToImgLeft; } set { _pathToImgLeft = value; OnPropertyChanged(); } }
         public string PathToImgRight { get { return _pathToImgRight; } set { _pathToImgRight = value; OnPropertyChanged(); } }
         public string PathToMaskImgRight { get { return _pathToMaskImgRight; } set { _pathToMaskImgRight = value; OnPropertyChanged(); } }
+        public string PathToMaskImgRight2 { get { return _pathToMaskImgRight2; } set { _pathToMaskImgRight2 = value; OnPropertyChanged(); } }
 
         private double _blurRadiusLeft;
         private double _blurRadiusRight;
@@ -238,18 +242,30 @@ namespace DocCompareWPF.UIhelper
             }
         }
 
-
-
-        public Visibility ShowMask
+        public Visibility ShowMaskMagenta
         {
             get
             {
-                return _showMask;
+                return _showMaskMagenta;
             }
 
             set
             {
-                _showMask = value;
+                _showMaskMagenta = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Visibility ShowMaskGreen
+        {
+            get
+            {
+                return _showMaskGreen;
+            }
+
+            set
+            {
+                _showMaskGreen = value;
                 OnPropertyChanged();
             }
         }

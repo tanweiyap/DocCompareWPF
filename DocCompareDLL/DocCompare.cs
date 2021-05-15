@@ -311,12 +311,12 @@ namespace DocCompareDLL
                         //only if they differ...
                         if (distanceMatrix[(int)seqi[i], (int)seqj[i]] <= 0.9999)
                         {
-                            Mat difference = new Mat();
-                            Image_compare((Mat)doc1[(int)seqi[i]], (Mat)doc2[(int)seqj[i]], (Size)sizes[(int)seqj[i]], ref difference);
-                            Cv2.ImWrite(Path.Join(outfolder, (seqi[i]).ToString() + "_" + (seqj[i]).ToString() + ".png"), difference);
-                            //namedWindow("image", WINDOW_NORMAL);
-                            //imshow("image", difference);
-                            //waitKey(0);
+                            Mat differencered = new Mat();
+                            Mat differencegreen = new Mat();
+                            Image_compare((Mat)doc1[(int)seqi[i]], (Mat)doc2[(int)seqj[i]], (Size)sizes[(int)seqj[i]], ref differencered, ref differencegreen);
+                            Cv2.ImWrite(Path.Join(outfolder, (seqi[i]).ToString() + "_" + (seqj[i]).ToString() + ".png"), differencered);
+                            //Cv2.ImWrite(Path.Join(outfolder2, (seqi[i]).ToString() + "_" + (seqj[i]).ToString() + ".png"), differencegreen);
+                            
                         }
                     }
                 }
@@ -825,7 +825,7 @@ namespace DocCompareDLL
 
 
         // creates an image mask for the differences between two images
-        private static void Image_compare(Mat alpha, Mat beta, Size orig_size, ref Mat diffHighlights)
+        private static void Image_compare(Mat alpha, Mat beta, Size orig_size, ref Mat diffHighlights, ref Mat diffHighlightsG)
         {
             Mat a = new Mat();
 
@@ -889,10 +889,16 @@ namespace DocCompareDLL
             Mat gruen = 0 * channels[0] + 44;
             Mat blau = 0 * channels[0] + 108;
 
+            Mat rot2 = 0 * channels[0] + 70;
+            Mat gruen2 = 0 * channels[0] + 255;
+            Mat blau2 = 0 * channels[0] + 183;
+
             Mat al_ch = channels[0] * 0.7;
 
-            Mat[] input = { blau, gruen, rot, al_ch };
+            Mat[] input1 = { blau, gruen, rot, al_ch };
+            Mat[] input2 = { blau2, gruen2, rot2, al_ch };
             Mat[] output = { a };
+            Mat[] output2 = { a.Clone() };
 
             int[] from_to = {
                                 0, 0, //zeros to channel B
@@ -900,9 +906,11 @@ namespace DocCompareDLL
 								2, 2, //ones to channel R
 								3, 3  //contours to channel Alpha
 			};
-            Cv2.MixChannels(input, output, from_to);
+            Cv2.MixChannels(input1, output, from_to);
+            Cv2.MixChannels(input2, output2, from_to);
             //finally, to output...
             Cv2.Resize(output[0], diffHighlights, orig_size);
+            Cv2.Resize(output2[0], diffHighlightsG, orig_size);
         }
 
         //calculates the match-score for two images

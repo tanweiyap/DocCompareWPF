@@ -22,16 +22,28 @@ namespace DocCompareWPF.UIhelper
             if (xmlString == null)
                 throw new ArgumentNullException("xmlString");
 
-            return xmlString.Replace("&amp;", "&");
+
+            string localText = xmlString;
+            localText = localText.Replace("&gt;",">");
+            localText = localText.Replace("&lt;","<");
+            localText = localText.Replace("&#39;","\'");
+            localText = localText.Replace("&#34;","\"");
+
+            return localText;
         }
 
         public static string EscapeXMLValue(string xmlString)
         {
-
             if (xmlString == null)
                 throw new ArgumentNullException("xmlString");
 
-            return xmlString.Replace("&", "&amp;");
+            string localText = xmlString;
+            localText = localText.Replace(">", "&gt;");
+            localText = localText.Replace("<", "&lt;");
+            localText = localText.Replace("\'", "&#39;");
+            localText = localText.Replace("\"", "&#34;");
+
+            return localText;
         }
 
         public static void SetFormattedText(DependencyObject obj, string value)
@@ -47,8 +59,16 @@ namespace DocCompareWPF.UIhelper
 
         public static string CleanInvalidXmlChars(string text)
         {
+            string localText = text;
+            /*
+            localText = localText.Replace(">", "&gt");
+            localText = localText.Replace("<", "&lt");            
+            localText = localText.Replace("&", "&#38");            
+            localText = localText.Replace("\'", "&#39");            
+            localText = localText.Replace("\"", "&#34");            
+            */
             string re = @"[^\x09\x0A\x0D\x20-\xD7FF\xE000-\xFFFD\x10000-x10FFFF]";
-            return Regex.Replace(text, re, "");
+            return Regex.Replace(localText, re, "");
         }
 
         private static void FormattedTextChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -72,8 +92,8 @@ namespace DocCompareWPF.UIhelper
 
             if (value != null)
             {
-                string local = EscapeXMLValue(value);
-                local = CleanInvalidXmlChars(local);
+                //string local = EscapeXMLValue(value);
+                string local = CleanInvalidXmlChars(value);
                 doc.LoadXml(local);
             }
 

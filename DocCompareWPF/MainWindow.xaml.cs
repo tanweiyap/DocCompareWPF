@@ -77,7 +77,7 @@ namespace DocCompareWPF
         public double HiddenPPTOpacity = 0.7;
 
         //private string FileFilter = FileFilter;
-        private string FileFilter = "PDF and PPT files (*.pdf, *.ppt)|*.pdf;*.ppt;*.pptx;|PDF files (*.pdf)|*.pdf|PPT files (*.ppt)|*.ppt;*pptx|All files|*.*";
+        private string FileFilter = "PPT files (*.pdf, *.ppt)|*.pdf;*.ppt;*.pptx;|All files|*.*";
 
         // mouse over hidden ppt slides effect buffer
         Effect hiddenPPTEffect;
@@ -1135,6 +1135,19 @@ namespace DocCompareWPF
             //DocCompareSideScrollViewerRight.IsEnabled = false;
         }
 
+        private string ReplaceInvalidXMLCharacters(string text)
+        {
+            string localText = text;
+            
+            localText = localText.Replace("&", "&#38;");            
+            localText = localText.Replace(">", "&gt;");
+            localText = localText.Replace("<", "&lt;");            
+            localText = localText.Replace("\'", "&#39;");            
+            localText = localText.Replace("\"", "&#34;");
+            
+            return localText;
+        }
+
         private void DisplayComparisonResult()
         {
             Dispatcher.Invoke(() =>
@@ -1301,7 +1314,6 @@ namespace DocCompareWPF
                     thisItem.BlurRadiusRight = 0;
                 }
 
-
                 bool showSpeakerNotesLeft = false;
                 bool showSpeakerNotesLeftChanged = false;
                 bool showSpeakerNotesRight = false;
@@ -1315,7 +1327,7 @@ namespace DocCompareWPF
                     {
                         if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0)
                         {
-                            thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] + "</text>";
+                            thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + ReplaceInvalidXMLCharacters(docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]]) + "</text>";
                             showSpeakerNotesLeft = true;
                             showSpeakerNotesLeftChanged = false;
                         }
@@ -1331,7 +1343,7 @@ namespace DocCompareWPF
                     {
                         if (docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]].Length != 0)
                         {
-                            thisItem.Document2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]] + "</text>";
+                            thisItem.Document2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + ReplaceInvalidXMLCharacters(docs.documents[docs.documentsToCompare[1]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[1]].docCompareIndices[i]]) + "</text>";
                             showSpeakerNotesRight = true;
                             showSpeakerNotesRightChanged = false;
                         }
@@ -1349,7 +1361,7 @@ namespace DocCompareWPF
 
                         if (docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]].Length != 0)
                         {
-                            thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]] + "</text>";
+                            thisItem.Document1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n<text>" + ReplaceInvalidXMLCharacters(docs.documents[docs.documentsToCompare[0]].pptSpeakerNotes[docs.documents[docs.documentsToCompare[0]].docCompareIndices[i]]) + "</text>";
                         }
                         else
                         {
@@ -1364,12 +1376,12 @@ namespace DocCompareWPF
                             {
                                 if (diff.operation == DocCompareDLL.Operation.INSERT)
                                 {
-                                    doc += "<INSERT>" + diff.text + "</INSERT>";
+                                    doc += "<INSERT>" + ReplaceInvalidXMLCharacters(diff.text) + "</INSERT>";
                                     didChange |= true;
                                 }
                                 else if (diff.operation == DocCompareDLL.Operation.DELETE)
                                 {
-                                    doc += "<DELETE>" + diff.text + "</DELETE>";
+                                    doc += "<DELETE>" + ReplaceInvalidXMLCharacters(diff.text) + "</DELETE>";
                                     didChange |= true;
                                 }
                                 else

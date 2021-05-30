@@ -88,21 +88,29 @@ namespace DocCompareWPF.UIhelper
 
         static Inline Process(string value)
         {
-            XmlDocument doc = new XmlDocument();
-
-            if (value != null)
+            try
             {
-                //string local = EscapeXMLValue(value);
-                string local = CleanInvalidXmlChars(value);
-                doc.LoadXml(local);
+                XmlDocument doc = new XmlDocument();
+
+                if (value != null)
+                {
+                    //string local = EscapeXMLValue(value);
+                    string local = CleanInvalidXmlChars(value);
+                    doc.LoadXml(local);
+                }
+
+                Span span = new Span();
+
+                if (doc.ChildNodes.Count != 0)
+                    InternalProcess(span, doc.ChildNodes[1]);
+
+                return span;
+            }catch
+            {
+                Span span2 = new Span();
+                span2.Inlines.Add(new Run("The speaker notes contents invalid characters, which cannot be displayed."));
+                return span2;
             }
-
-            Span span = new Span();
-
-            if (doc.ChildNodes.Count != 0)
-                InternalProcess(span, doc.ChildNodes[1]);
-
-            return span;
         }
 
         private static void InternalProcess(Span span, XmlNode xmlNode)

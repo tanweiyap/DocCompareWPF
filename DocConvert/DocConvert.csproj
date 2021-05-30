@@ -10,6 +10,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LocalLogging\LocalLogging.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Interop.Microsoft.Office.Core">
       <HintPath>Interop.Microsoft.Office.Core.dll</HintPath>
       <Private>true</Private>

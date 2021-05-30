@@ -96,6 +96,8 @@ namespace DocCompareWPF.Classes
                 ".GIF" => FileTypes.PIC,
                 _ => FileTypes.UNKNOWN,
             };
+
+            LocalLogging.LoggingClass.WriteLog("Document type: " + fileType.ToString());
         }
 
         public int ReadPDF()

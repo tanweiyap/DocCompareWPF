@@ -31,6 +31,7 @@ namespace DocConvert
             // check file existence
             if (File.Exists(filePath))
             {
+                LocalLogging.LoggingClass.WriteLog("Poppler exe found.");
                 Process proc = new Process();
                 proc.StartInfo.FileName = popplerPath;
                 //proc.StartInfo.Arguments = " -jpeg \"" + filePath + "\" \"" + outputPath + "\\page\"";
@@ -51,6 +52,10 @@ namespace DocConvert
                 }
                 ret = 0;
             }
+            else
+            {
+                LocalLogging.LoggingClass.WriteLog("Poppler exe not found. THIS IS CRITICAL");
+            }
 
             return ret;
         }
@@ -70,9 +75,11 @@ namespace DocConvert
             {
                 Mat thisImage = Cv2.ImRead(filePath);
                 thisImage.SaveImage(Path.Join(outputPath, "0.png"));
+                LocalLogging.LoggingClass.WriteLog("Image converted succesfully.");
             }
             catch
             {
+                LocalLogging.LoggingClass.WriteLog("Image conversion failed.");
                 return ret;
             }
 
@@ -102,6 +109,7 @@ namespace DocConvert
                     Type officeType = Type.GetTypeFromProgID("PowerPoint.Application");
                     if (officeType != null)
                     {
+                        LocalLogging.LoggingClass.WriteLog("Powerpoint launched.");
                         Application pptApplication;
                         try
                         {
@@ -120,6 +128,7 @@ namespace DocConvert
                         Presentation pptPresentation = pptApplication.Presentations
                         .Open(filePath, MsoTriState.msoFalse, MsoTriState.msoFalse
                         , MsoTriState.msoFalse);
+                        LocalLogging.LoggingClass.WriteLog("PPT loaded.");
 
                         if (pptPresentation.Final) //catching another detail problem: if presentation has flag 'final' it does not allow to save it, even with SaveCopyAs... by setting it here but not saving over the original file, the original state is not changed but we can save the jpgs.
                         {
@@ -129,7 +138,7 @@ namespace DocConvert
                         for (int i = 1; i < (pptPresentation.Slides.Count + 1); i++)
                         {
                             pptPresentation.Slides[i].Export(outputPath + "\\" + (i - 1).ToString() + ".png", "png");
-
+                            
                             if (pptPresentation.Slides[i].SlideShowTransition.Hidden == MsoTriState.msoTrue)
                             {
                                 isHidden.Add(true);
@@ -153,6 +162,7 @@ namespace DocConvert
                             catch // error reading speaker notes
                             {
                                 speakerNotes.Add("");
+                                LocalLogging.LoggingClass.WriteLog("Error reading speaker notes on slide " + i.ToString() + " of " + filePath);
                             }
 
                             if (i > 5)
@@ -162,21 +172,30 @@ namespace DocConvert
                             totalCount = pptPresentation.Slides.Count + 1;
 
                         }
+                        LocalLogging.LoggingClass.WriteLog("Slides exported.");
 
                         object fileAttribute = pptPresentation.BuiltInDocumentProperties;
 
                         if (pptPresentation.Slides.Count == 0)
+                        {
+                            LocalLogging.LoggingClass.WriteLog("Empty PPT.");
                             ret = -3;
+                        }
 
                         pptPresentation.Close();
+                        LocalLogging.LoggingClass.WriteLog("PPT file closed.");
                         if (pptApplication.Visible != MsoTriState.msoTrue)
+                        {
                             pptApplication.Quit();
+                            LocalLogging.LoggingClass.WriteLog("Powerpoint quit.");
+                        }
 
                         readyToShow = true;
                         ret = 0;
                     }
                     else
                     {
+                        LocalLogging.LoggingClass.WriteLog("Powerpoint not found. THIS IS CRITICAL");
                         return -2;
                     }
                 }
@@ -185,6 +204,7 @@ namespace DocConvert
             }
             catch (Exception ex)
             {
+                LocalLogging.LoggingClass.WriteLog("Other error when converting PPT file " + filePath + ". THIS IS CRITICAL" + ex.Message + ex.StackTrace);
                 return -1; // propably no office installation
             }
         }
@@ -196,31 +216,46 @@ namespace DocConvert
             {
                 if (File.Exists(filePath))
                 {
-                    Application pptApplication = new Application
+                    Type officeType = Type.GetTypeFromProgID("PowerPoint.Application");
+                    if (officeType != null)
                     {
-                        DisplayAlerts = PpAlertLevel.ppAlertsNone, //get rid of pop ups
-                        AutomationSecurity = MsoAutomationSecurity.msoAutomationSecurityForceDisable //get rid of even more pop ups
-                    };
-                    Presentation pptPresentation = pptApplication.Presentations
-                    .Open(filePath, MsoTriState.msoFalse, MsoTriState.msoFalse
-                    , MsoTriState.msoFalse);
+                        LocalLogging.LoggingClass.WriteLog("Powerpoint launched.");
 
-                    object docProperties = pptPresentation.BuiltInDocumentProperties;
-                    // Author, LastEditor, Creation Date, Modified Date
-                    ret.Add(GetDocumentProperty(docProperties, "Author").ToString());
-                    ret.Add(GetDocumentProperty(docProperties, "Last Author").ToString());
-                    ret.Add(GetDocumentProperty(docProperties, "Creation Date").ToString());
-                    ret.Add(GetDocumentProperty(docProperties, "Last Save Time").ToString());
+                        Application pptApplication = new Application
+                        {
+                            DisplayAlerts = PpAlertLevel.ppAlertsNone, //get rid of pop ups
+                            AutomationSecurity = MsoAutomationSecurity.msoAutomationSecurityForceDisable //get rid of even more pop ups
+                        };
 
-                    pptPresentation.Close();
-                    if (pptApplication.Visible != MsoTriState.msoTrue)
-                        pptApplication.Quit();
+                        Presentation pptPresentation = pptApplication.Presentations
+                        .Open(filePath, MsoTriState.msoFalse, MsoTriState.msoFalse
+                        , MsoTriState.msoFalse);
+                        LocalLogging.LoggingClass.WriteLog("PPT loaded.");
+
+                        object docProperties = pptPresentation.BuiltInDocumentProperties;
+                        // Author, LastEditor, Creation Date, Modified Date
+                        ret.Add(GetDocumentProperty(docProperties, "Author").ToString());
+                        ret.Add(GetDocumentProperty(docProperties, "Last Author").ToString());
+                        ret.Add(GetDocumentProperty(docProperties, "Creation Date").ToString());
+                        ret.Add(GetDocumentProperty(docProperties, "Last Save Time").ToString());
+
+                        LocalLogging.LoggingClass.WriteLog("PPT attributes readed.");
+                        pptPresentation.Close();
+                        LocalLogging.LoggingClass.WriteLog("PPT file closed.");
+                        if (pptApplication.Visible != MsoTriState.msoTrue)
+                        {
+                            pptApplication.Quit();
+                            LocalLogging.LoggingClass.WriteLog("Powerpoint quit.");
+                        }
+                    }
                 }
 
                 return ret;
             }
             catch
             {
+                LocalLogging.LoggingClass.WriteLog("Powerpoint not found. ");
+
                 return ret;
             }
         }

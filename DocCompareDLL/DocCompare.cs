@@ -315,8 +315,7 @@ namespace DocCompareDLL
                             Mat differencegreen = new Mat();
                             Image_compare((Mat)doc1[(int)seqi[i]], (Mat)doc2[(int)seqj[i]], (Size)sizes[(int)seqj[i]], ref differencered, ref differencegreen);
                             Cv2.ImWrite(Path.Join(outfolder, (seqi[i]).ToString() + "_" + (seqj[i]).ToString() + ".png"), differencered);
-                            Cv2.ImWrite(Path.Join(outfolder2, (seqi[i]).ToString() + "_" + (seqj[i]).ToString() + ".png"), differencegreen);
-                            
+                            Cv2.ImWrite(Path.Join(outfolder2, (seqi[i]).ToString() + "_" + (seqj[i]).ToString() + ".png"), differencegreen);                            
                         }
                     }
                 }

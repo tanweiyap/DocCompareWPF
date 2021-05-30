@@ -1,0 +1,9 @@
+C:\Users\Wei Yap\Documents\Projects\DocCompareWPF\LocalLogging\bin\Release\netcoreapp3.1\LocalLogging.deps.json
+C:\Users\Wei Yap\Documents\Projects\DocCompareWPF\LocalLogging\bin\Release\netcoreapp3.1\LocalLogging.dll
+C:\Users\Wei Yap\Documents\Projects\DocCompareWPF\LocalLogging\bin\Release\netcoreapp3.1\LocalLogging.pdb
+C:\Users\Wei Yap\Documents\Projects\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.csprojAssemblyReference.cache
+C:\Users\Wei Yap\Documents\Projects\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.AssemblyInfoInputs.cache
+C:\Users\Wei Yap\Documents\Projects\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.AssemblyInfo.cs
+C:\Users\Wei Yap\Documents\Projects\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.csproj.CoreCompileInputs.cache
+C:\Users\Wei Yap\Documents\Projects\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.dll
+C:\Users\Wei Yap\Documents\Projects\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.pdb

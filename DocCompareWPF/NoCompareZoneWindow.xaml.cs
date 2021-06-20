@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Input;
 using System.Windows.Controls;
+using System.Collections.Generic;
 
 namespace DocCompareWPF
 {
@@ -19,6 +20,7 @@ namespace DocCompareWPF
         bool isMouseDown;
         EditMode mode;
         Point startPoint, endPoint;
+        List<List<double>> rects;
 
         private enum EditMode
         {
@@ -34,6 +36,7 @@ namespace DocCompareWPF
             SelectButtonBackground.Background = brush;
             CreateRectBackground.Background = Brushes.Transparent;
             mode = EditMode.SELECT;
+            rects = new List<List<double>>();
         }
 
         public void SetupWindow(Document doc)
@@ -195,21 +198,6 @@ namespace DocCompareWPF
             if (mode == EditMode.CREATE && isMouseDown == true)
             {
                 endPoint = e.GetPosition(PageCanvas);
-                /*
-                if (startPoint.X > endPoint.X)
-                {
-                    double temp = endPoint.X;
-                    endPoint.X = startPoint.X;
-                    startPoint.X = temp;
-                }
-
-                if (startPoint.Y > endPoint.Y)
-                {
-                    double temp = endPoint.Y;
-                    endPoint.Y = startPoint.Y;
-                    startPoint.Y = temp;
-                }
-                */
                 System.Windows.Shapes.Rectangle newRect = new System.Windows.Shapes.Rectangle();
                 newRect.Stroke = Brushes.Black;
 
@@ -228,6 +216,12 @@ namespace DocCompareWPF
                 if(System.Windows.Input.Mouse.LeftButton == MouseButtonState.Released)
                 {
                     isMouseDown = false;
+                    List<double> values = new List<double>();
+                    values.Add(Math.Min(startPoint.X, endPoint.X));
+                    values.Add(Math.Min(startPoint.Y, endPoint.Y));
+                    values.Add(Math.Max(startPoint.X, endPoint.X));
+                    values.Add(Math.Max(startPoint.Y, endPoint.Y));
+                    rects.Add(values);
                 }
             }
         }
@@ -247,45 +241,6 @@ namespace DocCompareWPF
                     isMouseDown = false;
                     PageCanvas.Children.RemoveAt(PageCanvas.Children.Count - 1);
                 }
-            }
-        }
-
-        private void PageCanvas_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (mode == EditMode.CREATE)
-            {
-                isMouseDown = false;
-                /*
-                endPoint = e.GetPosition(PageCanvas);
-                
-                if(startPoint.X > endPoint.X)
-                {
-                    double temp = endPoint.X;
-                    endPoint.X = startPoint.X;
-                    startPoint.X = temp;
-                }
-
-                if (startPoint.Y > endPoint.Y)
-                {
-                    double temp = endPoint.Y;
-                    endPoint.Y = startPoint.Y;
-                    startPoint.Y = temp;
-                }
-
-                System.Windows.Shapes.Rectangle newRect = new System.Windows.Shapes.Rectangle();
-                newRect.Stroke = Brushes.Black;
-
-                Brush brush = FindResource("WarningBackgroundBrush") as Brush;
-
-                newRect.Fill = brush;
-                newRect.Opacity = 0.5;
-                newRect.Width = Math.Abs(endPoint.X - startPoint.X);
-                newRect.Height = Math.Abs(endPoint.Y - startPoint.Y);
-
-                Canvas.SetLeft(newRect, startPoint.X);
-                Canvas.SetTop(newRect, startPoint.Y);
-                PageCanvas.Children[PageCanvas.Children.Count - 1] = newRect;
-                */
             }
         }
     }

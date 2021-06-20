@@ -101,7 +101,7 @@
                             </Image.Effect>
                         </Image>
                         <Rectangle Fill="White" Opacity="0.4"></Rectangle>
-                        <Canvas x:Name="PageCanvas" MouseEnter="PageCanvas_MouseEnter" MouseLeave="PageCanvas_MouseLeave" Background="Transparent" MouseLeftButtonDown="PageCanvas_MouseDown" PreviewMouseLeftButtonUp="PageCanvas_MouseUp" MouseMove="PageCanvas_MouseMove"></Canvas>
+                        <Canvas x:Name="PageCanvas" MouseEnter="PageCanvas_MouseEnter" MouseLeave="PageCanvas_MouseLeave" Background="Transparent" MouseLeftButtonDown="PageCanvas_MouseDown" MouseMove="PageCanvas_MouseMove"></Canvas>
                     </Grid>
                 </Grid>
             </Grid>

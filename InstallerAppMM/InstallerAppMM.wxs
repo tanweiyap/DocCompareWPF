@@ -197,6 +197,12 @@
         <Component Id="owc4479CACDF7646BF09AE2CB6905429AEB" Guid="0527070b-cb36-d40a-3c72-694dea7aabe6" Win64="yes">
           <File Id="owf4479CACDF7646BF09AE2CB6905429AEB" Source="$(var.SourceDir)\Interop.Microsoft.Office.Interop.PowerPoint.dll" KeyPath="yes" />
         </Component>
+        <Component Id="owc8461CF8A8326F30A88D80995C5C0CFE8" Guid="c8cd3be6-fe8e-e58d-7241-0f117742ac2d" Win64="yes">
+          <File Id="owf8461CF8A8326F30A88D80995C5C0CFE8" Source="$(var.SourceDir)\LocalLogging.dll" KeyPath="yes" />
+        </Component>
+        <Component Id="owc39C2A8DCA1BFAE11EA038709FE2CBEE1" Guid="add7d8ab-4398-dbb3-72fa-678c903f0fa2" Win64="yes">
+          <File Id="owf39C2A8DCA1BFAE11EA038709FE2CBEE1" Source="$(var.SourceDir)\LocalLogging.pdb" KeyPath="yes" />
+        </Component>
         <Component Id="owcB6AF1360CB05B5C718A5A64D29EF8D0E" Guid="0fd2bc0a-100c-a2be-c4ad-50d1eefd6fc0" Win64="yes">
           <File Id="owfB6AF1360CB05B5C718A5A64D29EF8D0E" Source="$(var.SourceDir)\MahApps.Metro.dll" KeyPath="yes" />
         </Component>

@@ -91,6 +91,7 @@
                             <ColumnDefinition />
                             <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="40" />
                         </Grid.ColumnDefinitions>
                         <Border x:Name="SidePanelOpenDocBackground" Grid.Column="0" Margin="0,0,0,0" Height="50" Background="Transparent" CornerRadius="8">
                             <Button x:Name="SidePanelOpenDocButton" Style="{StaticResource MahApps.Styles.Button.Flat}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
@@ -104,19 +105,25 @@
                                 <iconPacks:PackIconMaterial Kind="Compare" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" />
                             </Button>
                         </Border>
-                        <Border x:Name="ZoomButtonBackground" Grid.Column="3" Margin="0,0,0,0" Height="50" Background="Transparent" CornerRadius="8" IsHitTestVisible="True">
+                        <Border x:Name="NoCompareZoneBackground" Grid.Column="3" Margin="0,0,0,0" Height="50" Background="Transparent" CornerRadius="8" IsHitTestVisible="True" Visibility="Visible">
+                            <Button x:Name="NoCompareZonButton" Style="{StaticResource MahApps.Styles.Button.Flat}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    Padding="0" ToolTip="Disable zoom" Background="Transparent" BorderBrush="Transparent" Click="NoCompareZonButton_Click" Margin="0,-10,0,0" Cursor="Hand" Visibility="Visible">
+                                <iconPacks:PackIconMaterial Kind="RectangleOutline" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" />
+                            </Button>
+                        </Border>
+                        <Border x:Name="ZoomButtonBackground" Grid.Column="4" Margin="0,0,0,0" Height="50" Background="Transparent" CornerRadius="8" IsHitTestVisible="True">
                             <Button x:Name="EnableZoomButton" Style="{StaticResource MahApps.Styles.Button.Flat}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     Padding="0" ToolTip="Enable zoom" Background="Transparent" BorderBrush="Transparent" Click="EnableZoomButton_Click" Margin="0,-10,0,0" Cursor="Hand">
                                 <iconPacks:PackIconBoxIcons Kind="RegularZoomIn" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" />
                             </Button>
                         </Border>
-                        <Border x:Name="ZoomButtonBackground2" Grid.Column="3" Margin="0,0,0,0" Height="50" Background="Transparent" CornerRadius="8" IsHitTestVisible="True" Visibility="Hidden">
+                        <Border x:Name="ZoomButtonBackground2" Grid.Column="4" Margin="0,0,0,0" Height="50" Background="Transparent" CornerRadius="8" IsHitTestVisible="True" Visibility="Hidden">
                             <Button x:Name="DisableZoomButton" Style="{StaticResource MahApps.Styles.Button.Flat}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     Padding="0" ToolTip="Disable zoom" Background="Transparent" BorderBrush="Transparent" Click="DisableZoomButton_Click" Margin="0,-10,0,0" Cursor="Hand" Visibility="Hidden">
                                 <iconPacks:PackIconBoxIcons Kind="RegularZoomOut" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" />
                             </Button>
                         </Border>
-                        <Border x:Name="SettingsButtonBackground" Grid.Column="4" Margin="0,0,0,0" Height="50" Background="Transparent" CornerRadius="8">
+                        <Border x:Name="SettingsButtonBackground" Grid.Column="5" Margin="0,0,0,0" Height="50" Background="Transparent" CornerRadius="8">
                             <Button x:Name="SettingsButton" Style="{StaticResource MahApps.Styles.Button.Flat}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     Padding="0" ToolTip="Settings" Background="Transparent" BorderBrush="Transparent" Click="SettingsButton_Click" Margin="0,-10,0,0" Cursor="Hand">
                                 <iconPacks:PackIconMaterial Kind="Cog" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" />
@@ -128,7 +135,7 @@
                     <xtk:MagnifierManager.Magnifier>
                         <xtk:Magnifier x:Name="magnifier" BorderBrush="Black" BorderThickness="1" Radius="125" ZoomFactor="0.5"></xtk:Magnifier>
                     </xtk:MagnifierManager.Magnifier>                    
-                    <Grid x:Name="DragDropPanel" Visibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid x:Name="DragDropPanel" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />

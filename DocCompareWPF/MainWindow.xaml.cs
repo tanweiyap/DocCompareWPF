@@ -29,7 +29,7 @@ namespace DocCompareWPF
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
         private readonly string versionString = "1.3.4";
-        private readonly string localetype = "EN";
+        private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private string compareResultFolder;
         private string compareResultFolder2;
@@ -5016,6 +5016,7 @@ namespace DocCompareWPF
                     DocComparePanel.Visibility = Visibility.Hidden;
                     SettingsPanel.Visibility = Visibility.Hidden;
                     SelectReferenceDocPanel.Visibility = Visibility.Hidden;
+                    NoCompareZoneBackground.Visibility = Visibility.Hidden;
                     break;
 
                 case SidePanels.DOCCOMPARE:
@@ -5026,6 +5027,7 @@ namespace DocCompareWPF
                     DocComparePanel.Visibility = Visibility.Visible;
                     SettingsPanel.Visibility = Visibility.Hidden;
                     SelectReferenceDocPanel.Visibility = Visibility.Hidden;
+                    NoCompareZoneBackground.Visibility = Visibility.Visible;
                     break;
 
                 case SidePanels.SETTINGS:
@@ -5035,7 +5037,8 @@ namespace DocCompareWPF
                     DragDropPanel.Visibility = Visibility.Hidden;
                     DocComparePanel.Visibility = Visibility.Hidden;
                     SettingsPanel.Visibility = Visibility.Visible;
-                    SelectReferenceDocPanel.Visibility = Visibility.Hidden;
+                    SelectReferenceDocPanel.Visibility = Visibility.Hidden; 
+                    NoCompareZoneBackground.Visibility = Visibility.Hidden;
 
                     if (enableZoom == true)
                     {
@@ -5057,6 +5060,7 @@ namespace DocCompareWPF
                     DocComparePanel.Visibility = Visibility.Hidden;
                     SettingsPanel.Visibility = Visibility.Hidden;
                     SelectReferenceDocPanel.Visibility = Visibility.Visible;
+                    NoCompareZoneBackground.Visibility = Visibility.Hidden;
                     break;
 
                 default:
@@ -5067,6 +5071,8 @@ namespace DocCompareWPF
                     DocComparePanel.Visibility = Visibility.Hidden;
                     SettingsPanel.Visibility = Visibility.Hidden;
                     SelectReferenceDocPanel.Visibility = Visibility.Hidden;
+                    NoCompareZoneBackground.Visibility = Visibility.Hidden;
+
                     if (enableZoom == true)
                     {
                         enableZoom = false;
@@ -8419,6 +8425,17 @@ namespace DocCompareWPF
                 OpenDoc4OriginalButton4.IsEnabled = true;
                 OpenDoc5OriginalButton5.IsEnabled = true;
             });
+        }
+
+        private void NoCompareZonButton_Click(object sender, RoutedEventArgs e)
+        {
+            NoCompareZoneWindow noCompareZoneWindow = new NoCompareZoneWindow();
+            noCompareZoneWindow.SetupWindow(docs.documents[docs.documentsToCompare[0]]);
+
+            if(noCompareZoneWindow.ShowDialog() == true)
+            {
+
+            }
         }
 
         private void DisableOpenOriginal()

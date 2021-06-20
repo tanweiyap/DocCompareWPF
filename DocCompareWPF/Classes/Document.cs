@@ -8,7 +8,7 @@ using System.IO;
 
 namespace DocCompareWPF.Classes
 {
-    internal class Document
+    public class Document
     {
         public string CreatedDate;
         public string Creator;

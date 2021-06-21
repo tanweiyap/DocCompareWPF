@@ -21,6 +21,8 @@ namespace DocCompareWPF
         EditMode mode;
         Point startPoint, endPoint;
         List<List<double>> rects;
+        int selectedRectIndex = -1;
+        List<double> newPos;
 
         private enum EditMode
         {
@@ -191,6 +193,37 @@ namespace DocCompareWPF
                 Canvas.SetTop(newRect, startPoint.Y);
                 PageCanvas.Children.Add(newRect);
             }
+            else
+            {
+                startPoint = e.GetPosition(PageCanvas);
+                selectedRectIndex = FindRect(startPoint);
+                if(selectedRectIndex != -1)
+                {
+                    System.Windows.Shapes.Rectangle newRect = new System.Windows.Shapes.Rectangle();
+                    newRect.Stroke = Brushes.Black;
+
+                    Brush brush = FindResource("NoWarningBackgroundBrush") as Brush;
+
+                    newRect.Fill = brush;
+                    newRect.Opacity = 0.5;
+                    newRect.Width = Math.Abs(rects[selectedRectIndex][2]- rects[selectedRectIndex][0]);
+                    newRect.Height = Math.Abs(rects[selectedRectIndex][3] - rects[selectedRectIndex][1]);
+
+                    Canvas.SetLeft(newRect, rects[selectedRectIndex][0]);
+                    Canvas.SetTop(newRect, rects[selectedRectIndex][1]);
+                    PageCanvas.Children.RemoveAt(selectedRectIndex);
+                    PageCanvas.Children.Insert(selectedRectIndex, newRect);
+
+                    newPos = new List<double>();
+                    newPos.Add(rects[selectedRectIndex][0]);
+                    newPos.Add(rects[selectedRectIndex][1]);
+                    newPos.Add(rects[selectedRectIndex][2]);
+                    newPos.Add(rects[selectedRectIndex][3]);
+
+                    isMouseDown = true;
+                }
+
+            }
         }
 
         private void PageCanvas_MouseMove(object sender, MouseEventArgs e)
@@ -224,6 +257,67 @@ namespace DocCompareWPF
                     rects.Add(values);
                 }
             }
+            else if (mode == EditMode.SELECT && isMouseDown == true)
+            {
+                endPoint = e.GetPosition(PageCanvas);                
+                System.Windows.Shapes.Rectangle newRect = new System.Windows.Shapes.Rectangle();
+                newRect.Stroke = Brushes.Black;
+
+                Brush brush = FindResource("NoWarningBackgroundBrush") as Brush;
+
+                newRect.Fill = brush;
+                newRect.Opacity = 0.5;
+                newRect.Width = Math.Abs(newPos[2] - newPos[0]);
+                newRect.Height = Math.Abs(newPos[3] - newPos[1]);
+
+                newPos[0] = newPos[0] - (startPoint.X - endPoint.X);
+                newPos[2] = newPos[2] - (startPoint.X - endPoint.X);
+                newPos[1] = newPos[1] - (startPoint.Y - endPoint.Y);
+                newPos[3] = newPos[3] - (startPoint.Y - endPoint.Y);
+
+                startPoint = endPoint;
+
+                if(newPos[0] < 0)
+                {
+                    newPos[0] = 0;
+                    newPos[2] = newRect.Width;
+                }
+
+                if(newPos[2] > PageCanvas.ActualWidth)
+                {
+                    newPos[0] = PageCanvas.ActualWidth - newRect.Width;
+                    newPos[2] = PageCanvas.ActualWidth;
+                }
+
+                if(newPos[1] < 0)
+                {
+                    newPos[1] = 0;
+                    newPos[3] = newRect.Height;
+                }
+
+                if (newPos[3] > PageCanvas.ActualHeight)
+                {
+                    newPos[1] = PageCanvas.ActualHeight - newRect.Height;
+                    newPos[3] = PageCanvas.ActualHeight;
+                }
+
+                Canvas.SetLeft(newRect, newPos[0]);
+                Canvas.SetTop(newRect, newPos[1]);
+                PageCanvas.Children.RemoveAt(selectedRectIndex);
+                PageCanvas.Children.Insert(selectedRectIndex, newRect);
+
+                if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Released)
+                {
+                    isMouseDown = false;
+                    rects.RemoveAt(selectedRectIndex);
+                    rects.Insert(selectedRectIndex, newPos);
+
+                    brush = FindResource("WarningBackgroundBrush") as Brush;
+                    newRect.Fill = brush;
+                    PageCanvas.Children.RemoveAt(selectedRectIndex);
+                    PageCanvas.Children.Insert(selectedRectIndex, newRect);
+                }
+            }
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -242,6 +336,22 @@ namespace DocCompareWPF
                     PageCanvas.Children.RemoveAt(PageCanvas.Children.Count - 1);
                 }
             }
+        }
+
+        private int FindRect(Point pos)
+        {
+            int ret = -1;
+
+            for(int i = 0; i < rects.Count; i++)
+            {
+                if(rects[i][0] <= pos.X && rects[i][2] >= pos.X &&
+                    rects[i][1] <= pos.Y && rects[i][3] >= pos.Y)
+                {
+                    return i;
+                }
+            }
+
+            return ret;
         }
     }
 }

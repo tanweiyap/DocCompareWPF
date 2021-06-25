@@ -8461,7 +8461,7 @@ namespace DocCompareWPF
                 DocCompareSideListViewLeft.ScrollIntoView(DocCompareSideListViewLeft.Items[0]);
                 DocCompareSideListViewRight.ScrollIntoView(DocCompareSideListViewRight.Items[0]);
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
-                ProgressBarDocCompareAlign.Visibility = Visibility.Visible;
+                ProgressBarDocCompare.Visibility = Visibility.Visible;
                 threadCompare = new Thread(new ThreadStart(CompareDocsThread));
                 threadCompare.Start();
 

@@ -1814,7 +1814,20 @@ namespace DocCompareWPF
                     ProgressBarDocCompareAlign.Visibility = Visibility.Hidden;
                     ProgressBarLoadingResults.Visibility = Visibility.Hidden;
                 });
-            }catch(Exception e)
+
+                // Hint of too many pages different
+                DirectoryInfo di = new DirectoryInfo(compareResultFolder);
+                FileInfo[] fi = di.GetFiles();
+
+                if(fi.Length >= 0.5 * docs.documents[docs.documentsToCompare[0]].docCompareIndices.Count)
+                {
+                    CustomMessageBox messageBox = new CustomMessageBox();
+                    messageBox.Setup("Too many differences", "2|Compare has detected a lot of difference in the slides. Consider using the No-Compare Zone editor to selected parts of the slides to be ignored.");
+                    messageBox.Show();
+                }
+
+            }
+            catch(Exception e)
             {
                 LocalLogging.LoggingClass.WriteLog("Error in DisplayComparisonResult: " + e.Message + e.StackTrace);
             }

@@ -13,6 +13,7 @@ namespace DocCompareWPF.Classes
         public List<int> documentsToCompare;
         public List<int> documentsToShow;
         public List<List<int>> forceAlignmentIndices;
+        public List<List<int>> noCompareZones;
         public int MAX_DOC_COUNT = 5;
         public ArrayList pageCompareIndices;
         public int totalLen;
@@ -40,6 +41,7 @@ namespace DocCompareWPF.Classes
 
             Directory.CreateDirectory(Path.Join(workingDir, "compare"));
             forceAlignmentIndices = new List<List<int>>();
+            noCompareZones = new List<List<int>>();
         }
 
         public DocumentManagement(int p_maxDocCount, string p_workingDir, AppSettings settings)
@@ -65,6 +67,7 @@ namespace DocCompareWPF.Classes
             };
 
             forceAlignmentIndices = new List<List<int>>();
+            noCompareZones = new List<List<int>>();
         }
 
         public void AddDocument(string p_filePath)

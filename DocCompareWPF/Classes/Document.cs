@@ -35,7 +35,7 @@ namespace DocCompareWPF.Classes
             PDF, PPT, WORD, EXCEL, PIC, TXT, UNKNOWN
         };
 
-        public static int CompareDocs(string doc1ImageFolder, string doc2ImageFolder, string outputFolder, string outputFolder2, out ArrayList pageIndices, out int totalLen, int[,] forceIndices)
+        public static int CompareDocs(string doc1ImageFolder, string doc2ImageFolder, string outputFolder, string outputFolder2, out ArrayList pageIndices, out int totalLen, int[,] forceIndices, List<List<int>> noCompareZones)
         {
             int ret = -1;
             int totalLength = 0;
@@ -53,7 +53,7 @@ namespace DocCompareWPF.Classes
                 file.Delete();
             }
 
-            pageIndices = DocCompareClass.DocCompare(ref doc1ImageFolder, ref doc2ImageFolder, ref outputFolder, ref outputFolder2, ref totalLength, forceIndices);
+            pageIndices = DocCompareClass.DocCompare(ref doc1ImageFolder, ref doc2ImageFolder, ref outputFolder, ref outputFolder2, ref totalLength, forceIndices, noCompareZones);
 
             if (pageIndices != null) //? successful?
             {

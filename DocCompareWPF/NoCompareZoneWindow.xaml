@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="DocCompare" Height="270" Width="600" MinWidth="800" MinHeight="600" WindowStyle="None" AllowsTransparency="True"
-        FontSize="15" ResizeMode="NoResize" KeyDown="Window_KeyDown">
+        FontSize="15" ResizeMode="NoResize" KeyDown="Window_KeyDown" ContentRendered="Window_ContentRendered">
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="{Binding ActualHeight,ElementName=TitleBar}" />
     </WindowChrome.WindowChrome>
@@ -43,6 +43,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="40"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Border x:Name="SelectButtonBackground" Grid.Column="0" Margin="0,0,0,0" Height="50" Background="Transparent" CornerRadius="8">
@@ -55,6 +56,12 @@
                         <Button x:Name="CreateRectButton" Style="{StaticResource MahApps.Styles.Button.Flat}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                     Padding="0" ToolTip="Add No-Compare Zone" Background="Transparent" BorderBrush="Transparent" Click="CreateRectButton_Click" Margin="0,-10,0,0" Cursor="Hand">
                             <iconPacks:PackIconMaterial Kind="ShapeRectanglePlus" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="DeleteRectBackground" Grid.Column="2" Margin="0,0,0,0" Height="50" Background="Transparent" CornerRadius="8">
+                        <Button x:Name="DeleteRectButton" Style="{StaticResource MahApps.Styles.Button.Flat}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                    Padding="0" ToolTip="Add No-Compare Zone" Background="Transparent" BorderBrush="Transparent" Click="DeleteRectButton_Click" Margin="0,-10,0,0" Cursor="Hand">
+                            <iconPacks:PackIconMaterial Kind="Delete" Height="20" Width="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" />
                         </Button>
                     </Border>
                 </Grid>
@@ -94,15 +101,17 @@
                         <Button x:Name="DoneButton" Visibility="Visible" Grid.Column="2" MaxWidth="200" MinWidth="100" Height="30" Margin="0,0,10,0" Click="DoneButton_Click" HorizontalAlignment="Right">Okay</Button>
                         <Button x:Name="CancelButton" Visibility="Visible" Grid.Column="2" MaxWidth="200" MinWidth="100" Height="30" Margin="0,0,130,0" Click="CancelButton_Click" HorizontalAlignment="Right">Cancel</Button>
                     </Grid>
-                    <Grid Grid.Row="1" Margin="20" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                    <Border Grid.Row="1" Margin="20" BorderThickness="1" BorderBrush="Black" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+                    <Grid>
                         <Image x:Name="PageImage">
-                            <Image.Effect>
+                            <!--Image.Effect>
                                 <DropShadowEffect ShadowDepth="0" BlurRadius="15"></DropShadowEffect>
-                            </Image.Effect>
+                            </Image.Effect-->
                         </Image>
-                        <Rectangle Fill="White" Opacity="0.4"></Rectangle>
+                        <Rectangle Fill="White" Opacity="0.0"></Rectangle>
                         <Canvas x:Name="PageCanvas" MouseEnter="PageCanvas_MouseEnter" MouseLeave="PageCanvas_MouseLeave" Background="Transparent" MouseLeftButtonDown="PageCanvas_MouseDown" MouseMove="PageCanvas_MouseMove"></Canvas>
                     </Grid>
+                    </Border>
                 </Grid>
             </Grid>
         </Grid>

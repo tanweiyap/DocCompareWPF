@@ -1015,7 +1015,7 @@ namespace DocCompareWPF
                 compareResultFolder2 = Path.Join(workingDir, Guid.NewGuid().ToString());
                 Directory.CreateDirectory(compareResultFolder2);
 
-                Document.CompareDocs(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[1]].imageFolder, compareResultFolder, compareResultFolder2, out docs.pageCompareIndices, out docs.totalLen, forceIndices);
+                Document.CompareDocs(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[1]].imageFolder, compareResultFolder, compareResultFolder2, out docs.pageCompareIndices, out docs.totalLen, forceIndices, docs.noCompareZones);
                 docs.documents[docs.documentsToCompare[0]].docCompareIndices = new List<int>();
                 docs.documents[docs.documentsToCompare[1]].docCompareIndices = new List<int>();
 
@@ -5885,6 +5885,7 @@ namespace DocCompareWPF
 
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
                 docs.forceAlignmentIndices = new List<List<int>>();
+                docs.noCompareZones = new List<List<int>>();
                 ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
@@ -7566,6 +7567,7 @@ namespace DocCompareWPF
                 //ReleaseDocPreview();
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
                 docs.forceAlignmentIndices = new List<List<int>>();
+                docs.noCompareZones = new List<List<int>>();
                 ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
@@ -7602,7 +7604,8 @@ namespace DocCompareWPF
 
                 //ReleaseDocPreview();
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
-                docs.forceAlignmentIndices = new List<List<int>>();
+                docs.forceAlignmentIndices = new List<List<int>>(); 
+                docs.noCompareZones = new List<List<int>>();
                 ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
@@ -7640,6 +7643,7 @@ namespace DocCompareWPF
                 //ReleaseDocPreview();
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
                 docs.forceAlignmentIndices = new List<List<int>>();
+                docs.noCompareZones = new List<List<int>>();
                 ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
@@ -7677,6 +7681,7 @@ namespace DocCompareWPF
                 //ReleaseDocPreview();
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
                 docs.forceAlignmentIndices = new List<List<int>>();
+                docs.noCompareZones = new List<List<int>>();
                 ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
@@ -8430,11 +8435,30 @@ namespace DocCompareWPF
         private void NoCompareZonButton_Click(object sender, RoutedEventArgs e)
         {
             NoCompareZoneWindow noCompareZoneWindow = new NoCompareZoneWindow();
-            noCompareZoneWindow.SetupWindow(docs.documents[docs.documentsToCompare[0]]);
+            noCompareZoneWindow.SetupWindow(docs.documents[docs.documentsToCompare[0]], docs.noCompareZones);
 
             if(noCompareZoneWindow.ShowDialog() == true)
             {
+                docs.noCompareZones = noCompareZoneWindow.rectsFinal;
 
+                ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
+                docCompareGrid.Visibility = Visibility.Hidden;
+                docCompareSideGridShown = 0;
+                DocCompareMainListView.ScrollIntoView(DocCompareMainListView.Items[0]);
+                DocCompareSideListViewLeft.ScrollIntoView(DocCompareSideListViewLeft.Items[0]);
+                DocCompareSideListViewRight.ScrollIntoView(DocCompareSideListViewRight.Items[0]);
+                SetVisiblePanel(SidePanels.DOCCOMPARE);
+                ProgressBarDocCompareAlign.Visibility = Visibility.Visible;
+                threadCompare = new Thread(new ThreadStart(CompareDocsThread));
+                threadCompare.Start();
+
+                Dispatcher.Invoke(() =>
+                {
+                    UnMaskSideGridFromForceAlignMode();
+                    EnableRemoveForceAlignButton();
+                    EnableSideScrollLeft();
+                    EnableSideScrollRight();
+                });
             }
         }
 

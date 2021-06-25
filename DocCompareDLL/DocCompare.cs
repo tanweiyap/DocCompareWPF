@@ -1,15 +1,17 @@
 ﻿using OpenCvSharp;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace DocCompareDLL
 {
     public class DocCompareClass
     {
-        public static ArrayList DocCompare(ref string folder1, ref string folder2, ref string outfolder, ref string outfolder2, ref int seqlen, int[,] force_pairs = null)
+        public static ArrayList DocCompare(ref string folder1, ref string folder2, ref string outfolder, ref string outfolder2, ref int seqlen, int[,] force_pairs = null, List<List<int>> noCompareZones = null)
         {
             force_pairs ??= new int[0, 0]; //{ { 5, 5 }, { 6, 6 }, { 7, 7 }, { 8, 8 } };
+            noCompareZones ??= new List<List<int>>();
 
             ArrayList doc1 = new ArrayList(); //all images of fist document
             ArrayList doc2 = new ArrayList(); //all images of second document

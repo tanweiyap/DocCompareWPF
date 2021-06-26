@@ -73,6 +73,14 @@ namespace DocCompareDLL
                 for (int ii = 0; ii < m; ii++)
                 {
                     Mat a = Cv2.ImRead(Path.Join(folder1, ii.ToString() + ".png"));
+                    for (int gg = 0; gg < noCompareZones.Count; gg++) //blacken out noCompareZones
+                    {
+                        Point start_point = new Point(noCompareZones[gg][0], noCompareZones[gg][1]);
+                        Point end_point = new Point(noCompareZones[gg][2], noCompareZones[gg][3]);
+                        Scalar colr = new Scalar(0, 0, 0);
+                        int thickness = -1;
+                        Cv2.Rectangle(a, start_point, end_point, colr, thickness);
+                    }
                     //Cv2.Resize(a, a, work_size);
                     doc1.Add(a);
                 }
@@ -82,6 +90,14 @@ namespace DocCompareDLL
                 {
                     Mat b = Cv2.ImRead(Path.Join(folder2, ii.ToString() + ".png"));
                     sizes.Add(b.Size());
+                    for (int gg = 0; gg < noCompareZones.Count; gg++) //blacken out noCompareZones
+                    {
+                        Point start_point = new Point(noCompareZones[gg][0], noCompareZones[gg][1]);
+                        Point end_point = new Point(noCompareZones[gg][2], noCompareZones[gg][3]);
+                        Scalar colr = new Scalar(0, 0, 0);
+                        int thickness = -1;
+                        Cv2.Rectangle(b, start_point, end_point, colr, thickness);
+                    }
                     //Cv2.Resize(b, b, work_size);
                     doc2.Add(b);
                 }

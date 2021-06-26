@@ -7,3 +7,12 @@ C:\Users\Wei Yap\Documents\Projects\DocCompareWPF\LocalLogging\obj\Release\netco
 C:\Users\Wei Yap\Documents\Projects\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.dll
 C:\Users\Wei Yap\Documents\Projects\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.pdb
 C:\Users\Wei Yap\Documents\Projects\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.csproj.AssemblyReference.cache
+C:\Users\tillm\Desktop\Hopie\code\2Compare dev2\DocCompareWPF\LocalLogging\bin\Release\netcoreapp3.1\LocalLogging.deps.json
+C:\Users\tillm\Desktop\Hopie\code\2Compare dev2\DocCompareWPF\LocalLogging\bin\Release\netcoreapp3.1\LocalLogging.dll
+C:\Users\tillm\Desktop\Hopie\code\2Compare dev2\DocCompareWPF\LocalLogging\bin\Release\netcoreapp3.1\LocalLogging.pdb
+C:\Users\tillm\Desktop\Hopie\code\2Compare dev2\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.csprojAssemblyReference.cache
+C:\Users\tillm\Desktop\Hopie\code\2Compare dev2\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.AssemblyInfoInputs.cache
+C:\Users\tillm\Desktop\Hopie\code\2Compare dev2\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.AssemblyInfo.cs
+C:\Users\tillm\Desktop\Hopie\code\2Compare dev2\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.csproj.CoreCompileInputs.cache
+C:\Users\tillm\Desktop\Hopie\code\2Compare dev2\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.dll
+C:\Users\tillm\Desktop\Hopie\code\2Compare dev2\DocCompareWPF\LocalLogging\obj\Release\netcoreapp3.1\LocalLogging.pdb

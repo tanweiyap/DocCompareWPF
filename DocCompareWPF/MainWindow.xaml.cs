@@ -64,6 +64,7 @@ namespace DocCompareWPF
         private Thread threadLoadDocs;
         private Thread threadLoadDocsProgress;
         private Thread threadCompare;
+        private Thread threadCompare2;
         private Thread threadAnimateDiff;
         private Thread threadDisplayResult;
         private Thread threadCheckTrial;
@@ -4653,11 +4654,8 @@ namespace DocCompareWPF
                             DocCompareSideListViewRight.ScrollIntoView(DocCompareSideListViewRight.Items[0]);
                             SetVisiblePanel(SidePanels.DOCCOMPARE);
                             ProgressBarDocCompare.Visibility = Visibility.Visible;
-                            if (docCompareRunning == false)
-                            {
-                                threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                                threadCompare.Start();
-                            }
+                            threadCompare2 = new Thread(new ThreadStart(CompareDocsThread));
+                            threadCompare2.Start();
                             break;
 
                         case 6:
@@ -4689,11 +4687,8 @@ namespace DocCompareWPF
                             DocCompareSideListViewRight.ScrollIntoView(DocCompareSideListViewRight.Items[0]);
                             SetVisiblePanel(SidePanels.DOCCOMPARE);
                             ProgressBarDocCompare.Visibility = Visibility.Visible;
-                            if (docCompareRunning == false)
-                            {
-                                threadCompare = new Thread(new ThreadStart(CompareDocsThread));
-                                threadCompare.Start();
-                            }
+                            threadCompare2 = new Thread(new ThreadStart(CompareDocsThread));
+                            threadCompare2.Start();
                             break;
                     }
 

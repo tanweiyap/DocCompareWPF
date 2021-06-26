@@ -166,7 +166,7 @@ namespace DocCompareDLL
                 //change distanceMatrix where fore_pairs is set
                 for (int i = 0; i < (int)force_pairs.GetLength(0); i++)
                 {
-                    distanceMatrix[force_pairs[i, 0], force_pairs[i, 1]] = 100;
+                    distanceMatrix[force_pairs[i, 0], force_pairs[i, 1]] = distanceMatrix[force_pairs[i, 0], force_pairs[i, 1]] + 100;
                 }
 
                 //distanceMatrix[5, 5] = 100;
@@ -311,7 +311,7 @@ namespace DocCompareDLL
                     if ((int)seqi[i] != -1 && (int)seqj[i] != -1)
                     {
                         //only if they differ...
-                        if (distanceMatrix[(int)seqi[i], (int)seqj[i]] <= 0.9999)
+                        if ( ( distanceMatrix[(int)seqi[i], (int)seqj[i]] <= 0.9999 ) | ( distanceMatrix[(int)seqi[i], (int)seqj[i]] >= 100 & distanceMatrix[(int)seqi[i], (int)seqj[i]] < 100.9999) )
                         {
                             Mat differencered = new Mat();
                             Mat differencegreen = new Mat();

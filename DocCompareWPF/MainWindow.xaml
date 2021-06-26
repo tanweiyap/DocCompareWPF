@@ -1646,8 +1646,8 @@
                                 <Grid x:Name="HighlightingDisableTip" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.8" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" Grid.Column="0">
                                     <Label Foreground="White" BorderBrush="Black" BorderThickness="2">Highlighting disabled</Label>
                                 </Grid>
-                                <Grid x:Name="ManualAlignmentTip" HorizontalAlignment="Center" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.8" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden">
-                                    <Label Foreground="White" BorderBrush="Black" BorderThickness="2" >Manually aligned</Label>
+                                <Grid x:Name="ManualAlignmentTip" HorizontalAlignment="Center" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.8" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" IsHitTestVisible="False">
+                                    <Label Foreground="White" BorderBrush="Black" BorderThickness="2" IsHitTestVisible="False" >Manually aligned</Label>
                                 </Grid>
                             </Grid>
                             <Grid Grid.Row="2" Background="{DynamicResource SecondaryAccentBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

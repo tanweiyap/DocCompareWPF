@@ -19,3 +19,5 @@ InstallerAppMM/obj/**
 UpgradeLog5.htm
 *.htm
 *.suo
+LocalLogging/bin/**
+LocalLogging/obj/**

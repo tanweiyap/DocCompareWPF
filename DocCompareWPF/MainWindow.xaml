@@ -1335,6 +1335,11 @@
                                                                         <DropShadowEffect ShadowDepth="0" BlurRadius="10"></DropShadowEffect>
                                                                     </Border.Effect>
                                                                 </Border>
+                                                                <Border >
+                                                                    <Image Tag="{Binding ImgNoCompareLeft}" Source="{Binding PathToImgNoCompareLeft, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Visibility="Visible" Stretch="Uniform">
+                                                                    </Image>
+                                                                </Border>
                                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHiddenLeft}" Margin="{Binding Margin}">
                                                                     <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Fill="White" Opacity="{Binding HiddenPPTOpacity}">
 
@@ -1421,6 +1426,11 @@
                                                                 <Border>
                                                                     <Image Tag="{Binding ImgMaskRightName2}" Source="{Binding PathToMaskImgRight2, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
                                                                     VerticalAlignment="Center" Visibility="{Binding ShowMaskGreen}" Stretch="Uniform">
+                                                                    </Image>
+                                                                </Border>
+                                                                <Border >
+                                                                    <Image Tag="{Binding ImgNoCompareRight}" Source="{Binding PathToImgNoCompareRight, Converter={StaticResource uriToImageConv}}" Margin="{Binding Margin}" HorizontalAlignment="Stretch" 
+                                                                    VerticalAlignment="Center" Visibility="Visible" Stretch="Uniform">
                                                                     </Image>
                                                                 </Border>
                                                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding ShowHiddenRight}" Margin="{Binding Margin}">
@@ -1643,9 +1653,18 @@
                                         </Style>
                                     </ListView.ItemContainerStyle>
                                 </ListView>
-                                <Grid x:Name="HighlightingDisableTip" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.8" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" Grid.Column="0">
-                                    <Label Foreground="White" BorderBrush="Black" BorderThickness="2">Highlighting disabled</Label>
-                                </Grid>
+                                <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,10" Grid.Column="0">
+                                    <Grid.RowDefinitions >
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Grid x:Name="HighlightingDisableTip" Opacity="0.8" Background="{StaticResource WarningBackgroundBrush}" Visibility="Collapsed" HorizontalAlignment="Right">
+                                        <Label Foreground="White" BorderBrush="Black" BorderThickness="2">Highlighting disabled</Label>
+                                    </Grid>
+                                    <Grid x:Name="NoCompareTip" Opacity="0.8" Background="{StaticResource WarningBackgroundBrush}" Visibility="Collapsed" Grid.Row="1" Margin="0,5,0,0" >
+                                        <Label Foreground="White" BorderBrush="Black" BorderThickness="2">No compare zones enabled</Label>
+                                    </Grid>
+                                </Grid>                                
                                 <Grid x:Name="ManualAlignmentTip" HorizontalAlignment="Center" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.8" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" IsHitTestVisible="False">
                                     <Label Foreground="White" BorderBrush="Black" BorderThickness="2" IsHitTestVisible="False" >Manually aligned</Label>
                                 </Grid>

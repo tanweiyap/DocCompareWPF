@@ -30,6 +30,9 @@ namespace DocCompareWPF.UIhelper
         public string ImgMaskRightName { get; set; }
         public string ImgMaskRightName2 { get; set; }
         public string ImgRightName { get; set; }
+        public string ImgNoCompareLeft { get; set; }
+        public string ImgNoCompareRight { get; set; }
+
         public Thickness Margin { get; set; }
 
         private string _pathToAniImgLeft;
@@ -38,12 +41,16 @@ namespace DocCompareWPF.UIhelper
         private string _pathToImgRight;
         private string _pathToMaskImgRight;
         private string _pathToMaskImgRight2;
+        private string _pathToImgNoCompareLeft;
+        private string _pathToImgNoCompareRight;
         public string PathToAniImgLeft { get { return _pathToAniImgLeft; } set { _pathToAniImgLeft = value; OnPropertyChanged(); } }
         public string PathToAniImgRight { get { return _pathToAniImgRight; } set { _pathToAniImgRight = value; OnPropertyChanged(); } }
         public string PathToImgLeft { get { return _pathToImgLeft; } set { _pathToImgLeft = value; OnPropertyChanged(); } }
         public string PathToImgRight { get { return _pathToImgRight; } set { _pathToImgRight = value; OnPropertyChanged(); } }
         public string PathToMaskImgRight { get { return _pathToMaskImgRight; } set { _pathToMaskImgRight = value; OnPropertyChanged(); } }
         public string PathToMaskImgRight2 { get { return _pathToMaskImgRight2; } set { _pathToMaskImgRight2 = value; OnPropertyChanged(); } }
+        public string PathToImgNoCompareLeft { get { return _pathToImgNoCompareLeft; } set { _pathToImgNoCompareLeft = value; OnPropertyChanged(); } }
+        public string PathToImgNoCompareRight { get { return _pathToImgNoCompareRight; } set { _pathToImgNoCompareRight = value; OnPropertyChanged(); } }
 
         private double _blurRadiusLeft;
         private double _blurRadiusRight;

@@ -27,18 +27,19 @@ namespace DocCompareWPF
     public partial class MainWindow : Window
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
-        private readonly DocumentManagement docs;
-        private readonly string versionString = "1.3.4";
+        private readonly string versionString = "1.4.0";
         private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
+        private readonly DocumentManagement docs;
+        private string noCompareDir;
         private string compareResultFolder;
         private string compareResultFolder2;
+        private string lastUsedDirectory;
         private bool docCompareRunning, docProcessRunning, animateDiffRunning;
-        private MaskType showMask = 0;
+        private bool inForceAlignMode;
         private int docCompareSideGridShown, docProcessingCounter;
         private Grid gridToAnimate;
-        private bool inForceAlignMode;
-        private string lastUsedDirectory;
+        private MaskType showMask = 0;
 
         // License management
         private LicenseManagement lic;
@@ -92,9 +93,11 @@ namespace DocCompareWPF
         public MainWindow()
         {
             InitializeComponent();
-            Directory.CreateDirectory(appDataDir);
+            Directory.CreateDirectory(appDataDir);1
             compareResultFolder = Path.Join(workingDir, Guid.NewGuid().ToString());
             compareResultFolder2 = Path.Join(workingDir, Guid.NewGuid().ToString());
+            noCompareDir = Path.Join(appDataDir, "NoCompareMask");
+            Directory.CreateDirectory(noCompareDir);
 
             // GUI stuff
             showMask = MaskType.Magenta;
@@ -405,6 +408,9 @@ namespace DocCompareWPF
                                     thisImg.Visibility = Visibility.Visible;
                             }
                             else if (thisImg.Tag.ToString().Contains("Mask"))
+                            {
+                            }
+                            else if (thisImg.Tag.ToString().Contains("NoCompare"))
                             {
                             }
                             else
@@ -1228,6 +1234,31 @@ namespace DocCompareWPF
                 List<SideGridItemRight> rightItemList = new List<SideGridItemRight>();
 
                 bool firstDiffFound = false;
+                bool hasNoCompare = false;
+                string pathNoCompare = "";
+                if (Directory.Exists(noCompareDir))
+                {
+                    DirectoryInfo diN = new DirectoryInfo(noCompareDir);
+                    FileInfo[] fis = diN.GetFiles();
+
+                    if (fis.Length != 0)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            NoCompareTip.Visibility = Visibility.Visible;
+                        });
+
+                        hasNoCompare = true;
+                        pathNoCompare = fis[0].FullName;
+                    }
+                    else
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            NoCompareTip.Visibility = Visibility.Collapsed;
+                        });
+                    }
+                }
 
                 for (int i = 0; i < docs.totalLen; i++)
                 {
@@ -1244,6 +1275,8 @@ namespace DocCompareWPF
                         ImgMaskRightName2 = "MainMaskImgRight2" + i.ToString(),
                         AnimateDiffLeftButtonName = "AnimateDiffLeft" + i.ToString(),
                         AnimateDiffRightButtonName = "AnimateDiffRight" + i.ToString(),
+                        ImgNoCompareLeft = "NoCompareLeft" + i.ToString(),
+                        ImgNoCompareRight = "NoCompareRight" + i.ToString(),
                         AniDiffButtonEnable = false,
                         Margin = new Thickness(10),
                         PPTSpeakerNoteGridNameLeft = "PPTSpeakerNoteGridLeft" + i.ToString(),
@@ -1267,6 +1300,10 @@ namespace DocCompareWPF
                     if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
                     {
                         thisItem.PathToImgLeft = Path.Join(docs.documents[docs.documentsToCompare[0]].imageFolder, docs.documents[docs.documentsToCompare[0]].docCompareIndices[i].ToString() + ".png");
+                        if (hasNoCompare == true)
+                        {
+                            thisItem.PathToImgNoCompareLeft = pathNoCompare;
+                        }
 
                         if (docs.documents[docs.documentsToCompare[0]].fileType == Document.FileTypes.PPT)
                         {
@@ -1297,6 +1334,10 @@ namespace DocCompareWPF
                     if (docs.documents[docs.documentsToCompare[1]].docCompareIndices[i] != -1)
                     {
                         thisItem.PathToImgRight = Path.Join(docs.documents[docs.documentsToCompare[1]].imageFolder, docs.documents[docs.documentsToCompare[1]].docCompareIndices[i].ToString() + ".png");
+                        if (hasNoCompare == true)
+                        {
+                            thisItem.PathToImgNoCompareRight = pathNoCompare;
+                        }
 
                         if (docs.documents[docs.documentsToCompare[0]].docCompareIndices[i] != -1)
                         {
@@ -3301,7 +3342,6 @@ namespace DocCompareWPF
 
                 if (!(DocCompareMainListView.Items[int.Parse(splittedName[^1])] as CompareMainItem).AniDiffButtonTooltip.Contains("limited"))
                 {
-
                     gridToAnimate = (sender as Button).Parent as Grid;
                     animateDiffRunning = true;
 
@@ -3471,22 +3511,22 @@ namespace DocCompareWPF
                 {
                     if (parentGrid.Tag.ToString().Contains("Left"))
                     {
-                        hiddenPPTVisi = (item.Children[4] as Label).Visibility;
-                        System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
+                        hiddenPPTVisi = (item.Children[5] as Label).Visibility;
+                        System.Windows.Shapes.Path path = item.Children[4] as System.Windows.Shapes.Path;
                         //path.Visibility = Visibility.Hidden;
-                        Label label = item.Children[4] as Label;
+                        Label label = item.Children[5] as Label;
                         //label.Visibility = Visibility.Hidden;
-                        Grid grid = item.Children[2] as Grid;
+                        Grid grid = item.Children[3] as Grid;
                         grid.Visibility = Visibility.Hidden;
                     }
                     else
                     {
-                        hiddenPPTVisi = (item.Children[6] as Label).Visibility;
-                        System.Windows.Shapes.Path path = item.Children[5] as System.Windows.Shapes.Path;
+                        hiddenPPTVisi = (item.Children[7] as Label).Visibility;
+                        System.Windows.Shapes.Path path = item.Children[6] as System.Windows.Shapes.Path;
                         //path.Visibility = Visibility.Hidden;
-                        Label label = item.Children[6] as Label;
+                        Label label = item.Children[7] as Label;
                         //label.Visibility = Visibility.Hidden;
-                        Grid grid = item.Children[4] as Grid;
+                        Grid grid = item.Children[5] as Grid;
                         grid.Visibility = Visibility.Hidden;
                     }
                 }
@@ -3541,20 +3581,20 @@ namespace DocCompareWPF
 
                     if (parentGrid.Tag.ToString().Contains("Left"))
                     {
-                        System.Windows.Shapes.Path path = item.Children[3] as System.Windows.Shapes.Path;
+                        System.Windows.Shapes.Path path = item.Children[4] as System.Windows.Shapes.Path;
                         path.Visibility = hiddenPPTVisi;
-                        Label label = item.Children[4] as Label;
+                        Label label = item.Children[5] as Label;
                         label.Visibility = hiddenPPTVisi;
-                        Grid grid = item.Children[2] as Grid;
+                        Grid grid = item.Children[3] as Grid;
                         grid.Visibility = hiddenPPTVisi;
                     }
                     else
                     {
-                        System.Windows.Shapes.Path path = item.Children[5] as System.Windows.Shapes.Path;
+                        System.Windows.Shapes.Path path = item.Children[6] as System.Windows.Shapes.Path;
                         path.Visibility = hiddenPPTVisi;
-                        Label label = item.Children[6] as Label;
+                        Label label = item.Children[7] as Label;
                         label.Visibility = hiddenPPTVisi;
-                        Grid grid = item.Children[4] as Grid;
+                        Grid grid = item.Children[5] as Grid;
                         grid.Visibility = hiddenPPTVisi;
                     }
                 }
@@ -5352,7 +5392,7 @@ namespace DocCompareWPF
             ShowMaskButtonMagenta.Visibility = Visibility.Hidden;
             ShowMaskButtonGreen.Visibility = Visibility.Visible;
             HideMaskButton.Visibility = Visibility.Hidden;
-            HighlightingDisableTip.Visibility = Visibility.Hidden;
+            HighlightingDisableTip.Visibility = Visibility.Collapsed;
         }
 
         private void ShowMaxDocCountWarningBox()
@@ -5894,6 +5934,10 @@ namespace DocCompareWPF
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
                 docs.forceAlignmentIndices = new List<List<int>>();
                 docs.noCompareZones = new List<List<int>>();
+                DirectoryInfo di = new DirectoryInfo(noCompareDir);
+                di.Delete(true);
+                Directory.CreateDirectory(noCompareDir);
+
                 ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
@@ -7576,6 +7620,9 @@ namespace DocCompareWPF
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
                 docs.forceAlignmentIndices = new List<List<int>>();
                 docs.noCompareZones = new List<List<int>>();
+                DirectoryInfo di = new DirectoryInfo(noCompareDir);
+                di.Delete(true);
+                Directory.CreateDirectory(noCompareDir);
                 ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
@@ -7614,6 +7661,9 @@ namespace DocCompareWPF
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
                 docs.forceAlignmentIndices = new List<List<int>>(); 
                 docs.noCompareZones = new List<List<int>>();
+                DirectoryInfo di = new DirectoryInfo(noCompareDir);
+                di.Delete(true);
+                Directory.CreateDirectory(noCompareDir);
                 ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
@@ -7652,6 +7702,9 @@ namespace DocCompareWPF
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
                 docs.forceAlignmentIndices = new List<List<int>>();
                 docs.noCompareZones = new List<List<int>>();
+                DirectoryInfo di = new DirectoryInfo(noCompareDir);
+                di.Delete(true);
+                Directory.CreateDirectory(noCompareDir);
                 ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
@@ -7690,6 +7743,9 @@ namespace DocCompareWPF
                 SetVisiblePanel(SidePanels.DOCCOMPARE);
                 docs.forceAlignmentIndices = new List<List<int>>();
                 docs.noCompareZones = new List<List<int>>();
+                DirectoryInfo di = new DirectoryInfo(noCompareDir);
+                di.Delete(true);
+                Directory.CreateDirectory(noCompareDir);
                 ProgressBarDocCompareReload.Visibility = Visibility.Hidden;
                 docCompareGrid.Visibility = Visibility.Hidden;
                 docCompareSideGridShown = 0;
@@ -8402,7 +8458,7 @@ namespace DocCompareWPF
             ShowMaskButtonMagenta.Visibility = Visibility.Hidden;
             ShowMaskButtonGreen.Visibility = Visibility.Hidden;
             HideMaskButton.Visibility = Visibility.Visible;
-            HighlightingDisableTip.Visibility = Visibility.Hidden;
+            HighlightingDisableTip.Visibility = Visibility.Collapsed;
         }
 
         private void EnableOpenOriginal()
@@ -8443,7 +8499,7 @@ namespace DocCompareWPF
         private void NoCompareZonButton_Click(object sender, RoutedEventArgs e)
         {
             NoCompareZoneWindow noCompareZoneWindow = new NoCompareZoneWindow();
-            noCompareZoneWindow.SetupWindow(docs.documents[docs.documentsToCompare[0]], docs.noCompareZones);
+            noCompareZoneWindow.SetupWindow(docs.documents[docs.documentsToCompare[0]], docs.noCompareZones, noCompareDir);
 
             if(noCompareZoneWindow.ShowDialog() == true)
             {

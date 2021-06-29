@@ -26,6 +26,8 @@ namespace DocCompareWPF
         int selectedRectIndex = -1;
         List<double> newPos;
         EdgeType lastEdge = EdgeType.NONE;
+        string pathToImg = "";
+        string pathToFolder = "";
 
         private enum EditMode
         {
@@ -47,7 +49,7 @@ namespace DocCompareWPF
             
         }
 
-        public void SetupWindow(Document doc, List<List<int>> _rects)
+        public void SetupWindow(Document doc, List<List<int>> _rects, string _path)
         {
             if (doc.filePath != null)
             {
@@ -79,6 +81,10 @@ namespace DocCompareWPF
             {
                 rectsInput = _rects;
             }
+
+            pathToFolder = _path;
+            pathToImg = Path.Join(_path, "noCompareMask" + Guid.NewGuid().ToString() +".png");
+            Directory.CreateDirectory(_path);
         }
 
         private void CreateRectButton_Click(object sender, RoutedEventArgs e)
@@ -151,7 +157,6 @@ namespace DocCompareWPF
                 NextPageButton.IsEnabled = false;
             }
 
-
             if (pageIndex >= 0)
             {
                 PrevPageButton.IsEnabled = true;
@@ -181,6 +186,59 @@ namespace DocCompareWPF
                 rectsFinal.Add(temp);
             }
 
+            for (int i = 0; i < PageCanvas.Children.Count; i++)
+            {
+                (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).Fill = Brushes.White;
+                (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).StrokeThickness = 1;
+            }
+
+            // Save current canvas transform
+            Transform transform = PageCanvas.LayoutTransform;
+            // reset current transform (in case it is scaled or rotated)
+            PageCanvas.LayoutTransform = null;
+
+            // Get the size of canvas
+            Size size = new Size(PageCanvas.ActualWidth, PageCanvas.ActualHeight);
+            // Measure and arrange the PageCanvas
+            // VERY IMPORTANT
+            PageCanvas.Measure(size);
+            PageCanvas.Arrange(new Rect(size));
+
+            // Create a render bitmap and push the PageCanvas to it
+            RenderTargetBitmap renderBitmap =
+              new RenderTargetBitmap(
+                (int)size.Width,
+                (int)size.Height,
+                96d,
+                96d,
+                PixelFormats.Pbgra32);
+            renderBitmap.Render(PageCanvas);
+
+            // delete previous            
+            DirectoryInfo di = new DirectoryInfo(pathToFolder);
+            FileInfo[] fi = di.GetFiles();
+            if(fi.Length != 0)
+            {
+                foreach (FileInfo f in fi)
+                    f.Delete();
+            }
+
+            // Create a file stream for saving image only if there are no compare zones
+            if (rects.Count != 0)
+            {
+                using (FileStream outStream = new FileStream(pathToImg, FileMode.Create))
+                {
+                    // Use png encoder for our data
+                    PngBitmapEncoder encoder = new PngBitmapEncoder();
+                    // push the rendered bitmap to it
+                    encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+                    // save the data to the stream
+                    encoder.Save(outStream);
+                }
+            }
+
+            // Restore previously saved layout
+            PageCanvas.LayoutTransform = transform;
 
             DialogResult = true;
         }

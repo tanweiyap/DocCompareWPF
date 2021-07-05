@@ -329,8 +329,8 @@
         <Component Id="owc6F31DEF09608AA645959666A4CB7FBBC" Guid="c94570a5-5bb4-a53f-e12f-9581bddf7d08" Win64="yes">
           <File Id="owf6F31DEF09608AA645959666A4CB7FBBC" Source="$(var.SourceDir)\mscordaccore.dll" KeyPath="yes" />
         </Component>
-        <Component Id="owcF48B20165B07138C83157551DD14A20B" Guid="6dc8d3cf-94e2-a098-613d-c42bccae5908" Win64="yes">
-          <File Id="owfF48B20165B07138C83157551DD14A20B" Source="$(var.SourceDir)\mscordaccore_amd64_amd64_4.700.21.6504.dll" KeyPath="yes" />
+        <Component Id="owcA060306327B14ABCE554287F1D646F02" Guid="cb6b1895-5b1d-eb2b-8e11-00ac3c0dd895" Win64="yes">
+          <File Id="owfA060306327B14ABCE554287F1D646F02" Source="$(var.SourceDir)\mscordaccore_amd64_amd64_4.700.21.26205.dll" KeyPath="yes" />
         </Component>
         <Component Id="owc5FC34571A1AE47A011FC6C2A95B00DA6" Guid="2591451e-0fe5-ccad-abf6-1d1097251253" Win64="yes">
           <File Id="owf5FC34571A1AE47A011FC6C2A95B00DA6" Source="$(var.SourceDir)\mscordbi.dll" KeyPath="yes" />

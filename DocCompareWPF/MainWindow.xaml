@@ -1653,18 +1653,6 @@
                                         </Style>
                                     </ListView.ItemContainerStyle>
                                 </ListView>
-                                <Grid HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,30,10" Grid.Column="0">
-                                    <Grid.RowDefinitions >
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                    </Grid.RowDefinitions>
-                                    <Grid x:Name="HighlightingDisableTip" Opacity="0.8" Background="{StaticResource WarningBackgroundBrush}" Visibility="Collapsed" HorizontalAlignment="Right">
-                                        <Label Foreground="White" BorderBrush="Black" BorderThickness="2">Highlighting disabled</Label>
-                                    </Grid>
-                                    <Grid x:Name="NoCompareTip" Opacity="0.8" Background="{StaticResource WarningBackgroundBrush}" Visibility="Collapsed" Grid.Row="1" Margin="0,5,0,0" >
-                                        <Label Foreground="White" BorderBrush="Black" BorderThickness="2">No compare zones enabled</Label>
-                                    </Grid>
-                                </Grid>                                
                                 <Grid x:Name="ManualAlignmentTip" HorizontalAlignment="Center" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="0,0,30,10" Opacity="0.8" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" IsHitTestVisible="False">
                                     <Label Foreground="White" BorderBrush="Black" BorderThickness="2" IsHitTestVisible="False" >Manually aligned</Label>
                                 </Grid>
@@ -1737,7 +1725,18 @@
                                         <TextBlock VerticalAlignment="Center" Padding="20,0,0,0" Margin="0,0,0,15" TextWrapping="WrapWithOverflow" x:Name="DocCompareRightStatModifiedLabel" Text="" Foreground="White" Grid.Row="7" Grid.Column="3"/>
                                     </Grid>
                                     <Grid Grid.Row="1" Grid.Column="2" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>
-                                    <Grid Grid.Row="1" Grid.Column="3" Background="{StaticResource PrimaryHueDarkBrush}"></Grid>
+                                    <Grid Grid.Row="1" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid.RowDefinitions >
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Grid x:Name="HighlightingDisableTip" Background="{StaticResource WarningBackgroundBrush}" Visibility="Hidden" >
+                                            <Label Foreground="White" Margin="20,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">Highlighting disabled</Label>
+                                        </Grid>
+                                        <Grid x:Name="NoCompareTip" Background="{StaticResource HatchBrush}" Visibility="Hidden" Grid.Row="1">
+                                            <Label Foreground="White" Margin="20,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource PrimaryHueDarkBrush}">No compare zones enabled</Label>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>

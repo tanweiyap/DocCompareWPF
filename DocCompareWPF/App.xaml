@@ -120,6 +120,20 @@
                             </Trigger>
                         </Style.Triggers>
                     </Style>
+
+                    <VisualBrush 
+                        x:Key="HatchBrush" 
+                        TileMode="Tile" Viewport="0,0,10,10" 
+                        ViewportUnits="Absolute" Viewbox="0,0,10,10"    
+                        ViewboxUnits="Absolute">      
+                        <VisualBrush.Visual>
+                            <Canvas>
+                                <Rectangle Fill="White" Width="10" Height="10" Opacity="0.5" />
+                                <Path Stroke="Black" Data="M 0 0 l 10 10" />
+                                <Path Stroke="Black" Data="M 0 10 l 10 -10" />
+                            </Canvas>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
             

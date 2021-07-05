@@ -46,7 +46,7 @@ namespace DocCompareWPF
             mode = EditMode.SELECT;
             rects = new List<List<double>>();
             rectsFinal = new List<List<int>>();
-            
+
         }
 
         public void SetupWindow(Document doc, List<List<int>> _rects, string _path)
@@ -77,13 +77,13 @@ namespace DocCompareWPF
                 PrevPageButton.IsEnabled = false;
             }
 
-            if(_rects.Count != 0)
+            if (_rects.Count != 0)
             {
                 rectsInput = _rects;
             }
 
             pathToFolder = _path;
-            pathToImg = Path.Join(_path, "noCompareMask" + Guid.NewGuid().ToString() +".png");
+            pathToImg = Path.Join(_path, "noCompareMask" + Guid.NewGuid().ToString() + ".png");
             Directory.CreateDirectory(_path);
         }
 
@@ -130,7 +130,7 @@ namespace DocCompareWPF
                 NextPageButton.IsEnabled = true;
             }
 
-            if(pageIndex == 0)
+            if (pageIndex == 0)
             {
                 PrevPageButton.IsEnabled = false;
             }
@@ -152,7 +152,7 @@ namespace DocCompareWPF
 
             PageImage.Source = bi;
 
-            if(pageIndex == fi.Length -1)
+            if (pageIndex == fi.Length - 1)
             {
                 NextPageButton.IsEnabled = false;
             }
@@ -171,7 +171,7 @@ namespace DocCompareWPF
             double currW = PageCanvas.ActualWidth;
             double currH = PageCanvas.ActualHeight;
 
-            foreach(List<double> l in rects)
+            foreach (List<double> l in rects)
             {
                 l[0] = l[0] * actualW / currW;
                 l[2] = l[2] * actualW / currW;
@@ -186,9 +186,12 @@ namespace DocCompareWPF
                 rectsFinal.Add(temp);
             }
 
+            VisualBrush brush = FindResource("HatchBrush") as VisualBrush;
+
             for (int i = 0; i < PageCanvas.Children.Count; i++)
             {
-                (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).Fill = Brushes.White;
+                (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).Fill = brush;
+                //(PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).Opacity = 1.0;
                 (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).StrokeThickness = 1;
             }
 
@@ -217,7 +220,7 @@ namespace DocCompareWPF
             // delete previous            
             DirectoryInfo di = new DirectoryInfo(pathToFolder);
             FileInfo[] fi = di.GetFiles();
-            if(fi.Length != 0)
+            if (fi.Length != 0)
             {
                 foreach (FileInfo f in fi)
                     f.Delete();
@@ -250,7 +253,7 @@ namespace DocCompareWPF
 
         private void PageCanvas_MouseEnter(object sender, MouseEventArgs e)
         {
-            if(mode == EditMode.CREATE)
+            if (mode == EditMode.CREATE)
             {
                 PageCanvas.Cursor = Cursors.Cross;
             }
@@ -267,7 +270,7 @@ namespace DocCompareWPF
 
         private void PageCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if(mode == EditMode.CREATE)
+            if (mode == EditMode.CREATE)
             {
                 isMouseDown = true;
                 startPoint = e.GetPosition(PageCanvas);
@@ -278,7 +281,7 @@ namespace DocCompareWPF
                 Brush brush = FindResource("WarningBackgroundBrush") as Brush;
 
                 newRect.Fill = brush;
-                newRect.Opacity = 0.5;
+                newRect.Opacity = 1.0;
                 newRect.Width = 1;
                 newRect.Height = 1;
 
@@ -286,7 +289,7 @@ namespace DocCompareWPF
                 Canvas.SetTop(newRect, startPoint.Y);
                 PageCanvas.Children.Add(newRect);
             }
-            else if(mode == EditMode.SELECT && selectedRectIndex != -1 && PageCanvas.Cursor != Cursors.Arrow)
+            else if (mode == EditMode.SELECT && selectedRectIndex != -1 && PageCanvas.Cursor != Cursors.Arrow)
             {
                 startPoint = e.GetPosition(PageCanvas);
                 newPos = new List<double>();
@@ -306,8 +309,6 @@ namespace DocCompareWPF
                     System.Windows.Shapes.Rectangle newRect = new System.Windows.Shapes.Rectangle();
                     newRect.Stroke = Brushes.Black;
                     */
-                    Brush brush = FindResource("NoWarningBackgroundBrush") as Brush;
-                    Brush brush2 = FindResource("WarningBackgroundBrush") as Brush;
                     /*
                     newRect.Fill = brush;
                     newRect.Opacity = 0.5;
@@ -321,28 +322,30 @@ namespace DocCompareWPF
                     */
 
                     // reset all colors
+                    VisualBrush brush = FindResource("HatchBrush") as VisualBrush;
+
                     for (int i = 0; i < PageCanvas.Children.Count; i++)
                     {
-                        (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).Fill = Brushes.White;
+                        (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).Fill = brush;
                         (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).StrokeThickness = 1;
                     }
 
-                    (PageCanvas.Children[selectedRectIndex] as System.Windows.Shapes.Rectangle).Fill = Brushes.White;
+                    (PageCanvas.Children[selectedRectIndex] as System.Windows.Shapes.Rectangle).Fill = brush;
                     (PageCanvas.Children[selectedRectIndex] as System.Windows.Shapes.Rectangle).StrokeThickness = 3;
 
                 }
                 else // no rectangle selected
                 {
-                    Brush brush = FindResource("WarningBackgroundBrush") as Brush;
+                    VisualBrush brush = FindResource("HatchBrush") as VisualBrush;
                     for (int i = 0; i < PageCanvas.Children.Count; i++)
                     {
-                        (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).Fill = Brushes.White;
+                        (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).Fill = brush;
                         (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).StrokeThickness = 1;
                     }
                 }
 
             }
-            else if(mode == EditMode.DELETE)
+            else if (mode == EditMode.DELETE)
             {
                 selectedRectIndex = FindRect(e.GetPosition(PageCanvas));
                 if (selectedRectIndex != -1)
@@ -371,10 +374,10 @@ namespace DocCompareWPF
                 System.Windows.Shapes.Rectangle newRect = new System.Windows.Shapes.Rectangle();
                 newRect.Stroke = Brushes.Black;
 
-                Brush brush = FindResource("WarningBackgroundBrush") as Brush;
+                VisualBrush brush = FindResource("HatchBrush") as VisualBrush;
 
-                newRect.Fill = Brushes.White;
-                newRect.Opacity = 0.5;
+                newRect.Fill = brush;
+                newRect.Opacity = 1.0;
                 newRect.Width = Math.Abs(endPoint.X - startPoint.X);
                 newRect.Height = Math.Abs(endPoint.Y - startPoint.Y);
 
@@ -383,7 +386,7 @@ namespace DocCompareWPF
                 PageCanvas.Children.RemoveAt(PageCanvas.Children.Count - 1);
                 PageCanvas.Children.Add(newRect);
 
-                if(System.Windows.Input.Mouse.LeftButton == MouseButtonState.Released)
+                if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Released)
                 {
                     isMouseDown = false;
                     List<double> values = new List<double>();
@@ -393,8 +396,8 @@ namespace DocCompareWPF
                     values.Add(Math.Max(startPoint.Y, endPoint.Y));
                     rects.Add(values);
 
-                    brush = FindResource("SecondaryAccentBrush") as Brush;
-                    SelectButtonBackground.Background = brush;
+                    Brush brush2 = FindResource("SecondaryAccentBrush") as Brush;
+                    SelectButtonBackground.Background = brush2;
                     CreateRectBackground.Background = Brushes.Transparent;
                     mode = EditMode.SELECT;
                     PageCanvas.Cursor = Cursors.Arrow;
@@ -450,28 +453,49 @@ namespace DocCompareWPF
                     Canvas.SetLeft((PageCanvas.Children[selectedRectIndex] as System.Windows.Shapes.Rectangle), newPos[0]);
                     Canvas.SetTop((PageCanvas.Children[selectedRectIndex] as System.Windows.Shapes.Rectangle), newPos[1]);
                 }
-                else if(PageCanvas.Cursor == Cursors.SizeNS) // resize top or bottom
+                else if (PageCanvas.Cursor == Cursors.SizeNS) // resize top or bottom
                 {
                     endPoint = e.GetPosition(PageCanvas);
 
-                    if(lastEdge == EdgeType.NONE)
+                    if (lastEdge == EdgeType.NONE)
                     {
                         lastEdge = FindRectEdge(endPoint);
                     }
 
-                    if(lastEdge == EdgeType.TOP)
-                        newPos[1] = newPos[1] - (startPoint.Y - endPoint.Y);
-                    else if (lastEdge == EdgeType.BOTTOM)
-                        newPos[3] = newPos[3] - (startPoint.Y - endPoint.Y);
-
-                    if (newPos[3] > PageCanvas.ActualHeight)
+                    if (lastEdge == EdgeType.TOP)
                     {
-                        newPos[3] = PageCanvas.ActualHeight;
+                        if (newPos[1] - (startPoint.Y - endPoint.Y) <= newPos[3] - 15)
+                            newPos[1] = newPos[1] - (startPoint.Y - endPoint.Y);
+                    }
+                    else if (lastEdge == EdgeType.BOTTOM)
+                    {
+                        if (newPos[3] - (startPoint.Y - endPoint.Y) >= newPos[1] + 15)
+                            newPos[3] = newPos[3] - (startPoint.Y - endPoint.Y);
                     }
 
-                    if (newPos[1] < 0)
+                    if (lastEdge == EdgeType.BOTTOM)
                     {
-                        newPos[1] = 0;
+                        if (newPos[3] > PageCanvas.ActualHeight)
+                        {
+                            newPos[3] = PageCanvas.ActualHeight;
+                        }
+
+                        if (newPos[3] <= newPos[1])
+                        {
+                            newPos[3] = newPos[1] + 15;
+                        }
+                    }
+                    else
+                    {
+                        if (newPos[1] < 0)
+                        {
+                            newPos[1] = 0;
+                        }
+
+                        if (newPos[1] >= newPos[3])
+                        {
+                            newPos[1] = newPos[3] - 15;
+                        }
                     }
 
                     startPoint = endPoint;
@@ -483,7 +507,7 @@ namespace DocCompareWPF
                     rects.RemoveAt(selectedRectIndex);
                     rects.Insert(selectedRectIndex, newPos);
                 }
-                else if (PageCanvas.Cursor == Cursors.SizeWE) // resize top or bottom
+                else if (PageCanvas.Cursor == Cursors.SizeWE) // resize left or right
                 {
                     endPoint = e.GetPosition(PageCanvas);
                     if (lastEdge == EdgeType.NONE)
@@ -492,18 +516,192 @@ namespace DocCompareWPF
                     }
 
                     if (lastEdge == EdgeType.LEFT)
-                        newPos[0] = newPos[0] - (startPoint.X - endPoint.X);
-                    else if (lastEdge == EdgeType.RIGHT)
-                        newPos[2] = newPos[2] - (startPoint.X - endPoint.X);
-
-                    if (newPos[2] > PageCanvas.ActualWidth)
                     {
-                        newPos[2] = PageCanvas.ActualWidth;
+                        if (newPos[0] - (startPoint.X - endPoint.X) <= newPos[2] - 15)
+                            newPos[0] = newPos[0] - (startPoint.X - endPoint.X);
+                    }
+                    else if (lastEdge == EdgeType.RIGHT)
+                    {
+                        if (newPos[2] - (startPoint.X - endPoint.X) >= newPos[0] + 15)
+                            newPos[2] = newPos[2] - (startPoint.X - endPoint.X);
                     }
 
-                    if (newPos[0] < 0)
+                    if (lastEdge == EdgeType.RIGHT)
                     {
-                        newPos[0] = 0;
+                        if (newPos[2] > PageCanvas.ActualWidth)
+                        {
+                            newPos[2] = PageCanvas.ActualWidth;
+                        }
+
+                        if (newPos[2] <= newPos[0])
+                        {
+                            newPos[2] = newPos[0] + 15;
+                            lastEdge = EdgeType.NONE;
+                        }
+                    }
+                    else
+                    {
+                        if (newPos[0] < 0)
+                        {
+                            newPos[0] = 0;
+                        }
+
+                        if (newPos[0] >= newPos[2])
+                        {
+                            newPos[0] = newPos[2] - 15;
+                        }
+                    }
+                    startPoint = endPoint;
+
+                    Canvas.SetLeft((PageCanvas.Children[selectedRectIndex] as System.Windows.Shapes.Rectangle), newPos[0]);
+                    Canvas.SetTop((PageCanvas.Children[selectedRectIndex] as System.Windows.Shapes.Rectangle), newPos[1]);
+                    (PageCanvas.Children[selectedRectIndex] as System.Windows.Shapes.Rectangle).Width = Math.Abs(newPos[2] - newPos[0]);
+                    (PageCanvas.Children[selectedRectIndex] as System.Windows.Shapes.Rectangle).Height = Math.Abs(newPos[3] - newPos[1]);
+                    rects.RemoveAt(selectedRectIndex);
+                    rects.Insert(selectedRectIndex, newPos);
+                }
+                else if (PageCanvas.Cursor == Cursors.SizeNESW) // resize topright or bottomleft
+                {
+                    endPoint = e.GetPosition(PageCanvas);
+                    if (lastEdge == EdgeType.NONE)
+                    {
+                        lastEdge = FindRectEdge(endPoint);
+                    }
+
+                    if (lastEdge == EdgeType.TOPRIGHT)
+                    {
+                        if(newPos[2] - (startPoint.X - endPoint.X) >= newPos[0] + 15)
+                            newPos[2] = newPos[2] - (startPoint.X - endPoint.X);
+                        if(newPos[1] - (startPoint.Y - endPoint.Y) <= newPos[3] - 15)
+                            newPos[1] = newPos[1] - (startPoint.Y - endPoint.Y);
+                    }
+                    else if (lastEdge == EdgeType.BOTTOMLEFT)
+                    {
+                        if (newPos[0] - (startPoint.X - endPoint.X) <= newPos[2] - 15)
+                            newPos[0] = newPos[0] - (startPoint.X - endPoint.X);
+                        if (newPos[3] - (startPoint.Y - endPoint.Y) >= newPos[1] + 15)
+                            newPos[3] = newPos[3] - (startPoint.Y - endPoint.Y);
+                    }
+
+                    if (lastEdge == EdgeType.BOTTOMLEFT)
+                    {
+                        if (newPos[3] > PageCanvas.ActualHeight)
+                        {
+                            newPos[3] = PageCanvas.ActualHeight;
+                        }
+
+                        if (newPos[3] <= newPos[1])
+                        {
+                            newPos[3] = newPos[1] + 15;
+                        }
+
+                        if (newPos[2] > PageCanvas.ActualWidth)
+                        {
+                            newPos[2] = PageCanvas.ActualWidth;
+                        }
+
+                        if (newPos[2] <= newPos[0])
+                        {
+                            newPos[2] = newPos[0] + 15;
+                        }
+                    }
+                    else
+                    {
+                        if (newPos[1] < 0)
+                        {
+                            newPos[1] = 0;
+                        }
+
+                        if (newPos[1] >= newPos[3])
+                        {
+                            newPos[1] = newPos[3] - 15;
+                        }
+
+                        if (newPos[0] < 0)
+                        {
+                            newPos[0] = 0;
+                        }
+
+                        if (newPos[0] >= newPos[2])
+                        {
+                            newPos[0] = newPos[2] - 15;
+                        }
+                    }
+                    startPoint = endPoint;
+
+                    Canvas.SetLeft((PageCanvas.Children[selectedRectIndex] as System.Windows.Shapes.Rectangle), newPos[0]);
+                    Canvas.SetTop((PageCanvas.Children[selectedRectIndex] as System.Windows.Shapes.Rectangle), newPos[1]);
+                    (PageCanvas.Children[selectedRectIndex] as System.Windows.Shapes.Rectangle).Width = Math.Abs(newPos[2] - newPos[0]);
+                    (PageCanvas.Children[selectedRectIndex] as System.Windows.Shapes.Rectangle).Height = Math.Abs(newPos[3] - newPos[1]);
+                    rects.RemoveAt(selectedRectIndex);
+                    rects.Insert(selectedRectIndex, newPos);
+                }
+                if (PageCanvas.Cursor == Cursors.SizeNWSE) // resize topleft or bottomright
+                {
+                    endPoint = e.GetPosition(PageCanvas);
+                    if (lastEdge == EdgeType.NONE)
+                    {
+                        lastEdge = FindRectEdge(endPoint);
+                    }
+
+                    if (lastEdge == EdgeType.TOPLEFT)
+                    {
+                        if (newPos[0] - (startPoint.X - endPoint.X) <= newPos[2] - 15)
+                            newPos[0] = newPos[0] - (startPoint.X - endPoint.X);
+                        if (newPos[1] - (startPoint.Y - endPoint.Y) <= newPos[3] - 15)
+                            newPos[1] = newPos[1] - (startPoint.Y - endPoint.Y);
+                    }
+                    else if (lastEdge == EdgeType.BOTTOMRIGHT)
+                    {
+                        if (newPos[2] - (startPoint.X - endPoint.X) >= newPos[0] + 15)
+                            newPos[2] = newPos[2] - (startPoint.X - endPoint.X);
+                        if (newPos[3] - (startPoint.Y - endPoint.Y) >= newPos[1] + 15)
+                            newPos[3] = newPos[3] - (startPoint.Y - endPoint.Y);
+                    }
+
+                    if(lastEdge == EdgeType.TOPLEFT)
+                    {
+                        if (newPos[0] < 0)
+                        {
+                            newPos[0] = 0;
+                        }
+
+                        if (newPos[0] >= newPos[2])
+                        {
+                            newPos[0] = newPos[2] - 15;
+                        }
+
+                        if (newPos[1] < 0)
+                        {
+                            newPos[1] = 0;
+                        }
+
+                        if (newPos[1] >= newPos[3])
+                        {
+                            newPos[1] = newPos[3] - 15;
+                        }
+                    }
+                    else
+                    {
+                        if (newPos[3] > PageCanvas.ActualHeight)
+                        {
+                            newPos[3] = PageCanvas.ActualHeight;
+                        }
+
+                        if (newPos[3] <= newPos[1])
+                        {
+                            newPos[3] = newPos[1] + 15;
+                        }
+
+                        if (newPos[2] > PageCanvas.ActualWidth)
+                        {
+                            newPos[2] = PageCanvas.ActualWidth;
+                        }
+
+                        if (newPos[2] <= newPos[0])
+                        {
+                            newPos[2] = newPos[0] + 15;
+                        }
                     }
 
                     startPoint = endPoint;
@@ -521,13 +719,13 @@ namespace DocCompareWPF
                 */
 
             }
-            
-            if(mode == EditMode.SELECT && isMouseDown == false )
+
+            if (mode == EditMode.SELECT && isMouseDown == false)
             {
                 int foundRect = FindRect(e.GetPosition(PageCanvas));
-                if(foundRect >= 0 && foundRect == selectedRectIndex)
+                if (foundRect >= 0 && foundRect == selectedRectIndex)
                 {
-                    switch(FindRectEdge(e.GetPosition(PageCanvas)))
+                    switch (FindRectEdge(e.GetPosition(PageCanvas)))
                     {
                         case EdgeType.TOP:
                         case EdgeType.BOTTOM:
@@ -537,21 +735,29 @@ namespace DocCompareWPF
                         case EdgeType.RIGHT:
                             PageCanvas.Cursor = Cursors.SizeWE;
                             break;
+                        case EdgeType.TOPLEFT:
+                        case EdgeType.BOTTOMRIGHT:
+                            PageCanvas.Cursor = Cursors.SizeNWSE;
+                            break;
+                        case EdgeType.TOPRIGHT:
+                        case EdgeType.BOTTOMLEFT:
+                            PageCanvas.Cursor = Cursors.SizeNESW;
+                            break;
                         default:
                             PageCanvas.Cursor = Cursors.SizeAll;
                             break;
                     }
-                }                
+                }
                 else
                 {
                     PageCanvas.Cursor = Cursors.Arrow;
                 }
             }
 
-            if(mode == EditMode.DELETE)
+            if (mode == EditMode.DELETE)
             {
                 int foundRect = FindRect(e.GetPosition(PageCanvas));
-                if(foundRect != -1)
+                if (foundRect != -1)
                 {
                     PageCanvas.Cursor = Cursors.Cross;
                 }
@@ -564,7 +770,7 @@ namespace DocCompareWPF
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Escape && mode == EditMode.CREATE)
+            if (e.Key == Key.Escape && mode == EditMode.CREATE)
             {
                 Brush brush = FindResource("SecondaryAccentBrush") as Brush;
                 SelectButtonBackground.Background = brush;
@@ -580,13 +786,14 @@ namespace DocCompareWPF
             }
             else if (e.Key == Key.Escape && mode == EditMode.SELECT)
             {
+                VisualBrush brush = FindResource("HatchBrush") as VisualBrush;
                 for (int i = 0; i < PageCanvas.Children.Count; i++)
                 {
-                    (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).Fill = Brushes.White;
+                    (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).Fill = brush;
                     (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).StrokeThickness = 1;
                 }
             }
-            else if(e.Key == Key.Delete && mode == EditMode.SELECT && selectedRectIndex != -1)
+            else if (e.Key == Key.Delete && mode == EditMode.SELECT && selectedRectIndex != -1)
             {
                 PageCanvas.Children.RemoveAt(selectedRectIndex);
                 rects.RemoveAt(selectedRectIndex);
@@ -599,9 +806,9 @@ namespace DocCompareWPF
         {
             int ret = -1;
 
-            for(int i = 0; i < rects.Count; i++)
+            for (int i = 0; i < rects.Count; i++)
             {
-                if(rects[i][0] <= pos.X && rects[i][2] >= pos.X &&
+                if (rects[i][0] <= pos.X && rects[i][2] >= pos.X &&
                     rects[i][1] <= pos.Y && rects[i][3] >= pos.Y)
                 {
                     return i;
@@ -616,7 +823,11 @@ namespace DocCompareWPF
             TOP,
             BOTTOM,
             LEFT,
-            RIGHT, 
+            RIGHT,
+            TOPLEFT,
+            TOPRIGHT,
+            BOTTOMLEFT,
+            BOTTOMRIGHT,
             NONE,
         }
 
@@ -627,10 +838,12 @@ namespace DocCompareWPF
             CreateRectBackground.Background = Brushes.Transparent;
             DeleteRectBackground.Background = brush;
             mode = EditMode.DELETE;
-            
+
+            VisualBrush brush2 = FindResource("HatchBrush") as VisualBrush;
+
             for (int i = 0; i < PageCanvas.Children.Count; i++)
             {
-                (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).Fill = Brushes.White;
+                (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).Fill = brush2;
                 (PageCanvas.Children[i] as System.Windows.Shapes.Rectangle).StrokeThickness = 1;
             }
         }
@@ -654,10 +867,11 @@ namespace DocCompareWPF
                     temp.Add((double)i[3] * (double)currH / (double)actualH);
                     rects.Add(temp);
 
+                    VisualBrush brush = FindResource("HatchBrush") as VisualBrush;
                     System.Windows.Shapes.Rectangle newRect = new System.Windows.Shapes.Rectangle();
                     newRect.Stroke = Brushes.Black;
-                    newRect.Fill = Brushes.White;
-                    newRect.Opacity = 0.5;
+                    newRect.Fill = brush;
+                    newRect.Opacity = 1.0;
                     newRect.Width = Math.Abs(temp[2] - temp[0]);
                     newRect.Height = Math.Abs(temp[3] - temp[1]);
 
@@ -674,11 +888,16 @@ namespace DocCompareWPF
             List<double> rectVertices = rects[selectedRectIndex];
 
             // check if TOP
-            if(pos.X >= rectVertices[0] && pos.X <= rectVertices[2])
+            if (pos.X >= rectVertices[0] && pos.X <= rectVertices[2])
             {
-                if(pos.Y >= rectVertices[1] && pos.Y <= rectVertices[1] + 5)
+                if (pos.Y >= rectVertices[1] && pos.Y <= rectVertices[1] + 5)
                 {
-                    return EdgeType.TOP;
+                    if (pos.X >= rectVertices[0] && pos.X <= rectVertices[0] + 5)
+                        return EdgeType.TOPLEFT;
+                    else if (pos.X <= rectVertices[2] && pos.X >= rectVertices[2] - 5)
+                        return EdgeType.TOPRIGHT;
+                    else
+                        return EdgeType.TOP;
                 }
             }
 
@@ -687,14 +906,19 @@ namespace DocCompareWPF
             {
                 if (pos.Y <= rectVertices[3] && pos.Y >= rectVertices[3] - 5)
                 {
-                    return EdgeType.BOTTOM;
+                    if (pos.X >= rectVertices[0] && pos.X <= rectVertices[0] + 5)
+                        return EdgeType.BOTTOMLEFT;
+                    else if (pos.X <= rectVertices[2] && pos.X >= rectVertices[2] - 5)
+                        return EdgeType.BOTTOMRIGHT;
+                    else
+                        return EdgeType.BOTTOM;
                 }
             }
 
             // check if Left
             if (pos.X >= rectVertices[0] && pos.X <= rectVertices[0] + 5)
             {
-                if (pos.Y >= rectVertices[1] && pos.Y <= rectVertices[3] )
+                if (pos.Y >= rectVertices[1] && pos.Y <= rectVertices[3])
                 {
                     return EdgeType.LEFT;
                 }

@@ -27,7 +27,7 @@ namespace DocCompareWPF
     public partial class MainWindow : Window
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
-        private readonly string versionString = "1.4.0";
+        private readonly string versionString = "1.4.1";
         private readonly string localetype = "DE";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
@@ -40,6 +40,7 @@ namespace DocCompareWPF
         private int docCompareSideGridShown, docProcessingCounter;
         private Grid gridToAnimate;
         private MaskType showMask = 0;
+        private MaskType lastShowMask = 0;
 
         // License management
         private LicenseManagement lic;
@@ -93,7 +94,7 @@ namespace DocCompareWPF
         public MainWindow()
         {
             InitializeComponent();
-            Directory.CreateDirectory(appDataDir);1
+            Directory.CreateDirectory(appDataDir);
             compareResultFolder = Path.Join(workingDir, Guid.NewGuid().ToString());
             compareResultFolder2 = Path.Join(workingDir, Guid.NewGuid().ToString());
             noCompareDir = Path.Join(appDataDir, "NoCompareMask");
@@ -409,6 +410,7 @@ namespace DocCompareWPF
                             }
                             else if (thisImg.Tag.ToString().Contains("Mask"))
                             {
+                                
                             }
                             else if (thisImg.Tag.ToString().Contains("NoCompare"))
                             {
@@ -1271,8 +1273,8 @@ namespace DocCompareWPF
                         ImgRightName = "MainImgRight" + i.ToString(),
                         ImgAniLeftName = "MainImgAniLeft" + i.ToString(),
                         ImgAniRightName = "MainImgAniRight" + i.ToString(),
-                        ImgMaskRightName = "MainMaskImgRight" + i.ToString(),
-                        ImgMaskRightName2 = "MainMaskImgRight2" + i.ToString(),
+                        ImgMaskRightName = "MainMaskImgRightMagenta" + i.ToString(),
+                        ImgMaskRightName2 = "MainMaskImgRightGreen" + i.ToString(),
                         AnimateDiffLeftButtonName = "AnimateDiffLeft" + i.ToString(),
                         AnimateDiffRightButtonName = "AnimateDiffRight" + i.ToString(),
                         ImgNoCompareLeft = "NoCompareLeft" + i.ToString(),
@@ -3348,22 +3350,9 @@ namespace DocCompareWPF
                     foreach (CompareMainItem item in DocCompareMainListView.Items)
                     {
                         if (item.AnimateDiffRightButtonName == (sender as Button).Tag.ToString())
-                        {
-                            switch (showMask)
-                            {
-                                case MaskType.Magenta:
-                                    item.ShowMaskMagenta = Visibility.Visible;
-                                    item.ShowMaskGreen = Visibility.Hidden;
-                                    break;
-                                case MaskType.Green:
-                                    item.ShowMaskMagenta = Visibility.Hidden;
-                                    item.ShowMaskGreen = Visibility.Visible;
-                                    break;
-                                case MaskType.Off:
-                                    item.ShowMaskMagenta = Visibility.Hidden;
-                                    item.ShowMaskGreen = Visibility.Hidden;
-                                    break;
-                            }
+                        {                            
+                            item.ShowMaskMagenta = Visibility.Hidden;
+                            item.ShowMaskGreen = Visibility.Hidden;
                             
                             item.BlurRadiusRight = 0;
                             item.ShowHiddenRight = Visibility.Hidden;
@@ -3396,6 +3385,9 @@ namespace DocCompareWPF
                         if (thisImg.Tag.ToString().Contains("Ani"))
                             thisImg.Visibility = Visibility.Hidden;
                         else if (thisImg.Tag.ToString().Contains("Mask"))
+                        {   
+                        }
+                        else if (thisImg.Tag.ToString().Contains("NoCompare"))
                         {
                         }
                         else

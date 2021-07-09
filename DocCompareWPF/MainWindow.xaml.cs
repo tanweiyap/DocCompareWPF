@@ -27,8 +27,8 @@ namespace DocCompareWPF
     public partial class MainWindow : Window
     {
         private readonly string appDataDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
-        private readonly string versionString = "1.4.1";
-        private readonly string localetype = "DE";
+        private readonly string versionString = "1.4.2";
+        private readonly string localetype = "EN";
         private readonly string workingDir = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".2compare");
         private readonly DocumentManagement docs;
         private string noCompareDir;

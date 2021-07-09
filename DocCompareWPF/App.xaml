@@ -104,6 +104,77 @@
                         </DrawingBrush.Drawing>
                     </DrawingBrush>
 
+                    <DrawingBrush x:Key="NoCompareIcon">
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup ClipGeometry="M0,0 V297 H210 V0 H0 Z">
+                                <DrawingGroup Opacity="1">
+                                    <DrawingGroup Opacity="1">
+                                        <DrawingGroup Opacity="1">
+                                            <GeometryDrawing Geometry="F1 M210,297z M0,0z M88.635417,26.458333L112.44792,26.458333">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen Brush="White" Thickness="6" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Geometry="F1 M210,297z M0,0z M15.875,51.593749L41.010416,26.458333">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen Brush="White" Thickness="2.11667" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Geometry="F1 M210,297z M0,0z M15.875,78.052082L67.468749,26.458333">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen Brush="White" Thickness="2.11667" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Geometry="F1 M210,297z M0,0z M37.703125,82.682291L82.020833,38.364583">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen Brush="White" Thickness="2.11667" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Geometry="F1 M210,297z M0,0z M66.80729,82.682291L100.54167,47.625">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen Brush="White" Thickness="2.11667" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Geometry="F1 M210,297z M0,0z M64.822917,82.020833L15.875,31.75">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen Brush="White" Thickness="2.11667" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Geometry="F1 M210,297z M0,0z M100.54167,63.5L63.5,26.458333">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen Brush="White" Thickness="2.11667" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Geometry="F1 M210,297z M0,0z M37.041667,26.458333L93.927083,82.020833">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen Brush="White" Thickness="2.11667" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Geometry="F1 M210,297z M0,0z M35.71875,82.020833L15.874996,62.177084">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen Brush="White" Thickness="2.11667" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing>
+                                                <GeometryDrawing.Pen>
+                                                    <Pen Brush="White" Thickness="6" StartLineCap="Square" EndLineCap="Square" LineJoin="Miter" />
+                                                </GeometryDrawing.Pen>
+                                                <GeometryDrawing.Geometry>
+                                                    <EllipseGeometry RadiusX="21.8281" RadiusY="21.8281" Center="100.5417,26.4583" />
+                                                </GeometryDrawing.Geometry>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Geometry="F1 M210,297z M0,0z M79.374999,26.458333L15.875,26.458333 15.875,82.020832 100.54167,82.020832 100.54167,47.624999">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen Brush="White" Thickness="6" StartLineCap="Flat" EndLineCap="Flat" LineJoin="Miter" />
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                        </DrawingGroup>
+                                    </DrawingGroup>
+                                </DrawingGroup>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+
                     <uihelper:UriToCachedImageConverter x:Key="uriToImageConv"/>
 
                     <Style TargetType="FrameworkElement" x:Key="VisibleAnimation">

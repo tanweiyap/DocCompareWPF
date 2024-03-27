@@ -28,6 +28,8 @@ To install DocCompareWPF, follow these steps:
 * Once the comparison is complete, review the compared slides. Differences will be highlighted for easy identification.
 * Navigate through the slides using the provided controls.
 
+[Demo-Video on YouTube](https://www.youtube.com/watch?v=nbYFXqKdY58)
+
 ### System Requirements
 
 * Windows operating system (Windows 7 or later)

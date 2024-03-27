@@ -34,6 +34,10 @@ To install DocCompareWPF, follow these steps:
 * .NET Framework 4.7.2 or later
 * 8 GB RAM
 
+### Compiling the Project
+
+The project was created using Microsoft Visual Studio 22. Windows 10 SDK is necessary.
+
 ### Contributions
 
 Contributions to DocCompareWPF are welcome! If you would like to contribute to the project, please fork the repository, make your changes, and submit a pull request detailing your proposed changes.
